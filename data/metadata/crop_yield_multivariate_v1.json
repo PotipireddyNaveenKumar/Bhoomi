@@ -1,0 +1,51 @@
+{
+  "dataset_id": "crop_yield_multivariate_v1",
+  "dataset_name": "Multivariate Indian Crop Yield Dataset",
+  "version": "v1.0",
+  "domain": "agriculture_economics",
+  "task": "yield_prediction",
+  "source": "Directorate of Economics & Statistics, Ministry of Agriculture, India",
+  "provenance": "Official Government of India agricultural statistics",
+  "license": "Government Open Data License - India (GODL)",
+  "geography": "India (National & State levels)",
+  "time_period": null,
+  "number_of_rows": 19689,
+  "number_of_columns": 10,
+  "target_column": "yield",
+  "feature_columns": [
+    "crop",
+    "season",
+    "state",
+    "area",
+    "annual_rainfall",
+    "fertilizer",
+    "pesticide"
+  ],
+  "categorical_columns": [
+    "crop",
+    "season",
+    "state"
+  ],
+  "numerical_columns": [
+    "area",
+    "production",
+    "annual_rainfall",
+    "fertilizer",
+    "pesticide",
+    "yield"
+  ],
+  "missing_value_rate": 0.0,
+  "duplicate_rate": 0.0,
+  "class_distribution": null,
+  "unit_information": {
+    "area": "hectares",
+    "production": "metric tonnes",
+    "annual_rainfall": "millimeters (mm)",
+    "fertilizer": "metric tonnes",
+    "pesticide": "metric tonnes",
+    "yield": "metric tonnes per hectare"
+  },
+  "validation_status": "VALIDATED",
+  "approved_for_training": true,
+  "notes": "Critical leakage guard: Production feature excluded from predictor set."
+}

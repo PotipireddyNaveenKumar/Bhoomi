@@ -1,0 +1,5 @@
+{
+  "method": "temperature_scaling",
+  "temperature": 1.1249198913574219,
+  "validation_samples": 1000
+}

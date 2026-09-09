@@ -1,0 +1,51 @@
+{
+  "dataset_id": "fertilizer_recommendation_v1",
+  "dataset_name": "Soil-Specific Fertilizer Requirement Dataset",
+  "version": "v1.0",
+  "domain": "agronomy",
+  "task": "fertilizer_recommendation",
+  "source": "Agri-extension nutrient diagnostic dataset",
+  "provenance": "Indian agricultural soil analysis datasets",
+  "license": "Open Dataset",
+  "geography": "India",
+  "time_period": null,
+  "number_of_rows": 8000,
+  "number_of_columns": 9,
+  "target_column": "fertilizer_name",
+  "feature_columns": [
+    "temperature",
+    "humidity",
+    "moisture",
+    "soil_type",
+    "crop_type",
+    "nitrogen",
+    "potassium",
+    "phosphorus"
+  ],
+  "categorical_columns": [
+    "soil_type",
+    "crop_type"
+  ],
+  "numerical_columns": [
+    "temperature",
+    "humidity",
+    "moisture",
+    "nitrogen",
+    "potassium",
+    "phosphorus"
+  ],
+  "missing_value_rate": 0.0,
+  "duplicate_rate": 0.0,
+  "class_distribution": null,
+  "unit_information": {
+    "temperature": "degree Celsius (\u00b0C)",
+    "humidity": "relative percentage (%)",
+    "moisture": "soil moisture percentage (%)",
+    "nitrogen": "kg/ha index",
+    "potassium": "kg/ha index",
+    "phosphorus": "kg/ha index"
+  },
+  "validation_status": "VALIDATED",
+  "approved_for_training": true,
+  "notes": "Covers Urea, DAP, 14-35-14, 28-28, 17-17-17, 20-20, 10-26-26."
+}

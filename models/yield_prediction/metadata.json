@@ -1,0 +1,57 @@
+{
+  "model_id": "yield_prediction_v2",
+  "model_name": "XGBoost",
+  "version": "v2.0-production",
+  "training_dataset": "crop_yield_multivariate_v1",
+  "training_rows": 9684,
+  "test_rows": 2421,
+  "features": [
+    "crop",
+    "season",
+    "state",
+    "area",
+    "annual_rainfall",
+    "fertilizer",
+    "pesticide"
+  ],
+  "benchmark_comparison": {
+    "Ridge": {
+      "cv_mean_r2": 0.7187,
+      "test_mae": 2.7215,
+      "test_rmse": 6.2024,
+      "test_r2": 0.7462
+    },
+    "RandomForest": {
+      "cv_mean_r2": 0.9315,
+      "test_mae": 0.8348,
+      "test_rmse": 2.636,
+      "test_r2": 0.9542
+    },
+    "ExtraTrees": {
+      "cv_mean_r2": 0.936,
+      "test_mae": 0.8575,
+      "test_rmse": 2.728,
+      "test_r2": 0.9509
+    },
+    "GradientBoosting": {
+      "cv_mean_r2": 0.9237,
+      "test_mae": 0.9969,
+      "test_rmse": 2.5723,
+      "test_r2": 0.9563
+    },
+    "XGBoost": {
+      "cv_mean_r2": 0.9225,
+      "test_mae": 0.8192,
+      "test_rmse": 2.5421,
+      "test_r2": 0.9574
+    }
+  },
+  "best_metrics": {
+    "cv_mean_r2": 0.9225,
+    "test_mae": 0.8192,
+    "test_rmse": 2.5421,
+    "test_r2": 0.9574
+  },
+  "target_unit": "metric tonnes per hectare",
+  "leakage_guard": "Production strictly excluded from predictors."
+}

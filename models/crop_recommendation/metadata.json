@@ -1,0 +1,100 @@
+{
+  "model_id": "crop_recommendation_v2",
+  "model_name": "RandomForest",
+  "version": "v2.0-production",
+  "training_dataset": "crop_recommendation_v1",
+  "training_rows": 1760,
+  "test_rows": 440,
+  "feature_schema": [
+    "nitrogen",
+    "phosphorus",
+    "potassium",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "classes": [
+    "apple",
+    "banana",
+    "blackgram",
+    "chickpea",
+    "coconut",
+    "coffee",
+    "cotton",
+    "grapes",
+    "jute",
+    "kidneybeans",
+    "lentil",
+    "maize",
+    "mango",
+    "mothbeans",
+    "mungbean",
+    "muskmelon",
+    "orange",
+    "papaya",
+    "pigeonpeas",
+    "pomegranate",
+    "rice",
+    "watermelon"
+  ],
+  "benchmark_comparison": {
+    "LogisticRegression": {
+      "cv_mean_f1": 0.9678,
+      "cv_std_f1": 0.0068,
+      "test_accuracy": 0.9727,
+      "test_macro_precision": 0.974,
+      "test_macro_recall": 0.9727,
+      "test_macro_f1": 0.9725
+    },
+    "DecisionTree": {
+      "cv_mean_f1": 0.9841,
+      "cv_std_f1": 0.0058,
+      "test_accuracy": 0.9795,
+      "test_macro_precision": 0.981,
+      "test_macro_recall": 0.9795,
+      "test_macro_f1": 0.9794
+    },
+    "RandomForest": {
+      "cv_mean_f1": 0.9931,
+      "cv_std_f1": 0.0059,
+      "test_accuracy": 0.9955,
+      "test_macro_precision": 0.9957,
+      "test_macro_recall": 0.9955,
+      "test_macro_f1": 0.9955
+    },
+    "ExtraTrees": {
+      "cv_mean_f1": 0.9937,
+      "cv_std_f1": 0.0033,
+      "test_accuracy": 0.9955,
+      "test_macro_precision": 0.9957,
+      "test_macro_recall": 0.9955,
+      "test_macro_f1": 0.9955
+    },
+    "GradientBoosting": {
+      "cv_mean_f1": 0.9869,
+      "cv_std_f1": 0.0036,
+      "test_accuracy": 0.9886,
+      "test_macro_precision": 0.9897,
+      "test_macro_recall": 0.9886,
+      "test_macro_f1": 0.9887
+    },
+    "XGBoost": {
+      "cv_mean_f1": 0.9914,
+      "cv_std_f1": 0.0031,
+      "test_accuracy": 0.9932,
+      "test_macro_precision": 0.9935,
+      "test_macro_recall": 0.9932,
+      "test_macro_f1": 0.9931
+    }
+  },
+  "best_metrics": {
+    "cv_mean_f1": 0.9931,
+    "cv_std_f1": 0.0059,
+    "test_accuracy": 0.9955,
+    "test_macro_precision": 0.9957,
+    "test_macro_recall": 0.9955,
+    "test_macro_f1": 0.9955
+  },
+  "limitations": "Trained on 22 standard Indian agro-climatic crops. Extreme micro-climates or untested exotic cultivars may require expert agronomic consultation."
+}

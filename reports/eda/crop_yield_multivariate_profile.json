@@ -1,0 +1,153 @@
+{
+  "dataset_name": "crop_yield_multivariate",
+  "total_rows": 19689,
+  "total_columns": 10,
+  "duplicate_rows": 0,
+  "numerical_columns": [
+    "crop_year",
+    "area",
+    "production",
+    "annual_rainfall",
+    "fertilizer",
+    "pesticide",
+    "yield"
+  ],
+  "categorical_columns": [
+    "crop",
+    "season",
+    "state"
+  ],
+  "numerical_stats": {
+    "crop_year": {
+      "count": 19689,
+      "mean": 2009.128,
+      "std": 6.498,
+      "min": 1997.0,
+      "q25": 2004.0,
+      "median": 2010.0,
+      "q75": 2015.0,
+      "max": 2020.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "area": {
+      "count": 19689,
+      "mean": 179926.57,
+      "std": 732828.676,
+      "min": 0.5,
+      "q25": 1390.0,
+      "median": 9317.0,
+      "q75": 75112.0,
+      "max": 50808100.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "production": {
+      "count": 19689,
+      "mean": 16435941.273,
+      "std": 263056839.813,
+      "min": 0.0,
+      "q25": 1393.0,
+      "median": 13804.0,
+      "q75": 122718.0,
+      "max": 6326000000.0,
+      "null_count": 0,
+      "zeros_count": 112
+    },
+    "annual_rainfall": {
+      "count": 19689,
+      "mean": 1437.755,
+      "std": 816.91,
+      "min": 301.3,
+      "q25": 940.7,
+      "median": 1247.6,
+      "q75": 1643.7,
+      "max": 6552.7,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "fertilizer": {
+      "count": 19689,
+      "mean": 24103312.449,
+      "std": 94946004.483,
+      "min": 54.17,
+      "q25": 188014.62,
+      "median": 1234957.44,
+      "q75": 10003847.2,
+      "max": 4835406877.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "pesticide": {
+      "count": 19689,
+      "mean": 48848.353,
+      "std": 213287.355,
+      "min": 0.09,
+      "q25": 356.7,
+      "median": 2421.9,
+      "q75": 20041.7,
+      "max": 15750511.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "yield": {
+      "count": 19689,
+      "mean": 79.954,
+      "std": 878.306,
+      "min": 0.0,
+      "q25": 0.6,
+      "median": 1.03,
+      "q75": 2.389,
+      "max": 21105.0,
+      "null_count": 0,
+      "zeros_count": 112
+    }
+  },
+  "categorical_stats": {
+    "crop": {
+      "unique_count": 55,
+      "top_values": {
+        "Rice": 1197,
+        "Maize": 975,
+        "Moong(Green Gram)": 740,
+        "Urad": 733,
+        "Groundnut": 725,
+        "Sesamum": 685,
+        "Potato": 628,
+        "Sugarcane": 605,
+        "Wheat": 545,
+        "Rapeseed &Mustard": 528
+      },
+      "null_count": 0
+    },
+    "season": {
+      "unique_count": 6,
+      "top_values": {
+        "Kharif     ": 8232,
+        "Rabi       ": 5742,
+        "Whole Year ": 3717,
+        "Summer     ": 1195,
+        "Autumn     ": 414,
+        "Winter     ": 389
+      },
+      "null_count": 0
+    },
+    "state": {
+      "unique_count": 30,
+      "top_values": {
+        "Karnataka": 1432,
+        "Andhra Pradesh": 1266,
+        "West Bengal": 1094,
+        "Chhattisgarh": 915,
+        "Bihar": 896,
+        "Madhya Pradesh": 845,
+        "Uttar Pradesh": 825,
+        "Tamil Nadu": 822,
+        "Gujarat": 817,
+        "Maharashtra": 770
+      },
+      "null_count": 0
+    }
+  },
+  "memory_usage_mb": 4.81
+}

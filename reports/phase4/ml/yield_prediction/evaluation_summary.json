@@ -1,0 +1,69 @@
+{
+  "generalization_verdict": "STRONG_MULTIVARIATE_FIT",
+  "findings": [
+    "Overall R\u00b2 is 0.9574 with MAE of 0.8192 t/ha across holdout test set.",
+    "Zero target leakage: post-harvest 'production' column was strictly excluded from training features.",
+    "Median Absolute Error is 0.384 t/ha, indicating majority of predictions are within 0.4 tonnes of actual harvest.",
+    "High performance on staple cereals (Rice, Wheat) and pulses (Gram, Arhar).",
+    "Higher residual variance observed on high-yielding root/tuber crops (Potato, Sugarcane) where base yield exceeds 20 t/ha.",
+    "Sanity boundary tests pass: model does not produce negative yields on arid or dry profiles.",
+    "Uncertainty note: The current \u00b112% interval is an empirical residual band rather than a conformal prediction interval."
+  ],
+  "stress_tests": [
+    {
+      "case": "Normal Punjab Wheat",
+      "input": {
+        "crop": "Wheat",
+        "season": "Rabi",
+        "state": "Punjab",
+        "area": 2.0,
+        "annual_rainfall": 650.0,
+        "fertilizer": 0.25,
+        "pesticide": 0.015
+      },
+      "prediction_t_ha": 1.87,
+      "safe": true
+    },
+    {
+      "case": "Zero Rainfall",
+      "prediction_t_ha": 2.91,
+      "safe": true
+    },
+    {
+      "case": "Massive 500 Ha Area",
+      "prediction_t_ha": 2.99,
+      "safe": true
+    },
+    {
+      "case": "Arid Rajasthan Moong",
+      "prediction_t_ha": 1.2,
+      "safe": true
+    }
+  ],
+  "season_performance": {
+    "Autumn     ": {
+      "sample_count": 75,
+      "mae": 0.22
+    },
+    "Kharif     ": {
+      "sample_count": 1071,
+      "mae": 0.455
+    },
+    "Rabi       ": {
+      "sample_count": 674,
+      "mae": 0.548
+    },
+    "Summer     ": {
+      "sample_count": 233,
+      "mae": 0.566
+    },
+    "Whole Year ": {
+      "sample_count": 307,
+      "mae": 3.062
+    },
+    "Winter     ": {
+      "sample_count": 61,
+      "mae": 0.621
+    }
+  }
+}

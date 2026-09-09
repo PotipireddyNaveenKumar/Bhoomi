@@ -1,0 +1,74 @@
+{
+  "test_samples": 200,
+  "accuracy": 0.89,
+  "macro_precision": 0.8915498017388773,
+  "macro_recall": 0.89,
+  "macro_f1": 0.8892541702986035,
+  "weighted_f1": 0.8892541702986035,
+  "avg_cpu_latency_ms": 4.008558928571152,
+  "per_class": {
+    "Blight": {
+      "precision": 0.8409090909090909,
+      "recall": 0.74,
+      "f1-score": 0.7872340425531915,
+      "support": 50.0
+    },
+    "Common_Rust": {
+      "precision": 0.9591836734693877,
+      "recall": 0.94,
+      "f1-score": 0.9494949494949495,
+      "support": 50.0
+    },
+    "Gray_Leaf_Spot": {
+      "precision": 0.7857142857142857,
+      "recall": 0.88,
+      "f1-score": 0.8301886792452831,
+      "support": 50.0
+    },
+    "Healthy": {
+      "precision": 0.9803921568627451,
+      "recall": 1.0,
+      "f1-score": 0.9900990099009901,
+      "support": 50.0
+    },
+    "accuracy": 0.89,
+    "macro avg": {
+      "precision": 0.8915498017388773,
+      "recall": 0.89,
+      "f1-score": 0.8892541702986035,
+      "support": 200.0
+    },
+    "weighted avg": {
+      "precision": 0.8915498017388773,
+      "recall": 0.89,
+      "f1-score": 0.8892541702986035,
+      "support": 200.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      37,
+      1,
+      12,
+      0
+    ],
+    [
+      2,
+      47,
+      0,
+      1
+    ],
+    [
+      5,
+      1,
+      44,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      50
+    ]
+  ]
+}

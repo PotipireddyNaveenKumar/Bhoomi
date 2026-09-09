@@ -1,0 +1,91 @@
+{
+  "test_samples": 250,
+  "accuracy": 0.744,
+  "macro_precision": 0.8299598190067371,
+  "macro_recall": 0.744,
+  "macro_f1": 0.7519693246367524,
+  "weighted_f1": 0.7519693246367525,
+  "avg_cpu_latency_ms": 4.536527493998987,
+  "per_class": {
+    "Bacterial Leaf Spot": {
+      "precision": 0.48484848484848486,
+      "recall": 0.96,
+      "f1-score": 0.6442953020134228,
+      "support": 50.0
+    },
+    "Downy Mildew": {
+      "precision": 0.8780487804878049,
+      "recall": 0.72,
+      "f1-score": 0.7912087912087912,
+      "support": 50.0
+    },
+    "Healthy Leaf": {
+      "precision": 0.9310344827586207,
+      "recall": 0.54,
+      "f1-score": 0.6835443037974683,
+      "support": 50.0
+    },
+    "Mosaic Disease": {
+      "precision": 0.9183673469387755,
+      "recall": 0.9,
+      "f1-score": 0.9090909090909091,
+      "support": 50.0
+    },
+    "Powdery_Mildew": {
+      "precision": 0.9375,
+      "recall": 0.6,
+      "f1-score": 0.7317073170731707,
+      "support": 50.0
+    },
+    "accuracy": 0.744,
+    "macro avg": {
+      "precision": 0.8299598190067371,
+      "recall": 0.744,
+      "f1-score": 0.7519693246367524,
+      "support": 250.0
+    },
+    "weighted avg": {
+      "precision": 0.8299598190067372,
+      "recall": 0.744,
+      "f1-score": 0.7519693246367525,
+      "support": 250.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      48,
+      0,
+      1,
+      1,
+      0
+    ],
+    [
+      9,
+      36,
+      0,
+      3,
+      2
+    ],
+    [
+      22,
+      1,
+      27,
+      0,
+      0
+    ],
+    [
+      3,
+      1,
+      1,
+      45,
+      0
+    ],
+    [
+      17,
+      3,
+      0,
+      0,
+      30
+    ]
+  ]
+}

@@ -1,0 +1,87 @@
+# ============================================================
+# BHOOMI — PRODUCTION .gitignore
+# ============================================================
+
+# Secrets & Environment Variables (Never commit)
+.env
+.env.*
+.env.local
+*.env
+!.env.example
+
+# Python & Build Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
+ENV/
+env/
+
+# Flutter & Dart Mobile Client
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+frontend/mobile/build/
+frontend/mobile/.dart_tool/
+frontend/mobile/.flutter-plugins*
+frontend/mobile/linux/flutter/ephemeral/
+frontend/mobile/windows/flutter/ephemeral/
+
+# Large Training Datasets (Offline Only — 14.35 GB preserved locally)
+data/organized/
+data/processed/
+data/rejected/
+data/validated/
+
+# Generated Datasets / Temporary Runtime Directories / Scratch
+scratch/
+tmp/
+uploads/
+cache/
+tmp_chrome_verify_*/
+*.onnx.data
+
+# Chroma Vector Store & Generated Embeddings Cache
+**/chroma/
+data/chroma/
+backend/data/chroma/
+
+# Local Databases (SQLite & WAL journals)
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-shm
+*.db-wal
+backend/bhoomi.db
+bhoomi.db
+
+# Logs
+*.log
+
+# IDE & Editor Configuration
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temporary Field Validation Run Manifests (preserve schema & documentation)
+data/field_validation/manifests/manifest_*.json
+backend/data/field_validation/manifests/manifest_*.json
+
+# Old Compromised Git History Backup
+.git.compromised_backup/
+*.compromised_backup

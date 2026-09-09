@@ -1,0 +1,15 @@
+{
+  "model_name": "banana_mobilenet_v3_small",
+  "model_version": "banana_vision_v1.0",
+  "crop": "banana",
+  "architecture": "MobileNetV3-Small",
+  "num_classes": 4,
+  "total_parameters": 1521956,
+  "train_samples": 363,
+  "val_samples": 92,
+  "test_samples": 105,
+  "accuracy": 0.9238095238095239,
+  "macro_f1": 0.9256023118384311,
+  "status": "VALIDATED",
+  "field_validation": "FIELD_VALIDATION_NOT_YET_COMPLETED"
+}

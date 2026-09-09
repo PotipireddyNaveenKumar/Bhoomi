@@ -1,0 +1,80 @@
+{
+  "crop": "corn_maize",
+  "model_version": "corn_maize_edge_onnx_int8_v1.0",
+  "runtime": "onnxruntime",
+  "format": "ONNX_INT8",
+  "architecture": "MobileNetV3-Small",
+  "input_size": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "classes": [
+    "Blight",
+    "Common_Rust",
+    "Gray_Leaf_Spot",
+    "Healthy"
+  ],
+  "class_names": [
+    "Blight",
+    "Common_Rust",
+    "Gray_Leaf_Spot",
+    "Healthy"
+  ],
+  "class_order": [
+    "Blight",
+    "Common_Rust",
+    "Gray_Leaf_Spot",
+    "Healthy"
+  ],
+  "num_classes": 4,
+  "parameter_count": 930000,
+  "checkpoint_hash": "",
+  "pytorch_model_size_bytes": 0,
+  "preprocessing_version": "v1.0_imagenet_224",
+  "preprocessing_config": {
+    "resize": [
+      224,
+      224
+    ],
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "interpolation": "BILINEAR"
+  },
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "resize": [
+      224,
+      224
+    ]
+  },
+  "calibration_temperature": 1.1663,
+  "confidence_threshold": 0.55,
+  "ood_threshold": 0.55,
+  "file_size_bytes": 1700813,
+  "file_size_mb": 1.62,
+  "sha256": "5bf2f22fb7ae8ef9b6bc627874efcb25cf4be09d4b95df7879fed08bf39a4042",
+  "export_opset": 13,
+  "quantization": "dynamic_int8",
+  "exported_at": "2026-09-03T20:35:47.528283"
+}

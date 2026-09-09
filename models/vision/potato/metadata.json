@@ -1,0 +1,15 @@
+{
+  "model_name": "potato_mobilenet_v3_small",
+  "model_version": "potato_vision_v1.0",
+  "crop": "potato",
+  "architecture": "MobileNetV3-Small",
+  "num_classes": 3,
+  "total_parameters": 1520931,
+  "train_samples": 750,
+  "val_samples": 180,
+  "test_samples": 180,
+  "accuracy": 0.6888888888888889,
+  "macro_f1": 0.6674610199203324,
+  "status": "CANDIDATE",
+  "field_validation": "FIELD_VALIDATION_NOT_YET_COMPLETED"
+}

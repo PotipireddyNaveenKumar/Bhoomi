@@ -1,0 +1,110 @@
+{
+  "test_samples": 300,
+  "accuracy": 0.78,
+  "macro_precision": 0.8289231601731601,
+  "macro_recall": 0.7799999999999999,
+  "macro_f1": 0.7848037711582495,
+  "weighted_f1": 0.7848037711582496,
+  "avg_cpu_latency_ms": 4.807810312524907,
+  "per_class": {
+    "Chilli__Anthracnos": {
+      "precision": 0.7272727272727273,
+      "recall": 0.96,
+      "f1-score": 0.8275862068965517,
+      "support": 50.0
+    },
+    "Chilli__Leaf_Curl_Virus": {
+      "precision": 0.5194805194805194,
+      "recall": 0.8,
+      "f1-score": 0.6299212598425197,
+      "support": 50.0
+    },
+    "Chilli__Leaf_Spot": {
+      "precision": 0.9,
+      "recall": 0.9,
+      "f1-score": 0.9,
+      "support": 50.0
+    },
+    "Chilli___healthy": {
+      "precision": 0.9142857142857143,
+      "recall": 0.64,
+      "f1-score": 0.7529411764705882,
+      "support": 50.0
+    },
+    "Chilli __Whitefly": {
+      "precision": 0.975,
+      "recall": 0.78,
+      "f1-score": 0.8666666666666667,
+      "support": 50.0
+    },
+    "Chilli __Yellowish": {
+      "precision": 0.9375,
+      "recall": 0.6,
+      "f1-score": 0.7317073170731707,
+      "support": 50.0
+    },
+    "accuracy": 0.78,
+    "macro avg": {
+      "precision": 0.8289231601731601,
+      "recall": 0.7799999999999999,
+      "f1-score": 0.7848037711582495,
+      "support": 300.0
+    },
+    "weighted avg": {
+      "precision": 0.8289231601731601,
+      "recall": 0.78,
+      "f1-score": 0.7848037711582496,
+      "support": 300.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      48,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      6,
+      40,
+      0,
+      1,
+      1,
+      2
+    ],
+    [
+      0,
+      5,
+      45,
+      0,
+      0,
+      0
+    ],
+    [
+      10,
+      7,
+      1,
+      32,
+      0,
+      0
+    ],
+    [
+      0,
+      7,
+      3,
+      1,
+      39,
+      0
+    ],
+    [
+      2,
+      17,
+      1,
+      0,
+      0,
+      30
+    ]
+  ]
+}

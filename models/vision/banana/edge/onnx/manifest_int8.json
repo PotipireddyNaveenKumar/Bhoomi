@@ -1,0 +1,80 @@
+{
+  "crop": "banana",
+  "model_version": "banana_edge_onnx_int8_v1.0",
+  "runtime": "onnxruntime",
+  "format": "ONNX_INT8",
+  "architecture": "MobileNetV3-Small",
+  "input_size": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "classes": [
+    "cordana",
+    "healthy",
+    "pestalotiopsis",
+    "sigatoka"
+  ],
+  "class_names": [
+    "cordana",
+    "healthy",
+    "pestalotiopsis",
+    "sigatoka"
+  ],
+  "class_order": [
+    "cordana",
+    "healthy",
+    "pestalotiopsis",
+    "sigatoka"
+  ],
+  "num_classes": 4,
+  "parameter_count": 930000,
+  "checkpoint_hash": "",
+  "pytorch_model_size_bytes": 0,
+  "preprocessing_version": "v1.0_imagenet_224",
+  "preprocessing_config": {
+    "resize": [
+      224,
+      224
+    ],
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "interpolation": "BILINEAR"
+  },
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "resize": [
+      224,
+      224
+    ]
+  },
+  "calibration_temperature": 1.0687,
+  "confidence_threshold": 0.55,
+  "ood_threshold": 0.55,
+  "file_size_bytes": 1700813,
+  "file_size_mb": 1.62,
+  "sha256": "bde32aac934202a87db369ec78449064d81a3772c0fb1747331eae66ed1d6d06",
+  "export_opset": 13,
+  "quantization": "dynamic_int8",
+  "exported_at": "2026-09-03T20:35:44.227951"
+}

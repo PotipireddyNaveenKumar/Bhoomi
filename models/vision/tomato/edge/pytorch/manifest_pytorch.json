@@ -1,0 +1,98 @@
+{
+  "crop": "tomato",
+  "model_version": "tomato_edge_pytorch_fp32_v1.0",
+  "runtime": "pytorch",
+  "format": "PyTorch_FP32",
+  "architecture": "MobileNetV3-Small",
+  "input_size": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "classes": [
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___healthy"
+  ],
+  "class_names": [
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___healthy"
+  ],
+  "class_order": [
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___healthy"
+  ],
+  "num_classes": 10,
+  "parameter_count": 930000,
+  "checkpoint_hash": "23da3b9f3b341f501c2f8e8438a28241f457750726dcbaa46dde801fc2e7a539",
+  "pytorch_model_size_bytes": 6243589,
+  "preprocessing_version": "v1.0_imagenet_224",
+  "preprocessing_config": {
+    "resize": [
+      224,
+      224
+    ],
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "interpolation": "BILINEAR"
+  },
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "resize": [
+      224,
+      224
+    ]
+  },
+  "calibration_temperature": 1.1249,
+  "confidence_threshold": 0.55,
+  "ood_threshold": 0.55,
+  "file_size_bytes": 6243589,
+  "file_size_mb": 5.95,
+  "sha256": "23da3b9f3b341f501c2f8e8438a28241f457750726dcbaa46dde801fc2e7a539",
+  "export_opset": 0,
+  "quantization": "none",
+  "exported_at": "2026-09-03T20:35:41.496900"
+}

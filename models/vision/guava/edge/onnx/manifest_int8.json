@@ -1,0 +1,77 @@
+{
+  "crop": "guava",
+  "model_version": "guava_edge_onnx_int8_v1.0",
+  "runtime": "onnxruntime",
+  "format": "ONNX_INT8",
+  "architecture": "MobileNetV3-Small",
+  "input_size": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "classes": [
+    "Anthracnose",
+    "fruit_fly",
+    "healthy_guava"
+  ],
+  "class_names": [
+    "Anthracnose",
+    "fruit_fly",
+    "healthy_guava"
+  ],
+  "class_order": [
+    "Anthracnose",
+    "fruit_fly",
+    "healthy_guava"
+  ],
+  "num_classes": 3,
+  "parameter_count": 930000,
+  "checkpoint_hash": "",
+  "pytorch_model_size_bytes": 0,
+  "preprocessing_version": "v1.0_imagenet_224",
+  "preprocessing_config": {
+    "resize": [
+      224,
+      224
+    ],
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "interpolation": "BILINEAR"
+  },
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "color_format": "RGB",
+    "resize": [
+      224,
+      224
+    ]
+  },
+  "calibration_temperature": 0.9951,
+  "confidence_threshold": 0.55,
+  "ood_threshold": 0.55,
+  "file_size_bytes": 1699785,
+  "file_size_mb": 1.62,
+  "sha256": "86b57b65eb55b5cb0a1d74e3e16230a00fad59ba8221f71e4dfe942a8ecf1db2",
+  "export_opset": 13,
+  "quantization": "dynamic_int8",
+  "exported_at": "2026-09-03T20:35:46.026665"
+}

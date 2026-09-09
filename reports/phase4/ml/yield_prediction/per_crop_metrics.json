@@ -1,0 +1,122 @@
+{
+  "Arhar/Tur": {
+    "sample_count": 111,
+    "mean_actual_yield": 0.86,
+    "mae": 0.298,
+    "r2": -8.887
+  },
+  "Bajra": {
+    "sample_count": 101,
+    "mean_actual_yield": 1.92,
+    "mae": 0.538,
+    "r2": 0.947
+  },
+  "Cotton(lint)": {
+    "sample_count": 96,
+    "mean_actual_yield": 1.67,
+    "mae": 0.532,
+    "r2": 0.617
+  },
+  "Dry chillies": {
+    "sample_count": 97,
+    "mean_actual_yield": 2.0,
+    "mae": 0.881,
+    "r2": 0.739
+  },
+  "Gram": {
+    "sample_count": 82,
+    "mean_actual_yield": 0.88,
+    "mae": 0.299,
+    "r2": -4.056
+  },
+  "Groundnut": {
+    "sample_count": 160,
+    "mean_actual_yield": 1.34,
+    "mae": 0.288,
+    "r2": 0.605
+  },
+  "Jowar": {
+    "sample_count": 109,
+    "mean_actual_yield": 1.11,
+    "mae": 0.408,
+    "r2": -0.324
+  },
+  "Maize": {
+    "sample_count": 188,
+    "mean_actual_yield": 2.56,
+    "mae": 0.568,
+    "r2": 0.712
+  },
+  "Moong(Green Gram)": {
+    "sample_count": 133,
+    "mean_actual_yield": 0.51,
+    "mae": 0.191,
+    "r2": -0.571
+  },
+  "Onion": {
+    "sample_count": 88,
+    "mean_actual_yield": 11.39,
+    "mae": 2.547,
+    "r2": 0.743
+  },
+  "Potato": {
+    "sample_count": 125,
+    "mean_actual_yield": 11.73,
+    "mae": 1.857,
+    "r2": 0.794
+  },
+  "Ragi": {
+    "sample_count": 98,
+    "mean_actual_yield": 1.31,
+    "mae": 0.238,
+    "r2": 0.808
+  },
+  "Rapeseed &Mustard": {
+    "sample_count": 109,
+    "mean_actual_yield": 0.76,
+    "mae": 0.244,
+    "r2": 0.039
+  },
+  "Rice": {
+    "sample_count": 233,
+    "mean_actual_yield": 2.22,
+    "mae": 0.344,
+    "r2": 0.48
+  },
+  "Sesamum": {
+    "sample_count": 137,
+    "mean_actual_yield": 0.48,
+    "mae": 0.298,
+    "r2": -10.369
+  },
+  "Small millets": {
+    "sample_count": 99,
+    "mean_actual_yield": 0.76,
+    "mae": 0.222,
+    "r2": 0.383
+  },
+  "Sugarcane": {
+    "sample_count": 123,
+    "mean_actual_yield": 48.1,
+    "mae": 6.168,
+    "r2": 0.861
+  },
+  "Sunflower": {
+    "sample_count": 78,
+    "mean_actual_yield": 0.94,
+    "mae": 0.471,
+    "r2": -3.197
+  },
+  "Urad": {
+    "sample_count": 150,
+    "mean_actual_yield": 0.6,
+    "mae": 0.245,
+    "r2": -0.016
+  },
+  "Wheat": {
+    "sample_count": 104,
+    "mean_actual_yield": 2.09,
+    "mae": 0.296,
+    "r2": 0.866
+  }
+}

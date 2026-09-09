@@ -1,0 +1,12 @@
+{
+  "mean_residual": -0.047,
+  "std_residual": 2.5416,
+  "min_residual": -52.2525,
+  "max_residual": 30.3207,
+  "p25_residual": -0.2794,
+  "median_residual": -0.024,
+  "p75_residual": 0.2122,
+  "p95_residual": 1.5344,
+  "underprediction_rate": 0.4713,
+  "overprediction_rate": 0.5287
+}

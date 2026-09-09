@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>BHOOMI — Multimodal AI Agronomist & Decision Support</title>
+  
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#16A34A">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BHOOMI AI">
+  <link rel="apple-touch-icon" href="/static/icon-192.png?v=20260905_v1">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png?v=20260905_v1">
+  <link rel="icon" type="image/png" href="/static/favicon.png?v=20260905_v1">
+  <link rel="shortcut icon" href="/static/favicon.ico?v=20260905_v1">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=20260907_v3">
+</head>
+<body>  <!-- PWA Mobile Install Banner (Shown when installable) -->
+  <div id="pwaInstallBanner" class="pwa-install-banner" style="display: none;">
+    <div class="pwa-install-content">
+      <span class="pwa-install-icon"><img src="/static/icon-192.png?v=20260905_v1" alt="BHOOMI logo" style="width:36px; height:36px; border-radius:8px;"></span>
+      <div class="pwa-install-text">
+        <span class="pwa-install-title">BHOOMI AI Mobile App</span>
+        <span class="pwa-install-sub">Install on your phone for quick field access</span>
+      </div>
+    </div>
+    <div class="pwa-install-actions">
+      <button class="btn-pwa-install" id="btnPwaInstall" onclick="installPWA()">Install</button>
+      <button class="btn-pwa-dismiss" onclick="dismissPwaBanner()">✕</button>
+    </div>
+  </div>
+
+  <!-- Fullscreen Farmer Authentication Gate (English Login + Language Chooser) -->
+  <div id="authModal" class="auth-modal-overlay">
+    <div class="auth-modal-backdrop"></div>
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-brand">
+          <img src="/static/icon-192.png?v=20260905_v1" alt="BHOOMI logo" style="width:48px; height:48px; border-radius:12px; margin-bottom:8px; box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+          <h2>BHOOMI <span class="brand-sub">AI</span></h2>
+        </div>
+
+        <p class="auth-tagline" id="txtAuthTagline">Multimodal AI Agronomist & Decision Support System</p>
+      </div>
+
+      <!-- Preferred Dashboard Language Selector -->
+      <div class="auth-lang-row">
+        <label for="authLangSelect">🌐 Select Dashboard Language:</label>
+        <select id="authLangSelect" onchange="onAuthLanguageChanged(this.value)">
+          <option value="en" selected>English (English - Default)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="mr">मराठी (Marathi)</option>
+        </select>
+      </div>
+
+      <!-- 1-Click Instant Demo Login (For Judges & Evaluators) -->
+      <button type="button" class="btn-demo-login" id="btnQuickDemoLogin" onclick="quickDemoLogin()">
+        <span>👨‍🌾</span>
+        <span id="txtQuickDemo">🌾 1-Click Demo Login (As Ramesh Rao)</span>
+      </button>
+
+      <div class="auth-divider">
+        <span>— or Login with Mobile OTP —</span>
+      </div>
+
+      <!-- Step 1: Request OTP Form -->
+      <div id="otpStep1">
+        <div class="form-group">
+          <label for="otpMobileInput" id="lblMobile">📱 Mobile Number (10 Digits)</label>
+          <div class="phone-input-wrap">
+            <span class="country-prefix">+91</span>
+            <input type="tel" id="otpMobileInput" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" autocomplete="tel">
+          </div>
+        </div>
+        <button type="button" class="btn-auth-submit" id="btnSendOtp" onclick="handleSendOtp()">
+          <span>📲</span>
+          <span id="txtBtnSendOtp">Send OTP (Get OTP)</span>
+        </button>
+      </div>
+
+      <!-- Step 2: Verify OTP Form (Appears after clicking Get OTP) -->
+      <div id="otpStep2" style="display: none;">
+        <div class="otp-sent-banner" id="otpSentBanner">
+          <span>📩</span>
+          <span id="txtOtpSentInfo">OTP sent to +91 9876543210</span>
+        </div>
+
+        <div id="newFarmerFields">
+          <!-- 1. Full Name -->
+          <div class="form-group">
+            <label for="farmerNameInput">👤 Farmer Name (Full Name)</label>
+            <input type="text" id="farmerNameInput" placeholder="e.g. Ramesh Rao" value="Ramesh Rao">
+          </div>
+
+          <!-- 2. State & District (2-Column) -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="farmerStateInput">🏛️ State</label>
+              <select id="farmerStateInput" onchange="populateDistricts('farmerStateInput', 'farmerDistrictInput')">
+                <option value="Telangana" selected>Telangana</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Punjab">Punjab</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="farmerDistrictInput">📍 District</label>
+              <select id="farmerDistrictInput">
+                <option value="Warangal" selected>Warangal</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 3. Current Crop & Land Area (2-Column) -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="farmerCropInput">🌾 Current Crop</label>
+              <select id="farmerCropInput">
+                <option value="Rice" selected>Rice (Paddy / వరి)</option>
+                <option value="Cotton">Cotton (పత్తి)</option>
+                <option value="Maize">Maize (మొక్కజొన్న)</option>
+                <option value="Chilli">Chilli (మిర్చి)</option>
+                <option value="Soybean">Soybean (సోయాబీన్)</option>
+                <option value="Wheat">Wheat (గోధుమ)</option>
+                <option value="Sugarcane">Sugarcane (చెరకు)</option>
+                <option value="Groundnut">Groundnut (వేరుశనగ)</option>
+                <option value="Pulses">Pulses / Red Gram (కందులు)</option>
+                <option value="Vegetables">Vegetables (కూరగాయలు)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="farmerAcresInput">📐 Land Area (Acres)</label>
+              <input type="number" id="farmerAcresInput" step="0.1" min="0.1" value="3.0">
+            </div>
+          </div>
+
+          <!-- 4. Soil Test Info (4-Column Grid) -->
+          <div class="soil-section-title">🧪 Soil Test Information (N, P, K, pH)</div>
+          <div class="form-row-4">
+            <div class="form-group">
+              <label>Nitrogen (N)</label>
+              <input type="number" id="farmerSoilN" value="90">
+            </div>
+            <div class="form-group">
+              <label>Phosphorus (P)</label>
+              <input type="number" id="farmerSoilP" value="42">
+            </div>
+            <div class="form-group">
+              <label>Potassium (K)</label>
+              <input type="number" id="farmerSoilK" value="43">
+            </div>
+            <div class="form-group">
+              <label>Soil pH</label>
+              <input type="number" id="farmerSoilPh" step="0.1" value="6.5">
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. OTP Code Input -->
+        <div class="form-group" style="margin-top: 12px;">
+          <label for="otpCodeInput" id="lblOtpCode">🔢 Enter 4-Digit OTP Code received on phone:</label>
+          <input type="number" id="otpCodeInput" placeholder="Enter 4-digit code" maxlength="4" style="text-align: center; font-size: 20px; letter-spacing: 6px;" autocomplete="one-time-code">
+        </div>
+
+        <div class="otp-action-row">
+          <button type="button" class="btn-auth-submit" id="btnVerifyOtp" onclick="handleVerifyOtp()">
+            <span>✅</span>
+            <span id="txtBtnVerify">Verify OTP & Enter Dashboard</span>
+          </button>
+          <button type="button" class="btn-back-otp" onclick="backToOtpStep1()">
+            <span>←</span> Change Mobile Number
+          </button>
+        </div>
+      </div>
+
+      <div id="authErrorMsg" class="auth-error-msg" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Farmer Profile Edit & Logout Modal -->
+  <div id="profileModal" class="profile-modal-overlay" style="display: none;">
+    <div class="profile-modal-backdrop" onclick="closeProfileModal()"></div>
+    <div class="profile-modal-card">
+      <div class="profile-modal-header">
+        <div class="profile-modal-title">
+          <span>👨‍🌾</span>
+          <h3>రైతు ప్రొఫైల్ & పొలం వివరాలు (Farmer Profile)</h3>
+        </div>
+        <button class="btn-close-modal" onclick="closeProfileModal()">✕</button>
+      </div>
+
+      <form id="profileEditForm" onsubmit="handleProfileUpdate(event)">
+        <!-- 1. Full Name -->
+        <div class="form-group">
+          <label>👤 రైతు పేరు (Full Name)</label>
+          <input type="text" id="profName" required>
+        </div>
+
+        <!-- 2. State & District (2-Column) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>🏛️ రాష్ట్రం (State)</label>
+            <select id="profState" onchange="populateDistricts('profState', 'profDistrict')" required>
+              <option value="Telangana" selected>Telangana</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Punjab">Punjab</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>📍 జిల్లా (District)</label>
+            <select id="profDistrict" required>
+              <option value="Warangal" selected>Warangal</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. Current Crop & Land Area (2-Column) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>🌾 ప్రస్తుత పంట (Current Crop)</label>
+            <select id="profCrop" required>
+              <option value="Rice" selected>Rice (Paddy / వరి)</option>
+              <option value="Cotton">Cotton (పత్తి)</option>
+              <option value="Maize">Maize (మొక్కజొన్న)</option>
+              <option value="Chilli">Chilli (మిర్చి)</option>
+              <option value="Soybean">Soybean (సోయాబీన్)</option>
+              <option value="Wheat">Wheat (గోధుమ)</option>
+              <option value="Sugarcane">Sugarcane (చెరకు)</option>
+              <option value="Groundnut">Groundnut (వేరుశనగ)</option>
+              <option value="Pulses">Pulses / Red Gram (కందులు)</option>
+              <option value="Vegetables">Vegetables (కూరగాయలు)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>📐 పొలం విస్తీర్ణం (Acres)</label>
+            <input type="number" id="profAcres" step="0.1" min="0.1" required>
+          </div>
+        </div>
+
+        
+        <!-- 4. Soil Test Info (4-Column) -->
+        <div class="soil-section-title">🧪 మట్టి పరీక్ష వివరాలు (Soil Test Information)</div>
+        <div class="form-row-4">
+          <div class="form-group">
+            <label>నత్రజని (N)</label>
+            <input type="number" id="profSoilN" step="1" required>
+          </div>
+          <div class="form-group">
+            <label>భాస్వరం (P)</label>
+            <input type="number" id="profSoilP" step="1" required>
+          </div>
+          <div class="form-group">
+            <label>పొటాష్ (K)</label>
+            <input type="number" id="profSoilK" step="1" required>
+          </div>
+          <div class="form-group">
+            <label>పీహెచ్ (pH)</label>
+            <input type="number" id="profSoilPh" step="0.1" required>
+          </div>
+        </div>
+
+        <!-- 5. Action Buttons (Save & Logout) -->
+        <div class="profile-action-buttons">
+          <button type="submit" class="btn-save-profile">💾 మార్పులను సేవ్ చేయండి (Save Changes)</button>
+          <button type="button" class="btn-logout" onclick="handleLogout()">🚪 లాగ్ అవుట్ (Logout)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Camera vs Gallery Upload Selector Modal -->
+  <div id="photoSelectModal" class="photo-select-overlay" style="display: none;">
+    <div class="photo-select-backdrop" onclick="closePhotoSelectModal()"></div>
+    <div class="photo-select-card">
+      <div class="photo-select-header">
+        <h4>🍃 పంట ఆకు ఫోటో తీయండి (Leaf Scan)</h4>
+        <button class="btn-close-modal" onclick="closePhotoSelectModal()">✕</button>
+      </div>
+      <div class="photo-options-grid">
+        <button class="photo-option-btn camera" onclick="triggerCameraCapture()">
+          <span class="photo-opt-icon">📸</span>
+          <span class="photo-opt-title">కెమెరా ద్వారా ఫోటో తీయండి</span>
+          <span class="photo-opt-sub">Live Camera Photo (Primary)</span>
+        </button>
+        <button class="photo-option-btn gallery" onclick="triggerGalleryUpload()">
+          <span class="photo-opt-icon">📁</span>
+          <span class="photo-opt-title">గ్యాలరీ నుండి ఎంచుకోండి</span>
+          <span class="photo-opt-sub">Upload from Files / Photos</span>
+        </button>
+      </div>
+      <div id="sampleLeavesDevSection" class="sample-leaves-section" style="display: none; margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 10px;">
+        <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">🧪 TEST DEMO SCENARIOS / నమూనాలు (DEV ONLY):</div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <button type="button" class="btn-sample-leaf" style="font-size: 11px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--surface); cursor: pointer;" onclick="analyzeSampleLeaf('chilli_healthy')">🌿 Healthy Chilli</button>
+          <button type="button" class="btn-sample-leaf" style="font-size: 11px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--surface); cursor: pointer;" onclick="analyzeSampleLeaf('chilli_leaf_curl')">🍂 Leaf Curl Virus</button>
+          <button type="button" class="btn-sample-leaf" style="font-size: 11px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--surface); cursor: pointer;" onclick="analyzeSampleLeaf('blurry_quality_gate')">🔍 Blurry Leaf (Reject)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-layout">
+    
+    <!-- Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-title">
+          <img src="/static/icon-192.png?v=20260905_v1" alt="BHOOMI" style="width:28px; height:28px; border-radius:7px; vertical-align:middle; margin-right:8px;">
+          <span>BHOOMI <span class="brand-sub">AI</span></span>
+        </div>
+        <button class="btn-theme-toggle" id="btnThemeToggle" title="Toggle Light/Dark Theme" onclick="toggleTheme()">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+
+      <!-- New Chat Button -->
+      <button class="btn-new-chat" id="btnNewChat" onclick="startNewChat()">
+        <span>+</span>
+        <span id="txtNewChat">New Chat</span>
+      </button>
+
+      <div class="sidebar-section-header">
+        <span id="txtRecent">Recent Conversations</span>
+        <button class="btn-clear-all" title="Clear all local chats" onclick="clearAllSessions()">Clear</button>
+      </div>
+      
+      <!-- Dynamic Session List -->
+      <div class="chat-history-list" id="historyList">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <!-- Language Selector -->
+        <div class="lang-selector-card">
+          <label for="langSelect" class="lang-label">
+            <span>🌐</span>
+            <span id="txtLangTitle">Language / భాష:</span>
+          </label>
+          <select id="langSelect" class="lang-dropdown" onchange="onLanguageChanged(this.value)">
+            <option value="en" selected>English (English)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="mr">मराठी (Marathi)</option>
+          </select>
+        </div>
+
+        <!-- Farmer Profile Card (Clickable to Edit & Logout) -->
+        <div class="farmer-profile-card" onclick="openProfileModal()" title="Click to Edit Profile or Logout">
+          <div class="farmer-avatar">👨‍🌾</div>
+          <div class="farmer-info">
+            <div class="farmer-name" id="sidebarFarmerName">Ramesh Rao</div>
+            <div class="farmer-farm" id="sidebarFarmerFarm">Warangal, Telangana • 3.0 Acres</div>
+          </div>
+          <span class="farmer-edit-badge">✏️ Edit</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Workspace -->
+    <main class="chat-main">
+      <!-- Top Bar -->
+      <header class="chat-header">
+        <button class="btn-mobile-menu" onclick="toggleMobileSidebar()">☰</button>
+        <div class="model-badge">
+          <span class="badge-dot">●</span>
+          <span class="badge-title">BHOOMI</span>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn-voice-call-header" id="btnOpenVoiceCall" onclick="openVoiceCallMode()" title="Interactive Siri-Style Voice Assistant">
+            <span class="live-dot-pulse"></span>
+            <span>🎙️</span>
+            <span id="txtVoiceCallBtn">Live Voice Call</span>
+          </button>
+        </div>
+      </header>
+
+
+
+      <!-- Scrollable Messages Container -->
+      <div class="chat-scroll-container" id="scrollContainer">
+        <div class="chat-content-width">
+
+          <!-- Hero Welcome (shown when session is empty) -->
+          <div id="heroWelcome" class="hero-welcome">
+            <div class="hero-logo-box">
+              <img src="/static/icon-512.png?v=20260823_v10" alt="BHOOMI logo" style="width:80px; height:80px; border-radius:20px; box-shadow: 0 8px 24px rgba(22, 163, 74, 0.28);">
+            </div>
+            <h1 class="hero-heading" id="heroTitle">Ask BHOOMI Your Agricultural Questions</h1>
+            <p class="hero-subtitle" id="heroSubtitle">Grounded crop planning, yield forecasts, mandi prices, leaf disease scanning & profit economics.</p>
+
+            
+            <div class="starter-chips-grid" id="starterChipsGrid">
+              <!-- Rendered dynamically by onLanguageChanged -->
+            </div>
+          </div>
+
+          <!-- Message Thread List -->
+          <div id="messagesList" class="messages-list" style="display: none;"></div>
+
+        </div>
+      </div>
+
+      <!-- Floating Multimodal Input Capsule -->
+      <div class="input-capsule-container">
+        
+        <!-- Attached Photo Preview Thumbnail -->
+        <div id="imagePreviewBar" class="image-preview-bar" style="display: none;">
+          <img id="imagePreviewThumb" class="image-preview-thumb" src="" alt="leaf preview">
+          <div class="image-preview-text">
+            <span class="image-preview-title">🍃 Crop Leaf Image Attached</span>
+            <span class="image-preview-sub">Ready for quality check & CNN diagnosis</span>
+          </div>
+          <button class="btn-remove-img" onclick="removeAttachedImage()" title="Remove image">×</button>
+        </div>
+
+        <div class="input-capsule">
+          <!-- Hidden Native File Inputs -->
+          <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" onchange="onImageSelected(event)">
+          <input type="file" id="galleryInput" accept="image/*" style="display: none;" onchange="onImageSelected(event)">
+          
+          <!-- Image Attachment Button (Opens Camera/Gallery Choice) -->
+          <button class="btn-attach" title="Capture Camera Photo or Upload Image" onclick="openPhotoSelectModal()">
+            <span>📷</span>
+          </button>
+
+          <!-- Multilingual Textarea -->
+          <textarea 
+            id="chatInput" 
+            class="chat-textarea" 
+            placeholder="మీ పంట లేదా సమస్య గురించి అడగండి (Type or speak in Telugu, Hindi, English)..." 
+            rows="1"
+            oninput="autoResizeTextarea(this)"
+            onkeydown="handleInputKeyDown(event)"></textarea>
+
+          <!-- Voice Mic Button (STT) -->
+          <button id="btnVoice" class="btn-voice" title="Voice Input (Speech-to-Text)" onclick="toggleVoiceRecording()">
+            <span id="voiceIcon">🎤</span>
+          </button>
+
+          <!-- Send Button (⬆) -->
+          <button id="btnSend" class="btn-send" onclick="sendMessage()" disabled>
+            <span>⬆</span>
+          </button>
+        </div>
+
+        <div class="footer-disclaimer" id="txtDisclaimer">
+          BHOOMI provides verified agronomic decision support strictly grounded in ICAR & CIBRC standards.
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Mobile Touch Bottom Navigation Bar (Visible on mobile phones) -->
+  <nav class="mobile-bottom-nav">
+    <button class="nav-item active" onclick="startNewChat()">
+      <span class="nav-icon">🌾</span>
+      <span class="nav-label">Chat</span>
+    </button>
+    <button class="nav-item" onclick="openPhotoSelectModal()">
+      <span class="nav-icon">📸</span>
+      <span class="nav-label">Camera</span>
+    </button>
+    <button class="nav-item nav-mic-highlight" onclick="openVoiceCallMode()">
+      <span class="nav-icon">🎙️</span>
+      <span class="nav-label">Voice Call</span>
+    </button>
+    <button class="nav-item" onclick="sendQuickQuery('What is the current mandi price for groundnut and cotton in Warangal?')">
+      <span class="nav-icon">📈</span>
+      <span class="nav-label">Mandi</span>
+    </button>
+    <button class="nav-item" onclick="openProfileModal()">
+      <span class="nav-icon">👨‍🌾</span>
+      <span class="nav-label">Profile</span>
+    </button>
+  </nav>
+
+  <!-- Fullscreen Interactive Voice Assistant Overlay (Apple Siri-Style) -->
+  <div id="voiceCallModal" class="voice-call-overlay" style="display: none;">
+    <div class="voice-call-backdrop" onclick="closeVoiceCallMode()"></div>
+    <div class="voice-call-card">
+      <!-- Call Header -->
+      <div class="voice-call-topbar">
+        <div class="voice-agent-badge">
+          <span class="live-dot-pulse"></span>
+          <span id="voiceCallAgentTitle">BHOOMI Voice Assistant</span>
+        </div>
+        <button class="btn-close-voice-call" onclick="closeVoiceCallMode()" title="Exit Voice Mode">✕</button>
+      </div>
+
+      <!-- Animated Voice Visualizer Orb -->
+      <div class="voice-orb-stage">
+        <div class="voice-orb" id="voiceOrb">
+          <div class="orb-wave wave-1"></div>
+          <div class="orb-wave wave-2"></div>
+          <div class="orb-wave wave-3"></div>
+          <div class="orb-core" id="orbCore">
+            <span class="orb-icon" id="orbIcon">🎙️</span>
+          </div>
+        </div>
+        <div class="voice-status-badge" id="voiceStatusBadge">
+          పూర్తిగా మాట్లాడండి, వింటున్నాను... (Listening carefully...)
+        </div>
+      </div>
+
+      <!-- Live Dialogue / Subtitles Box -->
+      <div class="voice-dialogue-box">
+        <div class="dialogue-item farmer">
+          <div class="dialogue-role">👨‍🌾 రైతు (Farmer):</div>
+          <div class="dialogue-text" id="voiceFarmerText">"మీ సమస్య లేదా ప్రశ్నను మాట్లాడండి..."</div>
+        </div>
+        <div class="dialogue-item ai">
+          <div class="dialogue-role" id="voiceAiRole">🌾 BHOOMI (Voice Assistant):</div>
+          <div class="dialogue-text" id="voiceAiText">"నమస్కారం రైతు మిత్రమా! మీ పంట, చీడపీడలు, వాతావరణం లేదా మార్కెట్ ధరల గురించి నేరుగా అడగండి."</div>
+        </div>
+      </div>
+
+
+      <!-- Interactive Call Action Controls -->
+      <div class="voice-call-controls">
+        <button class="btn-voice-action mic" id="btnVoiceCallMic" onclick="toggleVoiceCallMic()">
+          <span id="voiceCallMicIcon">🎤</span>
+          <span id="voiceCallMicLabel">మాట్లాడండి (Tap to Speak)</span>
+        </button>
+        <button class="btn-voice-action end" onclick="closeVoiceCallMode()" title="End Call">
+          <span>📞</span>
+          <span id="txtEndCall">ముగించు (End)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Microphone Permission Guidance & Quick Speech Modal -->
+  <div id="micPermissionModal" class="photo-select-overlay" style="display: none; z-index: 9999;">
+    <div class="photo-select-backdrop" onclick="closeMicPermissionModal()"></div>
+    <div class="photo-select-card" style="max-width: 480px; text-align: left;">
+      <div class="photo-select-header">
+        <h4 style="display:flex; align-items:center; gap:8px;">🎙️ <span id="txtMicModalTitle">Microphone Permission Notice</span></h4>
+        <button class="btn-close-modal" onclick="closeMicPermissionModal()">✕</button>
+      </div>
+      <div style="padding: 16px; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5;">
+        <p id="txtMicModalDesc" style="margin-bottom: 12px; color: var(--text-primary);">
+          Your browser blocked microphone recording access.
+        </p>
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+          <strong style="color: var(--accent-emerald);">🔧 How to enable in your browser:</strong>
+          <ol style="margin: 8px 0 0 18px; padding: 0;">
+            <li>Click the <strong>🔒 padlock or 🎛️ tune icon</strong> in your browser URL address bar.</li>
+            <li>Change <strong>Microphone</strong> from <em>Block</em> to <strong>Allow</strong>.</li>
+            <li>Click <strong>Request Permission</strong> below or refresh the page.</li>
+          </ol>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <strong style="color: var(--text-primary);">⚡ Or 1-Click to Ask Agricultural Questions:</strong>
+          <div class="mic-sample-chips" id="micSampleChips" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+            <!-- Rendered dynamically based on active language -->
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top: 14px;">
+          <button type="button" class="btn-demo-login" style="margin:0; padding:8px 16px; font-size:0.88rem;" onclick="requestMicPermissionDirectly()">
+            🎙️ Request Permission
+          </button>
+          <button type="button" class="btn-close-modal" style="position:static; width:auto; height:auto; padding:8px 14px; border-radius:8px; border:1px solid var(--border-subtle);" onclick="closeMicPermissionModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=20260907_v3"></script>
+</body>
+</html>
+
+
+

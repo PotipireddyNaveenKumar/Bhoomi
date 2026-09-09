@@ -1,0 +1,1 @@
+image_id,crop,image_path,actual_disease,location,state,district,crop_stage,lighting_condition,camera_device,image_distance,leaf_condition,occlusion_level,image_quality,expert_label,annotator_confidence,annotation_source,annotation_date,latitude,longitude,farmer_id_hash,weather_context,soil_context,notes

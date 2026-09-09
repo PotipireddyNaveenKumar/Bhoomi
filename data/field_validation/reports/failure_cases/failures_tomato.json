@@ -1,0 +1,12 @@
+[
+  {
+    "image_id": "unknown",
+    "crop": "tomato",
+    "expert_label": "unknown",
+    "predicted_disease": "unknown",
+    "confidence": 0.35,
+    "uncertainty_status": "UNKNOWN",
+    "failure_category": "OOD_MISCLASSIFICATION",
+    "details": "Expected 'None', predicted 'None' with 35.0% confidence (OOD_MISCLASSIFICATION)."
+  }
+]

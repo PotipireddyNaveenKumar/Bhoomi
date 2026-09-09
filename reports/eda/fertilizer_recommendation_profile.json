@@ -1,0 +1,136 @@
+{
+  "dataset_name": "fertilizer_recommendation",
+  "total_rows": 8000,
+  "total_columns": 9,
+  "duplicate_rows": 0,
+  "numerical_columns": [
+    "temperature",
+    "humidity",
+    "moisture",
+    "nitrogen",
+    "potassium",
+    "phosphorus"
+  ],
+  "categorical_columns": [
+    "soil_type",
+    "crop_type",
+    "fertilizer_name"
+  ],
+  "numerical_stats": {
+    "temperature": {
+      "count": 8000,
+      "mean": 30.339,
+      "std": 4.478,
+      "min": 20.0,
+      "q25": 27.05,
+      "median": 30.24,
+      "q75": 33.46,
+      "max": 40.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "humidity": {
+      "count": 8000,
+      "mean": 59.211,
+      "std": 8.177,
+      "min": 40.02,
+      "q25": 53.278,
+      "median": 59.11,
+      "q75": 65.082,
+      "max": 80.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "moisture": {
+      "count": 8000,
+      "mean": 43.581,
+      "std": 12.596,
+      "min": 20.0,
+      "q25": 33.968,
+      "median": 42.25,
+      "q75": 52.95,
+      "max": 70.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "nitrogen": {
+      "count": 8000,
+      "mean": 18.429,
+      "std": 11.852,
+      "min": 0.0,
+      "q25": 9.0,
+      "median": 14.0,
+      "q75": 26.0,
+      "max": 46.0,
+      "null_count": 0,
+      "zeros_count": 21
+    },
+    "potassium": {
+      "count": 8000,
+      "mean": 3.916,
+      "std": 5.495,
+      "min": 0.0,
+      "q25": 0.0,
+      "median": 1.0,
+      "q75": 5.0,
+      "max": 23.0,
+      "null_count": 0,
+      "zeros_count": 3460
+    },
+    "phosphorus": {
+      "count": 8000,
+      "mean": 18.512,
+      "std": 13.244,
+      "min": 0.0,
+      "q25": 8.0,
+      "median": 18.0,
+      "q75": 30.0,
+      "max": 46.0,
+      "null_count": 0,
+      "zeros_count": 1086
+    }
+  },
+  "categorical_stats": {
+    "soil_type": {
+      "unique_count": 5,
+      "top_values": {
+        "clayey": 1623,
+        "black": 1613,
+        "red": 1594,
+        "loamy": 1590,
+        "sandy": 1580
+      },
+      "null_count": 0
+    },
+    "crop_type": {
+      "unique_count": 11,
+      "top_values": {
+        "sugarcane": 763,
+        "maize": 753,
+        "wheat": 747,
+        "ground nuts": 732,
+        "pulses": 728,
+        "cotton": 722,
+        "millets": 718,
+        "tobacco": 717,
+        "oil seeds": 711,
+        "paddy": 706
+      },
+      "null_count": 0
+    },
+    "fertilizer_name": {
+      "unique_count": 7,
+      "top_values": {
+        "14-35-14": 1188,
+        "Urea": 1170,
+        "DAP": 1167,
+        "10-26-26": 1128,
+        "17-17-17": 1124,
+        "28-28": 1120,
+        "20-20": 1103
+      },
+      "null_count": 0
+    }
+  },
+  "memory_usage_mb": 1.81
+}

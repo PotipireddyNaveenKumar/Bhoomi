@@ -1,0 +1,15 @@
+{
+  "model_name": "cucumber_pumpkin_mobilenet_v3_small",
+  "model_version": "cucumber_pumpkin_vision_v1.0",
+  "crop": "cucumber_pumpkin",
+  "architecture": "MobileNetV3-Small",
+  "num_classes": 5,
+  "total_parameters": 1522981,
+  "train_samples": 1000,
+  "val_samples": 250,
+  "test_samples": 250,
+  "accuracy": 0.744,
+  "macro_f1": 0.7519693246367524,
+  "status": "CANDIDATE",
+  "field_validation": "FIELD_VALIDATION_NOT_YET_COMPLETED"
+}

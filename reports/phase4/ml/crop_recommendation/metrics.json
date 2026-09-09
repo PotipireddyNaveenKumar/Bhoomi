@@ -1,0 +1,28 @@
+{
+  "model_id": "crop_recommendation_v2",
+  "model_type": "RandomForestClassifier",
+  "total_test_samples": 440,
+  "total_training_samples": 1760,
+  "classes_count": 22,
+  "test_accuracy": 0.9955,
+  "test_macro_precision": 0.9957,
+  "test_macro_recall": 0.9955,
+  "test_macro_f1": 0.9955,
+  "test_weighted_f1": 0.9955,
+  "dataset_checks": {
+    "total_samples": 2200,
+    "duplicate_rows": 0,
+    "feature_duplicates": 0,
+    "conflicting_labels": 0,
+    "is_perfectly_balanced": true,
+    "bounds_validation": {
+      "negative_nutrients": false,
+      "ph_out_of_bounds": false,
+      "negative_rainfall": false,
+      "unrealistic_temperature": false,
+      "unrealistic_humidity": false
+    },
+    "geographic_field_present": false,
+    "temporal_field_present": false
+  }
+}

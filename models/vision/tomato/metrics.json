@@ -1,0 +1,206 @@
+{
+  "test_samples": 1000,
+  "accuracy": 0.935,
+  "macro_precision": 0.9401841233395508,
+  "macro_recall": 0.9350000000000002,
+  "macro_f1": 0.9356029409109656,
+  "weighted_f1": 0.9356029409109656,
+  "avg_cpu_latency_ms": 3.554588085936672,
+  "per_class": {
+    "Tomato___Bacterial_spot": {
+      "precision": 0.8918918918918919,
+      "recall": 0.99,
+      "f1-score": 0.9383886255924171,
+      "support": 100.0
+    },
+    "Tomato___Early_blight": {
+      "precision": 0.9375,
+      "recall": 0.9,
+      "f1-score": 0.9183673469387755,
+      "support": 100.0
+    },
+    "Tomato___Late_blight": {
+      "precision": 0.9680851063829787,
+      "recall": 0.91,
+      "f1-score": 0.9381443298969072,
+      "support": 100.0
+    },
+    "Tomato___Leaf_Mold": {
+      "precision": 0.9795918367346939,
+      "recall": 0.96,
+      "f1-score": 0.9696969696969697,
+      "support": 100.0
+    },
+    "Tomato___Septoria_leaf_spot": {
+      "precision": 0.9555555555555556,
+      "recall": 0.86,
+      "f1-score": 0.9052631578947369,
+      "support": 100.0
+    },
+    "Tomato___Spider_mites Two-spotted_spider_mite": {
+      "precision": 0.9772727272727273,
+      "recall": 0.86,
+      "f1-score": 0.9148936170212766,
+      "support": 100.0
+    },
+    "Tomato___Target_Spot": {
+      "precision": 0.7804878048780488,
+      "recall": 0.96,
+      "f1-score": 0.8609865470852018,
+      "support": 100.0
+    },
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+      "precision": 1.0,
+      "recall": 0.97,
+      "f1-score": 0.9847715736040609,
+      "support": 100.0
+    },
+    "Tomato___Tomato_mosaic_virus": {
+      "precision": 0.9514563106796117,
+      "recall": 0.98,
+      "f1-score": 0.9655172413793104,
+      "support": 100.0
+    },
+    "Tomato___healthy": {
+      "precision": 0.96,
+      "recall": 0.96,
+      "f1-score": 0.96,
+      "support": 100.0
+    },
+    "accuracy": 0.935,
+    "macro avg": {
+      "precision": 0.9401841233395508,
+      "recall": 0.9350000000000002,
+      "f1-score": 0.9356029409109656,
+      "support": 1000.0
+    },
+    "weighted avg": {
+      "precision": 0.9401841233395507,
+      "recall": 0.935,
+      "f1-score": 0.9356029409109656,
+      "support": 1000.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      99,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      90,
+      1,
+      1,
+      0,
+      0,
+      6,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      3,
+      91,
+      0,
+      1,
+      0,
+      3,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1,
+      96,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      7,
+      2,
+      1,
+      0,
+      86,
+      0,
+      4,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      86,
+      13,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      96,
+      0,
+      1,
+      1
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      97,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      98,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      96
+    ]
+  ]
+}

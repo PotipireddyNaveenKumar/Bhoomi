@@ -1,0 +1,15 @@
+{
+  "model_name": "chilli_mobilenet_v3_small",
+  "model_version": "chilli_vision_v1.0",
+  "crop": "chilli",
+  "architecture": "MobileNetV3-Small",
+  "num_classes": 6,
+  "total_parameters": 1524006,
+  "train_samples": 1200,
+  "val_samples": 300,
+  "test_samples": 300,
+  "accuracy": 0.78,
+  "macro_f1": 0.7848037711582495,
+  "status": "CANDIDATE",
+  "field_validation": "FIELD_VALIDATION_NOT_YET_COMPLETED"
+}

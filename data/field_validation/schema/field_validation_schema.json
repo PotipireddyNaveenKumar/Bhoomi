@@ -1,0 +1,186 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BhoomiFieldValidationMetadata",
+  "description": "Standardized schema for real-world on-farm smartphone leaf image evaluation in BHOOMI V2",
+  "type": "object",
+  "required": [
+    "image_id",
+    "crop",
+    "image_path",
+    "actual_disease",
+    "location",
+    "state",
+    "district",
+    "crop_stage",
+    "lighting_condition",
+    "camera_device",
+    "image_distance",
+    "leaf_condition",
+    "occlusion_level",
+    "image_quality",
+    "expert_label",
+    "annotator_confidence",
+    "annotation_source",
+    "annotation_date"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string",
+      "pattern": "^FLD_[A-Z0-9_]+$",
+      "description": "Unique deterministic identifier for the field test image"
+    },
+    "crop": {
+      "type": "string",
+      "enum": [
+        "tomato",
+        "banana",
+        "guava",
+        "corn_maize",
+        "apple",
+        "chilli",
+        "cucumber_pumpkin",
+        "sugarcane",
+        "potato",
+        "rice"
+      ],
+      "description": "Target crop species under examination"
+    },
+    "image_path": {
+      "type": "string",
+      "description": "Relative file path under data/field_validation/images/<crop>/"
+    },
+    "actual_disease": {
+      "type": "string",
+      "description": "True clinical/field pathology identified (or 'healthy' / 'uncertain')"
+    },
+    "location": {
+      "type": "string",
+      "description": "General locality or village (No specific house/survey numbers)"
+    },
+    "state": {
+      "type": "string",
+      "description": "Indian State or Region"
+    },
+    "district": {
+      "type": "string",
+      "description": "Administrative district"
+    },
+    "crop_stage": {
+      "type": "string",
+      "enum": [
+        "seedling",
+        "vegetative",
+        "flowering",
+        "fruiting",
+        "maturity",
+        "harvested",
+        "unknown"
+      ]
+    },
+    "lighting_condition": {
+      "type": "string",
+      "enum": [
+        "direct_sunlight",
+        "diffuse_daylight",
+        "shaded",
+        "overcast",
+        "golden_hour",
+        "harsh_glare",
+        "flash_illuminated",
+        "unknown"
+      ]
+    },
+    "camera_device": {
+      "type": "string",
+      "description": "Smartphone make and model (e.g. Redmi 9A, Samsung Galaxy M12)"
+    },
+    "image_distance": {
+      "type": "string",
+      "enum": [
+        "macro_close_up",
+        "moderate_leaf_span",
+        "whole_plant_canopy",
+        "distant_bed"
+      ]
+    },
+    "leaf_condition": {
+      "type": "string",
+      "enum": [
+        "fresh_attached",
+        "detached",
+        "dust_coated",
+        "wet_raindrops",
+        "chemical_residue",
+        "wilted"
+      ]
+    },
+    "occlusion_level": {
+      "type": "string",
+      "enum": [
+        "none",
+        "slight_overlapping",
+        "moderate_occlusion",
+        "heavy_occlusion"
+      ]
+    },
+    "image_quality": {
+      "type": "string",
+      "enum": [
+        "PASSED",
+        "BLUR",
+        "LOW_RESOLUTION",
+        "DARK",
+        "OVEREXPOSED",
+        "OCCLUDED",
+        "EXTREME_ANGLE",
+        "CORRUPTED",
+        "OTHER"
+      ]
+    },
+    "expert_label": {
+      "type": "string",
+      "description": "Pathology label assigned by qualified agronomist/plant pathologist"
+    },
+    "annotator_confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Annotator subjective confidence score"
+    },
+    "annotation_source": {
+      "type": "string",
+      "description": "Source authority (e.g. KVK Agronomist, State Dept Pathology Lab, ICAR Scientist)"
+    },
+    "annotation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date of expert validation (YYYY-MM-DD)"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Truncated GPS latitude (maximum 2 decimal places to preserve farmer privacy)"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Truncated GPS longitude (maximum 2 decimal places to preserve farmer privacy)"
+    },
+    "farmer_id_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16,64}$",
+      "description": "One-way cryptographic pseudonym hash for spatial farm grouping without PII"
+    },
+    "weather_context": {
+      "type": "string",
+      "description": "Recent rain, humidity, or temperature context"
+    },
+    "soil_context": {
+      "type": "string",
+      "description": "Soil type (e.g. vertisol/black, alfisol/red, alluvial)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Field observations, secondary co-infections, or nutritional symptoms"
+    }
+  },
+  "additionalProperties": false
+}

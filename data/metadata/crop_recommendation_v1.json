@@ -1,0 +1,51 @@
+{
+  "dataset_id": "crop_recommendation_v1",
+  "dataset_name": "Agricultural Crop Recommendation Dataset",
+  "version": "v1.0",
+  "domain": "agriculture",
+  "task": "crop_recommendation",
+  "source": "Indian Agricultural Research Data / Kaggle Agri Collection",
+  "provenance": "Collected from regional soil testing labs across Indian agro-climatic zones",
+  "license": "CC0: Public Domain",
+  "geography": "India",
+  "time_period": null,
+  "number_of_rows": 2200,
+  "number_of_columns": 8,
+  "target_column": "crop",
+  "feature_columns": [
+    "nitrogen",
+    "phosphorus",
+    "potassium",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "categorical_columns": [
+    "crop"
+  ],
+  "numerical_columns": [
+    "nitrogen",
+    "phosphorus",
+    "potassium",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "missing_value_rate": 0.0,
+  "duplicate_rate": 0.0,
+  "class_distribution": null,
+  "unit_information": {
+    "nitrogen": "ratio / kg per ha index",
+    "phosphorus": "ratio / kg per ha index",
+    "potassium": "ratio / kg per ha index",
+    "temperature": "degree Celsius (\u00b0C)",
+    "humidity": "relative percentage (%)",
+    "ph": "pH scale (3.5 - 9.5)",
+    "rainfall": "millimeters (mm)"
+  },
+  "validation_status": "VALIDATED",
+  "approved_for_training": true,
+  "notes": "Cleaned and standardized 22 Indian crop classes."
+}

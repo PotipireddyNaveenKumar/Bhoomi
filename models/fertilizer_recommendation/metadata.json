@@ -1,0 +1,25 @@
+{
+  "model_id": "fertilizer_recommendation_v1",
+  "version": "v1.0-production",
+  "accuracy": 0.1381,
+  "macro_f1": 0.1379,
+  "classes": [
+    "10-26-26",
+    "14-35-14",
+    "17-17-17",
+    "20-20",
+    "28-28",
+    "DAP",
+    "Urea"
+  ],
+  "features": [
+    "temperature",
+    "humidity",
+    "moisture",
+    "nitrogen",
+    "potassium",
+    "phosphorus",
+    "soil_type",
+    "crop_type"
+  ]
+}

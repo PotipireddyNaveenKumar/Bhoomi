@@ -1,0 +1,13 @@
+{
+  "model_name": "tomato_mobilenet_v3_small",
+  "model_version": "tomato_vision_v1.0",
+  "architecture": "MobileNetV3-Small",
+  "num_classes": 10,
+  "total_parameters": 1528106,
+  "train_samples": 3500,
+  "val_samples": 1000,
+  "test_samples": 1000,
+  "training_hardware": "CPU",
+  "created_at": "2026-09-03T12:54:21Z",
+  "status": "VALIDATED"
+}

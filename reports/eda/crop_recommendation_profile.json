@@ -1,0 +1,123 @@
+{
+  "dataset_name": "crop_recommendation",
+  "total_rows": 2200,
+  "total_columns": 8,
+  "duplicate_rows": 0,
+  "numerical_columns": [
+    "nitrogen",
+    "phosphorus",
+    "potassium",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "categorical_columns": [
+    "crop"
+  ],
+  "numerical_stats": {
+    "nitrogen": {
+      "count": 2200,
+      "mean": 50.552,
+      "std": 36.917,
+      "min": 0.0,
+      "q25": 21.0,
+      "median": 37.0,
+      "q75": 84.25,
+      "max": 140.0,
+      "null_count": 0,
+      "zeros_count": 27
+    },
+    "phosphorus": {
+      "count": 2200,
+      "mean": 53.363,
+      "std": 32.986,
+      "min": 5.0,
+      "q25": 28.0,
+      "median": 51.0,
+      "q75": 68.0,
+      "max": 145.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "potassium": {
+      "count": 2200,
+      "mean": 48.149,
+      "std": 50.648,
+      "min": 5.0,
+      "q25": 20.0,
+      "median": 32.0,
+      "q75": 49.0,
+      "max": 205.0,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "temperature": {
+      "count": 2200,
+      "mean": 25.616,
+      "std": 5.064,
+      "min": 8.826,
+      "q25": 22.769,
+      "median": 25.599,
+      "q75": 28.562,
+      "max": 43.675,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "humidity": {
+      "count": 2200,
+      "mean": 71.482,
+      "std": 22.264,
+      "min": 14.258,
+      "q25": 60.262,
+      "median": 80.473,
+      "q75": 89.949,
+      "max": 99.982,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "ph": {
+      "count": 2200,
+      "mean": 6.469,
+      "std": 0.774,
+      "min": 3.505,
+      "q25": 5.972,
+      "median": 6.425,
+      "q75": 6.924,
+      "max": 9.935,
+      "null_count": 0,
+      "zeros_count": 0
+    },
+    "rainfall": {
+      "count": 2200,
+      "mean": 103.464,
+      "std": 54.958,
+      "min": 20.211,
+      "q25": 64.552,
+      "median": 94.868,
+      "q75": 124.268,
+      "max": 298.56,
+      "null_count": 0,
+      "zeros_count": 0
+    }
+  },
+  "categorical_stats": {
+    "crop": {
+      "unique_count": 22,
+      "top_values": {
+        "rice": 100,
+        "maize": 100,
+        "chickpea": 100,
+        "kidneybeans": 100,
+        "pigeonpeas": 100,
+        "mothbeans": 100,
+        "mungbean": 100,
+        "blackgram": 100,
+        "lentil": 100,
+        "pomegranate": 100
+      },
+      "null_count": 0
+    }
+  },
+  "memory_usage_mb": 0.25
+}

@@ -1,0 +1,59 @@
+{
+  "test_samples": 180,
+  "accuracy": 0.6888888888888889,
+  "macro_precision": 0.7636241108582907,
+  "macro_recall": 0.688888888888889,
+  "macro_f1": 0.6674610199203324,
+  "weighted_f1": 0.6674610199203325,
+  "avg_cpu_latency_ms": 3.9066906249634785,
+  "per_class": {
+    "Potato___Early_blight": {
+      "precision": 0.8035714285714286,
+      "recall": 0.75,
+      "f1-score": 0.7758620689655172,
+      "support": 60.0
+    },
+    "Potato___Late_blight": {
+      "precision": 0.9130434782608695,
+      "recall": 0.35,
+      "f1-score": 0.5060240963855421,
+      "support": 60.0
+    },
+    "Potato___healthy": {
+      "precision": 0.5742574257425742,
+      "recall": 0.9666666666666667,
+      "f1-score": 0.7204968944099379,
+      "support": 60.0
+    },
+    "accuracy": 0.6888888888888889,
+    "macro avg": {
+      "precision": 0.7636241108582907,
+      "recall": 0.688888888888889,
+      "f1-score": 0.6674610199203324,
+      "support": 180.0
+    },
+    "weighted avg": {
+      "precision": 0.7636241108582908,
+      "recall": 0.6888888888888889,
+      "f1-score": 0.6674610199203325,
+      "support": 180.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      45,
+      2,
+      13
+    ],
+    [
+      9,
+      21,
+      30
+    ],
+    [
+      2,
+      0,
+      58
+    ]
+  ]
+}

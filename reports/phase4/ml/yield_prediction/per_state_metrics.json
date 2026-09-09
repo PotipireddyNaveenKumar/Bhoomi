@@ -1,0 +1,152 @@
+{
+  "Andhra Pradesh": {
+    "sample_count": 147,
+    "mean_actual_yield": 4.09,
+    "mae": 0.948
+  },
+  "Arunachal Pradesh": {
+    "sample_count": 40,
+    "mean_actual_yield": 4.93,
+    "mae": 0.41
+  },
+  "Assam": {
+    "sample_count": 85,
+    "mean_actual_yield": 4.85,
+    "mae": 0.464
+  },
+  "Bihar": {
+    "sample_count": 103,
+    "mean_actual_yield": 5.72,
+    "mae": 0.815
+  },
+  "Chhattisgarh": {
+    "sample_count": 99,
+    "mean_actual_yield": 2.21,
+    "mae": 0.984
+  },
+  "Delhi": {
+    "sample_count": 38,
+    "mean_actual_yield": 11.25,
+    "mae": 2.503
+  },
+  "Goa": {
+    "sample_count": 26,
+    "mean_actual_yield": 10.99,
+    "mae": 0.734
+  },
+  "Gujarat": {
+    "sample_count": 119,
+    "mean_actual_yield": 7.07,
+    "mae": 0.876
+  },
+  "Haryana": {
+    "sample_count": 74,
+    "mean_actual_yield": 6.38,
+    "mae": 1.897
+  },
+  "Himachal Pradesh": {
+    "sample_count": 77,
+    "mean_actual_yield": 2.58,
+    "mae": 0.631
+  },
+  "Jammu and Kashmir": {
+    "sample_count": 64,
+    "mean_actual_yield": 1.45,
+    "mae": 0.836
+  },
+  "Jharkhand": {
+    "sample_count": 43,
+    "mean_actual_yield": 3.07,
+    "mae": 0.85
+  },
+  "Karnataka": {
+    "sample_count": 181,
+    "mean_actual_yield": 4.0,
+    "mae": 0.673
+  },
+  "Kerala": {
+    "sample_count": 42,
+    "mean_actual_yield": 11.13,
+    "mae": 2.237
+  },
+  "Madhya Pradesh": {
+    "sample_count": 96,
+    "mean_actual_yield": 3.76,
+    "mae": 0.742
+  },
+  "Maharashtra": {
+    "sample_count": 118,
+    "mean_actual_yield": 2.78,
+    "mae": 0.445
+  },
+  "Manipur": {
+    "sample_count": 61,
+    "mean_actual_yield": 5.47,
+    "mae": 0.656
+  },
+  "Meghalaya": {
+    "sample_count": 70,
+    "mean_actual_yield": 1.95,
+    "mae": 0.365
+  },
+  "Mizoram": {
+    "sample_count": 49,
+    "mean_actual_yield": 2.55,
+    "mae": 1.265
+  },
+  "Nagaland": {
+    "sample_count": 83,
+    "mean_actual_yield": 2.69,
+    "mae": 0.814
+  },
+  "Odisha": {
+    "sample_count": 112,
+    "mean_actual_yield": 2.68,
+    "mae": 0.312
+  },
+  "Puducherry": {
+    "sample_count": 91,
+    "mean_actual_yield": 4.87,
+    "mae": 1.164
+  },
+  "Punjab": {
+    "sample_count": 55,
+    "mean_actual_yield": 5.82,
+    "mae": 0.612
+  },
+  "Sikkim": {
+    "sample_count": 21,
+    "mean_actual_yield": 1.82,
+    "mae": 0.83
+  },
+  "Tamil Nadu": {
+    "sample_count": 93,
+    "mean_actual_yield": 4.51,
+    "mae": 0.699
+  },
+  "Telangana": {
+    "sample_count": 55,
+    "mean_actual_yield": 4.67,
+    "mae": 0.751
+  },
+  "Tripura": {
+    "sample_count": 57,
+    "mean_actual_yield": 6.87,
+    "mae": 0.551
+  },
+  "Uttar Pradesh": {
+    "sample_count": 100,
+    "mean_actual_yield": 7.26,
+    "mae": 0.833
+  },
+  "Uttarakhand": {
+    "sample_count": 87,
+    "mean_actual_yield": 5.84,
+    "mae": 0.794
+  },
+  "West Bengal": {
+    "sample_count": 135,
+    "mean_actual_yield": 4.93,
+    "mae": 0.685
+  }
+}

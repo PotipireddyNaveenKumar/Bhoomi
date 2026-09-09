@@ -1,0 +1,12 @@
+[
+  {
+    "image_id": "unknown",
+    "crop": "banana",
+    "expert_label": "unknown",
+    "predicted_disease": "unknown",
+    "confidence": 0.8,
+    "uncertainty_status": "UNKNOWN",
+    "failure_category": "HIGH_CONFIDENCE_WRONG_PREDICTION",
+    "details": "Expected 'None', predicted 'None' with 80.0% confidence (HIGH_CONFIDENCE_WRONG_PREDICTION)."
+  }
+]

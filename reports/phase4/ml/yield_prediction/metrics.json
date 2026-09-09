@@ -1,0 +1,13 @@
+{
+  "model_id": "yield_prediction_v2",
+  "model_type": "XGBoostRegressor",
+  "target_variable": "yield (metric tonnes per hectare)",
+  "test_samples": 2421,
+  "train_samples": 9684,
+  "mae": 0.8192,
+  "rmse": 2.5421,
+  "r2_score": 0.9574,
+  "median_absolute_error": 0.2436,
+  "target_leakage_status": "VERIFIED_ISOLATED (Production strictly excluded)",
+  "uncertainty_interval_method": "Empirical residual band (+/- 12%), heuristic (not conformal)"
+}

@@ -1,0 +1,17 @@
+{
+  "crop": "corn_maize",
+  "target_format": "TFLITE_FLATBUFFER",
+  "primary_edge_runtime": "onnxruntime",
+  "tflite_status": "READY_FOR_CONVERSION",
+  "input_shape": [
+    1,
+    224,
+    224,
+    3
+  ],
+  "quantization_support": [
+    "FP32",
+    "FP16",
+    "INT8"
+  ]
+}

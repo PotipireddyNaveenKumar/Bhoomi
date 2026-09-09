@@ -1,0 +1,1058 @@
+[
+  {
+    "q": "మిరప ఆకులు ముడుచుకుంటున్నాయి. ఎందుకు?",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "Why are my chilli leaves curling?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "मिर्च के पत्ते ऊपर की तरफ मुड़ रहे हैं, इसका क्या कारण है?",
+    "lang": "hi",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "மிளகாய் இலைகள் சுருண்டு காணப்படுகின்றன. ஏன்?",
+    "lang": "ta",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "ಮೆಣಸಿನಕಾಯಿ ಎಲೆಗಳು ಮುದುಡುತ್ತಿವೆ, ಕಾರಣವೇನು?",
+    "lang": "kn",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "മുളകിന്റെ ഇലകൾ മുകളിലേക്ക് ചുരുളുന്നു, കാരണം എന്താണ്?",
+    "lang": "ml",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "Can water stress cause chilli leaves to roll upwards?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "irrigation",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-005"
+  },
+  {
+    "q": "మిరపలో నీటి ఎద్దడి వల్ల ఆకులు ముడుచుకుంటాయా?",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "irrigation",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-005"
+  },
+  {
+    "q": "My tomato leaves have brown spots with yellow rings. What should I do?",
+    "lang": "en",
+    "crop": "tomato",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-TOMATO-001"
+  },
+  {
+    "q": "టమాటా ఆకులపై నల్లటి మచ్చలు వస్తున్నాయి, ఏమి చేయాలి?",
+    "lang": "te",
+    "crop": "tomato",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-TOMATO-001"
+  },
+  {
+    "q": "टमाटर की पत्तियों पर भूरे धब्बे दिखाई दे रहे हैं, क्या उपाय करें?",
+    "lang": "hi",
+    "crop": "tomato",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-TOMATO-001"
+  },
+  {
+    "q": "Why is the bottom of my tomato fruits turning black and sunken?",
+    "lang": "en",
+    "crop": "tomato",
+    "topic": "nutrient_deficiency",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-TOMATO-005"
+  },
+  {
+    "q": "Cotton leaves turning yellow and curling upwards with vein thickening",
+    "lang": "en",
+    "crop": "cotton",
+    "topic": "pest_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-COTTON-004"
+  },
+  {
+    "q": "పత్తి ఆకులు పైకి ముడుచుకుని నరాలు లావవుతున్నాయి",
+    "lang": "te",
+    "crop": "cotton",
+    "topic": "pest_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-COTTON-004"
+  },
+  {
+    "q": "Rice plants drying in circular patches with hopper burn symptoms",
+    "lang": "en",
+    "crop": "rice",
+    "topic": "pest_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-RICE-006"
+  },
+  {
+    "q": "వరిలో సుడిదోమ ఆశించి పొలంలో మచ్చలు ఎండిపోతున్నాయి",
+    "lang": "te",
+    "crop": "rice",
+    "topic": "pest_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-RICE-006"
+  },
+  {
+    "q": "How to control thrips in chilli organically using bio-agents?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "మిరపలో తామర పురుగుల నివారణకు వేప నూనె ఎలా వాడాలి?",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "मिर्च में थ्रिप्स और माइट्स के जैविक नियंत्रण के उपाय बताएं",
+    "lang": "hi",
+    "crop": "chilli",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "How to manage yellow mites in chilli crop?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-003"
+  },
+  {
+    "q": "మిరపలో పల్చటి నల్లి నివారణకు ఏ మందు కొట్టాలి?",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-003"
+  },
+  {
+    "q": "How to manage pink bollworm in Bt cotton?",
+    "lang": "en",
+    "crop": "cotton",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-COTTON-001"
+  },
+  {
+    "q": "పత్తిలో గులాబీ రంగు పురుగు నివారణ పద్ధతులు",
+    "lang": "te",
+    "crop": "cotton",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-COTTON-001"
+  },
+  {
+    "q": "कपास में गुलाबी सुंडी के प्रकोप से बचाव कैसे करें?",
+    "lang": "hi",
+    "crop": "cotton",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-COTTON-001"
+  },
+  {
+    "q": "How to control fruit borer in tomato?",
+    "lang": "en",
+    "crop": "tomato",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-TOMATO-006"
+  },
+  {
+    "q": "టమాటాలో కాయ తొలుచు పురుగు నివారణ",
+    "lang": "te",
+    "crop": "tomato",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-TOMATO-006"
+  },
+  {
+    "q": "What is Integrated Pest Management (IPM) and its core steps?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-005"
+  },
+  {
+    "q": "సమగ్ర తెగుళ్ల యాజమాన్యం (IPM) అంటే ఏమిటి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-005"
+  },
+  {
+    "q": "How to control rice blast disease (spindle shaped lesions)?",
+    "lang": "en",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-001"
+  },
+  {
+    "q": "వరిలో అగ్గితెగులు నివారణకు ఏ మందు పిచికారీ చేయాలి?",
+    "lang": "te",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-001"
+  },
+  {
+    "q": "धान में झोंका (ब्लास्ट) रोग का रासायनिक व जैविक उपचार",
+    "lang": "hi",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-001"
+  },
+  {
+    "q": "How to control sheath blight in paddy?",
+    "lang": "en",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-005"
+  },
+  {
+    "q": "వరిలో పొడ తెగులు నివారణ మార్గాలు",
+    "lang": "te",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-005"
+  },
+  {
+    "q": "How to manage early blight and late blight in potato?",
+    "lang": "en",
+    "crop": "potato",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-POTATO-001"
+  },
+  {
+    "q": "How to manage Panama wilt in banana?",
+    "lang": "en",
+    "crop": "banana",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-BANANA-001"
+  },
+  {
+    "q": "How to control anthracnose and dieback in chilli?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-006"
+  },
+  {
+    "q": "మిరపలో కాయ కుళ్లు మరియు కొమ్మ ఎండు తెగులు నివారణ",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-006"
+  },
+  {
+    "q": "How to manage powdery mildew in chilli?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-007"
+  },
+  {
+    "q": "How to manage rust diseases in wheat?",
+    "lang": "en",
+    "crop": "wheat",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-WHEAT-001"
+  },
+  {
+    "q": "गेहूं में पीला रतुआ और भूरा रतुआ नियंत्रण",
+    "lang": "hi",
+    "crop": "wheat",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-WHEAT-001"
+  },
+  {
+    "q": "Groundnut tikka disease control and gypsum application",
+    "lang": "en",
+    "crop": "groundnut",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-GNDNUT-001"
+  },
+  {
+    "q": "వేరుశనగలో తిక్క ఆకుమచ్చ తెగులు నివారణ",
+    "lang": "te",
+    "crop": "groundnut",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-GNDNUT-001"
+  },
+  {
+    "q": "Which crop is suitable for black soil?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "నల్లరేగడి నేలలో ఏ పంటలు బాగా పండుతాయి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "काली मिट्टी के लिए कौन सी फसलें सबसे उपयुक्त हैं?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "கரிசல் மண்ணுக்கு ஏற்ற பயிர்கள் எவை?",
+    "lang": "ta",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "ಕಪ್ಪು ಮಣ್ಣಿಗೆ ಯಾವ ಬೆಳೆಗಳು ಸೂಕ್ತವಾಗಿವೆ?",
+    "lang": "kn",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "കരിമണ്ണിൽ കൃഷി ചെയ്യാൻ അനുയോജ്യമായ വിളകൾ ഏവ?",
+    "lang": "ml",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "How to manage red soil (Alfisols) fertility and water retention?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-002"
+  },
+  {
+    "q": "How to reclaim saline and alkaline (usar) soils using gypsum?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-005"
+  },
+  {
+    "q": "చౌడు లేదా ఉప్పు నేలలను జిప్సంతో ఎలా బాగుచేయాలి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-005"
+  },
+  {
+    "q": "How to collect soil samples and interpret a Soil Health Card?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-006"
+  },
+  {
+    "q": "భూసార పరీక్ష కోసం మట్టి నమూనాలు ఎలా తీయాలి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-006"
+  },
+  {
+    "q": "When should I irrigate my chilli crop?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-IRRIG-001"
+  },
+  {
+    "q": "మిరప పంటకు నీరు ఎప్పుడు పెట్టాలి?",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-IRRIG-001"
+  },
+  {
+    "q": "मिर्च की फसल में सिंचाई कब और कितनी करनी चाहिए?",
+    "lang": "hi",
+    "crop": "chilli",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-IRRIG-001"
+  },
+  {
+    "q": "What are the benefits of drip irrigation and how does it save water?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-002"
+  },
+  {
+    "q": "బిందు సేద్యం (డ్రిప్) వల్ల లాభాలు ఏమిటి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-002"
+  },
+  {
+    "q": "ड्रिप सिंचाई के फायदे और जल बचत की जानकारी",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-002"
+  },
+  {
+    "q": "How to interpret soil moisture sensor readings (-45 kPa soil tension)?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-IRRIG-002"
+  },
+  {
+    "q": "నేల ఉద్రిక్తత -45 kPa ఉంటే నీరు పెట్టాలా?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-IRRIG-002"
+  },
+  {
+    "q": "How much fertilizer should I apply?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "fertilizer_recommendation",
+    "intent": "FERTILIZER_QUERY",
+    "target_doc": "KB-ICAR-AGRI-002"
+  },
+  {
+    "q": "ఎరువులు ఎంత మోతాదులో వాడాలి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "fertilizer_recommendation",
+    "intent": "FERTILIZER_QUERY",
+    "target_doc": "KB-ICAR-AGRI-002"
+  },
+  {
+    "q": "खेत में खाद और उर्वरक की कितनी मात्रा डालनी चाहिए?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "fertilizer_recommendation",
+    "intent": "FERTILIZER_QUERY",
+    "target_doc": "KB-ICAR-AGRI-002"
+  },
+  {
+    "q": "What causes yellow leaves (chlorosis) in crops and how to treat it?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "nutrient_deficiency",
+    "intent": "FERTILIZER_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-003"
+  },
+  {
+    "q": "ఆకులు పసుపు రంగులోకి ఎందుకు మారతాయి? నివారణ ఏమిటి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "nutrient_deficiency",
+    "intent": "FERTILIZER_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-003"
+  },
+  {
+    "q": "पत्तियों का पीला पड़ना (क्लोरोसिस) कैसे ठीक करें?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "nutrient_deficiency",
+    "intent": "FERTILIZER_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-003"
+  },
+  {
+    "q": "Can I spray herbicide tomorrow morning in Guntur?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "spray_safety",
+    "intent": "SPRAY_WEATHER_SAFETY",
+    "target_doc": "KB-ICAR-AGRI-001"
+  },
+  {
+    "q": "రేపు ఉదయం గుంటూరులో కలుపు మందు పిచికారీ చేయవచ్చా?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "spray_safety",
+    "intent": "SPRAY_WEATHER_SAFETY",
+    "target_doc": "KB-ICAR-AGRI-001"
+  },
+  {
+    "q": "What are the weather safety rules for spraying agrochemicals (wind and rain)?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "spray_safety",
+    "intent": "SPRAY_WEATHER_SAFETY",
+    "target_doc": "KB-ICAR-AGRI-001"
+  },
+  {
+    "q": "কীटनाशक छिड़काव के लिए हवा की गति और मौसम के नियम क्या हैं?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "spray_safety",
+    "intent": "SPRAY_WEATHER_SAFETY",
+    "target_doc": "KB-ICAR-AGRI-001"
+  },
+  {
+    "q": "How much profit can I get from one acre of tomato cultivation?",
+    "lang": "en",
+    "crop": "tomato",
+    "topic": "economics",
+    "intent": "PROFIT_SIMULATION",
+    "target_doc": "KB-ICAR-TOMATO-003"
+  },
+  {
+    "q": "ఒక ఎకరా టమాటా సాగు చేస్తే ఎంత లాభం వస్తుంది?",
+    "lang": "te",
+    "crop": "tomato",
+    "topic": "economics",
+    "intent": "PROFIT_SIMULATION",
+    "target_doc": "KB-ICAR-TOMATO-003"
+  },
+  {
+    "q": "एक एकड़ टमाटर की खेती में कुल लागत और मुनाफा कितना होता है?",
+    "lang": "hi",
+    "crop": "tomato",
+    "topic": "economics",
+    "intent": "PROFIT_SIMULATION",
+    "target_doc": "KB-ICAR-TOMATO-003"
+  },
+  {
+    "q": "What is the cost of cultivation and net returns for one acre of chilli?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "economics",
+    "intent": "PROFIT_SIMULATION",
+    "target_doc": "KB-ICAR-CHILLI-004"
+  },
+  {
+    "q": "ఒక ఎకరం మిర్చి తోట సాగు ఖర్చు మరియు లాభం ఎంత?",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "economics",
+    "intent": "PROFIT_SIMULATION",
+    "target_doc": "KB-ICAR-CHILLI-004"
+  },
+  {
+    "q": "Should I sell my dry red chilli today or store in cold storage?",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "market_decisions",
+    "intent": "SELL_DECISION",
+    "target_doc": "KB-MKT-HARVEST-001"
+  },
+  {
+    "q": "నేను మిర్చిని ఇప్పుడే మార్కెట్లో అమ్మాలా లేక కోల్డ్ స్టోరేజ్ లో ఉంచాలా?",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "market_decisions",
+    "intent": "SELL_DECISION",
+    "target_doc": "KB-MKT-HARVEST-001"
+  },
+  {
+    "q": "What is the PM-KISAN scheme eligibility and payment installment amount?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-001"
+  },
+  {
+    "q": "పీఎం కిసాన్ పథకం అర్హతలు మరియు ₹6000 సహాయం వివరాలు",
+    "lang": "te",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-001"
+  },
+  {
+    "q": "पीएम किसान सम्मान निधि योजना के तहत कितनी राशि और कब मिलती है?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-001"
+  },
+  {
+    "q": "How to claim crop loss compensation under PMFBY crop insurance within 72 hours?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-002"
+  },
+  {
+    "q": "పంట నష్టం జరిగితే 72 గంటల్లో ఫసల్ బీమా ఎలా క్లెయిమ్ చేయాలి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-002"
+  },
+  {
+    "q": "प्रधानमंत्री फसल बीमा योजना में फसल क्षति की सूचना 72 घंटे में कैसे दें?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-002"
+  },
+  {
+    "q": "What subsidy is available for drip irrigation under PMKSY Per Drop More Crop?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-003"
+  },
+  {
+    "q": "డ్రిప్ ఇరిగేషన్ కోసం పీఎంకేఎస్వై కింద ఎంత సబ్సిడీ వస్తుంది?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-003"
+  },
+  {
+    "q": "What is Kisan Credit Card (KCC) interest rate and loan limit?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-004"
+  },
+  {
+    "q": "కిసాన్ క్రెడిట్ కార్డు (KCC) వడ్డీ రేటు ఎంత?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-004"
+  },
+  {
+    "q": "What is crop rotation and why is it recommended after chilli or cotton?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-GENERAL-001"
+  },
+  {
+    "q": "పంట మార్పిడి ఎందుకు చేయాలి? దానివల్ల ప్రయోజనాలు ఏమిటి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-GENERAL-001"
+  },
+  {
+    "q": "फसल चक्र (Crop Rotation) क्यों अपनाना चाहिए और इसके क्या लाभ हैं?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-GENERAL-001"
+  },
+  {
+    "q": "How to protect crops from heat waves and high temperatures?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "weather_agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-WX-001"
+  },
+  {
+    "q": "ఎండ తీవ్రత మరియు వడగాల్పుల నుండి పంటలను ఎలా కాపాడుకోవాలి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "weather_agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-WX-001"
+  },
+  {
+    "q": "What measures to take before and after heavy rainfall or cyclones?",
+    "lang": "en",
+    "crop": "general",
+    "topic": "weather_agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-WX-002"
+  },
+  {
+    "q": "భారీ వర్షాలు లేదా తుఫాను వచ్చినప్పుడు పంట రక్షణ చర్యలు",
+    "lang": "te",
+    "crop": "general",
+    "topic": "weather_agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-WX-002"
+  },
+  {
+    "q": "Chilli upward leaf curl vector management",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "Leaf curl virus in chilli whitefly control",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "Tomato early blight target board spots",
+    "lang": "en",
+    "crop": "tomato",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-TOMATO-001"
+  },
+  {
+    "q": "Alternaria solani tomato fungicide schedule",
+    "lang": "en",
+    "crop": "tomato",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-TOMATO-001"
+  },
+  {
+    "q": "Paddy blast tricyclazole spray dose",
+    "lang": "en",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-001"
+  },
+  {
+    "q": "Rice neck blast management guidelines",
+    "lang": "en",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-001"
+  },
+  {
+    "q": "Pink bollworm pheromone trap density cotton",
+    "lang": "en",
+    "crop": "cotton",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-COTTON-001"
+  },
+  {
+    "q": "Rosette flowers in cotton management",
+    "lang": "en",
+    "crop": "cotton",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-COTTON-001"
+  },
+  {
+    "q": "Deep black soil cotton suitability",
+    "lang": "en",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "Vertisols drainage broad bed furrow chilli",
+    "lang": "en",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "Nitrogen deficiency yellow lower leaves urea dose",
+    "lang": "en",
+    "crop": "general",
+    "topic": "nutrient_deficiency",
+    "intent": "FERTILIZER_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-003"
+  },
+  {
+    "q": "Micro irrigation water use efficiency pmksy",
+    "lang": "en",
+    "crop": "general",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-002"
+  },
+  {
+    "q": "Legume crop rotation soil nitrogen enrichment",
+    "lang": "en",
+    "crop": "general",
+    "topic": "agronomy",
+    "intent": "CROP_MANAGEMENT",
+    "target_doc": "KB-ICAR-GENERAL-001"
+  },
+  {
+    "q": "Chemical spray wind speed limits cibrc",
+    "lang": "en",
+    "crop": "general",
+    "topic": "spray_safety",
+    "intent": "SPRAY_WEATHER_SAFETY",
+    "target_doc": "KB-ICAR-AGRI-001"
+  },
+  {
+    "q": "Rain probability herbicide spray postponement",
+    "lang": "en",
+    "crop": "general",
+    "topic": "spray_safety",
+    "intent": "SPRAY_WEATHER_SAFETY",
+    "target_doc": "KB-ICAR-AGRI-001"
+  },
+  {
+    "q": "One acre chilli net returns guntur",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "economics",
+    "intent": "PROFIT_SIMULATION",
+    "target_doc": "KB-ICAR-CHILLI-004"
+  },
+  {
+    "q": "Tomato yield per acre cost of cultivation",
+    "lang": "en",
+    "crop": "tomato",
+    "topic": "economics",
+    "intent": "PROFIT_SIMULATION",
+    "target_doc": "KB-ICAR-TOMATO-003"
+  },
+  {
+    "q": "Dry red chilli moisture content cold storage",
+    "lang": "en",
+    "crop": "chilli",
+    "topic": "market_decisions",
+    "intent": "SELL_DECISION",
+    "target_doc": "KB-MKT-HARVEST-001"
+  },
+  {
+    "q": "PM-KISAN e-KYC requirement aadhaar",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-001"
+  },
+  {
+    "q": "PMFBY crop loss intimation toll free number",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-002"
+  },
+  {
+    "q": "PMKSY drip subsidy small farmer 55 percent",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-003"
+  },
+  {
+    "q": "KCC short term crop loan interest subvention",
+    "lang": "en",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-004"
+  },
+  {
+    "q": "మిరప తోటలో తామర పురుగుల ఉనికి గుర్తించడం",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "pest_management",
+    "intent": "PEST_QUERY",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "టమాటా అల్టర్నేరియా తెగులు నివారణ",
+    "lang": "te",
+    "crop": "tomato",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-TOMATO-001"
+  },
+  {
+    "q": "వరిలో అగ్గితెగులు మచ్చలు లక్షణాలు",
+    "lang": "te",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-001"
+  },
+  {
+    "q": "నల్లరేగడి నేలలో తేమ నిల్వ సామర్థ్యం",
+    "lang": "te",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "బిందు సేద్యం ద్వారా ఎరువులు అందించడం (ఫెర్టిగేషన్)",
+    "lang": "te",
+    "crop": "general",
+    "topic": "irrigation",
+    "intent": "IRRIGATION_QUERY",
+    "target_doc": "KB-ICAR-GENERAL-002"
+  },
+  {
+    "q": "మిర్చి కోల్డ్ స్టోరేజ్ అద్దె మరియు లాభనష్టాలు",
+    "lang": "te",
+    "crop": "chilli",
+    "topic": "market_decisions",
+    "intent": "SELL_DECISION",
+    "target_doc": "KB-MKT-HARVEST-001"
+  },
+  {
+    "q": "పీఎం కిసాన్ పథకం డబ్బులు ఎప్పుడు పడతాయి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-001"
+  },
+  {
+    "q": "ఫసల్ బీమా పథకం పరిహారం ఎలా పొందాలి?",
+    "lang": "te",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-002"
+  },
+  {
+    "q": "मिर्च में पत्ती मुड़ना और थ्रिप्स नियंत्रण",
+    "lang": "hi",
+    "crop": "chilli",
+    "topic": "disease_management",
+    "intent": "CROP_SYMPTOM",
+    "target_doc": "KB-ICAR-CHILLI-001"
+  },
+  {
+    "q": "टमाटर में अगेती झुलसा का रोकथाम कैसे करें?",
+    "lang": "hi",
+    "crop": "tomato",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-TOMATO-001"
+  },
+  {
+    "q": "धान में ब्लास्ट रोग के लक्षण और दवाई",
+    "lang": "hi",
+    "crop": "rice",
+    "topic": "disease_management",
+    "intent": "DISEASE_QUERY",
+    "target_doc": "KB-ICAR-RICE-001"
+  },
+  {
+    "q": "काली मिट्टी में जल निकास और प्रबंधन",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "soil_management",
+    "intent": "SOIL_QUERY",
+    "target_doc": "KB-ICAR-SOIL-001"
+  },
+  {
+    "q": "ड्रिप सिंचाई पर सरकारी अनुदान कितना है?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-003"
+  },
+  {
+    "q": "फसल बीमा का दावा कैसे करें?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-002"
+  },
+  {
+    "q": "किसान क्रेडिट कार्ड कैसे बनवाएं?",
+    "lang": "hi",
+    "crop": "general",
+    "topic": "government_schemes",
+    "intent": "GOVERNMENT_SCHEME",
+    "target_doc": "KB-GOV-SCHEME-004"
+  }
+]
