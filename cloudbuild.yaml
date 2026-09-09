@@ -1,0 +1,49 @@
+# ============================================================
+# BHOOMI — DETERMINISTIC GOOGLE CLOUD BUILD PIPELINE
+# Project: bhoomi-2026
+# Artifact Registry: asia-south1-docker.pkg.dev/bhoomi-2026/bhoomi-repo/bhoomi
+# Build Context: Repository Root (".")
+# Dockerfile: backend/Dockerfile
+# ============================================================
+
+steps:
+  # Step 1: Build Docker container image from repository root context
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-bhoomi-image'
+    args:
+      - 'build'
+      - '-f'
+      - 'backend/Dockerfile'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/bhoomi-2026/bhoomi-repo/bhoomi:latest'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/bhoomi-2026/bhoomi-repo/bhoomi:${_TAG}'
+      - '.'
+
+  # Step 2: Push the image with the 'latest' tag
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-bhoomi-latest'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/bhoomi-2026/bhoomi-repo/bhoomi:latest'
+
+  # Step 3: Push the image with the specific tag
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-bhoomi-tag'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/bhoomi-2026/bhoomi-repo/bhoomi:${_TAG}'
+
+# Declare artifacts pushed to Google Artifact Registry
+images:
+  - 'asia-south1-docker.pkg.dev/bhoomi-2026/bhoomi-repo/bhoomi:latest'
+  - 'asia-south1-docker.pkg.dev/bhoomi-2026/bhoomi-repo/bhoomi:${_TAG}'
+
+# Default substitutions (can be overridden via --substitutions=_TAG=...)
+substitutions:
+  _TAG: 'latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1200s'
