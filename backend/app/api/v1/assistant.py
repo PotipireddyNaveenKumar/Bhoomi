@@ -1,16 +1,23 @@
 import base64
 import logging
+import time
+from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.db.session import get_db
 from app.api.deps import get_current_farmer_profile
 from app.models.farmer import FarmerProfile
+from app.models.chat import ChatMessage
 from app.agents.orchestrator import BhoomiAgentOrchestrator
 from app.repositories.chat_repo import ChatRepository
 from app.services.vision.vision_service import VisionService
+from app.services.farm_manager.recommendation_trace import RecommendationTraceStore, FeedbackStatus
+from app.services.memory.farm_memory_v2 import FarmMemoryV2, ProvenanceType
+from app.services.monitoring.model_monitor import ModelMonitoringService
 
 logger = logging.getLogger(__name__)
 
@@ -226,3 +233,118 @@ async def get_session_history(
     repo = ChatRepository(db)
     session = await repo.get_or_create_session(farmer.id, session_id=session_id)
     return session
+
+
+class AssistantFeedbackRequest(BaseModel):
+    session_id: Optional[str] = Field(default=None, description="Chat session identifier")
+    rating: str = Field(..., description="Farmer feedback: 'helpful' or 'not_helpful'")
+    response_text: Optional[str] = Field(default=None, description="Excerpt of the assistant response being rated")
+    language_code: Optional[str] = Field(default="en", description="Language code: en, te, hi, ta, kn, ml")
+
+
+class AssistantFeedbackResponse(BaseModel):
+    status: str = "success"
+    rating: str
+    trace_updated: bool = False
+    memory_recorded: bool = False
+
+
+@router.post("/feedback", response_model=AssistantFeedbackResponse)
+async def submit_assistant_feedback(
+    req: AssistantFeedbackRequest,
+    farmer: FarmerProfile = Depends(get_current_farmer_profile),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Submits farmer feedback on AI assistant responses.
+    Validates input and records through existing persistence mechanisms:
+    1. Relational DB (ChatMessage metadata_json)
+    2. RecommendationTraceStore (Audit & Explainability trace)
+    3. FarmMemoryV2 (Episodic farmer feedback)
+    4. ModelMonitoringService (Aggregated quality metrics)
+    """
+    # 1. Validate rating
+    rating_norm = req.rating.lower().strip()
+    if rating_norm not in ("helpful", "not_helpful"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid rating. Allowed values: 'helpful', 'not_helpful'."
+        )
+
+    # 2. Validate language_code when supplied
+    valid_langs = {"en", "te", "hi", "ta", "kn", "ml"}
+    lang_norm = (req.language_code or "en").split("-")[0].lower().strip()
+    if lang_norm and lang_norm not in valid_langs:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid language_code '{req.language_code}'. Allowed: {', '.join(sorted(valid_langs))}."
+        )
+
+    # 3. Relational DB: Associate with farmer session and update latest assistant message
+    chat_repo = ChatRepository(db)
+    session = await chat_repo.get_or_create_session(farmer.id, session_id=req.session_id, language=lang_norm)
+
+    msg_query = (
+        select(ChatMessage)
+        .where(ChatMessage.session_id == session.id, ChatMessage.sender == "assistant")
+        .order_by(ChatMessage.created_at.desc())
+        .limit(1)
+    )
+    msg_res = await db.execute(msg_query)
+    latest_msg = msg_res.scalars().first()
+    if latest_msg:
+        meta = dict(latest_msg.metadata_json or {})
+        meta["feedback_rating"] = rating_norm
+        meta["feedback_timestamp"] = datetime.now(timezone.utc).isoformat()
+        latest_msg.metadata_json = meta
+        await db.commit()
+
+    # 4. RecommendationTraceStore: Update latest decision trace for this farmer
+    trace_updated = False
+    try:
+        farmer_traces = RecommendationTraceStore.list_for_farmer(farmer.id)
+        if farmer_traces:
+            latest_trace = farmer_traces[-1]
+            RecommendationTraceStore.update_feedback(
+                recommendation_id=latest_trace.recommendation_id,
+                farmer_action=FeedbackStatus.FOLLOWED if rating_norm == "helpful" else FeedbackStatus.NOT_FOLLOWED,
+                feedback_rating=FeedbackStatus.HELPFUL if rating_norm == "helpful" else FeedbackStatus.NOT_HELPFUL,
+                feedback_notes=f"Farmer chat feedback: {rating_norm}"
+            )
+            trace_updated = True
+    except Exception as e:
+        logger.warning(f"Could not update RecommendationTraceStore: {e}")
+
+    # 5. FarmMemoryV2: Record episodic farmer feedback
+    memory_recorded = False
+    try:
+        FarmMemoryV2.add_memory(
+            farmer_id=farmer.id,
+            category="FEEDBACK",
+            key=f"chat_feedback_{session.id}_{int(time.time())}",
+            value={
+                "session_id": session.id,
+                "rating": rating_norm,
+                "language_code": lang_norm,
+                "response_snippet": (req.response_text or "")[:150]
+            },
+            provenance=ProvenanceType.FARMER_ACTION
+        )
+        memory_recorded = True
+    except Exception as e:
+        logger.warning(f"Could not record FarmMemoryV2 entry: {e}")
+
+    # 6. ModelMonitoringService: Quality metrics
+    try:
+        rating_key = "USEFUL" if rating_norm == "helpful" else "NOT_USEFUL"
+        ModelMonitoringService.record_model_feedback("assistant_chat", rating_key)
+    except Exception:
+        pass
+
+    logger.info(f"Feedback recorded successfully for farmer {farmer.id}: rating={rating_norm}")
+    return AssistantFeedbackResponse(
+        status="success",
+        rating=rating_norm,
+        trace_updated=trace_updated,
+        memory_recorded=memory_recorded
+    )

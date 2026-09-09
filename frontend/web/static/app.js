@@ -1125,12 +1125,36 @@ function appendMessageRow(role, content, imageBase64, structuredData) {
 
 async function submitFeedback(btnElement, rating) {
   const container = btnElement.closest(".feedback-actions");
+  if (!container) return;
+
+  // Prevent duplicate submissions by disabling buttons
+  const buttons = container.querySelectorAll("button");
+  buttons.forEach(b => b.disabled = true);
+
   const bubble = btnElement.closest(".message-bubble");
   const textEl = bubble ? bubble.querySelector(".message-text") : null;
   const responseText = textEl ? textEl.innerText.slice(0, 500) : "";
 
+  const thanksMap = {
+    te: "ధన్యవాదాలు!",
+    hi: "धन्यवाद!",
+    ta: "நன்றி!",
+    kn: "ಧನ್ಯವಾದಗಳು!",
+    ml: "നന്ദി!",
+    en: "Thanks!"
+  };
+
+  const errorMap = {
+    te: "⚠️ విఫలమైంది",
+    hi: "⚠️ विफल रहा",
+    ta: "⚠️ தோல்வியடைந்தது",
+    kn: "⚠️ ವಿಫಲವಾಗಿದೆ",
+    ml: "⚠️ പരാജയപ്പെട്ടു",
+    en: "⚠️ Feedback failed"
+  };
+
   try {
-    await fetch("/api/v1/assistant/feedback", {
+    const res = await fetch("/api/v1/assistant/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1141,11 +1165,16 @@ async function submitFeedback(btnElement, rating) {
       })
     });
 
-    if (container) {
-      container.innerHTML = `<span class="feedback-thanks">✓ ${currentLanguage === "te" ? "ధన్యవాదాలు!" : (currentLanguage === "hi" ? "धन्यवाद!" : "Thanks!")}</span>`;
+    if (res.ok) {
+      const msg = thanksMap[currentLanguage] || thanksMap.en;
+      container.innerHTML = `<span class="feedback-thanks">✓ ${msg}</span>`;
+    } else {
+      const errMsg = errorMap[currentLanguage] || errorMap.en;
+      container.innerHTML = `<span class="feedback-error" style="color:#ef4444;font-size:0.8rem;">${errMsg}</span>`;
     }
   } catch (e) {
-    if (container) container.innerHTML = `<span class="feedback-thanks">✓</span>`;
+    const errMsg = errorMap[currentLanguage] || errorMap.en;
+    container.innerHTML = `<span class="feedback-error" style="color:#ef4444;font-size:0.8rem;">${errMsg}</span>`;
   }
 }
 

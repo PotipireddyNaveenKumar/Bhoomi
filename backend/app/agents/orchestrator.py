@@ -1598,35 +1598,26 @@ class BhoomiAgentOrchestrator:
                 c = rag_output.citations[0]
                 citation_str = f"\n\n[ఆధారం: {c.authority} - {c.document_title}]" if active_lang == "te" else f"\n\n[Source: {c.authority} - {c.document_title}]"
 
-            # Check Supporting Farm Digital Twin Evidence (Sensors) and Pending Tasks (Step 16)
+            # Check Supporting Farm Digital Twin Evidence (Sensors)
             farm_evidence_te = ""
             farm_evidence_en = ""
             farm_evidence_hi = ""
-            task_note_te = ""
-            task_note_en = ""
-            task_note_hi = ""
             try:
                 state = await FarmStateEngine.get_current_state(farmer_id=farmer_id, digital_twin=context)
                 if state and state.soil_moisture_awc_pct is not None:
                     farm_evidence_te = f"\n\n📊 సహాయక పొలం సమాచారం: మీ పొలంలో నేల తేమ {state.soil_moisture_awc_pct:.0f}% వద్ద మరియు నేల ఉద్రిక్తత -45 kPa వద్ద ఉంది. నేలలో స్వల్ప నీటి ఎద్దడి ఉండటం కూడా ఆకులు ముడుచుకోవడానికి దోహదం చేస్తుంది."
                     farm_evidence_en = f"\n\n📊 Supporting Farm Evidence: Soil moisture sensor is at {state.soil_moisture_awc_pct:.0f}% AWC with soil tension at -45 kPa. Mild root-zone water stress may be compounding leaf curl symptoms."
                     farm_evidence_hi = f"\n\n📊 सहायक खेत डेटा: आपकी मिट्टी में नमी {state.soil_moisture_awc_pct:.0f}% और मिट्टी का तनाव -45 kPa है। जड़ क्षेत्र में हल्की नमी की कमी भी पत्तियों के मुड़ने को बढ़ा सकती है।"
-                tasks = TaskIntelligenceEngine.get_tasks_for_farm(farm_id)
-                due_irrig = [t for t in tasks if getattr(t, "status", None) and str(t.status.value).upper() in ["DUE", "PENDING"] and getattr(t, "task_type", None) == TaskType.IRRIGATION]
-                if due_irrig:
-                    task_note_te = f"\n\n💧 గమనిక: మీ పొలానికి సంబంధించిన '{due_irrig[0].title}' పని ప్రస్తుతం DUE గా ఉంది."
-                    task_note_en = f"\n\n💧 Farm Context: Your pending task '{due_irrig[0].title}' is currently DUE."
-                    task_note_hi = f"\n\n💧 सूचना: आपके खेत का '{due_irrig[0].title}' कार्य वर्तमान में DUE है।"
             except Exception:
                 pass
 
             if active_lang == "te":
                 pest_resp = (
-                    f"నమస్కారం రైతు సోదరా! మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n"
+                    f"మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n"
                     f"1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంటే తామర పురుగుల ఉనికి ఎక్కువగా ఉంటుంది.\n"
                     f"2. పల్చటి నల్లి (Mites): ఆకులు బోర్లించినట్లు కిందికి ముడుచుకుంటే నల్లి ఆశించిందని గుర్తించాలి.\n"
                     f"3. ఆకుముడత వైరస్ (Chilli Leaf Curl Virus): ఆకులు దగ్గరకు ముడుచుకుని, మొక్క గిడసబారితే ఇది తెల్లదోమ ద్వారా వ్యాపించే వైరస్ లక్షణం.\n"
-                    f"4. నీటి లేదా ఎండ ఒత్తిడి: అధిక ఉష్ణోగ్రత మరియు నేలలో తేమ లోపించినప్పుడు ఆకులు రక్షణ కోసం ముడుచుకుంటాయి.{farm_evidence_te}{task_note_te}\n\n"
+                    f"4. నీటి లేదా ఎండ ఒత్తిడి: అధిక ఉష్ణోగ్రత మరియు నేలలో తేమ లోపించినప్పుడు ఆకులు రక్షణ కోసం ముడుచుకుంటాయి.{farm_evidence_te}\n\n"
                     f"తదుపరి ఆచరణీయ చర్యలు:\n"
                     f"• ఆకుల అడుగు భాగాన్ని జాగ్రత్తగా పరిశీలించండి.\n"
                     f"• ఎకరాకు 15-20 పసుపు, నీలి రంగు జిగురు అట్టలను పొలంలో అమర్చండి.\n"
@@ -1635,11 +1626,11 @@ class BhoomiAgentOrchestrator:
                 )
             elif active_lang == "hi":
                 pest_resp = (
-                    f"नमस्ते भाई! मिर्च में पत्तियां मुड़ने (लीफ कर्ल) के मुख्य कारण:\n\n"
+                    f"मिर्च में पत्तियां मुड़ने (लीफ कर्ल) के मुख्य कारण:\n\n"
                     f"1. थ्रिप्स (Thrips): यदि पत्तियां ऊपर की तरफ नाव जैसी मुड़ती हैं, तो यह थ्रिप्स कीट का लक्षण है।\n"
                     f"2. माइट्स (Mites): यदि पत्तियां नीचे की तरफ मुड़ती हैं और उल्टे छाते जैसी दिखती हैं, तो यह माइट्स का प्रकोप है।\n"
                     f"3. लीफ कर्ल वायरस (Chilli Leaf Curl Virus): पत्तियां छोटी, सिकुड़ी हुई और पौधा बौना हो जाए, तो यह सफेद मक्खी जनित वायरस है।\n"
-                    f"4. नमी या गर्मी का तनाव: अत्यधिक गर्मी और पानी की कमी से भी पत्तियां सिकुड़ती हैं।{farm_evidence_hi}{task_note_hi}\n\n"
+                    f"4. नमी या गर्मी का तनाव: अत्यधिक गर्मी और पानी की कमी से भी पत्तियां सिकुड़ती हैं।{farm_evidence_hi}\n\n"
                     f"अनुशंसित कदम:\n"
                     f"• पत्तियों की निचली सतह की जांच करें।\n"
                     f"• प्रति एकड़ 15-20 पीले और नीले चिपचिपे ट्रैप लगाएं।\n"
@@ -1648,11 +1639,11 @@ class BhoomiAgentOrchestrator:
                 )
             else:
                 pest_resp = (
-                    f"Hello brother! Primary causes of chilli leaf curling:\n\n"
+                    f"Primary causes of chilli leaf curling:\n\n"
                     f"1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirtothrips dorsalis) feeding is the primary cause.\n"
                     f"2. Yellow Mites (Polyphagotarsonemus latus): If leaves curl downwards (inverted cup) with thickening, mites are active.\n"
                     f"3. Chilli Leaf Curl Begomovirus: Severe puckering, mosaic mottling, and stunted bushy growth transmitted by Whiteflies (Bemisia tabaci).\n"
-                    f"4. Physiological Moisture Stress: Rapid transpiration or root-zone water deficit causes protective leaf rolling.{farm_evidence_en}{task_note_en}\n\n"
+                    f"4. Physiological Moisture Stress: Rapid transpiration or root-zone water deficit causes protective leaf rolling.{farm_evidence_en}\n\n"
                     f"Recommended Next Actions:\n"
                     f"• Inspect the underside of tender leaves with a 10x hand lens.\n"
                     f"• Install 15-20 yellow and blue sticky traps per acre to trap vectors early.\n"
@@ -1710,11 +1701,8 @@ class BhoomiAgentOrchestrator:
                     c = rag_output.citations[0]
                     citation_str = f"\n\n[Source: {c.authority} - {c.document_title}]"
 
-                # Only format brotherly voice persona for specific chilli curl queries, otherwise use retrieved RAG evidence directly
-                is_chilli_curl_query = any(k in text_lower for k in ["thrip", "తామర", "थ्रिप्स"]) or (
-                    any(k in text_lower for k in ["curl", "ముడుచు", "ముడత", "मुड़", "मरोड़"]) and any(k in text_lower for k in ["chilli", "mirchi", "మిరప", "మిర్చి", "मिर्च"])
-                )
-                if is_chilli_curl_query:
+                # Clean up technical Latin names from evidence_text for brotherly spoken persona
+                if any(k in text_lower for k in ["thrip", "curl", "whitefl", "pest", "insect", "worm", "ముడుచు", "ముడత", "मुड़", "पत्ति", "मरोड़", "सिकुड़"]):
                     evidence_text = (
                         "Don't worry brother, we can tackle this together. Look under the leaves for tiny insects like thrips or whiteflies. "
                         "Put up 15 to 20 yellow and blue sticky sheets across your field to trap them early. "
@@ -1725,7 +1713,10 @@ class BhoomiAgentOrchestrator:
 
                 # Localized translations for key queries if Telugu or Hindi
                 if active_lang == "te":
-                    if is_chilli_curl_query:
+                    if any(k in text_lower for k in [
+                        "thrip", "curl", "తామర", "దోమ", "తెగులు", "పురుగు",
+                        "ఆకులు", "ఆకు", "ముడుచు", "ముడుచుకు", "ముడత", "మచ్చలు", "కీటకాలు", "నల్లి", "పురుగులు"
+                    ]):
                         resp_text = "కంగారు పడకండి అన్నా, దీనిని మనం సులభంగా నివారించవచ్చు. ఆకుల అడుగున తామర పురుగులు లేదా తెల్లదోమ ఉనికిని గమనించండి. ఎకరాకు 15-20 పసుపు, నీలి రంగు జిగురు బోర్డులను అమర్చండి. ఉదయం వేళ వేప నూనె పిచికారీ చేయండి. అవసరమైతే సురక్షితమైన జీవ మందులు వాడండి, మందు కొట్టేటప్పుడు మాస్క్, చేతి తొడుగులు ధరించండి.\n\n[ఆధారం: ICAR - సమగ్ర తెగుళ్ల యాజమాన్య మార్గదర్శకాలు]"
                     elif "rotation" in text_lower or "మార్పిడి" in text_lower:
                         resp_text = "పంట మార్పిడి (Crop Rotation) అంటే ఒకే పొలంలో ఒకే పంటను పదే పదే వేయకుండా, వేర్వేరు పంటలను వరుసగా సాగు చేయడం. మిర్చి లేదా పత్తి తర్వాత శనగలు లేదా మినుములు వంటి పప్పుధాన్యాల పంటలను వేయడం వల్ల నేలలో నత్రజని స్థిరీకరణ జరిగి, నేల సారం పెరుగుతుంది మరియు తెగుళ్ల వ్యాప్తి 25-30% తగ్గుతుంది.\n\n[ఆధారం: ICAR - వ్యవసాయ మార్గదర్శిని]"
@@ -1736,9 +1727,13 @@ class BhoomiAgentOrchestrator:
                     elif "black" in text_lower or "నల్ల" in text_lower:
                         resp_text = "నల్లరేగడి నేలలు (Black Cotton Soil) అధిక బంకమట్టి మరియు తేమను నిలుపుకునే సామర్థ్యం కలిగి ఉంటాయి. ఎండినప్పుడు లోతైన పగుళ్లు ఏర్పడి గాలి ప్రసరణ బాగా జరుగుతుంది. ఇవి మిర్చి, పత్తి మరియు శనగ పంటలకు అత్యంత అనుకూలం.\n\n[ఆధారం: ANGRAU - నేల యాజమాన్య మార్గదర్శకాలు]"
                     else:
-                        resp_text = evidence_text + citation_str
+                        resp_text = "నమస్కారం అన్నా! నేను మీ సమస్యను విన్నాను, కానీ దీనిపై పూర్తి స్పష్టత కోసం ఆకులు లేదా పంట లక్షణాల గురించి కొంచెం వివరంగా చెప్పగలరా? లేదా వీలైతే ఆకు స్పష్టమైన ఫోటో తీసి పంపండి, మనం కలిసి సరైన పరిష్కారం చూద్దాం."
                 elif active_lang == "hi":
-                    if is_chilli_curl_query:
+                    if any(k in text_lower for k in [
+                        "thrip", "curl", "कीट", "थ्रिप्स", "मक्खी", "सुंडी", "रोग",
+                        "मुड़", "मुड़ना", "पत्तियां", "पत्ते", "मरोड़", "मरोड़िया", "सिकुड़", "सिकुड़ना",
+                        "कीड़े", "कीड़ा", "धब्बे", "पीली", "फफूंद", "झुलसा", "इल्ली", "माइट्स"
+                    ]):
                         resp_text = "घबराइए नहीं भाई, हम इसे मिलकर ठीक करेंगे। पत्तियों के नीचे थ्रिप्स या सफेद मक्खी की जांच करें। खेत में 15 से 20 पीले और नीले चिपचिपे ट्रैप लगाएं। सुबह के समय नीम तेल का छिड़काव करें। जरूरत पड़ने पर सुरक्षित कीटनाशक का प्रयोग करें और छिड़कते समय मास्क और दस्ताने जरूर पहनें।\n\n[स्रोत: ICAR - एकीकृत कीट प्रबंधन दिशानिर्देश]"
                     elif "rotation" in text_lower or "चक्र" in text_lower:
                         resp_text = "फसल चक्र (Crop Rotation) एक ही खेत में लगातार एक ही फसल न उगाकर विभिन्न फसलों को क्रमबद्ध रूप से लगाना है। मिर्च या कपास के बाद दलहनी फसलें (जैसे चना, मूंग) लगाने से मिट्टी में नाइट्रोजन की पूर्ति होती है और कीटों का चक्र टूटता है।\n\n[स्रोत: ICAR - कृषि हस्तपुस्तिका]"
