@@ -29,14 +29,16 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 # Create secure non-root application user
 RUN groupadd -r bhoomi && useradd -r -g bhoomi -d /app bhoomi
 
-# Copy application source code, runtime ML models, and RAG knowledge
+# Copy application source code, runtime ML models, RAG knowledge, and web frontend
 COPY backend/ /app/
 COPY models/ /app/models/
 COPY data/rag/ /app/data/rag/
+COPY frontend/web/ /app/frontend/web/
 
 # Ensure proper directory permissions for non-root user runtime operations
 RUN mkdir -p /app/uploads /app/data/chroma && \
-    chown -R bhoomi:bhoomi /app
+    ln -sfn /app/frontend /frontend && \
+    chown -R bhoomi:bhoomi /app /frontend
 
 # Switch to non-root user
 USER bhoomi
