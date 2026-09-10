@@ -22,11 +22,24 @@ def get_voice_provider(provider_name: Optional[str] = None) -> VoiceProvider:
             api_key = settings.SARVAM_API_KEY
         if api_key and not api_key.startswith("your_"):
             return SarvamVoiceProvider(api_key=api_key)
+        if settings.is_production:
+            raise RuntimeError(
+                "Production configuration error: SARVAM_API_KEY must be provided when VOICE_PROVIDER='sarvam'. "
+                "Silent fallback to MockVoiceProvider is disabled in production."
+            )
         logger.warning("SARVAM_API_KEY not configured or placeholder detected. Falling back safely to MockVoiceProvider.")
         return MockVoiceProvider()
     elif name == "bhashini":
+        if settings.is_production:
+            raise RuntimeError(
+                "Production configuration error: Voice provider 'bhashini' is not supported in production."
+            )
         return MockVoiceProvider()
     elif name == "whisper":
+        if settings.is_production:
+            raise RuntimeError(
+                "Production configuration error: Voice provider 'whisper' is not supported in production."
+            )
         return MockVoiceProvider()
     else:
         return MockVoiceProvider()

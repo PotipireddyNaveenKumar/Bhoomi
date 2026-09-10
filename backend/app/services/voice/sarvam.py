@@ -123,7 +123,7 @@ class SarvamVoiceProvider(VoiceProvider):
 
                 if response.status_code == 401 or response.status_code == 403:
                     logger.error("Sarvam STT authentication failed (401/403).")
-                    raise VoiceProcessingException("Voice authentication error. Please check server credentials.", status_code=status.HTTP_401_UNAUTHORIZED)
+                    raise VoiceProcessingException("Sarvam STT provider authentication error. Please verify server credentials.", status_code=status.HTTP_502_BAD_GATEWAY)
 
                 if response.status_code == 402:
                     logger.warning("Sarvam STT quota/credits exhausted (402).")
@@ -224,7 +224,7 @@ class SarvamVoiceProvider(VoiceProvider):
 
                 if response.status_code == 401 or response.status_code == 403:
                     logger.error("Sarvam TTS authentication failed (401/403).")
-                    raise VoiceProcessingException("Voice synthesis authentication error.", status_code=status.HTTP_401_UNAUTHORIZED)
+                    raise VoiceProcessingException("Sarvam TTS provider authentication error. Please verify server credentials.", status_code=status.HTTP_502_BAD_GATEWAY)
 
                 if response.status_code == 402:
                     logger.warning("Sarvam TTS quota/credits exhausted (402).")

@@ -34,12 +34,31 @@ async def get_current_user(
     user = await farmer_repo.get_by_id(user_id)
     return user
 
+def get_canonical_demo_farmer_profile() -> FarmerProfile:
+    return FarmerProfile(
+        id="demo_farmer_1",
+        user_id="demo_user_1",
+        name="Ramesh Kumar (Demo Farmer)",
+        preferred_language="te",
+        state="Andhra Pradesh",
+        district="Guntur",
+        village="Tenali",
+        experience_years=15
+    )
+
 async def get_current_farmer_profile(
     user: Optional[User] = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> FarmerProfile:
     if user and user.farmer_profile:
         return user.farmer_profile
+
+    if settings.DEMO_MODE:
+        farmer_repo = FarmerRepository(db)
+        demo_user = await farmer_repo.get_by_id("demo_user_1")
+        if demo_user and demo_user.farmer_profile:
+            return demo_user.farmer_profile
+        return get_canonical_demo_farmer_profile()
 
     if settings.APP_ENV in ["production", "staging"]:
         raise HTTPException(
@@ -54,13 +73,20 @@ async def get_current_farmer_profile(
     if demo_user and demo_user.farmer_profile:
         return demo_user.farmer_profile
 
-    return FarmerProfile(
-        id="demo_farmer_1",
-        user_id="demo_user_1",
-        name="Ramesh Kumar (Demo Farmer)",
-        preferred_language="te",
-        state="Andhra Pradesh",
-        district="Guntur",
-        village="Tenali",
-        experience_years=15
-    )
+    return get_canonical_demo_farmer_profile()
+
+async def get_current_farmer_profile_optional(
+    user: Optional[User] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> Optional[FarmerProfile]:
+    if user and user.farmer_profile:
+        return user.farmer_profile
+
+    if settings.DEMO_MODE or settings.APP_ENV not in ["production", "staging"]:
+        farmer_repo = FarmerRepository(db)
+        demo_user = await farmer_repo.get_by_id("demo_user_1")
+        if demo_user and demo_user.farmer_profile:
+            return demo_user.farmer_profile
+        return get_canonical_demo_farmer_profile()
+
+    return None

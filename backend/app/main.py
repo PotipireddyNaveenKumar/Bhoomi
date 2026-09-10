@@ -56,6 +56,8 @@ async def lifespan(app: FastAPI):
     logger.info("Initialized pristine demo tasks for demo_farmer_1.")
     yield
     logger.info("Shutting down BHOOMI V2 backend...")
+    await engine.dispose()
+    logger.info("Database engine connections closed.")
 
 app = FastAPI(
     title=settings.APP_NAME,

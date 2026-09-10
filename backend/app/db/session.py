@@ -2,11 +2,24 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.orm import declarative_base
 from app.core.config import settings
 
+is_sqlite = "sqlite" in settings.DATABASE_URL.lower()
+
+engine_kwargs = {
+    "echo": False,
+    "future": True,
+}
+
+if not is_sqlite:
+    engine_kwargs.update({
+        "pool_pre_ping": True,
+        "pool_recycle": 300,  # Recycle connections every 5 mins to prevent Neon serverless connection drops
+    })
+else:
+    engine_kwargs["pool_pre_ping"] = False
+
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=False,
-    future=True,
-    pool_pre_ping=True if "sqlite" not in settings.DATABASE_URL else False,
+    **engine_kwargs
 )
 
 AsyncSessionLocal = async_sessionmaker(

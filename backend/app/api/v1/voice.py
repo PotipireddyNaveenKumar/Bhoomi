@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, s
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
-from app.api.deps import get_current_farmer_profile
+from app.api.deps import get_current_farmer_profile, get_current_farmer_profile_optional
 from app.models.farmer import FarmerProfile
 from app.services.voice.factory import get_voice_provider
 from app.services.voice.sarvam import SarvamVoiceProvider
@@ -110,10 +110,10 @@ async def transcribe_audio(
 @router.post("/synthesize")
 async def synthesize_speech(
     req: SynthesisRequest,
-    farmer: FarmerProfile = Depends(get_current_farmer_profile),
+    farmer: Optional[FarmerProfile] = Depends(get_current_farmer_profile_optional),
 ):
     provider = get_voice_provider()
-    lang = req.language_code or farmer.preferred_language or "en"
+    lang = req.language_code or (farmer.preferred_language if farmer else "en")
     
     try:
         res = await provider.synthesize(text=req.text, language_code=lang, speaker_gender=req.speaker_gender)
@@ -321,10 +321,10 @@ class WebTTSRequest(BaseModel):
 @router.post("/tts")
 async def web_tts(
     req: WebTTSRequest,
-    farmer: FarmerProfile = Depends(get_current_farmer_profile)
+    farmer: Optional[FarmerProfile] = Depends(get_current_farmer_profile_optional)
 ):
     provider = get_voice_provider()
-    lang = req.language_code or farmer.preferred_language or "en"
+    lang = req.language_code or (farmer.preferred_language if farmer else "en")
     try:
         res = await provider.synthesize(text=req.text, language_code=lang)
         b64_audio = base64.b64encode(res.audio_bytes).decode("utf-8")

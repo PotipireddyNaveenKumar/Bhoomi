@@ -268,7 +268,13 @@ function initAuth() {
   const savedUser = localStorage.getItem("bhoomi_current_user");
   const savedToken = localStorage.getItem("bhoomi_auth_token");
   
-  if (savedToken && savedUser) {
+  // Clean up any legacy manufactured fake tokens
+  if (savedToken && savedToken.startsWith("demo_")) {
+    localStorage.removeItem("bhoomi_auth_token");
+    authToken = null;
+  }
+  
+  if (savedToken && !savedToken.startsWith("demo_") && savedUser) {
     try {
       currentUser = JSON.parse(savedUser);
       authToken = savedToken;
@@ -279,6 +285,18 @@ function initAuth() {
     } catch (e) {
       console.warn("Invalid user storage, prompting login:", e);
     }
+  }
+
+  // If reviewer logged in via demo profile without JWT
+  if (savedUser) {
+    try {
+      currentUser = JSON.parse(savedUser);
+      authToken = null;
+      updateSidebarFarmerProfile(currentUser);
+      hideAuthModal();
+      loadUserScopedSessions();
+      return;
+    } catch (e) {}
   }
 
   // Not logged in -> Show Authentication Modal
@@ -302,25 +320,26 @@ function onAuthLanguageChanged(lang) {
   if (langSelect) langSelect.value = lang;
 }
 
-// 1-Click Demo Login as Ramesh Rao
+// 1-Click Demo Login as Ramesh Kumar (Canonical Demo Farmer)
 async function quickDemoLogin() {
   currentUser = {
-    id: "usr_ramesh_rao",
-    phone_number: "9876543210",
-    full_name: "Ramesh Rao",
-    preferred_language: currentLanguage,
-    state: "Telangana",
-    district: "Warangal",
+    id: "demo_farmer_1",
+    phone_number: "+919876543210 (Demo Contact)",
+    full_name: "Ramesh Kumar (Demo Farmer)",
+    preferred_language: currentLanguage || "te",
+    state: "Andhra Pradesh",
+    district: "Guntur",
+    village: "Tenali",
     land_area_acres: 3.0,
-    current_crop: "Rice",
+    current_crop: "Chilli",
     soil_n: 90.0,
     soil_p: 42.0,
     soil_k: 43.0,
     soil_ph: 6.5
   };
 
-  authToken = "demo_token_ramesh_rao";
-  localStorage.setItem("bhoomi_auth_token", authToken);
+  authToken = null;
+  localStorage.removeItem("bhoomi_auth_token");
   localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
 
   updateSidebarFarmerProfile(currentUser);
@@ -978,9 +997,14 @@ async function sendMessage() {
       image_base64: imgB64
     };
 
+    const chatHeaders = { "Content-Type": "application/json" };
+    if (authToken && !authToken.startsWith("demo_")) {
+      chatHeaders["Authorization"] = `Bearer ${authToken}`;
+    }
+
     const response = await fetch("/api/v1/assistant/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: chatHeaders,
       body: JSON.stringify(payload)
     });
 
@@ -1773,7 +1797,9 @@ async function uploadAndProcessVoiceAudio(audioBlob, isVoiceCall = false) {
     formData.append("session_id", currentSessionId || "");
 
     const vHeaders = {};
-    if (authToken) vHeaders["Authorization"] = `Bearer ${authToken}`;
+    if (authToken && !authToken.startsWith("demo_")) {
+      vHeaders["Authorization"] = `Bearer ${authToken}`;
+    }
 
     const response = await fetch("/api/v1/voice/interact", {
       method: "POST",
@@ -1794,6 +1820,17 @@ async function uploadAndProcessVoiceAudio(audioBlob, isVoiceCall = false) {
         }
       } catch (e) {
         try { errText = await response.text(); } catch (e2) {}
+      }
+
+      if (response.status === 401 || response.status === 403) {
+        showToast("Authentication required: Please log in to access your farm digital twin.", "warning");
+        showAuthModal();
+      } else if (response.status === 402) {
+        showToast("Voice recognition quota exceeded. Please check account credits.", "warning");
+      } else if (response.status === 504) {
+        showToast("Voice recognition request timed out. Please try speaking again.", "warning");
+      } else {
+        showToast("Voice error: " + errText, "error");
       }
       throw new Error(`Voice server error: ${errText}`);
     }
@@ -2096,7 +2133,9 @@ async function processVoiceCallInput(userText) {
 
   try {
     const headers = { "Content-Type": "application/json" };
-    if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+    if (authToken && !authToken.startsWith("demo_")) {
+      headers["Authorization"] = `Bearer ${authToken}`;
+    }
 
     const resp = await fetch("/api/v1/assistant/chat", {
       method: "POST",
@@ -2117,6 +2156,9 @@ async function processVoiceCallInput(userText) {
         else if (errJson && errJson.error && errJson.error.message) errDetail = errJson.error.message;
       } catch (e) {
         try { errDetail = await resp.text(); } catch (e2) {}
+      }
+      if (resp.status === 401 || resp.status === 403) {
+        showAuthModal();
       }
       throw new Error(errDetail);
     }
@@ -2142,9 +2184,13 @@ async function processVoiceCallInput(userText) {
     } else {
       // Synthesize audio using backend TTS
       try {
+        const synthHeaders = { "Content-Type": "application/json" };
+        if (authToken && !authToken.startsWith("demo_")) {
+          synthHeaders["Authorization"] = `Bearer ${authToken}`;
+        }
         const synthResp = await fetch("/api/v1/voice/synthesize", {
           method: "POST",
-          headers: headers,
+          headers: synthHeaders,
           body: JSON.stringify({
             text: replyText,
             language_code: currentLanguage || "en"
@@ -2190,7 +2236,9 @@ async function processVoiceCallAudio(audioBlob) {
     formData.append("session_id", currentSessionId || "");
 
     const vHeaders = {};
-    if (authToken) vHeaders["Authorization"] = `Bearer ${authToken}`;
+    if (authToken && !authToken.startsWith("demo_")) {
+      vHeaders["Authorization"] = `Bearer ${authToken}`;
+    }
 
     const response = await fetch("/api/v1/voice/interact", {
       method: "POST",
@@ -2209,6 +2257,9 @@ async function processVoiceCallAudio(audioBlob) {
         }
       } catch (e) {
         try { errDetail = await response.text(); } catch (e2) {}
+      }
+      if (response.status === 401 || response.status === 403) {
+        showAuthModal();
       }
       throw new Error(errDetail);
     }
@@ -2520,9 +2571,14 @@ async function listenToAssistantMessage(btnElement) {
   updateListenButtonState(btnElement, "loading");
   try {
     const cleanText = rawText.replace(/[\*\#\_`~>•]/g, ' ').trim();
+    const ttsHeaders = { "Content-Type": "application/json" };
+    if (authToken && !authToken.startsWith("demo_")) {
+      ttsHeaders["Authorization"] = `Bearer ${authToken}`;
+    }
+
     const resp = await fetch("/api/v1/voice/tts", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: ttsHeaders,
       body: JSON.stringify({
         text: cleanText,
         language_code: currentLanguage,
@@ -2547,6 +2603,15 @@ async function listenToAssistantMessage(btnElement) {
           serverErrorMsg = errData.detail || errData.message;
         }
       } catch (_) {}
+
+      if (resp.status === 401 || resp.status === 403) {
+        showAuthModal();
+        throw new Error("Authentication required. Please log in to access your farm digital twin.");
+      } else if (resp.status === 402) {
+        throw new Error("Voice synthesis quota exceeded. Please check credits.");
+      } else if (resp.status === 504) {
+        throw new Error("Voice synthesis timed out. Please try again.");
+      }
       throw new Error(serverErrorMsg);
     }
   } catch (err) {
