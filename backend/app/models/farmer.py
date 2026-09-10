@@ -1,8 +1,9 @@
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from datetime import datetime
+from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
 
 class FarmerProfile(Base):
     __tablename__ = "farmer_profiles"
@@ -15,8 +16,8 @@ class FarmerProfile(Base):
     district = Column(String(100), nullable=True)
     village = Column(String(100), nullable=True)
     experience_years = Column(Integer, default=0)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(NaiveUTCDateTime, default=utc_now_naive)
+    updated_at = Column(NaiveUTCDateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     user = relationship("User", back_populates="farmer_profile")
     farms = relationship("Farm", back_populates="farmer", cascade="all, delete-orphan")

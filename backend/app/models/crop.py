@@ -1,9 +1,10 @@
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, Date, Numeric, DateTime, ForeignKey, Enum
+from datetime import datetime
+from sqlalchemy import Column, String, Date, Numeric, ForeignKey, Enum
 import enum
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
 
 class CropStage(str, enum.Enum):
     PLANNING = "planning"
@@ -33,8 +34,8 @@ class FarmCrop(Base):
     current_stage = Column(String(50), default=CropStage.VEGETATIVE.value, nullable=False)
     status = Column(String(20), default=CropStatus.ACTIVE.value, nullable=False)
     cultivation_cost_spent = Column(Numeric(12, 2), default=0.0)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(NaiveUTCDateTime, default=utc_now_naive)
+    updated_at = Column(NaiveUTCDateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     farm = relationship("Farm", back_populates="crops")
     tasks = relationship("FarmTask", back_populates="crop", cascade="all, delete-orphan")

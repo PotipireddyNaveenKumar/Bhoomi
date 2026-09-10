@@ -1,8 +1,10 @@
+import uuid
 from typing import Optional, List, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from app.models.chat import ChatSession, ChatMessage
+from app.core.datetime_utils import utc_now_naive
 
 class ChatRepository:
     def __init__(self, db: AsyncSession):
@@ -20,7 +22,15 @@ class ChatRepository:
             if session:
                 return session
 
-        new_session = ChatSession(farmer_id=farmer_id, title="Farm Advisory Session", language=language)
+        now_naive = utc_now_naive()
+        new_session = ChatSession(
+            id=session_id if session_id else str(uuid.uuid4()),
+            farmer_id=farmer_id,
+            title="Farm Advisory Session",
+            language=language,
+            created_at=now_naive,
+            updated_at=now_naive
+        )
         self.db.add(new_session)
         await self.db.commit()
         await self.db.refresh(new_session)
@@ -60,6 +70,7 @@ class ChatRepository:
             import json
             sanitized_metadata = json.loads(json.dumps(metadata, default=str))
 
+        now_naive = utc_now_naive()
         msg = ChatMessage(
             session_id=session_id,
             sender=sender,
@@ -69,8 +80,16 @@ class ChatRepository:
             image_url=image_url,
             structured_payload=sanitized_payload,
             metadata_json=sanitized_metadata,
+            created_at=now_naive,
         )
         self.db.add(msg)
+
+        # Update session updated_at timestamp in naive UTC
+        result = await self.db.execute(select(ChatSession).where(ChatSession.id == session_id))
+        session = result.scalars().first()
+        if session:
+            session.updated_at = now_naive
+
         await self.db.commit()
         await self.db.refresh(msg)
         return msg

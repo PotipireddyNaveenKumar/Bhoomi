@@ -1,8 +1,9 @@
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, Float, Numeric, DateTime, ForeignKey, JSON
+from datetime import datetime
+from sqlalchemy import Column, String, Float, Numeric, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
 
 class Farm(Base):
     __tablename__ = "farms"
@@ -16,8 +17,8 @@ class Farm(Base):
     soil_type = Column(String(50), nullable=True)  # black, red, alluvial, sandy, clay, loamy
     irrigation_source = Column(String(50), nullable=True)  # borewell, canal, drip, sprinkler, rainfed
     soil_health_data = Column(JSON, nullable=True)  # {"N": 120, "P": 40, "K": 60, "pH": 6.8}
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(NaiveUTCDateTime, default=utc_now_naive)
+    updated_at = Column(NaiveUTCDateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     farmer = relationship("FarmerProfile", back_populates="farms")
     crops = relationship("FarmCrop", back_populates="farm", cascade="all, delete-orphan")

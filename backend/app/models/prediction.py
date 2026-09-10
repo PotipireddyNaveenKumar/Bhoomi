@@ -1,9 +1,10 @@
 from typing import Optional, Dict, Any, TYPE_CHECKING
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import String, Float, DateTime, ForeignKey, JSON
+from datetime import datetime
+from sqlalchemy import String, Float, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.session import Base
+from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
 
 if TYPE_CHECKING:
     from app.models.farmer import FarmerProfile
@@ -18,4 +19,4 @@ class PredictionHistory(Base):
     output_result: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False)
     model_version: Mapped[str] = mapped_column(String(50), default="v1.0.0")
     confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(NaiveUTCDateTime, default=utc_now_naive)

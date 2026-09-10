@@ -1,9 +1,10 @@
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, Text, Date, DateTime, ForeignKey, JSON, Enum
+from datetime import datetime
+from sqlalchemy import Column, String, Text, Date, ForeignKey, JSON, Enum
 import enum
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
 
 class TaskType(str, enum.Enum):
     IRRIGATION = "irrigation"
@@ -49,8 +50,8 @@ class FarmTask(Base):
     reason = Column(Text, nullable=True)
     conditions = Column(JSON, nullable=True)  # {"check_weather": "rain_probability < 40%", "min_soil_moisture": 20}
     source = Column(String(30), default=TaskSource.AI_AGENT.value, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(NaiveUTCDateTime, default=utc_now_naive)
+    updated_at = Column(NaiveUTCDateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     farmer = relationship("FarmerProfile", back_populates="tasks")
     farm = relationship("Farm", back_populates="tasks")

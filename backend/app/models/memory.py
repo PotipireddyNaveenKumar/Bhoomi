@@ -1,9 +1,10 @@
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, Text, Float, DateTime, ForeignKey, Enum
+from datetime import datetime
+from sqlalchemy import Column, String, Text, Float, ForeignKey, Enum
 import enum
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
 
 class MemoryCategory(str, enum.Enum):
     FARM_ATTRIBUTE = "farm_attribute"       # e.g., soil=black soil, area=3 acres
@@ -21,7 +22,7 @@ class FarmerMemory(Base):
     category = Column(String(50), default=MemoryCategory.FARM_ATTRIBUTE.value, nullable=False)
     confidence = Column(Float, default=1.0)
     source_session_id = Column(String(36), ForeignKey("chat_sessions.id", ondelete="SET NULL"), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(NaiveUTCDateTime, default=utc_now_naive)
+    updated_at = Column(NaiveUTCDateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     farmer = relationship("FarmerProfile", back_populates="memories")

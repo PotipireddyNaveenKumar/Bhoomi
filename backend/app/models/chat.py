@@ -1,9 +1,10 @@
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey, JSON, Enum
+from datetime import datetime
+from sqlalchemy import Column, String, Text, ForeignKey, JSON, Enum
 import enum
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
 
 class MessageSender(str, enum.Enum):
     USER = "user"
@@ -22,8 +23,8 @@ class ChatSession(Base):
     farmer_id = Column(String(36), ForeignKey("farmer_profiles.id", ondelete="CASCADE"), nullable=False)
     title = Column(String(200), default="New Conversation", nullable=False)
     language = Column(String(10), default="en", nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(NaiveUTCDateTime, default=utc_now_naive)
+    updated_at = Column(NaiveUTCDateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     farmer = relationship("FarmerProfile", back_populates="chat_sessions")
     messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan", order_by="ChatMessage.created_at")
@@ -40,6 +41,6 @@ class ChatMessage(Base):
     image_url = Column(String(500), nullable=True)
     structured_payload = Column(JSON, nullable=True)  # Visual card payload: { "card_type": "weather_card", "data": {...} }
     metadata_json = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(NaiveUTCDateTime, default=utc_now_naive)
 
     session = relationship("ChatSession", back_populates="messages")
