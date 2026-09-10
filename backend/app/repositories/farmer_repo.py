@@ -56,5 +56,5 @@ class FarmerRepository:
         )
         self.db.add(profile)
         await self.db.commit()
-        await self.db.refresh(user, attribute_names=["farmer_profile"])
+        user.farmer_profile = profile
         return user

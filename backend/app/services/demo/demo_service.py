@@ -21,6 +21,93 @@ class DemoModeService:
     DATA_LABEL = "DEMO_PROFILE / SIMULATED"
 
     @classmethod
+    async def ensure_canonical_demo_data(cls, db: Any) -> None:
+        """
+        Guarantees that the canonical demo farmer (demo_farmer_1), user (demo_user_1),
+        farm (farm_demo_1), and active crop (crop_demo_1) are seeded in the database.
+        Ensures foreign keys in chat_sessions, tasks, and memories never violate constraints.
+        Idempotent: safe to run on every startup and before demo operations.
+        """
+        from decimal import Decimal
+        from sqlalchemy.future import select
+        from app.models.user import User
+        from app.models.farmer import FarmerProfile
+        from app.models.farm import Farm
+        from app.models.crop import FarmCrop, CropStage, CropStatus
+        from app.core.security import get_password_hash
+
+        # 1. User
+        res_user = await db.execute(select(User).where(User.id == "demo_user_1"))
+        user = res_user.scalars().first()
+        if not user:
+            res_phone = await db.execute(select(User).where(User.phone_number == "+919876543210"))
+            user = res_phone.scalars().first()
+            if not user:
+                user = User(
+                    id="demo_user_1",
+                    phone_number="+919876543210",
+                    hashed_password=get_password_hash("demo_farmer_default_pw")
+                )
+                db.add(user)
+                await db.flush()
+
+        # 2. Farmer Profile
+        res_prof = await db.execute(select(FarmerProfile).where(FarmerProfile.id == cls.DEMO_FARMER_ID))
+        profile = res_prof.scalars().first()
+        if not profile:
+            res_prof_user = await db.execute(select(FarmerProfile).where(FarmerProfile.user_id == user.id))
+            profile = res_prof_user.scalars().first()
+            if not profile:
+                profile = FarmerProfile(
+                    id=cls.DEMO_FARMER_ID,
+                    user_id=user.id,
+                    name="Ramesh Kumar (Demo Farmer)",
+                    preferred_language="te",
+                    state="Andhra Pradesh",
+                    district="Guntur",
+                    village="Tenali",
+                    experience_years=15
+                )
+                db.add(profile)
+                await db.flush()
+
+        # 3. Farm
+        res_farm = await db.execute(select(Farm).where(Farm.id == cls.DEMO_FARM_ID))
+        farm = res_farm.scalars().first()
+        if not farm:
+            farm = Farm(
+                id=cls.DEMO_FARM_ID,
+                farmer_id=profile.id,
+                farm_name="Guntur Model Farm",
+                total_area_acres=Decimal("3.0"),
+                soil_type="black",
+                irrigation_source="borewell",
+                latitude=16.2437,
+                longitude=80.6406,
+                soil_health_data={"N": 90.0, "P": 42.0, "K": 43.0, "pH": 6.5}
+            )
+            db.add(farm)
+            await db.flush()
+
+        # 4. Active Crop
+        res_crop = await db.execute(select(FarmCrop).where(FarmCrop.id == "crop_demo_1"))
+        crop = res_crop.scalars().first()
+        if not crop:
+            crop = FarmCrop(
+                id="crop_demo_1",
+                farm_id=farm.id,
+                crop_name="Chilli",
+                variety="Teja",
+                area_acres=Decimal("3.0"),
+                current_stage=CropStage.VEGETATIVE.value,
+                status=CropStatus.ACTIVE.value
+            )
+            db.add(crop)
+            await db.flush()
+
+        await db.commit()
+
+    @classmethod
     def get_demo_profile(cls) -> Dict[str, Any]:
         """
         Returns the canonical predefined demonstration farm digital twin.

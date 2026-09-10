@@ -50,13 +50,14 @@ async def verify_otp(req: VerifyOtpRequest, db: AsyncSession = Depends(get_db)):
             detail="Invalid OTP code. Please use the verification code shown."
         )
 
+    phone_clean = req.phone_number.strip()
     repo = FarmerRepository(db)
-    user = await repo.get_by_phone(req.phone_number)
+    user = await repo.get_by_phone(phone_clean)
     if not user:
         # Auto-register new farmer profile
         hashed_pw = get_password_hash("farmer_otp_auth_default")
         user = await repo.create_user_with_profile(
-            phone=req.phone_number,
+            phone=phone_clean,
             hashed_pw=hashed_pw,
             name=req.full_name or "Farmer",
             language=req.preferred_language or "en",
@@ -64,6 +65,19 @@ async def verify_otp(req: VerifyOtpRequest, db: AsyncSession = Depends(get_db)):
             district=req.district or "Warangal",
             village=req.village or "Rural"
         )
+    elif not user.farmer_profile:
+        from app.models.farmer import FarmerProfile
+        profile = FarmerProfile(
+            user_id=user.id,
+            name=req.full_name or "Farmer",
+            preferred_language=req.preferred_language or "en",
+            state=req.state or "Telangana",
+            district=req.district or "Warangal",
+            village=req.village or "Rural"
+        )
+        db.add(profile)
+        await db.commit()
+        user.farmer_profile = profile
 
     token = create_access_token(user.id)
     return TokenResponse(

@@ -52,8 +52,11 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database schema initialized.")
     from app.services.demo.demo_service import DemoModeService
+    from app.db.session import AsyncSessionLocal
+    async with AsyncSessionLocal() as session:
+        await DemoModeService.ensure_canonical_demo_data(session)
     DemoModeService.reset_demo_state()
-    logger.info("Initialized pristine demo tasks for demo_farmer_1.")
+    logger.info("Initialized pristine demo tasks and canonical demo farmer in database.")
     yield
     logger.info("Shutting down BHOOMI V2 backend...")
     await engine.dispose()
@@ -95,13 +98,17 @@ app.add_middleware(
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled Exception on {request.url.path}: {str(exc)}", exc_info=True)
+    err_str = str(exc)
+    for secret in [settings.SECRET_KEY, settings.GEMINI_API_KEY, settings.SARVAM_API_KEY, settings.OPENAI_API_KEY]:
+        if secret and len(secret) > 6 and secret in err_str:
+            err_str = err_str.replace(secret, "[REDACTED]")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
             "success": False,
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
-                "message": "An unexpected error occurred. Please try again.",
+                "message": err_str or "An unexpected error occurred. Please try again.",
             }
         }
     )
@@ -119,8 +126,11 @@ async def root(request: Request):
             "app": settings.APP_NAME,
             "status": "healthy",
             "version": "2.0.0",
+            "demo_mode": settings.DEMO_MODE,
             "voice_provider": settings.VOICE_PROVIDER,
             "llm_provider": settings.LLM_PROVIDER,
+            "weather_provider": settings.WEATHER_PROVIDER,
+            "market_provider": settings.MARKET_PROVIDER,
             "real_field_pilot_data": "NOT_PRESENT",
             "production_status": "NOT_PRODUCTION_READY",
             "rice_status": "RESEARCH_ONLY",
@@ -132,7 +142,8 @@ async def root(request: Request):
     return {
         "app": settings.APP_NAME,
         "status": "healthy",
-        "version": "2.0.0"
+        "version": "2.0.0",
+        "demo_mode": settings.DEMO_MODE
     }
 
 @app.get("/health", tags=["Health"])
@@ -140,7 +151,12 @@ async def health():
     return {
         "app": settings.APP_NAME,
         "status": "healthy",
-        "version": "2.0.0"
+        "version": "2.0.0",
+        "demo_mode": settings.DEMO_MODE,
+        "voice_provider": settings.VOICE_PROVIDER,
+        "llm_provider": settings.LLM_PROVIDER,
+        "weather_provider": settings.WEATHER_PROVIDER,
+        "market_provider": settings.MARKET_PROVIDER
     }
 
 # Register V1 Routers

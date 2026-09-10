@@ -160,8 +160,12 @@ async def voice_interact(
     # 2. Handle Empty or Unintelligible Transcript Gracefully
     if not user_text:
         fallback_msg = FALLBACK_PROMPTS.get(active_lang, FALLBACK_PROMPTS["en"])
-        tts_res = await provider.synthesize(text=fallback_msg, language_code=active_lang)
-        b64_audio = base64.b64encode(tts_res.audio_bytes).decode("utf-8")
+        b64_audio = ""
+        try:
+            tts_res = await provider.synthesize(text=fallback_msg, language_code=active_lang)
+            b64_audio = base64.b64encode(tts_res.audio_bytes).decode("utf-8")
+        except Exception as exc:
+            logger.warning(f"[VOICE_LOOP] Fallback TTS synthesis failed: {exc}")
         return VoiceInteractResponse(
             user_transcription="",
             detected_language=active_lang,
@@ -182,12 +186,15 @@ async def voice_interact(
     )
 
     # 4. Save User Voice Message to History
-    await chat_repo.save_message(
-        session_id=session.id,
-        sender="user",
-        content=user_text,
-        input_mode="voice",
-    )
+    try:
+        await chat_repo.save_message(
+            session_id=session.id,
+            sender="user",
+            content=user_text,
+            input_mode="voice",
+        )
+    except Exception as e:
+        logger.warning(f"Error saving user voice message: {e}")
 
     # 5. Execute Core Decision Intelligence Loop via BhoomiAgentOrchestrator
     logger.info(f"[VOICE_LOOP] [STAGE 3: ORCHESTRATOR] user_text='{user_text}', farmer_id='{farmer.id}'")
@@ -217,13 +224,18 @@ async def voice_interact(
         b64_audio = ""
 
     # 7. Save Assistant Message with Visual Cards
-    asst_msg = await chat_repo.save_message(
-        session_id=session.id,
-        sender="assistant",
-        content=orch_result.response_text,
-        input_mode="voice",
-        structured_payload={"visual_cards": orch_result.visual_cards} if orch_result.visual_cards else None
-    )
+    msg_id = "msg_asst"
+    try:
+        asst_msg = await chat_repo.save_message(
+            session_id=session.id,
+            sender="assistant",
+            content=orch_result.response_text,
+            input_mode="voice",
+            structured_payload={"visual_cards": orch_result.visual_cards} if orch_result.visual_cards else None
+        )
+        msg_id = asst_msg.id
+    except Exception as e:
+        logger.warning(f"Error saving assistant voice message: {e}")
 
     return VoiceInteractResponse(
         user_transcription=user_text,
@@ -232,7 +244,7 @@ async def voice_interact(
         assistant_audio_base64=b64_audio,
         visual_cards=orch_result.visual_cards,
         session_id=session.id,
-        message_id=asst_msg.id,
+        message_id=msg_id,
         voice_state="RESPONDING"
     )
 

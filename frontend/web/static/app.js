@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==========================================
 // Authentication & Multi-Tenant Isolation
 // ==========================================
-function initAuth() {
+async function initAuth() {
   const savedUser = localStorage.getItem("bhoomi_current_user");
   const savedToken = localStorage.getItem("bhoomi_auth_token");
   
@@ -299,7 +299,40 @@ function initAuth() {
     } catch (e) {}
   }
 
-  // Not logged in -> Show Authentication Modal
+  // Fresh / incognito reviewer visit: check if backend is running with DEMO_MODE=true
+  try {
+    const healthRes = await fetch("/health");
+    if (healthRes.ok) {
+      const healthData = await healthRes.json();
+      if (healthData.demo_mode === true) {
+        currentUser = {
+          id: "demo_farmer_1",
+          phone_number: "+919876543210 (Demo Contact)",
+          full_name: "Ramesh Kumar (Demo Farmer)",
+          preferred_language: currentLanguage || "te",
+          state: "Andhra Pradesh",
+          district: "Guntur",
+          village: "Tenali",
+          land_area_acres: 3.0,
+          current_crop: "Chilli",
+          soil_n: 90.0,
+          soil_p: 42.0,
+          soil_k: 43.0,
+          soil_ph: 6.5
+        };
+        authToken = null;
+        localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
+        updateSidebarFarmerProfile(currentUser);
+        hideAuthModal();
+        loadUserScopedSessions();
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn("Error checking demo_mode from /health:", err);
+  }
+
+  // Not in DEMO_MODE and not logged in -> Show Authentication Modal
   showAuthModal();
 }
 
@@ -475,15 +508,25 @@ async function handleVerifyOtp() {
       updateUILanguage(currentLanguage);
       loadUserScopedSessions();
     } else {
-      const err = await res.json();
+      const err = await res.json().catch(() => ({}));
+      let msg = "Invalid OTP code entered. Please try again.";
+      if (typeof err.detail === "string") {
+        msg = err.detail;
+      } else if (Array.isArray(err.detail)) {
+        msg = err.detail.map(d => d.msg || JSON.stringify(d)).join("; ");
+      } else if (err.error && err.error.message) {
+        msg = err.error.message;
+      } else if (err.message) {
+        msg = err.message;
+      }
       if (errorMsg) {
-        errorMsg.textContent = err.detail || "Invalid OTP code entered. Please try again.";
+        errorMsg.textContent = msg;
         errorMsg.style.display = "block";
       }
     }
   } catch (e) {
     if (errorMsg) {
-      errorMsg.textContent = "Server error verifying OTP. Please try again.";
+      errorMsg.textContent = "Server error verifying OTP: " + (e.message || "Please try again.");
       errorMsg.style.display = "block";
     }
   }
@@ -1036,11 +1079,26 @@ async function sendMessage() {
         }, 300);
       }
     } else {
-      appendMessageRow("assistant", "⚠️ Unable to connect to agronomic server. Please verify your connection.");
+      const errData = await response.json().catch(() => ({}));
+      console.error("[CHAT] Request failed:", response.status, errData);
+      let errMsg = "⚠️ Unable to connect to agronomic server. Please verify your connection.";
+      if (response.status === 401) {
+        errMsg = "⚠️ Authentication required. Please log in to access your farm digital twin, or enable demo mode.";
+      } else if (typeof errData.detail === "string") {
+        errMsg = `⚠️ ${errData.detail}`;
+      } else if (Array.isArray(errData.detail)) {
+        errMsg = `⚠️ ${errData.detail.map(d => d.msg || JSON.stringify(d)).join("; ")}`;
+      } else if (errData.error && errData.error.message) {
+        errMsg = `⚠️ ${errData.error.message}`;
+      } else if (errData.message) {
+        errMsg = `⚠️ ${errData.message}`;
+      }
+      appendMessageRow("assistant", errMsg);
     }
   } catch (err) {
     removeThinkingRow(thinkingId);
-    appendMessageRow("assistant", "⚠️ Connection error. Please try again.");
+    console.error("[CHAT] Network error:", err);
+    appendMessageRow("assistant", `⚠️ Connection error: ${err.message || "Please try again."}`);
   }
 
   scrollToBottom();
@@ -1178,9 +1236,14 @@ async function submitFeedback(btnElement, rating) {
   };
 
   try {
+    const feedbackHeaders = { "Content-Type": "application/json" };
+    if (authToken && !authToken.startsWith("demo_")) {
+      feedbackHeaders["Authorization"] = `Bearer ${authToken}`;
+    }
+
     const res = await fetch("/api/v1/assistant/feedback", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: feedbackHeaders,
       body: JSON.stringify({
         session_id: currentSessionId,
         rating: rating,
@@ -1193,10 +1256,13 @@ async function submitFeedback(btnElement, rating) {
       const msg = thanksMap[currentLanguage] || thanksMap.en;
       container.innerHTML = `<span class="feedback-thanks">✓ ${msg}</span>`;
     } else {
+      const errData = await res.json().catch(() => ({}));
+      console.error("[FEEDBACK] Submission failed:", res.status, errData);
       const errMsg = errorMap[currentLanguage] || errorMap.en;
       container.innerHTML = `<span class="feedback-error" style="color:#ef4444;font-size:0.8rem;">${errMsg}</span>`;
     }
   } catch (e) {
+    console.error("[FEEDBACK] Network/client error:", e);
     const errMsg = errorMap[currentLanguage] || errorMap.en;
     container.innerHTML = `<span class="feedback-error" style="color:#ef4444;font-size:0.8rem;">${errMsg}</span>`;
   }
@@ -2174,9 +2240,20 @@ async function processVoiceCallInput(userText) {
       aiSubtitle.textContent = replyText;
     }
 
-    // Save to chat history
+    // Save to chat history and active session
+    let curSess = sessionsList.find(s => s.id === currentSessionId);
+    if (!curSess) {
+      curSess = createNewSession();
+    }
     appendMessageRow("user", userText, null, null);
     appendMessageRow("assistant", replyText, null, { visual_cards: data.visual_cards });
+    if (curSess) {
+      curSess.messages.push({ role: "user", content: userText, input_mode: "voice", timestamp: Date.now() });
+      curSess.messages.push({ role: "assistant", content: replyText, data: { visual_cards: data.visual_cards }, timestamp: Date.now() });
+      curSess.updatedAt = Date.now();
+      saveSessions();
+    }
+    scrollToBottom();
 
     // Speak response out loud
     if (data.assistant_audio_base64) {
@@ -2278,9 +2355,28 @@ async function processVoiceCallAudio(audioBlob) {
       aiSubtitle.textContent = replyText;
     }
 
-    // Save to chat history
-    if (userTranscript) appendMessageRow("user", userTranscript, null, null);
-    appendMessageRow("assistant", replyText, null, { visual_cards: data.visual_cards });
+    // Save to chat history and active session
+    let curSess = sessionsList.find(s => s.id === currentSessionId);
+    if (!curSess) {
+      curSess = createNewSession();
+    }
+    if (userTranscript) {
+      appendMessageRow("user", userTranscript, null, null);
+      if (curSess) {
+        curSess.messages.push({ role: "user", content: userTranscript, input_mode: "voice", timestamp: Date.now() });
+      }
+    }
+    if (replyText) {
+      appendMessageRow("assistant", replyText, null, { visual_cards: data.visual_cards });
+      if (curSess) {
+        curSess.messages.push({ role: "assistant", content: replyText, data: { visual_cards: data.visual_cards }, timestamp: Date.now() });
+      }
+    }
+    if (curSess) {
+      curSess.updatedAt = Date.now();
+      saveSessions();
+    }
+    scrollToBottom();
 
     // Play synthesized voice out loud
     if (data.assistant_audio_base64) {

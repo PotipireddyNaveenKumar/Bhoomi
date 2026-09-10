@@ -18,10 +18,12 @@ async def get_current_user(
     if not token:
         return None
     if token == "demo_session_token_bhoomi_v2":
-        if settings.APP_ENV in ["production", "staging"]:
+        if settings.effective_env in ["production", "staging"] and not settings.DEMO_MODE:
             return None
         farmer_repo = FarmerRepository(db)
         return await farmer_repo.get_by_id("demo_user_1")
+    if token.startswith("demo_"):
+        return None
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id: Optional[str] = payload.get("sub")
@@ -58,9 +60,14 @@ async def get_current_farmer_profile(
         demo_user = await farmer_repo.get_by_id("demo_user_1")
         if demo_user and demo_user.farmer_profile:
             return demo_user.farmer_profile
+        from app.services.demo.demo_service import DemoModeService
+        await DemoModeService.ensure_canonical_demo_data(db)
+        demo_user = await farmer_repo.get_by_id("demo_user_1")
+        if demo_user and demo_user.farmer_profile:
+            return demo_user.farmer_profile
         return get_canonical_demo_farmer_profile()
 
-    if settings.APP_ENV in ["production", "staging"]:
+    if settings.APP_ENV in ["production", "staging"] or settings.effective_env in ["production", "staging"]:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication required. Please log in to access your farm digital twin.",
@@ -82,8 +89,13 @@ async def get_current_farmer_profile_optional(
     if user and user.farmer_profile:
         return user.farmer_profile
 
-    if settings.DEMO_MODE or settings.APP_ENV not in ["production", "staging"]:
+    if settings.DEMO_MODE or (settings.APP_ENV not in ["production", "staging"] and settings.effective_env not in ["production", "staging"]):
         farmer_repo = FarmerRepository(db)
+        demo_user = await farmer_repo.get_by_id("demo_user_1")
+        if demo_user and demo_user.farmer_profile:
+            return demo_user.farmer_profile
+        from app.services.demo.demo_service import DemoModeService
+        await DemoModeService.ensure_canonical_demo_data(db)
         demo_user = await farmer_repo.get_by_id("demo_user_1")
         if demo_user and demo_user.farmer_profile:
             return demo_user.farmer_profile
