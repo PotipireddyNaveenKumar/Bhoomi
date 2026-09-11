@@ -380,6 +380,109 @@ async function quickDemoLogin() {
   loadUserScopedSessions();
 }
 
+// State and District directory for realistic location onboarding
+const STATE_DISTRICTS = {
+  "Telangana": ["Warangal", "Karimnagar", "Khammam", "Nalgonda", "Nizamabad", "Mahabubnagar", "Adilabad", "Medak", "Rangareddy"],
+  "Andhra Pradesh": ["Guntur", "Krishna", "Kurnool", "Anantapur", "West Godavari", "East Godavari", "Chittoor", "Prakasam", "Visakhapatnam"],
+  "Karnataka": ["Bengaluru Rural", "Belagavi", "Dharwad", "Mysuru", "Ballari", "Shivamogga", "Raichur", "Hassan"],
+  "Tamil Nadu": ["Coimbatore", "Thanjavur", "Madurai", "Salem", "Tiruchirappalli", "Erode", "Dindigul", "Tirunelveli"],
+  "Maharashtra": ["Nashik", "Pune", "Nagpur", "Amravati", "Ahmednagar", "Solapur", "Kolhapur", "Aurangabad"],
+  "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Sangrur", "Firozpur"],
+  "Haryana": ["Karnal", "Hisar", "Ambala", "Rohtak", "Sirsa", "Kurukshetra", "Sonipat"],
+  "Uttar Pradesh": ["Varanasi", "Lucknow", "Agra", "Kanpur", "Meerut", "Prayagraj", "Bareilly"],
+  "Madhya Pradesh": ["Indore", "Bhopal", "Ujjain", "Jabalpur", "Gwalior", "Hoshangabad", "Dewas"],
+  "Gujarat": ["Rajkot", "Surat", "Vadodara", "Junagadh", "Mehsana", "Bhavnagar", "Ahmedabad"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Sri Ganganagar", "Udaipur", "Alwar"],
+  "West Bengal": ["Burdwan", "Hooghly", "Nadia", "Murshidabad", "North 24 Parganas", "Bankura"],
+  "Bihar": ["Patna", "Muzaffarpur", "Bhagalpur", "Gaya", "Samastipur", "Nalanda"],
+  "Odisha": ["Cuttack", "Sambalpur", "Balasore", "Bargarh", "Ganjam", "Khurda"],
+  "Kerala": ["Palakkad", "Wayanad", "Thrissur", "Idukki", "Alappuzha", "Kottayam"]
+};
+
+let detectedLat = null;
+let detectedLon = null;
+let currentSoilEstimate = null;
+
+function onStateChanged() {
+  const stateSelect = document.getElementById("farmerStateInput");
+  const districtSelect = document.getElementById("farmerDistrictInput");
+  if (!stateSelect || !districtSelect) return;
+
+  const state = stateSelect.value;
+  const districts = STATE_DISTRICTS[state] || ["Central District"];
+  districtSelect.innerHTML = districts.map(d => `<option value="${d}">${d}</option>`).join("");
+  onDistrictChanged();
+}
+
+function onDistrictChanged() {
+  const state = document.getElementById("farmerStateInput")?.value || "Telangana";
+  const district = document.getElementById("farmerDistrictInput")?.value || "Warangal";
+  fetchSoilEstimate(state, district, detectedLat, detectedLon);
+}
+
+async function fetchSoilEstimate(state, district, lat = null, lon = null) {
+  try {
+    let url = `/api/v1/farms/soil-estimate?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}`;
+    if (lat && lon) {
+      url += `&latitude=${lat}&longitude=${lon}`;
+    }
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      currentSoilEstimate = data;
+      const typeLabel = document.getElementById("soilEstTypeLabel");
+      const phLabel = document.getElementById("soilEstPhLabel");
+      const badge = document.getElementById("soilEstConfidenceBadge");
+      if (typeLabel) typeLabel.textContent = data.soil_type || "Estimated Loam";
+      if (phLabel) phLabel.textContent = `${data.estimated_ph || 6.5} (Estimated)`;
+      if (badge) badge.textContent = `${Math.round((data.confidence || 0.85) * 100)}% Coverage`;
+    }
+  } catch (err) {
+    console.debug("Soil estimate fetch notice:", err);
+  }
+}
+
+function detectFarmerLocation() {
+  const btn = document.getElementById("btnDetectLocation");
+  if (!navigator.geolocation) {
+    showToast("Geolocation is not supported by your browser.", "warning");
+    return;
+  }
+  if (btn) btn.innerHTML = "<span>⏳</span> Detecting...";
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      detectedLat = parseFloat(pos.coords.latitude.toFixed(4));
+      detectedLon = parseFloat(pos.coords.longitude.toFixed(4));
+      const villageInput = document.getElementById("farmerVillageInput");
+      if (villageInput) {
+        villageInput.value = `GPS (${detectedLat}, ${detectedLon})`;
+      }
+      if (btn) btn.innerHTML = "<span>✅</span> Location Set";
+      showToast(`Location detected: ${detectedLat}, ${detectedLon}`, "success");
+      const state = document.getElementById("farmerStateInput")?.value || "Telangana";
+      const district = document.getElementById("farmerDistrictInput")?.value || "Warangal";
+      fetchSoilEstimate(state, district, detectedLat, detectedLon);
+    },
+    (err) => {
+      console.warn("Geolocation denied/unavailable:", err);
+      if (btn) btn.innerHTML = "<span>📍</span> Detect Location (GPS)";
+      showToast("Could not access GPS. Please enter district manually.", "info");
+    },
+    { timeout: 8000 }
+  );
+}
+
+function toggleSoilTestFields() {
+  const fields = document.getElementById("labSoilFields");
+  const btn = document.getElementById("btnToggleSoilTest");
+  if (!fields) return;
+  const isHidden = fields.style.display === "none";
+  fields.style.display = isHidden ? "block" : "none";
+  if (btn) {
+    btn.textContent = isHidden ? "- [Hide Measured Soil Test Values]" : "+ [Enter Measured Soil Test Values (N, P, K, pH)]";
+  }
+}
+
 // Step 1: Send OTP to Mobile Number
 async function handleSendOtp() {
   const phoneInput = document.getElementById("otpMobileInput");
@@ -423,9 +526,10 @@ async function handleSendOtp() {
       otpCodeInput.focus();
     }
 
-    // Show farmer detail fields
+    // Show farmer detail fields & trigger initial soil estimate
     const newFields = document.getElementById("newFarmerFields");
     if (newFields) newFields.style.display = "block";
+    onStateChanged();
 
   } catch (e) {
     if (errorMsg) {
@@ -450,16 +554,22 @@ async function handleVerifyOtp() {
     return;
   }
 
-
   const name = document.getElementById("farmerNameInput")?.value?.trim() || "Farmer";
   const state = document.getElementById("farmerStateInput")?.value || "Telangana";
   const district = document.getElementById("farmerDistrictInput")?.value?.trim() || "Warangal";
-  const crop = document.getElementById("farmerCropInput")?.value?.trim() || "Rice";
+  const village = document.getElementById("farmerVillageInput")?.value?.trim() || "Rural";
+  const crop = document.getElementById("farmerCropInput")?.value?.trim() || "Chilli";
+  const variety = document.getElementById("farmerVarietyInput")?.value?.trim() || "";
   const acres = parseFloat(document.getElementById("farmerAcresInput")?.value || 3.0);
-  const soilN = parseFloat(document.getElementById("farmerSoilN")?.value || 90);
-  const soilP = parseFloat(document.getElementById("farmerSoilP")?.value || 42);
-  const soilK = parseFloat(document.getElementById("farmerSoilK")?.value || 43);
-  const soilPh = parseFloat(document.getElementById("farmerSoilPh")?.value || 6.5);
+
+  const labFields = document.getElementById("labSoilFields");
+  const isSoilManual = labFields && labFields.style.display !== "none";
+  const soilN = isSoilManual && document.getElementById("farmerSoilN")?.value ? parseFloat(document.getElementById("farmerSoilN").value) : null;
+  const soilP = isSoilManual && document.getElementById("farmerSoilP")?.value ? parseFloat(document.getElementById("farmerSoilP").value) : null;
+  const soilK = isSoilManual && document.getElementById("farmerSoilK")?.value ? parseFloat(document.getElementById("farmerSoilK").value) : null;
+  const soilPh = isSoilManual && document.getElementById("farmerSoilPh")?.value ? parseFloat(document.getElementById("farmerSoilPh").value) : null;
+
+  const soilSourceType = (soilN !== null || soilP !== null || soilK !== null) ? "farmer_entered" : "estimated";
 
   try {
     const res = await fetch("/api/v1/auth/verify-otp", {
@@ -472,12 +582,18 @@ async function handleVerifyOtp() {
         preferred_language: currentLanguage,
         state: state,
         district: district,
+        village: village,
         current_crop: crop,
+        crop_variety: variety,
         land_area_acres: acres,
+        soil_type: currentSoilEstimate?.soil_type || null,
+        soil_source_type: soilSourceType,
         soil_n: soilN,
         soil_p: soilP,
         soil_k: soilK,
-        soil_ph: soilPh
+        soil_ph: soilPh || currentSoilEstimate?.estimated_ph || 6.5,
+        latitude: detectedLat,
+        longitude: detectedLon
       })
     });
 
@@ -493,12 +609,16 @@ async function handleVerifyOtp() {
         preferred_language: currentLanguage,
         state: state,
         district: district,
+        village: village,
         land_area_acres: acres,
         current_crop: crop,
+        crop_variety: variety,
+        active_crop: crop,
+        soil_source_type: soilSourceType,
         soil_n: soilN,
         soil_p: soilP,
         soil_k: soilK,
-        soil_ph: soilPh
+        soil_ph: soilPh || currentSoilEstimate?.estimated_ph || 6.5
       };
       localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
       localStorage.setItem("bhoomi_lang", currentLanguage);
@@ -572,38 +692,8 @@ function updateSidebarFarmerProfile(user) {
 // ==========================================
 // Regional State & Districts Mapping
 // ==========================================
-const STATE_DISTRICTS = {
-  "Telangana": [
-    "Warangal", "Karimnagar", "Nalgonda", "Khammam", "Nizamabad",
-    "Mahabubnagar", "Medak", "Rangareddy", "Adilabad", "Suryapet",
-    "Siddipet", "Jagtial", "Kamareddy", "Peddapalli", "Mancherial"
-  ],
-  "Andhra Pradesh": [
-    "Guntur", "Krishna", "East Godavari", "West Godavari", "Kurnool",
-    "Anantapur", "Vizianagaram", "Visakhapatnam", "Chittoor", "Prakasam",
-    "YSR Kadapa", "Nellore", "Srikakulam", "Eluru", "Kakinada"
-  ],
-  "Maharashtra": [
-    "Pune", "Nagpur", "Nashik", "Chhatrapati Sambhajinagar (Aurangabad)", "Solapur",
-    "Kolhapur", "Amravati", "Yavatmal", "Ahmednagar", "Satara",
-    "Jalgaon", "Nanded", "Latur", "Buldhana", "Akola"
-  ],
-  "Karnataka": [
-    "Belagavi", "Mysuru", "Mandya", "Dharwad", "Ballari",
-    "Raichur", "Davanagere", "Shivamogga", "Tumakuru", "Hassan",
-    "Kalaburagi", "Vijayapura", "Bagalkot", "Chikkamagaluru", "Udupi"
-  ],
-  "Tamil Nadu": [
-    "Thanjavur", "Madurai", "Coimbatore", "Salem", "Tiruchirappalli",
-    "Erode", "Tirunelveli", "Vellore", "Dindigul", "Cuddalore",
-    "Tiruppur", "Kanchipuram", "Thiruvarur", "Nagapattinam", "Theni"
-  ],
-  "Punjab": [
-    "Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda",
-    "Firozpur", "Sangrur", "Hoshiarpur", "Moga", "Gurdaspur",
-    "Faridkot", "Fazilka", "Kapurthala", "Mansa", "Muktsar"
-  ]
-};
+// Duplicate STATE_DISTRICTS removed
+
 
 function populateDistricts(stateSelectId, districtSelectId, selectedDistrict = null) {
   const stateEl = document.getElementById(stateSelectId);
@@ -2978,7 +3068,8 @@ window.onLanguageChanged = onLanguageChanged;
 window.sendMessage = sendMessage;
 window.sendQuickQuery = sendQuickQuery;
 window.removeAttachedImage = removeAttachedImage;
+window.onStateChanged = onStateChanged;
+window.onDistrictChanged = onDistrictChanged;
+window.detectFarmerLocation = detectFarmerLocation;
+window.toggleSoilTestFields = toggleSoilTestFields;
 window.analyzeSampleLeaf = analyzeSampleLeaf;
-
-
-

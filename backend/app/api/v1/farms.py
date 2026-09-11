@@ -1,13 +1,32 @@
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
 from app.api.deps import get_current_farmer_profile
 from app.models.farmer import FarmerProfile
 from app.repositories.farm_repo import FarmRepository
 from app.schemas.farm import FarmCreate, FarmResponse, CropCreate, CropResponse
+from app.services.soil.soil_estimation_service import SoilEstimationService, SoilEstimateResponse
 
 router = APIRouter(prefix="/farms", tags=["Farm Digital Twin"])
+
+@router.get("/soil-estimate", response_model=SoilEstimateResponse)
+async def get_location_soil_estimate(
+    state: Optional[str] = Query(None, description="Indian state name"),
+    district: Optional[str] = Query(None, description="District name"),
+    latitude: Optional[float] = Query(None, description="GPS Latitude"),
+    longitude: Optional[float] = Query(None, description="GPS Longitude")
+):
+    """
+    Returns regional agro-ecological soil estimation and provenance per ICAR-NBSS&LUP data.
+    Accessible publicly for onboarding and farm setup.
+    """
+    return SoilEstimationService.get_soil_estimate(
+        state=state,
+        district=district,
+        latitude=latitude,
+        longitude=longitude
+    )
 
 @router.get("", response_model=List[FarmResponse])
 async def list_farms(

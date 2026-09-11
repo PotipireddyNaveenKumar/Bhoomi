@@ -143,3 +143,31 @@ class CropModelRegistry:
 
         provider = cls._providers[canonical]
         return provider.predict(image_bytes=image_bytes, top_k=top_k)
+
+    @classmethod
+    def identify_best_candidate(
+        cls,
+        image_bytes: bytes,
+        top_k: int = 3
+    ) -> Optional[tuple]:
+        """
+        Runs multi-crop vision evaluation across all 10 registered crop providers.
+        Returns (crop_name, best_prediction) sorted by calibrated confidence,
+        filtering for reliable in-distribution predictions.
+        """
+        cls._initialize()
+        candidates = []
+        for c_name, provider in cls._providers.items():
+            try:
+                p = provider.predict(image_bytes=image_bytes, top_k=top_k)
+                if p.quality_status != "FAILED" and p.is_reliable and not p.is_ood:
+                    candidates.append((c_name, p))
+            except Exception as e:
+                logger.debug("Provider %s failed during candidate scan: %s", c_name, e)
+                continue
+
+        if candidates:
+            candidates.sort(key=lambda x: x[1].calibrated_confidence, reverse=True)
+            return candidates[0]
+        return None
+

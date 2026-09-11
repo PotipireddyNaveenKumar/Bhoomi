@@ -64,16 +64,7 @@
         </select>
       </div>
 
-      <!-- 1-Click Instant Demo Login (For Judges & Evaluators) -->
-      <button type="button" class="btn-demo-login" id="btnQuickDemoLogin" onclick="quickDemoLogin()">
-        <span>👨‍🌾</span>
-        <span id="txtQuickDemo">🌾 1-Click Demo Login (As Ramesh Kumar)</span>
-      </button>
-
-      <div class="auth-divider">
-        <span>— or Login with Mobile OTP —</span>
-      </div>
-
+      <!-- Mobile OTP Login & Onboarding Gate -->
       <!-- Step 1: Request OTP Form -->
       <div id="otpStep1">
         <div class="form-group">
@@ -85,15 +76,15 @@
         </div>
         <button type="button" class="btn-auth-submit" id="btnSendOtp" onclick="handleSendOtp()">
           <span>📲</span>
-          <span id="txtBtnSendOtp">Send OTP (Get OTP)</span>
+          <span id="txtBtnSendOtp">Send OTP Verification Code</span>
         </button>
       </div>
 
-      <!-- Step 2: Verify OTP Form (Appears after clicking Get OTP) -->
+      <!-- Step 2: Verify OTP & Farm Onboarding Form -->
       <div id="otpStep2" style="display: none;">
         <div class="otp-sent-banner" id="otpSentBanner">
           <span>📩</span>
-          <span id="txtOtpSentInfo">OTP sent to +91 9876543210</span>
+          <span id="txtOtpSentInfo">OTP sent to +91 9876543210. (Demo verification code: <strong>1234</strong>)</span>
         </div>
 
         <div id="newFarmerFields">
@@ -107,38 +98,65 @@
           <div class="form-row">
             <div class="form-group">
               <label for="farmerStateInput">🏛️ State</label>
-              <select id="farmerStateInput" onchange="populateDistricts('farmerStateInput', 'farmerDistrictInput')">
+              <select id="farmerStateInput" onchange="onStateChanged()">
                 <option value="Telangana" selected>Telangana</option>
                 <option value="Andhra Pradesh">Andhra Pradesh</option>
-                <option value="Maharashtra">Maharashtra</option>
                 <option value="Karnataka">Karnataka</option>
                 <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Maharashtra">Maharashtra</option>
                 <option value="Punjab">Punjab</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Odisha">Odisha</option>
+                <option value="Kerala">Kerala</option>
               </select>
             </div>
             <div class="form-group">
               <label for="farmerDistrictInput">📍 District</label>
-              <select id="farmerDistrictInput">
+              <select id="farmerDistrictInput" onchange="onDistrictChanged()">
                 <option value="Warangal" selected>Warangal</option>
               </select>
             </div>
           </div>
 
-          <!-- 3. Current Crop & Land Area (2-Column) -->
+          <!-- 3. Location: Geolocation & Village -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="farmerVillageInput">🏡 Village / Mandal</label>
+              <input type="text" id="farmerVillageInput" placeholder="e.g. Rural / Atmakur" value="Rural">
+            </div>
+            <div class="form-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
+              <button type="button" class="btn-geo-detect" id="btnDetectLocation" onclick="detectFarmerLocation()" style="padding: 10px; background: var(--surface-card, #1e293b); border: 1px solid var(--border-subtle, #334155); border-radius: 8px; color: var(--accent-emerald, #10b981); cursor: pointer; font-size: 0.88rem; font-weight: 600;">
+                <span>📍</span> Detect Location (GPS)
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. Current Crop & Land Area -->
           <div class="form-row">
             <div class="form-group">
               <label for="farmerCropInput">🌾 Current Crop</label>
               <select id="farmerCropInput">
-                <option value="Rice" selected>Rice (Paddy / వరి)</option>
-                <option value="Cotton">Cotton (పత్తి)</option>
-                <option value="Maize">Maize (మొక్కజొన్న)</option>
-                <option value="Chilli">Chilli (మిర్చి)</option>
-                <option value="Soybean">Soybean (సోయాబీన్)</option>
-                <option value="Wheat">Wheat (గోధుమ)</option>
-                <option value="Sugarcane">Sugarcane (చెరకు)</option>
-                <option value="Groundnut">Groundnut (వేరుశనగ)</option>
-                <option value="Pulses">Pulses / Red Gram (కందులు)</option>
-                <option value="Vegetables">Vegetables (కూరగాయలు)</option>
+                <option value="Potato">Potato (బంగాళాదుంప / आलू)</option>
+                <option value="Guava">Guava (జామ / अमरूद)</option>
+                <option value="Tomato">Tomato (టమోటా / टमाटर)</option>
+                <option value="Chilli" selected>Chilli (మిర్చి / मिर्च)</option>
+                <option value="Rice">Rice / Paddy (వరి / धान)</option>
+                <option value="Banana">Banana (అరటి / केला)</option>
+                <option value="Corn">Corn / Maize (మొక్కజొన్న / मक्का)</option>
+                <option value="Apple">Apple (ఆపిల్ / सेब)</option>
+                <option value="Cucumber">Cucumber / Pumpkin (దోస / कद्दू)</option>
+                <option value="Sugarcane">Sugarcane (చెరకు / गन्ना)</option>
+                <option value="Cotton">Cotton (పత్తి / कपास)</option>
+                <option value="Wheat">Wheat (గోధుమ / गेहूं)</option>
+                <option value="Soybean">Soybean (సోయాబీన్ / सोयाबीन)</option>
+                <option value="Groundnut">Groundnut (వేరుశనగ / मूंगफली)</option>
+                <option value="Pulses">Pulses / Red Gram (కందులు / दालें)</option>
               </select>
             </div>
             <div class="form-group">
@@ -147,32 +165,57 @@
             </div>
           </div>
 
-          <!-- 4. Soil Test Info (4-Column Grid) -->
-          <div class="soil-section-title">🧪 Soil Test Information (N, P, K, pH)</div>
-          <div class="form-row-4">
-            <div class="form-group">
-              <label>Nitrogen (N)</label>
-              <input type="number" id="farmerSoilN" value="90">
+          <!-- 5. Optional Crop Variety -->
+          <div class="form-group">
+            <label for="farmerVarietyInput">🌱 Crop Variety (Optional)</label>
+            <input type="text" id="farmerVarietyInput" placeholder="e.g. Kufri Jyoti / Teja / Arka Rakshak">
+          </div>
+
+          <!-- 6. Soil Information (Location Estimate + Optional Lab Entry) -->
+          <div class="soil-onboarding-panel" style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.22); border-radius: 10px; padding: 12px; margin-top: 10px; margin-bottom: 12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-weight: 700; font-size: 0.92rem; color: var(--accent-emerald, #10b981);">🧪 Soil Information (Estimated from Location)</span>
+              <span id="soilEstConfidenceBadge" style="font-size: 11px; background: rgba(16,185,129,0.2); color: var(--accent-emerald, #10b981); padding: 2px 8px; border-radius: 12px; font-weight: 600;">89% Coverage</span>
             </div>
-            <div class="form-group">
-              <label>Phosphorus (P)</label>
-              <input type="number" id="farmerSoilP" value="42">
+            <div style="font-size: 0.85rem; color: var(--text-secondary, #94a3b8); margin-bottom: 8px;">
+              <strong>Soil Type:</strong> <span id="soilEstTypeLabel" style="color:var(--text-primary, #f8fafc);">Red Sandy Loam (Chalka)</span> | 
+              <strong>Estimated pH:</strong> <span id="soilEstPhLabel" style="color:var(--text-primary, #f8fafc);">6.6 (Near Neutral)</span>
             </div>
-            <div class="form-group">
-              <label>Potassium (K)</label>
-              <input type="number" id="farmerSoilK" value="43">
+            <div style="font-size: 0.78rem; color: var(--text-muted, #64748b); line-height: 1.35; margin-bottom: 8px;">
+              ℹ️ <em>N/P/K soil-test values not available from location alone. Derived from ICAR-NBSS&LUP Regional Agro-Ecological Survey.</em>
             </div>
-            <div class="form-group">
-              <label>Soil pH</label>
-              <input type="number" id="farmerSoilPh" step="0.1" value="6.5">
+            <button type="button" id="btnToggleSoilTest" onclick="toggleSoilTestFields()" style="background: none; border: none; color: var(--accent-emerald, #10b981); text-decoration: underline; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 0;">
+              + [Enter Measured Soil Test Values (N, P, K, pH)]
+            </button>
+
+            <!-- Collapsible Lab Soil Values -->
+            <div id="labSoilFields" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(16,185,129,0.25);">
+              <div class="form-row-4">
+                <div class="form-group">
+                  <label style="font-size: 0.78rem;">Nitrogen (N kg/ha)</label>
+                  <input type="number" id="farmerSoilN" placeholder="e.g. 90">
+                </div>
+                <div class="form-group">
+                  <label style="font-size: 0.78rem;">Phosphorus (P kg/ha)</label>
+                  <input type="number" id="farmerSoilP" placeholder="e.g. 42">
+                </div>
+                <div class="form-group">
+                  <label style="font-size: 0.78rem;">Potassium (K kg/ha)</label>
+                  <input type="number" id="farmerSoilK" placeholder="e.g. 43">
+                </div>
+                <div class="form-group">
+                  <label style="font-size: 0.78rem;">Exact Lab pH</label>
+                  <input type="number" id="farmerSoilPh" step="0.1" placeholder="e.g. 6.5">
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 5. OTP Code Input -->
+        <!-- 7. OTP Code Input -->
         <div class="form-group" style="margin-top: 12px;">
-          <label for="otpCodeInput" id="lblOtpCode">🔢 Enter 4-Digit OTP Code received on phone:</label>
-          <input type="number" id="otpCodeInput" placeholder="Enter 4-digit code" maxlength="4" style="text-align: center; font-size: 20px; letter-spacing: 6px;" autocomplete="one-time-code">
+          <label for="otpCodeInput" id="lblOtpCode">🔢 Enter 4-Digit OTP Code (Enter: <strong>1234</strong>):</label>
+          <input type="number" id="otpCodeInput" placeholder="1234" maxlength="4" style="text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: 700;" autocomplete="one-time-code">
         </div>
 
         <div class="otp-action-row">
@@ -304,14 +347,6 @@
           <span class="photo-opt-title">గ్యాలరీ నుండి ఎంచుకోండి</span>
           <span class="photo-opt-sub">Upload from Files / Photos</span>
         </button>
-      </div>
-      <div id="sampleLeavesDevSection" class="sample-leaves-section" style="display: none; margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 10px;">
-        <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">🧪 TEST DEMO SCENARIOS / నమూనాలు (DEV ONLY):</div>
-        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <button type="button" class="btn-sample-leaf" style="font-size: 11px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--surface); cursor: pointer;" onclick="analyzeSampleLeaf('chilli_healthy')">🌿 Healthy Chilli</button>
-          <button type="button" class="btn-sample-leaf" style="font-size: 11px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--surface); cursor: pointer;" onclick="analyzeSampleLeaf('chilli_leaf_curl')">🍂 Leaf Curl Virus</button>
-          <button type="button" class="btn-sample-leaf" style="font-size: 11px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--surface); cursor: pointer;" onclick="analyzeSampleLeaf('blurry_quality_gate')">🔍 Blurry Leaf (Reject)</button>
-        </div>
       </div>
     </div>
   </div>
@@ -570,12 +605,6 @@
             <li>Change <strong>Microphone</strong> from <em>Block</em> to <strong>Allow</strong>.</li>
             <li>Click <strong>Request Permission</strong> below or refresh the page.</li>
           </ol>
-        </div>
-        <div style="margin-bottom: 16px;">
-          <strong style="color: var(--text-primary);">⚡ Or 1-Click to Ask Agricultural Questions:</strong>
-          <div class="mic-sample-chips" id="micSampleChips" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
-            <!-- Rendered dynamically based on active language -->
-          </div>
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end; margin-top: 14px;">
           <button type="button" class="btn-demo-login" style="margin:0; padding:8px 16px; font-size:0.88rem;" onclick="requestMicPermissionDirectly()">

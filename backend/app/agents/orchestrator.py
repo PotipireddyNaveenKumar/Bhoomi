@@ -125,84 +125,84 @@ class BhoomiAgentOrchestrator:
             "ml": "നെല്ല് വിള മാതൃകകൾ നിലവിൽ ഗവേഷണ ഘട്ടത്തിലാണ്. നെല്ലിന് രാസ തളിക്കൽ നിർദ്ദേശങ്ങൾ അനുവദനീയമല്ല."
         },
         "greeting": {
-            "en": "Namaste Ramesh! Good to speak with you. Your 3 acres of chilli in Guntur are coming along well. How can I help you out today — want to check on weather, today's work, or mandi rates?",
-            "te": "నమస్కారం రమేష్ గారు! మీతో మాట్లాడటం సంతోషం. గుంటూరులోని మీ 3 ఎకరాల మిర్చి తోట బాగుంది. ఈరోజు వాతావరణం, పనులు లేదా మార్కెట్ ధరల గురించి ఏమైనా తెలుసుకోవాలా?",
-            "hi": "नमस्ते रमेश जी! आपसे बात करके अच्छा लगा। गुंटूर में आपकी 3 एकड़ मिर्च की फसल अच्छी चल रही है। आज मौसम, खेत के काम या मंडी भाव के बारे में क्या जानना चाहते हैं?",
-            "ta": "வணக்கம் ரமேஷ் அவர்களே! குண்டூரில் உங்கள் 3 ஏக்கர் மிளகாய் பயிர் நன்றாக உள்ளது. இன்று உங்களுக்கு என்ன உதவி தேவை?",
-            "kn": "ನಮಸ್ಕಾರ ರಮೇಶ್ ಅವರೇ! ಗುಂಟೂರಿನಲ್ಲಿ ನಿಮ್ಮ 3 ಎಕರೆ ಮೆಣಸಿನಕಾಯಿ ಬೆಳೆ ಉತ್ತಮವಾಗಿದೆ. ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
-            "ml": "നമസ്കാരം രമേഷ്! ഗുണ്ടൂരിലെ നിങ്ങളുടെ 3 ഏക്കർ മുളക് കൃഷി നന്നായി വളരുന്നു. ഇന്ന് എനിക്ക് എങ്ങനെ സഹായിക്കാനാകും?"
+            "en": "Namaste {farmer_name}! Good to speak with you. Your {crop_desc} farm in {location} is registered with BHOOMI. How can I assist you today — check live weather, crop tasks, or mandi market rates?",
+            "te": "నమస్కారం {farmer_name}! మీతో మాట్లాడటం సంతోషం. {location}లోని మీ {crop_desc} తోట వివరాలు నమోదయ్యాయి. ఈరోజు వాతావరణం, పంట పనులు లేదా మార్కెట్ ధరల గురించి ఏమైనా తెలుసుకోవాలా?",
+            "hi": "नमस्ते {farmer_name}! आपसे बात करके अच्छा लगा। {location} में आपके {crop_desc} खेत का डिजिटल ट्विन सक्रिय है। आज मौसम, कृषि कार्य या मंडी भाव के बारे में क्या जानना चाहते हैं?",
+            "ta": "வணக்கம் {farmer_name}! {location}ல் உங்கள் {crop_desc} பண்ணை பதிவு செய்யப்பட்டுள்ளது. இன்று உங்களுக்கு என்ன உதவி தேவை?",
+            "kn": "ನಮಸ್ಕಾರ {farmer_name}! {location}ನಲ್ಲಿ ನಿಮ್ಮ {crop_desc} ಜಮೀನು ದಾಖಲಾಗಿದೆ. ಇಂದು ನಾನು మీకు ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
+            "ml": "നമസ്കാരം {farmer_name}! {location}-ൽ നിങ്ങളുടെ {crop_desc} തോട്ടം രേഖപ്പെടുത്തിയിട്ടുണ്ട്. ഇന്ന് എനിക്ക് എങ്ങനെ സഹായിക്കാനാകും?"
         },
         "weather_query_response": {
-            "en": "In {location} right now, it's {temp}°C and {condition}. There's about a {rain_prob}% chance of rain this afternoon, so hold off on watering today. Let's see how much rain falls first.",
-            "te": "{location}లో ప్రస్తుత ఉష్ణోగ్రత {temp}°C. మధ్యాహ్నం {rain_prob}% వర్షం పడే అవకాశం ఉంది, కాబట్టి ఈరోజు నీరు పెట్టడం ఆపండి. వర్షం ఎంత పడుతుందో చూద్దాం.",
-            "hi": "{location} में वर्तमान तापमान {temp}°C है। दोपहर में {rain_prob}% बारिश की संभावना है, इसलिए आज पानी मत दीजिए। पहले देख लेते हैं कितनी बारिश होती है।",
-            "ta": "{location}ல் தற்போதைய வெப்பநிலை {temp}°C. பிற்பகலில் {rain_prob}% மழை வாய்ப்புள்ளது, எனவே இன்று நீர்ப்பாசனம் செய்ய வேண்டாம்.",
-            "kn": "{location}ನಲ್ಲಿ ತಾಪಮಾನ {temp}°C ಇದೆ. ಮಧ್ಯಾಹ್ನ {rain_prob}% ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ, ಆದ್ದರಿಂದ ಇಂದು ನೀರು ಹಾಕಬೇಡಿ.",
-            "ml": "{location}-ൽ താപനില {temp}°C ആണ്. ഉച്ചതിരിഞ്ഞ് {rain_prob}% മഴയ്ക്ക് സാധ്യതയുണ്ട്, അതിനാൽ ഇന്ന് നനയ്ക്കേണ്ടതില്ല."
+            "en": "In {location} right now, it's {temp}°C and {condition}. There's about a {rain_prob}% chance of rain, so manage field irrigation accordingly.",
+            "te": "{location}లో ప్రస్తుత ఉష్ణోగ్రత {temp}°C, వాతావరణం: {condition}. వర్షం పడే అవకాశం {rain_prob}% ఉంది, కాబట్టి తదనుగుణంగా నీటి పారుదల నిర్వహించండి.",
+            "hi": "{location} में वर्तमान तापमान {temp}°C और स्थिति {condition} है। {rain_prob}% बारिश की संभावना है, इसलिए सिंचाई का ध्यान रखें।",
+            "ta": "{location}ல் தற்போதைய வெப்பநிலை {temp}°C, {condition}. {rain_prob}% மழை வாய்ப்புள்ளது.",
+            "kn": "{location}ನಲ್ಲಿ ತಾಪಮಾನ {temp}°C ಮತ್ತು {condition} ಆಗಿದೆ. {rain_prob}% ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ.",
+            "ml": "{location}-ൽ താപനില {temp}°C, {condition} ആണ്. {rain_prob}% മഴയ്ക്ക് സാധ്യതയുണ്ട്."
         },
         "irrigation_decision_response": {
-            "en": "You can skip watering today, brother. There is rain expected in Guntur this afternoon, and your black soil still holds plenty of moisture. Let's wait until tomorrow morning and see if the soil needs any water.",
-            "te": "ఈరోజు నీరు పెట్టాల్సిన పనిలేదు అన్నా. మధ్యాహ్నం గుంటూరులో వర్షం పడే అవకాశం ఉంది, మీ నల్లరేగడి నేలలో తేమ కూడా బాగుంది. రేపు ఉదయం చూసి అవసరమైతే నీరు పెడదాం.",
-            "hi": "आज पानी देने की जरूरत नहीं है भाई। दोपहर में गुंटूर में बारिश की संभावना है और आपकी काली मिट्टी में अच्छी नमी बनी हुई है। कल सुबह देखकर तय करेंगे।",
-            "ta": "இன்று நீர்ப்பாசனம் செய்ய வேண்டாம். மழை வர வாய்ப்புள்ளது மற்றும் மண்ணில் நல்ல ஈரப்பதம் உள்ளது.",
-            "kn": "ಇಂದು ನೀರು ಹಾಕಬೇಕಾಗಿಲ್ಲ. ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ ಮತ್ತು ಮಣ್ಣಿನಲ್ಲಿ ತೇವಾಂಶವಿದೆ.",
-            "ml": "ഇന്ന് നനയ്ക്കേണ്ടതില്ല. മഴയ്ക്ക് സാധ്യതയുണ്ട്, മണ്ണിൽ ആവശ്യത്തിന് ഈർപ്പവുമുണ്ട്."
+            "en": "For {crop_name} in {location}: With {rain_prob}% rain probability and {soil_type} soil holding moisture, hold off on immediate flood watering. Check field moisture tomorrow.",
+            "te": "{location}లోని {crop_name} పంటకు: వర్షం అవకాశం {rain_prob}% ఉన్నందున మరియు {soil_type} నేలలో తేమ ఉన్నందున ప్రస్తుతం భారీ తడి అవసరం లేదు. రేపు తేమను పరిశీలించి నిర్ణయించండి.",
+            "hi": "{location} में {crop_name} फसल के लिए: {rain_prob}% बारिश की संभावना और {soil_type} मिट्टी में नमी को देखते हुए अभी भारी सिंचाई रोकें। कल मिट्टी की नमी जांचें।",
+            "ta": "{location}ல் {crop_name} பயிருக்கு: {rain_prob}% மழை வாய்ப்பு உள்ளதால் உடனடியாக நீர்ப்பாசனம் செய்ய வேண்டாம்.",
+            "kn": "{location}ನಲ್ಲಿ {crop_name} ಬೆಳೆಗೆ: {rain_prob}% ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿರುವುದರಿಂದ ತಕ್ಷಣ ನೀರು ಹಾಕಬೇಡಿ.",
+            "ml": "{location}-ൽ {crop_name} വിളയ്ക്ക്: {rain_prob}% മഴയ്ക്ക് സാധ്യതയുള്ളതിനാൽ ഇപ്പോൾ നനയ്ക്കേണ്ടതില്ല."
         },
         "crop_soil_recommendation": {
-            "en": "Deep black cotton soil in the Guntur region holds moisture really well. The most profitable crops suited for this ground are: Chilli (Teja variety), Cotton, and Bengal Gram. Your current 3-acre chilli crop is a perfect match for this land.",
-            "te": "గుంటూరు జిల్లాలోని నల్ల రేగడి నేల తేమను చాలా బాగా నిలుపుకుంటుంది. ఈ నేలకు మిర్చి (తేజ రకం), పత్తి, మరియు శనగలు చాలా లాభదాయకమైనవి. మీ 3 ఎకరాల మిర్చి తోట ఈ భూమికి చక్కగా సరిపోతుంది.",
-            "hi": "गुंटूर की गहरी काली मिट्टी नमी बहुत अच्छे से बनाए रखती है। इस मिट्टी के लिए तेजा मिर्च, कपास और चना सबसे अच्छे और मुनाफे वाले हैं। आपकी 3 एकड़ मिर्च की फसल बिल्कुल सही है।",
-            "ta": "குண்டூர் பகுதியின் கரிசல் மண் ஈரப்பதத்தை நன்கு தக்கவைக்கும். மிளகாய், பருத்தி மற்றும் கொண்டைக்கடலை சிறந்தவை.",
-            "kn": "ಗುಂಟೂರಿನ ಕಪ್ಪು ಮಣ್ಣು ತೇವಾಂಶವನ್ನು ಚೆನ್ನಾಗಿ ಹಿಡಿದಿಟ್ಟುಕೊಳ್ಳುತ್ತದೆ. ಮೆಣಸಿನಕಾಯಿ, ಹತ್ತಿ ಮತ್ತು ಕಡಲೆ ಉತ್ತಮ ಬೆಳೆಗಳು.",
-            "ml": "ഗുണ്ടൂരിലെ കറുത്ത മണ്ണ് ഈർപ്പം നന്നായി നിലനിർത്തുന്നു. മുളക്, പരുത്തി, കടല എന്നിവ അനുയോജ്യമാണ്."
+            "en": "{soil_type} soil in {location} has good agronomic characteristics. The most profitable crops suited for this ground include: {top_crops}. Your {acres}acre farm aligns well with these recommendations.",
+            "te": "{location} ప్రాంతంలోని {soil_type} నేల స్వభావానికి అనువైన లాభదాయక పంటలు: {top_crops}. మీ {acres}ఎకరాల పొలానికి ఈ పంటల ప్రణాళిక చక్కగా సరిపోతుంది.",
+            "hi": "{location} की {soil_type} मिट्टी के लिए सबसे उपयुक्त और लाभदायक फसलें हैं: {top_crops}। आपके {acres} एकड़ खेत के लिए यह फसलें अनुकूल हैं।",
+            "ta": "{location} பகுதியின் {soil_type} மண்ணிற்கு உகந்த பயிர்கள்: {top_crops}.",
+            "kn": "{location}ನ {soil_type} ಮಣ್ಣಿಗೆ ಸೂಕ್ತವಾದ ಬೆಳೆಗಳು: {top_crops}.",
+            "ml": "{location}-ലെ {soil_type} മണ്ണിന് അനുയോജ്യമായ വിളകൾ: {top_crops}."
         },
         "market_price_response": {
-            "en": "In Guntur mandi today, Teja chilli is selling at ₹12,000 a quintal. After about ₹150 for transport, you'll bring home ₹11,850 per quintal in your pocket. Guntur is giving the best return for you right now.",
-            "te": "గుంటూరు మార్కెట్ యార్డులో తేజ మిర్చి ధర క్వింటాలుకు ₹12,000 పలుకుతోంది. రవాణా ఖర్చు ₹150 తీసేస్తే మీ చేతికి ₹11,850 వస్తుంది. ప్రస్తుతం గుంటూరులోనే మంచి లాభం ఉంది.",
-            "hi": "गुंटूर मंडी में तेजा मिर्च का भाव ₹12,000 प्रति क्विंटल चल रहा है। ₹150 भाड़ा काटकर आपके हाथ में ₹11,850 प्रति क्विंटल आएंगे। गुंटूर मंडी में ही अभी सबसे अच्छा दाम मिल रहा है।",
-            "ta": "குண்டூர் சந்தையில் தேஜா மிளகாய் குவிண்டாலுக்கு ₹12,000. போக்குவரத்து செலவு போக ₹11,850 உங்கள் கைக்கு கிடைக்கும்.",
-            "kn": "ಗುಂಟೂರು ಮಂಡಿಯಲ್ಲಿ ತೇಜ ಮೆಣಸಿನಕಾಯಿ ದರ ₹12,000. ಸಾರಿಗೆ ವೆಚ್ಚ ಕಳೆದು ₹11,850 ನಿಮ್ಮ ಕೈಗೆ ಸಿಗುತ್ತದೆ.",
-            "ml": "ഗുണ്ടൂർ മാർക്കറ്റിൽ തേജ മുളകിന്റെ വില ₹12,000 ആണ്. ഗതാഗത ചെലവ് കഴിഞ്ഞ് ₹11,850 കയ്യിൽ കിട്ടും."
+            "en": "In {mandi} today, {crop} is trading around ₹{price}/quintal modal price. Net realization after transport is estimated at ₹{net_price}/quintal.",
+            "te": "{mandi}లో {crop} ప్రస్తుత మోడల్ ధర క్వింటాలుకు ₹{price}. రవాణా ఖర్చు పోగా నికర రాబడి సుమారు ₹{net_price}/క్వింటాల్.",
+            "hi": "{mandi} में {crop} का वर्तमान मॉडल भाव ₹{price}/क्विंटल है। परिवहन के बाद शुद्ध प्राप्ति लगभग ₹{net_price}/क्विंटल रहेगी।",
+            "ta": "{mandi} சந்தையில் {crop} விலை ₹{price}/குவிண்டால்.",
+            "kn": "{mandi} ಮಂಡಿಯಲ್ಲಿ {crop} ದರ ₹{price}/ಕ್ವಿಂಟಾಲ್.",
+            "ml": "{mandi} മാർക്കറ്റിൽ {crop} വില ₹{price}/ക്വിന്റൽ."
         },
         "profit_simulation_response": {
-            "en": "For your 3-acre chilli crop with 10 quintals per acre (30 quintals total) at ₹12,000: You can expect ₹3,60,000 in total sales. After ₹2,10,000 in cultivation and transport costs, you will make about ₹1,50,000 in clean profit.",
-            "te": "మీ 3 ఎకరాల మిర్చి తోటలో మొత్తం 30 క్వింటాళ్లు వస్తే, ₹12,000 ధర వద్ద ₹3,60,000 ఆదాయం వస్తుంది. ఖర్చులు ₹2,10,000 పోగా మీ చేతికి సుమారు ₹1,50,000 నికర లాభం మిగులుతుంది.",
-            "hi": "आपकी 3 एकड़ मिर्च से कुल 30 क्विंटल पर ₹12,000 के भाव से ₹3,60,000 बनेंगे। ₹2,10,000 का खर्च निकालने के बाद आपके पास लगभग ₹1,50,000 का साफ मुनाफा बचेगा।",
-            "ta": "உங்கள் 3 ஏக்கர் மிளகாயில் ₹3,60,000 மொத்த வரவு. செலவு போக ₹1,50,000 லாபம் கிடைக்கும்.",
-            "kn": "ನಿಮ್ಮ 3 ಎಕರೆ ಮೆಣಸಿನಕಾಯಿಯಲ್ಲಿ ₹3,60,000 ಆದಾಯ. ವೆಚ್ಚ ಕಳೆದು ₹1,50,000 ಲಾಭ ಸಿಗುತ್ತದೆ.",
-            "ml": "നിങ്ങളുടെ 3 ഏക്കർ മുളകിൽ ₹3,60,000 വരുമാനം. ചെലവ് കഴിഞ്ഞ് ₹1,50,000 ലാഭം ലഭിക്കും."
+            "en": "For {acres} acres of {crop}: Expected gross revenue is ₹{gross_rev} against total cultivation costs of ₹{tot_cost}, yielding an estimated net profit of ₹{net_prof} (ROI: {roi}%).",
+            "te": "{acres} ఎకరాల {crop} సాగుకు: స్థూల ఆదాయం ₹{gross_rev}, మొత్తం సాగు ఖర్చులు ₹{tot_cost} పోగా అంచనా నికర లాభం ₹{net_prof} (పెట్టుబడి రాబడి ROI: {roi}%).",
+            "hi": "{acres} एकड़ {crop} के लिए: सकल आय ₹{gross_rev} और कुल लागत ₹{tot_cost} के बाद अनुमानित शुद्ध लाभ ₹{net_prof} (ROI: {roi}%) है।",
+            "ta": "{acres} ஏக்கர் {crop} பயிரில் நிகர லாபம் ₹{net_prof}.",
+            "kn": "{acres} ಎಕರೆ {crop} ಬೆಳೆಯಲ್ಲಿ ನಿವ್ವಳ ಲಾಭ ₹{net_prof}.",
+            "ml": "{acres} ഏക്കർ {crop} കൃഷിയിൽ അറ്റാദായം ₹{net_prof}."
         },
         "pest_curling_symptoms": {
-            "en": "Don't worry, brother, we can sort this out. Look closely at the leaves: are they curling upwards like a cup, or bending downwards? Upward curl is usually tiny insects like thrips, while downward is mites. If you can take a clear photo of the leaf, send it over and I'll take a look right away.",
-            "te": "కంగారు పడకండి అన్నా, చూద్దాం. ఆకులు పైకి దోనెలా ముడుచుకుంటున్నాయా, లేక కిందికి వంగుతున్నాయా? పైకి ముడిచితే తామర పురుగులు, కిందికి ముడిచితే నల్లి కావచ్చు. ఆకు స్పష్టమైన ఫోటో తీసి పంపితే వెంటనే చూసి చెబుతాను.",
-            "hi": "चिंता मत कीजिए भाई, हम इसे संभाल लेंगे। पत्तियां ऊपर की तरफ मुड़ रही हैं या नीचे की तरफ? ऊपर मुड़ना थ्रिप्स कीट से होता है, नीचे मुड़ना माइट्स से। अगर प्रभावित पत्ती का साफ फोटो भेज सकें तो मैं तुरंत देखकर बताता हूँ।",
-            "ta": "கவலைப்படாதீர்கள். இலைகள் மேல்நோக்கி சுருளுகிறதா அல்லது கீழ்நோக்கியா? புகைப்படத்தை அனுப்பினால் உடனே பார்த்து விடுகிறேன்.",
-            "kn": "ಚಿಂತೆ ಬೇಡ. ಎಲೆಗಳು ಮೇಲಕ್ಕೆ ಮುದುಡಿಕೊಳ್ಳುತ್ತಿವೆಯೇ ಅಥವಾ ಕೆಳಮುಖವಾಗಿಯೇ? ಫೋಟೋ ಕಳುಹಿಸಿದರೆ ತಕ್ಷಣ ಪರಿಶೀಲಿಸುತ್ತೇನೆ.",
-            "ml": "പേടിക്കേണ്ടതില്ല. ഇലകൾ മുകളിലേക്കാണോ താഴേക്കാണോ ചുരുളുന്നത്? ഫോട്ടോ അയച്ചാൽ ഉടൻ നോക്കാം."
+            "en": "Check the affected leaves closely: upward curling is typically caused by thrips or viral vectors, while downward curling is often caused by mites or aphids. Upload a clear daylight leaf photo for accurate vision diagnosis.",
+            "te": "బాధిత ఆకులను గమనించండి: ఆకులు పైకి దోనెలా ముడిచితే తామర పురుగులు లేదా వైరస్ కావచ్చు, కిందికి ముడిచితే నల్లి లేదా పేనుబంక కావచ్చు. ఖచ్చితమైన నిర్ధారణ కోసం ఆకు స్పష్టమైన ఫోటో తీసి పంపండి.",
+            "hi": "प्रभावित पत्तियों को ध्यान से देखें: ऊपर मुड़ना थ्रिप्स या वायरस के कारण होता है, जबकि नीचे मुड़ना माइट्स या माहू के कारण। सटीक निदान के लिए एक साफ पत्ती की फोटो भेजें।",
+            "ta": "இலைகள் மேல்நோக்கி சுருண்டால் த்ரிப்ஸ் பூச்சிகள், கீழ்நோக்கி சுருண்டால் சிலந்திப் பூச்சிகள் காரணம். தெளிவான புகைப்படம் அனுப்பவும்.",
+            "kn": "ಎಲೆಗಳು ಮೇಲಕ್ಕೆ ಮುದುಡಿದರೆ ಥ್ರಿಪ್ಸ್, ಕೆಳಮುಖವಾಗಿದ್ದರೆ ನುಸಿ ಕಾರಣ. ಸ್ಪಷ್ಟ ಫೋಟೋ ಕಳುಹಿಸಿ.",
+            "ml": "ഇലകൾ മുകളിലേക്ക് ചുരുളുന്നത് തൃപ്സ് കൊണ്ടും താഴേക്ക് ചുരുളുന്നത് മൈറ്റുകൾ കൊണ്ടുമാണ്. വ്യക്തമായ ഫോട്ടോ അയക്കൂ."
         },
         "harvest_query_response": {
-            "en": "Your 3-acre chilli crop in Guntur is flowering nicely right now, around 65 days in. Teja chilli takes about 140 to 160 days to fully ripen. You can do your first green chilli picking in about 35 to 40 days, and dry red chillies will be ready around 150 days.",
-            "te": "గుంటూరులోని మీ 3 ఎకరాల తేజ మిర్చి తోట ఇప్పుడు 65 రోజుల వద్ద పూత దశలో ఉంది. మొదటి పచ్చిమిర్చి కోత మరో 35-40 రోజుల్లో తీసుకోవచ్చు, ఎర్ర ఎండుమిర్చి 150 రోజుల వద్ద సిద్ధమవుతుంది.",
-            "hi": "गुंटूर में आपकी 3 एकड़ मिर्च अभी 65 दिनों पर फूल की अवस्था में है। पहली हरी मिर्च की तुड़ाई 35-40 दिनों में हो सकेगी, और लाल मिर्च 150 दिनों पर तैयार होगी।",
-            "ta": "உங்கள் 3 ஏக்கர் மிளகாய் இப்போது பூக்கும் நிலையில் உள்ளது. முதல் பறிப்பு 35-40 நாட்களில் தொடங்கும்.",
-            "kn": "ನಿಮ್ಮ ಮೆಣಸಿನಕಾಯಿ ಬೆಳೆ ಹೂಬಿಡುವ ಹಂತದಲ್ಲಿದೆ. ಮೊದಲ ಕೊಯ್ಲು 35-40 ದಿನಗಳಲ್ಲಿ ಆರಂಭವಾಗುತ್ತದೆ.",
-            "ml": "നിങ്ങളുടെ മുളക് കൃഷി ഇപ്പോൾ പൂവിടുന്ന ഘട്ടത്തിലാണ്. ആദ്യ വിളവെടുപ്പ് 35-40 ദിവസങ്ങളിൽ ആരംഭിക്കും."
+            "en": "For {crop_name} in {location} ({acres} acres): Monitor physiological maturity and grain/fruit color change before harvesting. Ensure dry weather during harvest operations.",
+            "te": "{location}లోని మీ {acres}ఎకరాల {crop_name} పంటకు: కోతకు ముందు కాయలు/గింజల పరిపక్వత రంగును గమనించండి. వర్షం లేని పొడి వాతావరణంలో కోత చేపట్టండి.",
+            "hi": "{location} में आपके {acres} एकड़ {crop_name} के लिए: कटाई से पहले दाने/फल के पकने के रंग का ध्यान रखें और सूखे मौसम में कटाई करें।",
+            "ta": "{location}ல் உங்கள் {acres} ஏக்கர் {crop_name} பயிர் அறுவடைக்கு முன் முதிர்ச்சியை கவனியுங்கள்.",
+            "kn": "{location}ನಲ್ಲಿ ನಿಮ್ಮ {acres} ಎಕರೆ {crop_name} ಬೆಳೆಯ ಪಕ್ವತೆಯನ್ನು ಗಮನಿಸಿ ಕೊಯ್ಲು ಮಾಡಿ.",
+            "ml": "{location}-ൽ നിങ്ങളുടെ {acres} ഏക്കർ {crop_name} വിളവെടുപ്പിന് മുൻപ് മൂപ്പ് ശ്രദ്ധിക്കുക."
         },
         "crop_management_response": {
-            "en": "Here is how to care for your chilli crop right now: 1. Water with morning drip only, don't let puddles form. 2. Put up yellow and blue sticky sheets in the field to catch tiny thrips. 3. Spray 19:19:19 nutrient to stop flower drop. 4. Avoid spraying during the hot midday so we don't harm honeybees.",
-            "te": "మీ మిర్చి తోట సంరక్షణ కోసం: 1. ఉదయం మాత్రమే డ్రిప్ ద్వారా నీరు ఇవ్వండి. 2. పురుగుల నివారణకు జిగురు అట్టలు పెట్టండి. 3. పూత రాలకుండా 19:19:19 పిచికారీ చేయండి. 4. తేనెటీగలను కాపాడేందుకు మధ్యాహ్నం ఎండలో మందులు కొట్టవద్దు.",
-            "hi": "अपनी मिर्च की फसल की देखभाल के लिए: 1. सुबह ड्रिप से पानी दें, जलभराव न होने दें। 2. कीटों के लिए चिपचिपे ट्रैप लगाएं। 3. फूल झड़ने से रोकने के लिए 19:19:19 दें। 4. मधुमक्खियों को बचाने के लिए दोपहर की धूप में छिड़काव न करें।",
-            "ta": "மிளகாய் பயிர் மேலாண்மை: 1. காலையில் சொட்டு நீர் பாசனம் செய்யுங்கள். 2. ஒட்டும் பொறிகளை வையுங்கள். 3. பூ கொட்டுவதைத் தடுக்க 19:19:19 தெளிக்கவும்.",
-            "kn": "ಮೆಣಸಿನಕಾಯಿ ಬೆಳೆ ನಿರ್ವಹಣೆ: 1. ಬೆಳಗ್ಗೆ ಹನಿ ನೀರಾವರಿ ಮಾಡಿ. 2. ಜಿಗುಟು ಬಲೆಗಳನ್ನು ಇರಿಸಿ. 3. ಹೂವು ಉದುರುವುದನ್ನು ತಡೆಯಲು 19:19:19 ಸಿಂಪಡಿಸಿ.",
-            "ml": "മുളക് കൃഷി പരിപാലനം: 1. രാവിലെ ഡ്രിപ്പ് ഇറിഗേഷൻ നൽകുക. 2. ഒട്ടുന്ന കെണികൾ സ്ഥാപിക്കുക. 3. പൂവ് കൊഴിച്ചിൽ തടയാൻ 19:19:19 തളിക്കുക."
+            "en": "Agronomic care for {crop_name}: 1. Timely irrigation without waterlogging. 2. Install sticky traps for monitoring sucking pests. 3. Apply balanced micronutrients based on crop stage. 4. Avoid daytime chemical spraying to protect natural pollinators.",
+            "te": "{crop_name} పంట సంరక్షణ కోసం: 1. మురుగునీరు నిలవకుండా సకాలంలో తడులు ఇవ్వండి. 2. రసం పీల్చే పురుగుల కోసం జిగురు అట్టలు అమర్చండి. 3. పైపాటుగా సమతుల్య సూక్ష్మపోషకాలు అందించండి. 4. మిత్రపురుగులను కాపాడేందుకు ఎండ వేళల్లో స్ప్రే చేయవద్దు.",
+            "hi": "{crop_name} फसल प्रबंधन: 1. जलभराव के बिना समय पर सिंचाई। 2. रस चूसक कीटों के लिए चिपचिपे ट्रैप लगाएं। 3. संतुलित सूक्ष्म पोषक तत्व दें। 4. परागण करने वाले कीटों की सुरक्षा के लिए तेज धूप में छिड़काव न करें।",
+            "ta": "{crop_name} பயிர் மேலாண்மை: 1. சரியான பாசனம். 2. ஒட்டும் பொறிகள். 3. நுண்ணூட்டச்சத்துக்கள்.",
+            "kn": "{crop_name} ಬೆಳೆ ನಿರ್ವಹಣೆ: 1. ಸಕಾಲಿಕ ನೀರಾವರಿ. 2. ಜಿಗುಟು ಬಲೆಗಳು. 3. ಸಮತೋಲಿತ ಪೋಷಕಾಂಶಗಳು.",
+            "ml": "{crop_name} വിള പരിപാലനം: 1. യഥാസമയ നന. 2. കെണികൾ. 3. സൂക്ഷ്മ മൂലകങ്ങൾ."
         },
         "farm_status_response": {
-            "en": "Your 3 acres of Teja chilli in Guntur are looking healthy and green. Soil moisture is sitting nicely at 45%, and the air is 31.5°C with no pest problems. The main plan for this morning is your regular drip watering.",
-            "te": "గుంటూరులోని మీ 3 ఎకరాల తేజ మిర్చి తోట ఆరోగ్యంగా, పచ్చగా ఉంది. నేలలో తేమ 45% తో బాగుంది, ఎటువంటి తెగుళ్ల బెడద లేదు. ఈరోజు ముఖ్యమైన పని: ఉదయపు డ్రిప్ తడి.",
-            "hi": "गुंटूर में आपकी 3 एकड़ तेजा मिर्च की फसल बहुत हरी-भरी और स्वस्थ है। मिट्टी में 45% नमी बहुत अच्छी है और कोई कीट प्रकोप नहीं है। आज का मुख्य काम सुबह की ड्रिप सिंचाई है।",
-            "ta": "உங்கள் 3 ஏக்கர் மிளகாய் பண்ணை நல்ல ஆரோக்கியமான நிலையில் உள்ளது. மண் ஈரப்பதம் 45% உள்ளது.",
-            "kn": "ಗುಂಟೂರಿನಲ್ಲಿ ನಿಮ್ಮ 3 ಎಕರೆ ಮೆಣಸಿನಕಾಯಿ ತೋಟ ಉತ್ತಮವಾಗಿದೆ. ಮಣ್ಣಿನ ತೇವಾಂಶ 45% ಇದೆ.",
-            "ml": "ഗുണ്ടൂരിലെ നിങ്ങളുടെ 3 ഏക്കർ മുളക് തോട്ടം നല്ല നിലയിലാണ്. മണ്ണിലെ ഈർപ്പം 45% ആണ്."
+            "en": "Your {acres} acres of {crop_name} in {location} digital twin is active. Weather and agronomic conditions are being tracked in real time.",
+            "te": "{location}లోని మీ {acres}ఎకరాల {crop_name} తోట డిజిటల్ ట్విన్ సమాచారం ప్రత్యక్షంగా పర్యవేక్షించబడుతోంది. వాతావరణం మరియు సాగు వివరాలు సిద్ధంగా ఉన్నాయి.",
+            "hi": "{location} में आपके {acres} एकड़ {crop_name} का डिजिटल ट्विन सक्रिय है। मौसम और फसल की स्थिति की निरंतर निगरानी हो रही है।",
+            "ta": "{location}ல் உங்கள் {acres} ஏக்கர் {crop_name} பண்ணை விவரங்கள் செயலில் உள்ளன.",
+            "kn": "{location}ನಲ್ಲಿ ನಿಮ್ಮ {acres} ಎಕರೆ {crop_name} ತೋಟದ ವಿವರಗಳು ಸಕ್ರಿಯವಾಗಿವೆ.",
+            "ml": "{location}-ൽ നിങ്ങളുടെ {acres} ഏക്കർ {crop_name} തോട്ടത്തിന്റെ വിവരങ്ങൾ സജീവമാണ്."
         }
     }
 
@@ -267,6 +267,33 @@ class BhoomiAgentOrchestrator:
             return template
 
     @classmethod
+    async def orchestrate(
+        cls,
+        user_text: str = "",
+        session_id: str = "session_default",
+        farmer_id: str = "farmer_default",
+        farm_id: Optional[str] = None,
+        context: Optional[Any] = None,
+        language: Optional[str] = None,
+        db: Optional[AsyncSession] = None,
+        input_mode: str = "text"
+    ) -> OrchestrationResult:
+        """
+        Unified entry point for orchestrating agricultural agent turns.
+        Accepts direct in-memory DigitalTwinContext for evaluation runners and unit tests.
+        """
+        return await cls.process_turn(
+            db=db,
+            farmer_id=farmer_id,
+            session_id=session_id,
+            user_text=user_text,
+            input_mode=input_mode,
+            language=language,
+            context=context,
+            farm_id=farm_id
+        )
+
+    @classmethod
     async def process_turn(
         cls,
         db: Optional[AsyncSession] = None,
@@ -274,11 +301,12 @@ class BhoomiAgentOrchestrator:
         session_id: str = "session_demo_1",
         user_text: str = "",
         input_mode: str = "voice",
-        language: Optional[str] = None
+        language: Optional[str] = None,
+        context: Optional[Any] = None,
+        farm_id: Optional[str] = None
     ) -> OrchestrationResult:
         # 1. Digital Twin Context Retrieval
-        context = None
-        if db is not None:
+        if context is None and db is not None:
             try:
                 context = await DigitalTwinService.get_farmer_context(db, farmer_id)
                 chat_repo = ChatRepository(db)
@@ -333,9 +361,12 @@ class BhoomiAgentOrchestrator:
             active_lang = context.language
         else:
             active_lang = "en"
-        if farmer_id == "demo_farmer_1":
-            farm_id = "farm_demo_1"
-            if context is not None:
+
+        if farm_id:
+            resolved_farm_id = farm_id
+        elif farmer_id == "demo_farmer_1":
+            resolved_farm_id = "farm_demo_1"
+            if context is not None and not context.active_crops:
                 context.farm_id = "farm_demo_1"
                 context.active_crops = [{
                     "crop_name": "Chilli",
@@ -344,7 +375,8 @@ class BhoomiAgentOrchestrator:
                     "current_stage": "vegetative"
                 }]
         else:
-            farm_id = getattr(context, "farm_id", "farm_1")
+            resolved_farm_id = getattr(context, "farm_id", "farm_1") or "farm_1"
+        farm_id = resolved_farm_id
 
         text_lower = user_text.lower()
 
@@ -381,7 +413,11 @@ class BhoomiAgentOrchestrator:
         elif dialogue_session.pending_slot == "CONFIRM_CROP_RECOMMENDATION":
             dialogue_session.pending_slot = None
             dialogue_session.active_topic = "CROP_RECOMMENDATION"
-            crop_resp = cls._get_localized_msg("crop_soil_recommendation", active_lang)
+            soil_type = getattr(context, "soil_type", None) or ("నల్లరేగడి" if active_lang == "te" else "black cotton")
+            loc = context.district or context.location or ("ఈ ప్రాంతం" if active_lang == "te" else "your region")
+            top_crops = "మిర్చి, పత్తి, శనగలు" if active_lang == "te" else "Chilli, Cotton, Bengal Gram"
+            acres = f"{getattr(context, 'total_land_acres', 3.0) or 3.0} "
+            crop_resp = cls._get_localized_msg("crop_soil_recommendation", active_lang, soil_type=soil_type, location=loc, top_crops=top_crops, acres=acres)
             FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, crop_resp, intent="CROP_RECOMMENDATION")
             return OrchestrationResult(response_text=crop_resp, visual_cards=[], voice_state="RESPONDING", trace_id=f"trace_crop_rec_{farmer_id}")
 
@@ -1078,7 +1114,10 @@ class BhoomiAgentOrchestrator:
         # -------------------------------------------------------------
         # A. Greetings
         if any(w in text_lower for w in ["hello", "hi", "hey", "namaste", "namaskaram", "నమస్కారం", "నమస్తే", "హలో", "नमस्ते", "வணக்கம்", "நமஸ்காரம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം"]) and len(text_lower.split()) <= 5:
-            greeting_msg = cls._get_localized_msg("greeting", active_lang)
+            farmer_name = context.farmer_name if context and context.farmer_name else ("రైతు సోదరా" if active_lang == "te" else "Farmer")
+            location = context.district or context.location or ("మీ ప్రాంతం" if active_lang == "te" else "your region")
+            crop_name = (context.active_crops[0]["crop_name"].title() if context and context.active_crops else ("పంట" if active_lang == "te" else "crop"))
+            greeting_msg = cls._get_localized_msg("greeting", active_lang, farmer_name=farmer_name, location=location, crop_desc=crop_name)
             return OrchestrationResult(
                 response_text=greeting_msg,
                 visual_cards=[],
@@ -1270,10 +1309,21 @@ class BhoomiAgentOrchestrator:
         ])
 
         if not is_educational_irrigation and (intent.intent_type == VoiceIntentType.IRRIGATION_QUERY or is_operational_irrigation):
-            loc = context.district or "Guntur"
+            loc = context.district or context.location or "your farm location"
+            crop_name = (context.active_crops[0]["crop_name"].title() if context and context.active_crops else "crop")
             weather_card = await ToolRegistry.execute_tool("get_current_weather", {"location": loc})
             w_dict = weather_card.get("data", {})
-            irr_resp = cls._get_localized_msg("irrigation_decision_response", active_lang)
+            cur = w_dict.get("current", {})
+            rain_p = cur.get("rain_probability_percent") if cur.get("rain_probability_percent") is not None else cur.get("precipitation_probability", 20)
+            soil_type = getattr(context, "soil_type", None) or "field"
+            irr_resp = cls._get_localized_msg(
+                "irrigation_decision_response",
+                active_lang,
+                crop_name=crop_name,
+                location=loc,
+                rain_prob=rain_p,
+                soil_type=soil_type
+            )
             # Record irrigation task in dialogue session for follow-up pronoun resolution
             farm_tasks = TaskIntelligenceEngine.get_tasks_for_farm(farm_id)
             if not farm_tasks:
@@ -1334,12 +1384,15 @@ class BhoomiAgentOrchestrator:
             top_names = [c["crop_name"] for c in top_crops[:3]] if top_crops else ["Chilli", "Cotton", "Bengal Gram"]
             crops_str = ", ".join(top_names)
             
+            region_name = context.district or context.location or ("ఈ ప్రాంతం" if active_lang == "te" else ("यह क्षेत्र" if active_lang == "hi" else "your region"))
+            soil_desc = getattr(context, "soil_type", None) or ("నల్లరేగడి" if active_lang == "te" else ("काली मिट्टी" if active_lang == "hi" else "black cotton"))
+
             if active_lang == "te":
-                crop_resp = f"గుంటూరులోని నల్లరేగడి నేలకు తేమను నిలిపి ఉంచే శక్తి ఎక్కువ. AI మోడల్ సిఫార్సు చేసిన ఉత్తమ పంటలు: 1. {top_names[0] if len(top_names)>0 else 'మిర్చి'} 2. {top_names[1] if len(top_names)>1 else 'పత్తి'} 3. {top_names[2] if len(top_names)>2 else 'శనగలు'}. మీ పొలం నేల స్వభావానికి ఈ పంటలు అత్యధిక దిగుబడిని ఇస్తాయి."
+                crop_resp = f"{region_name}లోని {soil_desc} నేలకు AI మోడల్ సిఫార్సు చేసిన ఉత్తమ పంటలు: 1. {top_names[0] if len(top_names)>0 else 'మిర్చి'} 2. {top_names[1] if len(top_names)>1 else 'పత్తి'} 3. {top_names[2] if len(top_names)>2 else 'శనగలు'}. మీ పొలం నేల స్వభావానికి ఈ పంటలు అత్యధిక దిగుబడిని ఇస్తాయి."
             elif active_lang == "hi":
-                crop_resp = f"गुंटूर की काली मिट्टी के लिए AI द्वारा अनुशंसित सर्वोत्तम फसलें हैं: 1. {top_names[0] if len(top_names)>0 else 'मिर्च'} 2. {top_names[1] if len(top_names)>1 else 'कपास'} 3. {top_names[2] if len(top_names)>2 else 'चना'}। यह फसलें आपकी मिट्टी के अनुकूल हैं।"
+                crop_resp = f"{region_name} की {soil_desc} मिट्टी के लिए AI द्वारा अनुशंसित सर्वोत्तम फसलें हैं: 1. {top_names[0] if len(top_names)>0 else 'मिर्च'} 2. {top_names[1] if len(top_names)>1 else 'कपास'} 3. {top_names[2] if len(top_names)>2 else 'चना'}। यह फसलें आपकी मिट्टी के अनुकूल हैं।"
             else:
-                crop_resp = f"Deep black cotton soil in your region has high clay content and excellent moisture-retention capacity. Highly suited crops recommended by ML: {crops_str}. Your current crop plan aligns with optimal agronomic conditions."
+                crop_resp = f"For {soil_desc} soil in {region_name}, the AI model identifies the following optimal crops: {crops_str}. Your farm conditions align well with these agronomic recommendations."
 
             RecommendationTraceStore.record_trace(RecommendationRecord(
                 farmer_id=farmer_id,
@@ -1528,8 +1581,8 @@ class BhoomiAgentOrchestrator:
 
         # G3. Fertilizer Recommendation Query
         if intent.intent_type == VoiceIntentType.FERTILIZER_QUERY or any(w in text_lower for w in ["fertilizer", "urea", "dap", "potash", "19:19:19", "nutrient", "fertilize", "ఎరువు", "ఎరువులు", "పోషకాలు", "खाद", "उर्वरक", "உரம்", "ಗೊಬ್ಬರ", "വളം"]):
-            crop = intent.target_crop or (context.active_crops[0]["crop_name"] if context and context.active_crops else "Chilli")
-            stage = (context.active_crops[0]["current_stage"] if context and context.active_crops else "vegetative")
+            crop = intent.target_crop or (context.active_crops[0].get("crop_name", "Chilli") if context and context.active_crops else "Chilli")
+            stage = (context.active_crops[0].get("current_stage") or context.active_crops[0].get("stage") or "vegetative") if context and context.active_crops else "vegetative"
             soil = context.soil_type or "black"
 
             fert_card = await ToolRegistry.execute_tool("fertilizer_recommendation", {
@@ -1569,19 +1622,26 @@ class BhoomiAgentOrchestrator:
         # -------------------------------------------------------------
         # H. Harvest Inquiries
         if intent.intent_type == VoiceIntentType.HARVEST_QUERY or any(w in text_lower for w in ["harvest", "ready to harvest", "when should i harvest", "కోత", "కోయడం", "कटाई"]):
-            harvest_resp = cls._get_localized_msg("harvest_query_response", active_lang)
+            crop_name = (context.active_crops[0]["crop_name"].title() if context and context.active_crops else "crop")
+            loc = context.district or context.location or "your region"
+            acres = getattr(context, "total_land_acres", 3.0) or 3.0
+            harvest_resp = cls._get_localized_msg("harvest_query_response", active_lang, crop_name=crop_name, location=loc, acres=acres)
             FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, harvest_resp, intent="HARVEST_QUERY")
             return OrchestrationResult(response_text=harvest_resp, visual_cards=[], voice_state="RESPONDING", trace_id=intent.trace_id)
 
         # I. Crop Management & Stage Inquiries
         if intent.intent_type in [VoiceIntentType.CROP_MANAGEMENT, VoiceIntentType.CROP_STAGE] or any(w in text_lower for w in ["planted", "crop stage", "what stage", "what should i do now", "management", "పంట దశ", "నాటిన తర్వాత"]):
-            mgmt_resp = cls._get_localized_msg("crop_management_response", active_lang)
+            crop_name = (context.active_crops[0]["crop_name"].title() if context and context.active_crops else "crop")
+            mgmt_resp = cls._get_localized_msg("crop_management_response", active_lang, crop_name=crop_name)
             FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, mgmt_resp, intent="CROP_MANAGEMENT")
             return OrchestrationResult(response_text=mgmt_resp, visual_cards=[], voice_state="RESPONDING", trace_id=intent.trace_id)
 
         # J. Farm & Crop Health Status
         if intent.intent_type in [VoiceIntentType.FARM_STATUS, VoiceIntentType.CROP_STATUS] or any(w in text_lower for w in ["how is my crop", "how is my farm", "crop health", "farm status", "నా పంట ఎలా ఉంది", "పంట పరిస్థితి"]):
-            status_resp = cls._get_localized_msg("farm_status_response", active_lang)
+            crop_name = (context.active_crops[0]["crop_name"].title() if context and context.active_crops else "crop")
+            loc = context.district or context.location or "your region"
+            acres = getattr(context, "total_land_acres", 3.0) or 3.0
+            status_resp = cls._get_localized_msg("farm_status_response", active_lang, crop_name=crop_name, location=loc, acres=acres)
             FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, status_resp, intent="FARM_STATUS")
             return OrchestrationResult(response_text=status_resp, visual_cards=[], voice_state="RESPONDING", trace_id=intent.trace_id)
 

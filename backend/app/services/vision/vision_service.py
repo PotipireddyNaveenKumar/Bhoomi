@@ -63,7 +63,8 @@ class VisionService:
         image_bytes: bytes,
         crop_hint: Optional[str] = None,
         language: Optional[str] = "en",
-        farmer_name: Optional[str] = None
+        farmer_name: Optional[str] = None,
+        synthesize_speech: bool = True
     ) -> VisionAnalysisOutput:
         active_lang = language or "en"
 
@@ -79,7 +80,7 @@ class VisionService:
                 language=active_lang,
                 farmer_name=farmer_name
             )
-            audio_b64 = await cls._synthesize_audio(spoken, active_lang)
+            audio_b64 = await cls._synthesize_audio(spoken, active_lang) if synthesize_speech else ""
             return VisionAnalysisOutput(
                 success=False,
                 crop_identified=crop_hint.title() if crop_hint else "Unknown",
@@ -102,54 +103,62 @@ class VisionService:
         # 2. Crop Routing & Deep Learning Inference via CropModelRegistry
         from app.services.vision.crop_registry import CropModelRegistry
         canonical_crop = CropModelRegistry.normalize_crop_name(crop_hint)
+        conflict_detected = False
+        original_hint = canonical_crop
 
         pred = None
+        # Attempt dedicated model if crop_hint was provided
         if canonical_crop:
             pred = CropModelRegistry.predict(image_bytes=image_bytes, crop_hint=canonical_crop)
 
-        # If crop_hint was not specified or yielded an unreliable / OOD result,
-        # scan across all registered crop models to identify the best-matching pathology candidate
-        if not pred or not pred.is_reliable or pred.is_ood or pred.quality_status == "FAILED":
-            CropModelRegistry._initialize()
-            candidates = []
-            for c_name, provider in CropModelRegistry._providers.items():
-                try:
-                    p = provider.predict(image_bytes=image_bytes)
-                    if p.quality_status != "FAILED" and p.is_reliable and not p.is_ood:
-                        candidates.append((c_name, p))
-                except Exception:
-                    continue
-            if candidates:
-                candidates.sort(key=lambda x: x[1].calibrated_confidence, reverse=True)
-                canonical_crop, pred = candidates[0]
-            elif not pred:
-                canonical_crop = canonical_crop or "chilli"
-                pred = CropModelRegistry.predict(image_bytes=image_bytes, crop_hint=canonical_crop)
+        original_hint = canonical_crop
+        conflict_detected = False
 
-        if not pred.is_reliable or pred.is_ood or pred.quality_status == "FAILED":
-            spoken = BhoomiPersonaEngine.format_vision_diagnosis(
-                crop=canonical_crop or "crop",
-                disease_name="Uncertain Lesion Pattern",
-                confidence=pred.calibrated_confidence if pred else 0.0,
-                uncertainty_level="HIGH",
-                language=active_lang,
-                farmer_name=farmer_name
+        # If crop_hint was not specified OR if dedicated prediction is below 0.80 confidence,
+        # scan across all registered crop models to identify the best-matching pathology candidate
+        if not pred or not pred.is_reliable or pred.is_ood or pred.quality_status == "FAILED" or pred.calibrated_confidence < 0.80:
+            candidate = CropModelRegistry.identify_best_candidate(image_bytes=image_bytes)
+            if candidate:
+                detected_crop, candidate_pred = candidate
+                if canonical_crop and canonical_crop != detected_crop:
+                    # If candidate model has higher confidence or hinted model was weak
+                    if not pred or not pred.is_reliable or candidate_pred.calibrated_confidence > (pred.calibrated_confidence + 0.08):
+                        conflict_detected = True
+                        logger.info("Vision crop conflict detected: requested=%s, detected=%s (candidate_conf=%.2f, hinted_conf=%.2f)",
+                                    canonical_crop, detected_crop, candidate_pred.calibrated_confidence, pred.calibrated_confidence if pred else 0.0)
+                        canonical_crop = detected_crop
+                        pred = candidate_pred
+                elif not canonical_crop:
+                    canonical_crop = detected_crop
+                    pred = candidate_pred
+
+        # 3. Handle Low Confidence / OOD / Uncertain Crop
+        if not pred or not pred.is_reliable or pred.is_ood or pred.quality_status == "FAILED":
+            crop_label = (canonical_crop or "Crop").title() if canonical_crop else "Uncertain"
+            spoken = (
+                f"నమస్కారం, ఈ ఫోటోలో పంట లేదా తెగులును ఖచ్చితంగా గుర్తించలేకపోయాను. ఇది ఏ పంట ఫోటో? దయచేసి స్పష్టమైన ఫోటో తీసి పంపండి."
+                if active_lang == "te" else (
+                    f"नमस्ते, इस फोटो में फसल या बीमारी की पुष्टि नहीं हो सकी। यह किस फसल की फोटो है? कृपया एक और साफ फोटो भेजें।"
+                    if active_lang == "hi" else (
+                        f"Hello, I could not reliably determine the crop or diagnosis for this leaf photograph. Which crop is this image from? Please provide a clearer close-up photograph in good natural light."
+                    )
+                )
             )
-            audio_b64 = await cls._synthesize_audio(spoken, active_lang)
+            audio_b64 = await cls._synthesize_audio(spoken, active_lang) if synthesize_speech else ""
             return VisionAnalysisOutput(
                 success=False,
-                crop_identified=(canonical_crop or "Unknown").title(),
-                disease_detected="UNCERTAIN_ANOMALY",
-                common_name="Uncertain Lesion Pattern",
+                crop_identified=crop_label,
+                disease_detected="CROP_UNCERTAIN",
+                common_name="Crop Type / Lesion Pattern Uncertain",
                 confidence=pred.calibrated_confidence if pred else 0.0,
                 confidence_percentage=round((pred.calibrated_confidence if pred else 0.0) * 100, 1),
                 uncertainty_level=pred.uncertainty_status if pred else "UNRELIABLE",
                 symptoms=[],
-                ipm_recommendation="Consult local agricultural university / KVK extension officer.",
-                chemical_treatment="Do not spray unvetted chemicals without confirmed diagnosis.",
+                ipm_recommendation="Consult your local agricultural extension officer (KVK) or verify the crop type.",
+                chemical_treatment="Do not spray unvetted chemicals without confirmed crop and disease diagnosis.",
                 safety_advisories=["Model confidence is insufficient or input is out-of-distribution."],
                 quality_gate_metrics=(pred.quality_metrics if pred else None) or gate_result.metrics,
-                farmer_explanation="I am not confident in diagnosing this photo. Please hold the camera closer to the symptoms, take a photo in clear natural daylight, or consult a local KVK agricultural extension officer.",
+                farmer_explanation=f"I could not reliably verify the diagnosis. Which crop is this image from? Please confirm your crop or capture a clearer photo of the affected leaf in daylight.",
                 spoken_explanation=spoken,
                 assistant_audio_base64=audio_b64,
                 requires_retake=True
@@ -194,8 +203,16 @@ class VisionService:
         if not disease_info:
             disease_info = VisionModelRegistry.get_disease_info(canonical_crop, "healthy")
         if not disease_info:
-            crop_dict = getattr(VisionModelRegistry, "_registry", {}).get(canonical_crop, {})
-            disease_info = list(crop_dict.values())[0] if crop_dict else VisionModelRegistry.get_disease_info("chilli", "leaf_curl")
+            crop_tax = VisionModelRegistry.CROP_TAXONOMY.get(canonical_crop, {})
+            disease_info = next(iter(crop_tax.values())) if crop_tax else DiseaseInfo(
+                disease_id=f"{canonical_crop}_{disease_key}",
+                common_name=pred.common_name,
+                pathogen_type="fungal",
+                symptoms=["Foliar lesions observed on leaf blade"],
+                ipm_treatment="Monitor field closely and consult local KVK agronomy advisory.",
+                chemical_treatment="Apply recommended bio-protectant if symptoms spread.",
+                prevention_advisory="Ensure proper crop spacing and adequate field drainage."
+            )
 
         # Step 45: Image + RAG Parity - Query verified RAG guidance for predicted crop and disease
         rag_citations: List[Dict[str, Any]] = []
@@ -246,23 +263,31 @@ class VisionService:
             language=active_lang,
             farmer_name=farmer_name
         )
-        audio_b64 = await cls._synthesize_audio(spoken, active_lang)
+        audio_b64 = await cls._synthesize_audio(spoken, active_lang) if synthesize_speech else ""
 
         # 8. Visual Farmer-friendly explanation
+        conflict_prefix = ""
+        if conflict_detected and original_hint and original_hint != canonical_crop:
+            conflict_prefix = (
+                f"**Crop Notice**: The uploaded image appears inconsistent with your registered {original_hint.title()} crop context. "
+                f"Visual patterns match **{canonical_crop.title()}**. Please confirm if this leaf is from {canonical_crop.title()}.\n\n"
+            )
+            all_warnings.append(f"Image visual features match {canonical_crop.title()}, conflicting with registered {original_hint.title()} crop.")
+
         if safety_blocked:
             explanation = (
-                f"Diagnosis: Detected **{disease_info.common_name}** with {round(raw_conf * 100, 1)}% confidence. "
+                f"{conflict_prefix}Diagnosis: Detected **{disease_info.common_name}** with {round(raw_conf * 100, 1)}% confidence. "
                 f"Safety Notice: {safety_eval.modified_text} "
                 f"Eco-Friendly Action: {disease_info.ipm_treatment}."
             )
         elif disease_info.pathogen_type == "healthy":
             explanation = (
-                f"Great news! Your {canonical_crop.title()} leaf appears healthy with robust green pigmentation "
+                f"{conflict_prefix}Great news! Your {canonical_crop.title()} leaf appears healthy with robust green pigmentation "
                 f"({round(raw_conf * 100, 1)}% confidence). Continue regular farm monitoring."
             )
         else:
             explanation = (
-                f"Diagnosis: Detected **{disease_info.common_name}** with {round(raw_conf * 100, 1)}% confidence. "
+                f"{conflict_prefix}Diagnosis: Detected **{disease_info.common_name}** with {round(raw_conf * 100, 1)}% confidence. "
                 f"Immediate Action: {disease_info.ipm_treatment} "
                 f"Chemical Option: {chem_treatment}."
             )

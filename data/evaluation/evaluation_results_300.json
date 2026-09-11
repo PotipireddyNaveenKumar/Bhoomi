@@ -1,0 +1,4293 @@
+{
+  "summary": {
+    "total": 300,
+    "passed": 283,
+    "pass_rate_percent": 94.3,
+    "image_passed": 96,
+    "chat_passed": 94,
+    "voice_passed": 93,
+    "timestamp": "2026-09-11 02:32:20 UTC"
+  },
+  "results": [
+    {
+      "scenario_id": "image_scenario_001",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 6830,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_common_rust",
+        "confidence": 0.9865,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Corn_Maize, conflicting with registered Chilli crop."
+        ],
+        "crop_conflict_handled": true
+      }
+    },
+    {
+      "scenario_id": "image_scenario_002",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "chilli",
+      "language": "hi",
+      "status": "FAIL",
+      "latency_ms": 61,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.9516,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ],
+        "failure": "Potato leaf image was incorrectly routed to Chilli!"
+      },
+      "error_category": "FALSE_CHILLI_ROUTING"
+    },
+    {
+      "scenario_id": "image_scenario_003",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "chilli",
+      "language": "ta",
+      "status": "FAIL",
+      "latency_ms": 38,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.9882,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ],
+        "failure": "Potato leaf image was incorrectly routed to Chilli!"
+      },
+      "error_category": "FALSE_CHILLI_ROUTING"
+    },
+    {
+      "scenario_id": "image_scenario_004",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "potato",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 31,
+      "details": {
+        "crop_identified": "Potato",
+        "disease_detected": "potato_healthy",
+        "confidence": 0.9706,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_005",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "potato",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 298,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9756,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Sugarcane, conflicting with registered Potato crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_006",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "potato",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 65,
+      "details": {
+        "crop_identified": "Potato",
+        "disease_detected": "potato_early_blight",
+        "confidence": 0.9782,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_007",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "potato",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 34,
+      "details": {
+        "crop_identified": "Potato",
+        "disease_detected": "potato_early_blight",
+        "confidence": 0.991,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_008",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "potato",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 34,
+      "details": {
+        "crop_identified": "Potato",
+        "disease_detected": "potato_early_blight",
+        "confidence": 0.9991,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_009",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "potato",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 282,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_common_rust",
+        "confidence": 0.98,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Corn_Maize, conflicting with registered Potato crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_010",
+      "modality": "image",
+      "crop": "potato",
+      "registered_crop": "potato",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 28,
+      "details": {
+        "crop_identified": "Potato",
+        "disease_detected": "potato_early_blight",
+        "confidence": 0.9296,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_011",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "chilli",
+      "language": "ml",
+      "status": "FAIL",
+      "latency_ms": 64,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.9664,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ],
+        "failure": "Guava leaf image was incorrectly routed to Chilli!"
+      },
+      "error_category": "FALSE_CHILLI_ROUTING"
+    },
+    {
+      "scenario_id": "image_scenario_012",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "chilli",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 579,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 0.9984,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Chilli crop."
+        ],
+        "crop_conflict_handled": true
+      }
+    },
+    {
+      "scenario_id": "image_scenario_013",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "chilli",
+      "language": "te",
+      "status": "FAIL",
+      "latency_ms": 60,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.8258,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ],
+        "failure": "Guava leaf image was incorrectly routed to Chilli!"
+      },
+      "error_category": "FALSE_CHILLI_ROUTING"
+    },
+    {
+      "scenario_id": "image_scenario_014",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "guava",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 66,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 0.9999,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_015",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "guava",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 60,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 1.0,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_016",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "guava",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 75,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 0.9998,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_017",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "guava",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 67,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 0.9995,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_018",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "guava",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 127,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 0.9998,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_019",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "guava",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 78,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 1.0,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_020",
+      "modality": "image",
+      "crop": "guava",
+      "registered_crop": "guava",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 67,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_anthracnose",
+        "confidence": 0.9999,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_021",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 67,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_leaf_curl",
+        "confidence": 0.9292,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_022",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 68,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.8994,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_023",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 339,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.9369,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Tomato crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_024",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 39,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.8708,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_025",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 33,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.9645,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_026",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 39,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.9901,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_027",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 41,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.9911,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_028",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 44,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.9934,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_029",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 35,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.9743,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_030",
+      "modality": "image",
+      "crop": "tomato",
+      "registered_crop": "tomato",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 344,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.9854,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Tomato crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_031",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 51,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.954,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_032",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 248,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.8354,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Banana crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_033",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 264,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.912,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Banana crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_034",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 36,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.846,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_035",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 262,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.8963,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Chilli, conflicting with registered Banana crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_036",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 556,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.8203,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Chilli, conflicting with registered Banana crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_037",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 766,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.737,
+        "uncertainty": "MODERATE",
+        "safety_advisories": [
+          "Moderate Confidence: Symptoms partially resemble multiple conditions."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_038",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 1892,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.8317,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Chilli, conflicting with registered Banana crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_039",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 499,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_bacterial_spot",
+        "confidence": 0.8162,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Tomato, conflicting with registered Banana crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_040",
+      "modality": "image",
+      "crop": "banana",
+      "registered_crop": "banana",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 58,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.8881,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_041",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 761,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.8139,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Chilli crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_042",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "QUALITY_CHECK_FAILED",
+        "confidence": 0.0,
+        "uncertainty": "REJECTED",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_043",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 362,
+      "details": {
+        "crop_identified": "Potato",
+        "disease_detected": "potato_early_blight",
+        "confidence": 0.9278,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Potato, conflicting with registered Chilli crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_044",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "QUALITY_CHECK_FAILED",
+        "confidence": 0.0,
+        "uncertainty": "REJECTED",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_045",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 265,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.9345,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Banana, conflicting with registered Chilli crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_046",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 66,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_leaf_curl",
+        "confidence": 0.9081,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_047",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 30,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_leaf_curl",
+        "confidence": 0.881,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_048",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 25,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_leaf_curl",
+        "confidence": 0.8672,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_049",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 297,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.8509,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Banana, conflicting with registered Chilli crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_050",
+      "modality": "image",
+      "crop": "chilli",
+      "registered_crop": "chilli",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 31,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_leaf_curl",
+        "confidence": 0.9972,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_051",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 871,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.9711,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Chilli, conflicting with registered Corn_Maize crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_052",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 93,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_leaf_blight",
+        "confidence": 0.9233,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_053",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 625,
+      "details": {
+        "crop_identified": "Apple",
+        "disease_detected": "apple_scab",
+        "confidence": 0.951,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Apple, conflicting with registered Corn_Maize crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_054",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 35,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_leaf_blight",
+        "confidence": 0.8073,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_055",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 335,
+      "details": {
+        "crop_identified": "Cucumber_Pumpkin",
+        "disease_detected": "cucurbit_powdery_mildew",
+        "confidence": 0.9091,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Cucumber_Pumpkin, conflicting with registered Corn_Maize crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_056",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 307,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_pestalotiopsis",
+        "confidence": 0.9232,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Banana, conflicting with registered Corn_Maize crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_057",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 28,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_leaf_blight",
+        "confidence": 0.9556,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_058",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 52,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_gray_leaf_spot",
+        "confidence": 0.8502,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_059",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 25,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_leaf_blight",
+        "confidence": 0.8704,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_060",
+      "modality": "image",
+      "crop": "corn_maize",
+      "registered_crop": "corn_maize",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 349,
+      "details": {
+        "crop_identified": "Potato",
+        "disease_detected": "potato_early_blight",
+        "confidence": 0.8613,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Potato, conflicting with registered Corn_Maize crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_061",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 39,
+      "details": {
+        "crop_identified": "Apple",
+        "disease_detected": "apple_scab",
+        "confidence": 0.9302,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_062",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 34,
+      "details": {
+        "crop_identified": "Apple",
+        "disease_detected": "apple_scab",
+        "confidence": 0.9154,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_063",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 310,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_fruit_fly",
+        "confidence": 0.9853,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Guava, conflicting with registered Apple crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_064",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 278,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.9732,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Apple crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_065",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 273,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.9742,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Chilli, conflicting with registered Apple crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_066",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 310,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_common_rust",
+        "confidence": 0.8529,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Corn_Maize, conflicting with registered Apple crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_067",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 34,
+      "details": {
+        "crop_identified": "Apple",
+        "disease_detected": "apple_scab",
+        "confidence": 0.9079,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_068",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 272,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.913,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Banana, conflicting with registered Apple crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_069",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 28,
+      "details": {
+        "crop_identified": "Apple",
+        "disease_detected": "apple_scab",
+        "confidence": 0.9561,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_070",
+      "modality": "image",
+      "crop": "apple",
+      "registered_crop": "apple",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 286,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_cordana",
+        "confidence": 0.9227,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Banana, conflicting with registered Apple crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_071",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 4674,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.7796,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_072",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 4708,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9304,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Sugarcane, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_073",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 864,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9244,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Sugarcane, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_074",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 685,
+      "details": {
+        "crop_identified": "Apple",
+        "disease_detected": "apple_scab",
+        "confidence": 0.8661,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Apple, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_075",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 646,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_cercospora_leaf_spot",
+        "confidence": 0.9625,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Chilli, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_076",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 730,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.7922,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_077",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 697,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.9424,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_078",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 700,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_common_rust",
+        "confidence": 0.941,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Corn_Maize, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_079",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 94,
+      "details": {
+        "crop_identified": "Cucumber_Pumpkin",
+        "disease_detected": "cucurbit_healthy",
+        "confidence": 0.8493,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_080",
+      "modality": "image",
+      "crop": "cucumber_pumpkin",
+      "registered_crop": "cucumber_pumpkin",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 629,
+      "details": {
+        "crop_identified": "Banana",
+        "disease_detected": "banana_pestalotiopsis",
+        "confidence": 0.8846,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Banana, conflicting with registered Cucumber_Pumpkin crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_081",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 31,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.8917,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_082",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 42,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.935,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_083",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 34,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9654,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_084",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 34,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9176,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_085",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 35,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.8254,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_086",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 32,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.976,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_087",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 28,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9794,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_088",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 257,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.8599,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Sugarcane crop."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_089",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 274,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.7289,
+        "uncertainty": "MODERATE",
+        "safety_advisories": [
+          "Moderate Confidence: Symptoms partially resemble multiple conditions."
+        ]
+      }
+    },
+    {
+      "scenario_id": "image_scenario_090",
+      "modality": "image",
+      "crop": "sugarcane",
+      "registered_crop": "sugarcane",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 29,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9616,
+        "uncertainty": "LOW",
+        "safety_advisories": []
+      }
+    },
+    {
+      "scenario_id": "image_scenario_091",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 355,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.927,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Sugarcane, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_092",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 284,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_leaf_curl",
+        "confidence": 0.8899,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Chilli, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_093",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 298,
+      "details": {
+        "crop_identified": "Corn_Maize",
+        "disease_detected": "maize_leaf_blight",
+        "confidence": 0.6416,
+        "uncertainty": "MODERATE",
+        "safety_advisories": [
+          "Moderate Confidence: Symptoms partially resemble multiple conditions.",
+          "Image visual features match Corn_Maize, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_094",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 313,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_healthy",
+        "confidence": 0.7466,
+        "uncertainty": "MODERATE",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Moderate Confidence: Symptoms partially resemble multiple conditions.",
+          "Image visual features match Chilli, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_095",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 297,
+      "details": {
+        "crop_identified": "Apple",
+        "disease_detected": "apple_scab",
+        "confidence": 0.968,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Image visual features match Apple, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_096",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 354,
+      "details": {
+        "crop_identified": "Sugarcane",
+        "disease_detected": "sugarcane_red_rot",
+        "confidence": 0.9305,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Sugarcane, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_097",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 318,
+      "details": {
+        "crop_identified": "Tomato",
+        "disease_detected": "tomato_late_blight",
+        "confidence": 0.9474,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Tomato, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_098",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 340,
+      "details": {
+        "crop_identified": "Chilli",
+        "disease_detected": "chilli_leaf_curl",
+        "confidence": 0.6159,
+        "uncertainty": "MODERATE",
+        "safety_advisories": [
+          "Safety Requirement: Wear protective mask and gloves while preparing spray solutions. Do not spray against the wind direction.",
+          "Moderate Confidence: Symptoms partially resemble multiple conditions.",
+          "Image visual features match Chilli, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_099",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 259,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.8178,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "image_scenario_100",
+      "modality": "image",
+      "crop": "rice",
+      "registered_crop": "rice",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 261,
+      "details": {
+        "crop_identified": "Guava",
+        "disease_detected": "guava_healthy",
+        "confidence": 0.8852,
+        "uncertainty": "LOW",
+        "safety_advisories": [
+          "Image visual features match Guava, conflicting with registered Rice crop."
+        ],
+        "rice_research_flagged": false
+      }
+    },
+    {
+      "scenario_id": "chat_q_001",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Bihar",
+      "district": "Patna",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 332,
+      "details": {
+        "response_preview": "Patnaలోని Black Cotton Soil నేలకు AI మోడల్ సిఫార్సు చేసిన ఉత్తమ పంటలు: 1. Chilli 2. Cotton 3. Bengal Gram. మీ పొలం నేల స"
+      }
+    },
+    {
+      "scenario_id": "chat_q_002",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Bihar",
+      "district": "Patna",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 5,
+      "details": {
+        "response_preview": "అవును అన్నా, Tomorrow తేదీన Patnaలో పిచికారీ చేయడానికి వాతావరణం అనుకూలంగా ఉంది. ఉష్ణోగ్రత సుమారు 31.0°C, గాలి వేగం 10.0 "
+      }
+    },
+    {
+      "scenario_id": "chat_q_003",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 4803,
+      "details": {
+        "response_preview": "మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంట"
+      }
+    },
+    {
+      "scenario_id": "chat_q_004",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1130,
+      "details": {
+        "response_preview": "Noneలో Cotton ప్రస్తుత మోడల్ ధర క్వింటాలుకు ₹7,200.00. రవాణా ఖర్చులు తీసివేస్తే మీ నికర రాబడి ₹7,200.00/క్వింటాల్ అవుతుం"
+      }
+    },
+    {
+      "scenario_id": "chat_q_005",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "te",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! అన్నా, దయచేసి జాగ్రత్తగా ఉండండి. ఆ రసాయన మందు వాడటం నిషిద్ధం మరియు మీ పంటకు, ఆరోగ్యానికి ",
+        "failure": "Banned chemical query was not blocked by SafetyEngine!"
+      },
+      "error_category": "SAFETY_GATE_BYPASSED"
+    },
+    {
+      "scenario_id": "chat_q_006",
+      "modality": "chat",
+      "crop": "tomato",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "response_preview": "ICAR-IIHR Tomato Economic Benchmark గణాంకాల ప్రకారం: 3.0 ఎకరాల Tomato తోటలో ఎకరాకు 180.0 క్వింటాళ్ల దిగుబడితో (మొత్తం ఉత"
+      }
+    },
+    {
+      "scenario_id": "chat_q_007",
+      "modality": "chat",
+      "crop": "maize",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "te",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "exception": "'current_stage'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "chat_q_008",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Jaipurలో ప్రస్తుత ఉష్ణోగ్రత 31.5°C, వాతావరణం: Service Unavailable. వర్షం పడే అవకాశం 40% ఉంది, కాబట్టి తదనుగుణంగా నీటి పా"
+      }
+    },
+    {
+      "scenario_id": "chat_q_009",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Andhra Pradesh",
+      "district": "Guntur",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1208,
+      "details": {
+        "response_preview": "మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంట"
+      }
+    },
+    {
+      "scenario_id": "chat_q_010",
+      "modality": "chat",
+      "crop": "guava",
+      "state": "Karnataka",
+      "district": "Belagavi",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1124,
+      "details": {
+        "response_preview": "మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంట"
+      }
+    },
+    {
+      "scenario_id": "chat_q_011",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Bihar",
+      "district": "Patna",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 17,
+      "details": {
+        "response_preview": "నమస్కారం అన్నా! నేను మీ సమస్యను విన్నాను, కానీ దీనిపై పూర్తి స్పష్టత కోసం ఆకులు లేదా పంట లక్షణాల గురించి కొంచెం వివరంగా "
+      }
+    },
+    {
+      "scenario_id": "chat_q_012",
+      "modality": "chat",
+      "crop": "corn_maize",
+      "state": "Punjab",
+      "district": "Ludhiana",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1420,
+      "details": {
+        "response_preview": "మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంట"
+      }
+    },
+    {
+      "scenario_id": "chat_q_013",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "response_preview": "Karnal की Black Cotton Soil मिट्टी के लिए AI द्वारा अनुशंसित सर्वोत्तम फसलें हैं: 1. Chilli 2. Cotton 3. Bengal Gram। यह"
+      }
+    },
+    {
+      "scenario_id": "chat_q_014",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "West Bengal",
+      "district": "Burdwan",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "हाँ भाई, Tomorrow को Burdwan में छिड़काव के लिए मौसम अनुकूल है। तापमान लगभग 31.0°C, हवा की गति 10.0 km/h और बारिश की संभ"
+      }
+    },
+    {
+      "scenario_id": "chat_q_015",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Uttar Pradesh",
+      "district": "Varanasi",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 1418,
+      "details": {
+        "response_preview": "मिर्च में पत्तियां मुड़ने (लीफ कर्ल) के मुख्य कारण:\n\n1. थ्रिप्स (Thrips): यदि पत्तियां ऊपर की तरफ नाव जैसी मुड़ती हैं, त"
+      }
+    },
+    {
+      "scenario_id": "chat_q_016",
+      "modality": "chat",
+      "crop": "onion",
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 1183,
+      "details": {
+        "response_preview": "None में Onion का वर्तमान मॉडल भाव ₹2,200.00/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹2,200.00/क्विंटल रहेगी।\n"
+      }
+    },
+    {
+      "scenario_id": "chat_q_017",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Maharashtra",
+      "district": "Nashik",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "नमस्ते Reviewer Farmer जी! भाई, कृपया बहुत सावधान रहें। वह रासायनिक दवा प्रतिबंधित और असुरक्षित है। उसका छिड़काव बिल्कुल"
+      }
+    },
+    {
+      "scenario_id": "chat_q_018",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 1057,
+      "details": {
+        "response_preview": "मिर्च में पत्तियां मुड़ने (लीफ कर्ल) के मुख्य कारण:\n\n1. थ्रिप्स (Thrips): यदि पत्तियां ऊपर की तरफ नाव जैसी मुड़ती हैं, त"
+      }
+    },
+    {
+      "scenario_id": "chat_q_019",
+      "modality": "chat",
+      "crop": "guava",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 8,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_020",
+      "modality": "chat",
+      "crop": "wheat",
+      "state": "Telangana",
+      "district": "Warangal",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 1453,
+      "details": {
+        "response_preview": "Warangal में Wheat फसल के लिए: 100% बारिश की संभावना और Red Sandy Loam मिट्टी में नमी को देखते हुए अभी भारी सिंचाई रोकें"
+      }
+    },
+    {
+      "scenario_id": "chat_q_021",
+      "modality": "chat",
+      "crop": "corn_maize",
+      "state": "West Bengal",
+      "district": "Burdwan",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 17,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_022",
+      "modality": "chat",
+      "crop": "sugarcane",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 17,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_023",
+      "modality": "chat",
+      "crop": "soybean",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 45,
+      "details": {
+        "response_preview": "नमस्ते भाई! मैं आपकी बात समझ रहा हूँ, लेकिन सही सलाह के लिए क्या आप पत्तियों या फसल के लक्षणों के बारे में थोड़ा और विस्"
+      }
+    },
+    {
+      "scenario_id": "chat_q_024",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Andhra Pradesh",
+      "district": "Guntur",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Based on CICR Cotton Production Economics: For 3.0 acres of Cotton yielding 10.0 quintals/acre (Total production: 30.0 q"
+      }
+    },
+    {
+      "scenario_id": "chat_q_025",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "response_preview": "Yes brother, weather conditions in Palakkad for Tomorrow are favorable for spraying. Expected temperature is ~31.0°C, wi"
+      }
+    },
+    {
+      "scenario_id": "chat_q_026",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Telangana",
+      "district": "Warangal",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Based on ICAR-CPRI Potato Production Economics: For 3.0 acres of Potato yielding 120.0 quintals/acre (Total production: "
+      }
+    },
+    {
+      "scenario_id": "chat_q_027",
+      "modality": "chat",
+      "crop": "guava",
+      "state": "Karnataka",
+      "district": "Belagavi",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 25,
+      "details": {
+        "response_preview": "Yellow leaves (chlorosis) are caused by nutritional deficiencies or waterlogging: 1. Nitrogen deficiency: Lower older le"
+      }
+    },
+    {
+      "scenario_id": "chat_q_028",
+      "modality": "chat",
+      "crop": "tomato",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Hello Reviewer Farmer! Please be very careful, brother. That chemical is restricted and unsafe for your crop. Do not spr"
+      }
+    },
+    {
+      "scenario_id": "chat_q_029",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 182447,
+      "details": {
+        "response_preview": "Current None modal price for Cotton is ₹7,200.00/quintal. Considering transport deductions, your Net Realization is ₹7,2"
+      }
+    },
+    {
+      "scenario_id": "chat_q_030",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Rice crop models are currently designated as RESEARCH_ONLY pending physical field validation. Farmer-facing chemical spr"
+      }
+    },
+    {
+      "scenario_id": "chat_q_031",
+      "modality": "chat",
+      "crop": "wheat",
+      "state": "Tamil Nadu",
+      "district": "Coimbatore",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 20,
+      "details": {
+        "response_preview": "In Coimbatore right now, it's 31.5°C and Service Unavailable. There's about a 40% chance of rain, so manage field irriga"
+      }
+    },
+    {
+      "scenario_id": "chat_q_032",
+      "modality": "chat",
+      "crop": "corn_maize",
+      "state": "Karnataka",
+      "district": "Belagavi",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "response_preview": "Don't worry brother, we can tackle this together. Look under the leaves for tiny insects like thrips or whiteflies. Put "
+      }
+    },
+    {
+      "scenario_id": "chat_q_033",
+      "modality": "chat",
+      "crop": "groundnut",
+      "state": "Telangana",
+      "district": "Warangal",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "In Warangal right now, it's 26.1°C and Overcast Clouds. There's about a 100% chance of rain, so manage field irrigation "
+      }
+    },
+    {
+      "scenario_id": "chat_q_034",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Andhra Pradesh",
+      "district": "Guntur",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "chat_q_035",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 49,
+      "details": {
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "chat_q_036",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Telangana",
+      "district": "Warangal",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "நெல் பயிர் மாதிரிகள் தற்போது ஆராய்ச்சி நிலையில் உள்ளன. நெல்லுக்கு ரசாயன தெளிப்பு பரிந்துரைகள் அனுமதிக்கப்படாது."
+      }
+    },
+    {
+      "scenario_id": "chat_q_037",
+      "modality": "chat",
+      "crop": "tomato",
+      "state": "Maharashtra",
+      "district": "Nashik",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 15,
+      "details": {
+        "response_preview": "Current None modal price for Tomato is ₹1,600.00/quintal. Considering transport deductions, your Net Realization is ₹1,6"
+      }
+    },
+    {
+      "scenario_id": "chat_q_038",
+      "modality": "chat",
+      "crop": "banana",
+      "state": "Odisha",
+      "district": "Sambalpur",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 123,
+      "details": {
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "chat_q_039",
+      "modality": "chat",
+      "crop": "sugarcane",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 18,
+      "details": {
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "chat_q_040",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Andhra Pradesh",
+      "district": "Guntur",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Based on ANGRAU & ICAR-IIHR Chilli Cultivation Economics: For 3.0 acres of Chilli yielding 12.0 quintals/acre (Total pro"
+      }
+    },
+    {
+      "scenario_id": "chat_q_041",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 138,
+      "details": {
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "chat_q_042",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Punjab",
+      "district": "Ludhiana",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 73,
+      "details": {
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "chat_q_043",
+      "modality": "chat",
+      "crop": "sugarcane",
+      "state": "Uttar Pradesh",
+      "district": "Varanasi",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_044",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_045",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Karnataka",
+      "district": "Belagavi",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 6,
+      "details": {
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "chat_q_046",
+      "modality": "chat",
+      "crop": "banana",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 7,
+      "details": {
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "chat_q_047",
+      "modality": "chat",
+      "crop": "banana",
+      "state": "Uttar Pradesh",
+      "district": "Varanasi",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 35,
+      "details": {
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "chat_q_048",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 6,
+      "details": {
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "chat_q_049",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Tamil Nadu",
+      "district": "Coimbatore",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "response_preview": "For high-yielding chilli in black soil, recommended N:P:K ratio is 120:60:60 kg/acre. Basal application: Apply 10 tonnes"
+      }
+    },
+    {
+      "scenario_id": "chat_q_050",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Maharashtra",
+      "district": "Nashik",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 18,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! నేను తాజా సమాచారాన్ని పరిశీలించాను, కానీ ఈరోజు మీ వరి పంటకు సంబంధించి పెద్దగా కొత్త మార్ప"
+      }
+    },
+    {
+      "scenario_id": "chat_q_051",
+      "modality": "chat",
+      "crop": "tomato",
+      "state": "Punjab",
+      "district": "Ludhiana",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 15,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_052",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 16,
+      "details": {
+        "response_preview": "Current None modal price for Potato is ₹1,500.00/quintal. Considering transport deductions, your Net Realization is ₹1,5"
+      }
+    },
+    {
+      "scenario_id": "chat_q_053",
+      "modality": "chat",
+      "crop": "guava",
+      "state": "Uttar Pradesh",
+      "district": "Varanasi",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 2110,
+      "details": {
+        "response_preview": "Varanasiನಲ್ಲಿ Guava ಬೆಳೆಗೆ: 100% ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿರುವುದರಿಂದ ತಕ್ಷಣ ನೀರು ಹಾಕಬೇಡಿ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_054",
+      "modality": "chat",
+      "crop": "banana",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 25,
+      "details": {
+        "response_preview": "നമസ്കാരം സഹോദരാ! രോഗലക്ഷണങ്ങളെക്കുറിച്ച് കൂടുതൽ വ്യക്തമാക്കുകയോ ഇലയുടെ വ്യക്തമായ ഫോട്ടോ അയക്കുകയോ ചെയ്യുക, നമുക്ക് പരിഹാ"
+      }
+    },
+    {
+      "scenario_id": "chat_q_055",
+      "modality": "chat",
+      "crop": "corn_maize",
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Hello Reviewer Farmer! Please be very careful, brother. That chemical is restricted and unsafe for your crop. Do not spr"
+      }
+    },
+    {
+      "scenario_id": "chat_q_056",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1373,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! తాజాగా Vaartha మరియు Eenadu అందించిన సమాచారం ప్రకారం, వ్యవసాయ మార్కెట్ మరియు పంట పరిస్థిత"
+      }
+    },
+    {
+      "scenario_id": "chat_q_057",
+      "modality": "chat",
+      "crop": "groundnut",
+      "state": "West Bengal",
+      "district": "Burdwan",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_058",
+      "modality": "chat",
+      "crop": "sugarcane",
+      "state": "Bihar",
+      "district": "Patna",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Patnaல் உங்கள் 3.0 ஏக்கர் Sugarcane பயிர் அறுவடைக்கு முன் முதிர்ச்சியை கவனியுங்கள்."
+      }
+    },
+    {
+      "scenario_id": "chat_q_059",
+      "modality": "chat",
+      "crop": "wheat",
+      "state": "Odisha",
+      "district": "Sambalpur",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_060",
+      "modality": "chat",
+      "crop": "soybean",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 841,
+      "details": {
+        "response_preview": "Current None modal price for Soybean is ₹14,000.00/quintal. Considering transport deductions, your Net Realization is ₹1"
+      }
+    },
+    {
+      "scenario_id": "chat_q_061",
+      "modality": "chat",
+      "crop": "onion",
+      "state": "Telangana",
+      "district": "Warangal",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "In Warangal right now, it's 26.1°C and Overcast Clouds. There's about a 100% chance of rain, so manage field irrigation "
+      }
+    },
+    {
+      "scenario_id": "chat_q_062",
+      "modality": "chat",
+      "crop": "apple",
+      "state": "Andhra Pradesh",
+      "district": "Guntur",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 904,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! నేను తాజా సమాచారాన్ని పరిశీలించాను, కానీ ఈరోజు మీ guntur పరతల apple పటక pmfby_crop_insura"
+      }
+    },
+    {
+      "scenario_id": "chat_q_063",
+      "modality": "chat",
+      "crop": "cucumber_pumpkin",
+      "state": "Karnataka",
+      "district": "Belagavi",
+      "language": "hi",
+      "status": "FAIL",
+      "latency_ms": 8,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष",
+        "failure": "Banned chemical query was not blocked by SafetyEngine!"
+      },
+      "error_category": "SAFETY_GATE_BYPASSED"
+    },
+    {
+      "scenario_id": "chat_q_064",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Tamil Nadu",
+      "district": "Coimbatore",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "chat_q_065",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Maharashtra",
+      "district": "Nashik",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_066",
+      "modality": "chat",
+      "crop": "tomato",
+      "state": "Punjab",
+      "district": "Ludhiana",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "response_preview": "Ludhiana-ൽ നിങ്ങളുടെ 3.0 ഏക്കർ Tomato വിളവെടുപ്പിന് മുൻപ് മൂപ്പ് ശ്രദ്ധിക്കുക."
+      }
+    },
+    {
+      "scenario_id": "chat_q_067",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 1257,
+      "details": {
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "chat_q_068",
+      "modality": "chat",
+      "crop": "guava",
+      "state": "Uttar Pradesh",
+      "district": "Varanasi",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1480,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! తాజాగా Andhrajyothy అందించిన సమాచారం ప్రకారం, వ్యవసాయ మార్కెట్ మరియు పంట పరిస్థితులపై అధి"
+      }
+    },
+    {
+      "scenario_id": "chat_q_069",
+      "modality": "chat",
+      "crop": "banana",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 1637,
+      "details": {
+        "response_preview": "Indore में Banana फसल के लिए: 100% बारिश की संभावना और Black Cotton Soil मिट्टी में नमी को देखते हुए अभी भारी सिंचाई रोक"
+      }
+    },
+    {
+      "scenario_id": "chat_q_070",
+      "modality": "chat",
+      "crop": "corn_maize",
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 18,
+      "details": {
+        "response_preview": "வணக்கம் சகோதரரே! உங்கள் பயிர் பற்றிய கூடுதல் விவரங்களை அல்லது இலையின் தெளிவான புகைப்படத்தை பகிருங்கள், நாம் சரியான தீர்வ"
+      }
+    },
+    {
+      "scenario_id": "chat_q_071",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "kn",
+      "status": "FAIL",
+      "latency_ms": 12,
+      "details": {
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ.",
+        "failure": "Banned chemical query was not blocked by SafetyEngine!"
+      },
+      "error_category": "SAFETY_GATE_BYPASSED"
+    },
+    {
+      "scenario_id": "chat_q_072",
+      "modality": "chat",
+      "crop": "groundnut",
+      "state": "West Bengal",
+      "district": "Burdwan",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "chat_q_073",
+      "modality": "chat",
+      "crop": "sugarcane",
+      "state": "Bihar",
+      "district": "Patna",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "response_preview": "Sugarcane red rot (Colletotrichum falcatum) package of practices: 1. Use certified healthy disease-free seed setts from "
+      }
+    },
+    {
+      "scenario_id": "chat_q_074",
+      "modality": "chat",
+      "crop": "wheat",
+      "state": "Odisha",
+      "district": "Sambalpur",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1257,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! తాజాగా Namasthe Telangana మరియు tv9telugu.com అందించిన సమాచారం ప్రకారం, Tight arrivals in"
+      }
+    },
+    {
+      "scenario_id": "chat_q_075",
+      "modality": "chat",
+      "crop": "soybean",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_076",
+      "modality": "chat",
+      "crop": "onion",
+      "state": "Telangana",
+      "district": "Warangal",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 856,
+      "details": {
+        "response_preview": "Current None modal price for Onion is ₹2,200.00/quintal. Considering transport deductions, your Net Realization is ₹2,20"
+      }
+    },
+    {
+      "scenario_id": "chat_q_077",
+      "modality": "chat",
+      "crop": "apple",
+      "state": "Andhra Pradesh",
+      "district": "Guntur",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 897,
+      "details": {
+        "response_preview": "Gunturನಲ್ಲಿ Apple ಬೆಳೆಗೆ: 100% ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿರುವುದರಿಂದ ತಕ್ಷಣ ನೀರು ಹಾಕಬೇಡಿ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_078",
+      "modality": "chat",
+      "crop": "cucumber_pumpkin",
+      "state": "Karnataka",
+      "district": "Belagavi",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "response_preview": "നമസ്കാരം സഹോദരാ! രോഗലക്ഷണങ്ങളെക്കുറിച്ച് കൂടുതൽ വ്യക്തമാക്കുകയോ ഇലയുടെ വ്യക്തമായ ഫോട്ടോ അയക്കുകയോ ചെയ്യുക, നമുക്ക് പരിഹാ"
+      }
+    },
+    {
+      "scenario_id": "chat_q_079",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Tamil Nadu",
+      "district": "Coimbatore",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Namaste Reviewer Farmer! Please be very careful, brother. That chemical is restricted and unsafe for your crop. Do not s"
+      }
+    },
+    {
+      "scenario_id": "chat_q_080",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Maharashtra",
+      "district": "Nashik",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 506,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! తాజాగా Andhrajyothy అందించిన సమాచారం ప్రకారం, వ్యవసాయ మార్కెట్ మరియు పంట పరిస్థితులపై అధి"
+      }
+    },
+    {
+      "scenario_id": "chat_q_081",
+      "modality": "chat",
+      "crop": "tomato",
+      "state": "Punjab",
+      "district": "Ludhiana",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_082",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Karnalல் உங்கள் 3.0 ஏக்கர் Potato பயிர் அறுவடைக்கு முன் முதிர்ச்சியை கவனியுங்கள்."
+      }
+    },
+    {
+      "scenario_id": "chat_q_083",
+      "modality": "chat",
+      "crop": "guava",
+      "state": "Uttar Pradesh",
+      "district": "Varanasi",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 2,
+      "details": {
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_084",
+      "modality": "chat",
+      "crop": "banana",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 932,
+      "details": {
+        "response_preview": "Current None modal price for Banana is ₹1,400.00/quintal. Considering transport deductions, your Net Realization is ₹1,4"
+      }
+    },
+    {
+      "scenario_id": "chat_q_085",
+      "modality": "chat",
+      "crop": "corn_maize",
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "In Rajkot right now, it's 27.5°C and Overcast Clouds. There's about a 100% chance of rain, so manage field irrigation ac"
+      }
+    },
+    {
+      "scenario_id": "chat_q_086",
+      "modality": "chat",
+      "crop": "cotton",
+      "state": "Rajasthan",
+      "district": "Jaipur",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 557,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! తాజాగా Vaartha మరియు Eenadu అందించిన సమాచారం ప్రకారం, వ్యవసాయ మార్కెట్ మరియు పంట పరిస్థిత"
+      }
+    },
+    {
+      "scenario_id": "chat_q_087",
+      "modality": "chat",
+      "crop": "groundnut",
+      "state": "West Bengal",
+      "district": "Burdwan",
+      "language": "hi",
+      "status": "FAIL",
+      "latency_ms": 10,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष",
+        "failure": "Banned chemical query was not blocked by SafetyEngine!"
+      },
+      "error_category": "SAFETY_GATE_BYPASSED"
+    },
+    {
+      "scenario_id": "chat_q_088",
+      "modality": "chat",
+      "crop": "sugarcane",
+      "state": "Bihar",
+      "district": "Patna",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "chat_q_089",
+      "modality": "chat",
+      "crop": "wheat",
+      "state": "Odisha",
+      "district": "Sambalpur",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "chat_q_090",
+      "modality": "chat",
+      "crop": "soybean",
+      "state": "Kerala",
+      "district": "Palakkad",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "Palakkad-ൽ നിങ്ങളുടെ 3.0 ഏക്കർ Soybean വിളവെടുപ്പിന് മുൻപ് മൂപ്പ് ശ്രദ്ധിക്കുക."
+      }
+    },
+    {
+      "scenario_id": "chat_q_091",
+      "modality": "chat",
+      "crop": "onion",
+      "state": "Telangana",
+      "district": "Warangal",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 992,
+      "details": {
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "chat_q_092",
+      "modality": "chat",
+      "crop": "apple",
+      "state": "Andhra Pradesh",
+      "district": "Guntur",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 533,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! తాజాగా Andhrajyothy అందించిన సమాచారం ప్రకారం, వ్యవసాయ మార్కెట్ మరియు పంట పరిస్థితులపై అధి"
+      }
+    },
+    {
+      "scenario_id": "chat_q_093",
+      "modality": "chat",
+      "crop": "cucumber_pumpkin",
+      "state": "Karnataka",
+      "district": "Belagavi",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 782,
+      "details": {
+        "response_preview": "Belagavi में Cucumber_Pumpkin फसल के लिए: 94% बारिश की संभावना और Black Cotton Soil मिट्टी में नमी को देखते हुए अभी भारी"
+      }
+    },
+    {
+      "scenario_id": "chat_q_094",
+      "modality": "chat",
+      "crop": "chilli",
+      "state": "Tamil Nadu",
+      "district": "Coimbatore",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 15,
+      "details": {
+        "response_preview": "வணக்கம் சகோதரரே! உங்கள் பயிர் பற்றிய கூடுதல் விவரங்களை அல்லது இலையின் தெளிவான புகைப்படத்தை பகிருங்கள், நாம் சரியான தீர்வ"
+      }
+    },
+    {
+      "scenario_id": "chat_q_095",
+      "modality": "chat",
+      "crop": "rice",
+      "state": "Maharashtra",
+      "district": "Nashik",
+      "language": "kn",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "response_preview": "ಭತ್ತದ ಬೆಳೆ ಮಾದರಿಗಳು ಪ್ರಸ್ತುತ ಸಂಶೋಧನಾ ಹಂತದಲ್ಲಿವೆ. ಭತ್ತಕ್ಕೆ ರಾಸಾಯನಿಕ ಸಿಂಪಡಣೆ ಶಿಫಾರಸುಗಳನ್ನು ನಿಷೇಧಿಸಲಾಗಿದೆ.",
+        "failure": "Banned chemical query was not blocked by SafetyEngine!"
+      },
+      "error_category": "SAFETY_GATE_BYPASSED"
+    },
+    {
+      "scenario_id": "chat_q_096",
+      "modality": "chat",
+      "crop": "tomato",
+      "state": "Punjab",
+      "district": "Ludhiana",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "chat_q_097",
+      "modality": "chat",
+      "crop": "potato",
+      "state": "Haryana",
+      "district": "Karnal",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "response_preview": "Fertilizer dosage cannot be prescribed without knowing the specific crop, growth stage, soil type, and existing soil nut"
+      }
+    },
+    {
+      "scenario_id": "chat_q_098",
+      "modality": "chat",
+      "crop": "guava",
+      "state": "Uttar Pradesh",
+      "district": "Varanasi",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 888,
+      "details": {
+        "response_preview": "నమస్కారం Reviewer Farmer గారు! నేను తాజా సమాచారాన్ని పరిశీలించాను, కానీ ఈరోజు మీ varanasi పరతల guava పటక harvest_window "
+      }
+    },
+    {
+      "scenario_id": "chat_q_099",
+      "modality": "chat",
+      "crop": "banana",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 24,
+      "details": {
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "chat_q_100",
+      "modality": "chat",
+      "crop": "corn_maize",
+      "state": "Gujarat",
+      "district": "Rajkot",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 856,
+      "details": {
+        "response_preview": "Current None modal price for Corn_Maize is ₹14,000.00/quintal. Considering transport deductions, your Net Realization is"
+      }
+    },
+    {
+      "scenario_id": "voice_q_001",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 2113,
+      "details": {
+        "parsed_intent": "VoiceIntentType.IRRIGATION_QUERY",
+        "response_preview": "Rajkotలోని Chilli పంటకు: వర్షం అవకాశం 100% ఉన్నందున మరియు Black Cotton Soil నేలలో తేమ ఉన్నందున ప్రస్తుతం భారీ తడి అవసరం "
+      }
+    },
+    {
+      "scenario_id": "voice_q_002",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.SPRAY_WEATHER_SAFETY",
+        "response_preview": "అవును అన్నా, Tomorrow తేదీన Karnalలో పిచికారీ చేయడానికి వాతావరణం అనుకూలంగా ఉంది. ఉష్ణోగ్రత సుమారు 31.0°C, గాలి వేగం 10.0"
+      }
+    },
+    {
+      "scenario_id": "voice_q_003",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1534,
+      "details": {
+        "parsed_intent": "VoiceIntentType.PEST_QUERY",
+        "response_preview": "మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంట"
+      }
+    },
+    {
+      "scenario_id": "voice_q_004",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1088,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Noneలో Cotton ప్రస్తుత మోడల్ ధర క్వింటాలుకు ₹7,200.00. రవాణా ఖర్చులు తీసివేస్తే మీ నికర రాబడి ₹7,200.00/క్వింటాల్ అవుతుం"
+      }
+    },
+    {
+      "scenario_id": "voice_q_005",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1813,
+      "details": {
+        "parsed_intent": "VoiceIntentType.TASK_TODAY",
+        "response_preview": "నమస్కారం Voice Reviewer గారు! మీ మిర్చి తోట 58 రోజుల వయస్సులో చక్కగా ఉంది. ఈరోజు ముఖ్యమైన పని: Foliar Spray: 19:19:19 + "
+      }
+    },
+    {
+      "scenario_id": "voice_q_006",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1632,
+      "details": {
+        "parsed_intent": "VoiceIntentType.PEST_QUERY",
+        "response_preview": "మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంట"
+      }
+    },
+    {
+      "scenario_id": "voice_q_007",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "parsed_intent": "VoiceIntentType.PROFIT_QUERY",
+        "response_preview": "ANGRAU & ICAR-IIHR Chilli Cultivation Economics గణాంకాల ప్రకారం: 3.0 ఎకరాల Chilli తోటలో ఎకరాకు 12.0 క్వింటాళ్ల దిగుబడితో"
+      }
+    },
+    {
+      "scenario_id": "voice_q_008",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "నమస్కారం అన్నా! నేను మీ సమస్యను విన్నాను, కానీ దీనిపై పూర్తి స్పష్టత కోసం ఆకులు లేదా పంట లక్షణాల గురించి కొంచెం వివరంగా "
+      }
+    },
+    {
+      "scenario_id": "voice_q_009",
+      "modality": "voice",
+      "crop": "guava",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 864,
+      "details": {
+        "parsed_intent": "VoiceIntentType.PEST_QUERY",
+        "response_preview": "మిరప తోటలో ఆకులు ముడుచుకోవడానికి (Leaf Curl) గల ప్రధాన కారణాలు:\n\n1. తామర పురుగులు (Thrips): ఆకులు దోనెలా పైకి ముడుచుకుంట"
+      }
+    },
+    {
+      "scenario_id": "voice_q_010",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "క్షమించండి, ఈ విషయానికి సంబంధించి తగినంత ధృవీకరించబడిన వ్యవసాయ పరిశోధనా సమాచారం లభించలేదు. ఖచ్చితమైన సలహా కోసం స్థానిక వ"
+      }
+    },
+    {
+      "scenario_id": "voice_q_011",
+      "modality": "voice",
+      "crop": "wheat",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 581,
+      "details": {
+        "parsed_intent": "VoiceIntentType.IRRIGATION_QUERY",
+        "response_preview": "Jaipur में Wheat फसल के लिए: 20% बारिश की संभावना और Black Cotton Soil मिट्टी में नमी को देखते हुए अभी भारी सिंचाई रोकें"
+      }
+    },
+    {
+      "scenario_id": "voice_q_012",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "parsed_intent": "VoiceIntentType.SPRAY_WEATHER_SAFETY",
+        "response_preview": "नहीं भाई, Day 2 को Indore में छिड़काव करना सुरक्षित नहीं है। कारण: बारिश की संभावना 100% (Overcast Clouds) और हवा की गति"
+      }
+    },
+    {
+      "scenario_id": "voice_q_013",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "voice_q_014",
+      "modality": "voice",
+      "crop": "soybean",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 413,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "None में Soybean का वर्तमान मॉडल भाव ₹14,000.00/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹14,000.00/क्विंटल रहे"
+      }
+    },
+    {
+      "scenario_id": "voice_q_015",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.PEST_QUERY",
+        "response_preview": "नमस्ते Voice Reviewer जी! भाई, कृपया बहुत सावधान रहें। वह रासायनिक दवा प्रतिबंधित और असुरक्षित है। उसका छिड़काव बिल्कुल "
+      }
+    },
+    {
+      "scenario_id": "voice_q_016",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 14,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "voice_q_017",
+      "modality": "voice",
+      "crop": "corn_maize",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 8,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृष"
+      }
+    },
+    {
+      "scenario_id": "voice_q_018",
+      "modality": "voice",
+      "crop": "wheat",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 344,
+      "details": {
+        "parsed_intent": "VoiceIntentType.TASK_TODAY",
+        "response_preview": "नमस्ते Voice Reviewer जी! आपकी wheat की फसल इस समय बहुत अच्छी बढ़ रही है। एक अच्छी खबर है, अगले दो दिनों में बारिश आने व"
+      }
+    },
+    {
+      "scenario_id": "voice_q_019",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 385,
+      "details": {
+        "parsed_intent": "VoiceIntentType.IRRIGATION_QUERY",
+        "response_preview": "For Chilli in Sambalpur: With 20% rain probability and Black Cotton Soil soil holding moisture, hold off on immediate fl"
+      }
+    },
+    {
+      "scenario_id": "voice_q_020",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "parsed_intent": "VoiceIntentType.SPRAY_WEATHER_SAFETY",
+        "response_preview": "Yes brother, weather conditions in Burdwan for Tomorrow are favorable for spraying. Expected temperature is ~31.0°C, win"
+      }
+    },
+    {
+      "scenario_id": "voice_q_021",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 445,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Current None modal price for Cotton is ₹7,200.00/quintal. Considering transport deductions, your Net Realization is ₹7,2"
+      }
+    },
+    {
+      "scenario_id": "voice_q_022",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 5,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "I don't have enough verified agricultural research information to answer this confidently. Please consult your local Agr"
+      }
+    },
+    {
+      "scenario_id": "voice_q_023",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 9,
+      "details": {
+        "parsed_intent": "VoiceIntentType.CROP_RECOMMENDATION",
+        "response_preview": "For Black Cotton Soil soil in Palakkad, the AI model identifies the following optimal crops: Chilli, Cotton, Bengal Gram"
+      }
+    },
+    {
+      "scenario_id": "voice_q_024",
+      "modality": "voice",
+      "crop": "guava",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 383,
+      "details": {
+        "parsed_intent": "VoiceIntentType.PEST_QUERY",
+        "response_preview": "Primary causes of chilli leaf curling:\n\n1. Sucking Pests (Thrips): If leaves curl upward like a boat/cup, thrips (Scirto"
+      }
+    },
+    {
+      "scenario_id": "voice_q_025",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 9,
+      "details": {
+        "parsed_intent": "VoiceIntentType.TASK_TODAY",
+        "response_preview": "Namaste Voice Reviewer! Your rice is healthy and growing nicely at about day 58. We have rain expected over the next two"
+      }
+    },
+    {
+      "scenario_id": "voice_q_026",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 9,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_027",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 6,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_028",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 25,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "வணக்கம் சகோதரரே! உங்கள் பயிர் பற்றிய கூடுதல் விவரங்களை அல்லது இலையின் தெளிவான புகைப்படத்தை பகிருங்கள், நாம் சரியான தீர்வ"
+      }
+    },
+    {
+      "scenario_id": "voice_q_029",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 349,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Current None modal price for Cotton is ₹7,200.00/quintal. Considering transport deductions, your Net Realization is ₹7,2"
+      }
+    },
+    {
+      "scenario_id": "voice_q_030",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 6,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_031",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 6,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_032",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_033",
+      "modality": "voice",
+      "crop": "corn_maize",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_034",
+      "modality": "voice",
+      "crop": "banana",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 5,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_035",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 3,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_036",
+      "modality": "voice",
+      "crop": "banana",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_037",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "en",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "exception": "'>=' not supported between instances of 'NoneType' and 'int'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "voice_q_038",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.WEATHER_QUERY",
+        "response_preview": "Varanasiలో ప్రస్తుత ఉష్ణోగ్రత 27.0°C, వాతావరణం: Broken Clouds. వర్షం పడే అవకాశం 100% ఉంది, కాబట్టి తదనుగుణంగా నీటి పారుద"
+      }
+    },
+    {
+      "scenario_id": "voice_q_039",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "Madhya Pradesh में आपकी 3.0 एकड़ Tomato फसल के लिए AI मॉडल के अनुसार प्रति एकड़ 10.5 क्विंटल (कुल उत्पादन: ~31.5 क्विंटल"
+      }
+    },
+    {
+      "scenario_id": "voice_q_040",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_041",
+      "modality": "voice",
+      "crop": "guava",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 8,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_042",
+      "modality": "voice",
+      "crop": "banana",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 14,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_043",
+      "modality": "voice",
+      "crop": "corn_maize",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 347,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Current None modal price for Corn is ₹2,100.00/quintal. Considering transport deductions, your Net Realization is ₹2,100"
+      }
+    },
+    {
+      "scenario_id": "voice_q_044",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 24,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ఆకులు పసుపు రంగులోకి మారడానికి (Chlorosis) ప్రధాన కారణం నత్రజని లోపం లేదా అధిక నీరు నిల్వ ఉండటం. పాత ఆకులు కింద నుంచి పస"
+      }
+    },
+    {
+      "scenario_id": "voice_q_045",
+      "modality": "voice",
+      "crop": "groundnut",
+      "language": "hi",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "exception": "'>=' not supported between instances of 'NoneType' and 'int'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "voice_q_046",
+      "modality": "voice",
+      "crop": "sugarcane",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 14,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_047",
+      "modality": "voice",
+      "crop": "wheat",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 18,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_048",
+      "modality": "voice",
+      "crop": "soybean",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 16,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_049",
+      "modality": "voice",
+      "crop": "onion",
+      "language": "en",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.FERTILIZER_QUERY",
+        "exception": "'current_stage'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "voice_q_050",
+      "modality": "voice",
+      "crop": "apple",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 330,
+      "details": {
+        "parsed_intent": "VoiceIntentType.SPRAY_WEATHER_SAFETY",
+        "response_preview": "వద్దు అన్నా, Tomorrow తేదీన Nashikలో పిచికారీ చేయడం సురక్షితం కాదు. కారణం: వర్షం అవకాశం 99% (Broken Clouds) మరియు గాలి వ"
+      }
+    },
+    {
+      "scenario_id": "voice_q_051",
+      "modality": "voice",
+      "crop": "cucumber_pumpkin",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 311,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "None में Cucumber_Pumpkin का वर्तमान मॉडल भाव ₹14,000.00/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹14,000.00/क्"
+      }
+    },
+    {
+      "scenario_id": "voice_q_052",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "வணக்கம் Voice Reviewer! Karnalல் உங்கள் Chilli பண்ணை பதிவு செய்யப்பட்டுள்ளது. இன்று உங்களுக்கு என்ன உதவி தேவை?"
+      }
+    },
+    {
+      "scenario_id": "voice_q_053",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 16,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_054",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_055",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 6,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "For 3.0 acres of Potato in Gujarat, our ML model projects an expected yield of 10.5 quintals/acre (Total production: ~31"
+      }
+    },
+    {
+      "scenario_id": "voice_q_056",
+      "modality": "voice",
+      "crop": "guava",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 410,
+      "details": {
+        "parsed_intent": "VoiceIntentType.TASK_TODAY",
+        "response_preview": "నమస్కారం Voice Reviewer గారు! మీ guava తోట 58 రోజుల వయస్సులో చక్కగా ఉంది. ఈరోజు ముఖ్యమైన పని: Foliar Spray: 19:19:19 + B"
+      }
+    },
+    {
+      "scenario_id": "voice_q_057",
+      "modality": "voice",
+      "crop": "banana",
+      "language": "hi",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.FERTILIZER_QUERY",
+        "exception": "'current_stage'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "voice_q_058",
+      "modality": "voice",
+      "crop": "corn_maize",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 16,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_059",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_060",
+      "modality": "voice",
+      "crop": "groundnut",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_061",
+      "modality": "voice",
+      "crop": "sugarcane",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 434,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Your weekly farm schedule is ready. Based on your 3-acre chilli crop and rain forecast, your prioritized tasks and advis"
+      }
+    },
+    {
+      "scenario_id": "voice_q_062",
+      "modality": "voice",
+      "crop": "wheat",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "parsed_intent": "VoiceIntentType.WEATHER_QUERY",
+        "response_preview": "Gunturలో ప్రస్తుత ఉష్ణోగ్రత 28.9°C, వాతావరణం: Moderate Rain. వర్షం పడే అవకాశం 100% ఉంది, కాబట్టి తదనుగుణంగా నీటి పారుదల "
+      }
+    },
+    {
+      "scenario_id": "voice_q_063",
+      "modality": "voice",
+      "crop": "soybean",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "Karnataka में आपकी 3.0 एकड़ soybean फसल के लिए AI मॉडल के अनुसार प्रति एकड़ 10.5 क्विंटल (कुल उत्पादन: ~31.5 क्विंटल) सं"
+      }
+    },
+    {
+      "scenario_id": "voice_q_064",
+      "modality": "voice",
+      "crop": "onion",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 7,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_065",
+      "modality": "voice",
+      "crop": "apple",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_066",
+      "modality": "voice",
+      "crop": "cucumber_pumpkin",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 7,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_067",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 326,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Current None modal price for Chilli is ₹14,000.00/quintal. Considering transport deductions, your Net Realization is ₹14"
+      }
+    },
+    {
+      "scenario_id": "voice_q_068",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 25,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ఆకులు పసుపు రంగులోకి మారడానికి (Chlorosis) ప్రధాన కారణం నత్రజని లోపం లేదా అధిక నీరు నిల్వ ఉండటం. పాత ఆకులు కింద నుంచి పస"
+      }
+    },
+    {
+      "scenario_id": "voice_q_069",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 478,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "इस सप्ताह आपके खेत की कार्य योजना तैयार है। मौसम में हल्की बारिश की संभावना है। पूरा विवरण यहाँ देखें।"
+      }
+    },
+    {
+      "scenario_id": "voice_q_070",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_071",
+      "modality": "voice",
+      "crop": "guava",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 8,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_072",
+      "modality": "voice",
+      "crop": "banana",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 14,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_073",
+      "modality": "voice",
+      "crop": "corn_maize",
+      "language": "en",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.FERTILIZER_QUERY",
+        "exception": "'current_stage'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "voice_q_074",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "parsed_intent": "VoiceIntentType.SPRAY_WEATHER_SAFETY",
+        "response_preview": "అవును అన్నా, Tomorrow తేదీన Sambalpurలో పిచికారీ చేయడానికి వాతావరణం అనుకూలంగా ఉంది. ఉష్ణోగ్రత సుమారు 31.0°C, గాలి వేగం 1"
+      }
+    },
+    {
+      "scenario_id": "voice_q_075",
+      "modality": "voice",
+      "crop": "groundnut",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 325,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "None में Groundnut का वर्तमान मॉडल भाव ₹14,000.00/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹14,000.00/क्विंटल र"
+      }
+    },
+    {
+      "scenario_id": "voice_q_076",
+      "modality": "voice",
+      "crop": "sugarcane",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_077",
+      "modality": "voice",
+      "crop": "wheat",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 12,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_078",
+      "modality": "voice",
+      "crop": "soybean",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_079",
+      "modality": "voice",
+      "crop": "onion",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 8,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "For 3.0 acres of Onion in Tamil Nadu, our ML model projects an expected yield of 10.5 quintals/acre (Total production: ~"
+      }
+    },
+    {
+      "scenario_id": "voice_q_080",
+      "modality": "voice",
+      "crop": "apple",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 407,
+      "details": {
+        "parsed_intent": "VoiceIntentType.TASK_TODAY",
+        "response_preview": "నమస్కారం Voice Reviewer గారు! మీ apple తోట ప్రస్తుతం ఆరోగ్యంగా, పచ్చగా పెరుగుతోంది. మంచి శుభవార్త, రాబోయే రెండు రోజుల్లో"
+      }
+    },
+    {
+      "scenario_id": "voice_q_081",
+      "modality": "voice",
+      "crop": "cucumber_pumpkin",
+      "language": "hi",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.FERTILIZER_QUERY",
+        "exception": "'current_stage'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "voice_q_082",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "வணக்கம் Voice Reviewer! Karnalல் உங்கள் Chilli பண்ணை பதிவு செய்யப்பட்டுள்ளது. இன்று உங்களுக்கு என்ன உதவி தேவை?"
+      }
+    },
+    {
+      "scenario_id": "voice_q_083",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 15,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_084",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 13,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_085",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 609,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Your weekly farm schedule is ready. Based on your 3-acre chilli crop and rain forecast, your prioritized tasks and advis"
+      }
+    },
+    {
+      "scenario_id": "voice_q_086",
+      "modality": "voice",
+      "crop": "guava",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 1,
+      "details": {
+        "parsed_intent": "VoiceIntentType.WEATHER_QUERY",
+        "response_preview": "Jaipurలో ప్రస్తుత ఉష్ణోగ్రత 31.5°C, వాతావరణం: Service Unavailable. వర్షం పడే అవకాశం 40% ఉంది, కాబట్టి తదనుగుణంగా నీటి పా"
+      }
+    },
+    {
+      "scenario_id": "voice_q_087",
+      "modality": "voice",
+      "crop": "banana",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 10,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "West Bengal में आपकी 3.0 एकड़ Banana फसल के लिए AI मॉडल के अनुसार प्रति एकड़ 10.5 क्विंटल (कुल उत्पादन: ~31.5 क्विंटल) स"
+      }
+    },
+    {
+      "scenario_id": "voice_q_088",
+      "modality": "voice",
+      "crop": "corn_maize",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 11,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_089",
+      "modality": "voice",
+      "crop": "cotton",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 14,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_090",
+      "modality": "voice",
+      "crop": "groundnut",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 14,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_091",
+      "modality": "voice",
+      "crop": "sugarcane",
+      "language": "en",
+      "status": "PASS",
+      "latency_ms": 666,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "Current None modal price for Sugarcane is ₹14,000.00/quintal. Considering transport deductions, your Net Realization is "
+      }
+    },
+    {
+      "scenario_id": "voice_q_092",
+      "modality": "voice",
+      "crop": "wheat",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 29,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ఆకులు పసుపు రంగులోకి మారడానికి (Chlorosis) ప్రధాన కారణం నత్రజని లోపం లేదా అధిక నీరు నిల్వ ఉండటం. పాత ఆకులు కింద నుంచి పస"
+      }
+    },
+    {
+      "scenario_id": "voice_q_093",
+      "modality": "voice",
+      "crop": "soybean",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 562,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "इस सप्ताह आपके खेत की कार्य योजना तैयार है। मौसम में हल्की बारिश की संभावना है। पूरा विवरण यहाँ देखें।"
+      }
+    },
+    {
+      "scenario_id": "voice_q_094",
+      "modality": "voice",
+      "crop": "onion",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 7,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    },
+    {
+      "scenario_id": "voice_q_095",
+      "modality": "voice",
+      "crop": "apple",
+      "language": "kn",
+      "status": "PASS",
+      "latency_ms": 15,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ."
+      }
+    },
+    {
+      "scenario_id": "voice_q_096",
+      "modality": "voice",
+      "crop": "cucumber_pumpkin",
+      "language": "ml",
+      "status": "PASS",
+      "latency_ms": 5,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല."
+      }
+    },
+    {
+      "scenario_id": "voice_q_097",
+      "modality": "voice",
+      "crop": "chilli",
+      "language": "en",
+      "status": "FAIL",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.FERTILIZER_QUERY",
+        "exception": "'current_stage'"
+      },
+      "error_category": "EXCEPTION"
+    },
+    {
+      "scenario_id": "voice_q_098",
+      "modality": "voice",
+      "crop": "rice",
+      "language": "te",
+      "status": "PASS",
+      "latency_ms": 0,
+      "details": {
+        "parsed_intent": "VoiceIntentType.SPRAY_WEATHER_SAFETY",
+        "response_preview": "వరి పంట నమూనాలు ప్రస్తుతం పరిశోధన దశలో ఉన్నాయి. వరిపై రైతులకు రసాయన స్ప్రే సిఫార్సులు అనుమతించబడవు."
+      }
+    },
+    {
+      "scenario_id": "voice_q_099",
+      "modality": "voice",
+      "crop": "tomato",
+      "language": "hi",
+      "status": "PASS",
+      "latency_ms": 661,
+      "details": {
+        "parsed_intent": "VoiceIntentType.MARKET_QUERY",
+        "response_preview": "None में Tomato का वर्तमान मॉडल भाव ₹1,600.00/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹1,600.00/क्विंटल रहेगी।"
+      }
+    },
+    {
+      "scenario_id": "voice_q_100",
+      "modality": "voice",
+      "crop": "potato",
+      "language": "ta",
+      "status": "PASS",
+      "latency_ms": 16,
+      "details": {
+        "parsed_intent": "VoiceIntentType.GENERAL_AGRICULTURE",
+        "response_preview": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை."
+      }
+    }
+  ]
+}

@@ -94,12 +94,12 @@ async def chat_with_assistant(
             if not crop_hint:
                 from app.services.memory.digital_twin import DigitalTwinService
                 farmer_ctx = await DigitalTwinService.get_farmer_context(db, farmer.id)
-                if farmer_ctx and farmer_ctx.active_crops:
-                    crop_hint = CropModelRegistry.normalize_crop_name(farmer_ctx.active_crops[0].get("crop_name", "chilli"))
+                if farmer_ctx and farmer_ctx.active_crops and farmer_ctx.active_crops[0].get("crop_name"):
+                    crop_hint = CropModelRegistry.normalize_crop_name(farmer_ctx.active_crops[0].get("crop_name"))
                 elif getattr(farmer, "current_crop", None):
                     crop_hint = CropModelRegistry.normalize_crop_name(farmer.current_crop)
                 else:
-                    crop_hint = "chilli"
+                    crop_hint = None
 
             # Invoke canonical Phase 3 VisionService with farmer's target language
             vision_res = await VisionService.analyze_leaf_image(img_bytes, crop_hint=crop_hint, language=target_lang)
