@@ -14,6 +14,7 @@ let sessionsList = [];
 let authToken = localStorage.getItem("bhoomi_auth_token") || null;
 let currentUser = null;
 let pendingOtpPhone = "";
+let currentAuthMode = "LOGIN"; // "LOGIN" | "SIGNUP" | "REVIEWER"
 
 // Audio & Voice Engine State (Apple Siri-Style Natural Female Voice)
 let currentAudioPlayer = null;
@@ -602,6 +603,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateUILanguage(currentLanguage);
   initSpeechRecognition();
+  initOtpInputBoxes();
   initAuth();
 });
 
@@ -763,7 +765,23 @@ async function initAuth() {
   const savedToken = localStorage.getItem("bhoomi_auth_token");
 
   if (savedToken && savedToken.startsWith("demo_")) {
+    const refreshToken = localStorage.getItem("bhoomi_refresh_token");
+    if (token) {
+      try {
+        await fetch("/api/v1/auth/logout", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ refresh_token: refreshToken || null })
+        });
+      } catch (e) {
+        console.debug("Backend logout call notice:", e);
+      }
+    }
     localStorage.removeItem("bhoomi_auth_token");
+    localStorage.removeItem("bhoomi_refresh_token");
     localStorage.removeItem("bhoomi_current_user");
     authToken = null;
     currentUser = null;
@@ -841,7 +859,23 @@ async function initAuth() {
     }
   } catch (err) {
     console.warn("Session verification error:", err);
+    const refreshToken = localStorage.getItem("bhoomi_refresh_token");
+    if (token) {
+      try {
+        await fetch("/api/v1/auth/logout", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ refresh_token: refreshToken || null })
+        });
+      } catch (e) {
+        console.debug("Backend logout call notice:", e);
+      }
+    }
     localStorage.removeItem("bhoomi_auth_token");
+    localStorage.removeItem("bhoomi_refresh_token");
     localStorage.removeItem("bhoomi_current_user");
     authToken = null;
     currentUser = null;
@@ -902,8 +936,7 @@ function showOtpVerifyView() {
   if (step1) step1.style.display = "none";
   if (step2) step2.style.display = "block";
   if (onboardStep) onboardStep.style.display = "none";
-  const otpInput = document.getElementById("otpCodeInput");
-  if (otpInput) otpInput.focus();
+  focusFirstOtpBox();
 }
 
 function onAuthLanguageChanged(lang) {
@@ -1086,6 +1119,135 @@ async function handleResendOtp() {
   await handleSendOtp(true);
 }
 
+
+// ====================================================================
+// 6-DIGIT OTP INPUT BOX GRID ENGINE
+// ====================================================================
+
+function initOtpInputBoxes() {
+  const container = document.getElementById("otpDigitsContainer");
+  if (!container) return;
+  const boxes = container.querySelectorAll(".otp-digit-box");
+  if (!boxes || !boxes.length) return;
+
+  boxes.forEach((box, index) => {
+    if (box._otpBound) return;
+    box._otpBound = true;
+
+    box.addEventListener("input", (e) => {
+      const val = e.target.value;
+      const cleanVal = val.replace(/\D/g, "");
+
+      if (cleanVal.length === 0) {
+        box.value = "";
+        syncOtpCode();
+        return;
+      }
+
+      if (cleanVal.length === 1) {
+        box.value = cleanVal;
+        syncOtpCode();
+        if (index < boxes.length - 1) {
+          boxes[index + 1].focus();
+          boxes[index + 1].select();
+        }
+      } else if (cleanVal.length > 1) {
+        distributeOtpDigits(cleanVal, index);
+      }
+    });
+
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace") {
+        if (!box.value && index > 0) {
+          e.preventDefault();
+          boxes[index - 1].focus();
+          boxes[index - 1].value = "";
+          syncOtpCode();
+        } else {
+          box.value = "";
+          syncOtpCode();
+        }
+      } else if (e.key === "ArrowLeft" && index > 0) {
+        e.preventDefault();
+        boxes[index - 1].focus();
+      } else if (e.key === "ArrowRight" && index < boxes.length - 1) {
+        e.preventDefault();
+        boxes[index + 1].focus();
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        handleVerifyOtp();
+      }
+    });
+
+    box.addEventListener("paste", (e) => {
+      e.preventDefault();
+      const pasteData = (e.clipboardData || window.clipboardData).getData("text") || "";
+      const digits = pasteData.replace(/\D/g, "").slice(0, 6);
+      if (!digits) return;
+      distributeOtpDigits(digits, 0);
+    });
+
+    box.addEventListener("focus", () => {
+      box.select();
+    });
+  });
+}
+
+function distributeOtpDigits(digits, startIndex = 0) {
+  const container = document.getElementById("otpDigitsContainer");
+  if (!container) return;
+  const boxes = container.querySelectorAll(".otp-digit-box");
+  for (let i = 0; i < digits.length && (startIndex + i) < boxes.length; i++) {
+    boxes[startIndex + i].value = digits[i];
+  }
+  syncOtpCode();
+  const nextIdx = Math.min(startIndex + digits.length, boxes.length - 1);
+  if (boxes[nextIdx]) {
+    boxes[nextIdx].focus();
+    boxes[nextIdx].select();
+  }
+}
+
+function syncOtpCode() {
+  const code = getOtpCode();
+  const hiddenInput = document.getElementById("otpCodeInput");
+  if (hiddenInput) {
+    hiddenInput.value = code;
+  }
+}
+
+function getOtpCode() {
+  const container = document.getElementById("otpDigitsContainer");
+  if (!container) {
+    const hidden = document.getElementById("otpCodeInput");
+    return hidden ? hidden.value.trim() : "";
+  }
+  const boxes = container.querySelectorAll(".otp-digit-box");
+  let code = "";
+  boxes.forEach((b) => {
+    code += (b.value || "").trim();
+  });
+  return code;
+}
+
+function clearOtpBoxes() {
+  const container = document.getElementById("otpDigitsContainer");
+  if (container) {
+    const boxes = container.querySelectorAll(".otp-digit-box");
+    boxes.forEach((b) => { b.value = ""; });
+  }
+  syncOtpCode();
+  focusFirstOtpBox();
+}
+
+function focusFirstOtpBox() {
+  const first = document.getElementById("otpDigit1");
+  if (first) {
+    first.focus();
+    first.select();
+  }
+}
+
 async function handleSendOtp(isResend = false) {
   let phone = "";
   if (isResend && pendingOtpPhone) {
@@ -1114,17 +1276,23 @@ async function handleSendOtp(isResend = false) {
     btnSend.innerHTML = "<span>⏳</span> Sending Code...";
   }
 
+  // Choose canonical endpoint based on currentAuthMode
+  const isSignup = currentAuthMode === "SIGNUP";
+  const endpoint = isSignup
+    ? "/api/v1/auth/signup/request-otp"
+    : "/api/v1/auth/login/request-otp";
+
   try {
-    const res = await fetch("/api/v1/auth/send-otp", {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone_number: phone })
     });
 
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      const errMsg = data.detail || data.message || "Failed to send verification code. Please try again.";
+      let errMsg = data.detail || data.message || "Failed to send verification code. Please try again.";
       if (errorMsg) {
         errorMsg.textContent = errMsg;
         errorMsg.style.display = "block";
@@ -1139,59 +1307,19 @@ async function handleSendOtp(isResend = false) {
 
     const lblOtpCode = document.getElementById("lblOtpCode");
     const sentBanner = document.getElementById("txtOtpSentInfo");
-    const otpCodeInput = document.getElementById("otpCodeInput");
 
-    // Dynamically configure OTP input and banner based on delivery channel and auth mode
-    if (data.auth_mode === "evaluator" || (data.otp || data.otp_code)) {
-      const code = data.otp || data.otp_code;
-      if (lblOtpCode) {
-        lblOtpCode.innerHTML = `🔢 Enter Evaluator Verification Code:`;
-      }
-      if (sentBanner) {
-        sentBanner.innerHTML = `🔐 <b>Evaluator Session Active</b> • Use verification code: <b style="color:#10B981; font-size:16px; letter-spacing:3px;">${code}</b>`;
-      }
-      if (otpCodeInput) {
-        otpCodeInput.placeholder = "••••";
-      }
-    } else if (data.delivery_channel === "sms") {
-      if (lblOtpCode) {
-        lblOtpCode.innerHTML = `🔢 Enter Verification Code Sent to Your Phone:`;
-      }
-      if (sentBanner) {
-        sentBanner.innerHTML = `📲 Verification code sent via SMS to +91 ${phone}.`;
-      }
-      if (otpCodeInput) {
-        otpCodeInput.placeholder = "••••";
-      }
-    } else {
-      // Production without SMS gateway: Honest messaging, no fake default OTP
-      if (lblOtpCode) {
-        lblOtpCode.innerHTML = `🔢 Enter 4-Digit Verification Code:`;
-      }
-      if (sentBanner) {
-        sentBanner.innerHTML = `ℹ️ <b>Production Environment:</b> SMS delivery gateway is not configured for public broadcast. Please enter authorized verification code or use pre-registered credentials.`;
-      }
-      if (otpCodeInput) {
-        otpCodeInput.placeholder = "••••";
-      }
+    if (lblOtpCode) {
+      lblOtpCode.innerHTML = `🔢 Enter 6-Digit Verification Code:`;
+    }
+    if (sentBanner) {
+      const modeLabel = isSignup ? "registration" : "login";
+      sentBanner.innerHTML = `📲 Verification code sent via SMS to +91 ${phone} for ${modeLabel}.`;
     }
 
-    if (otpCodeInput) {
-      otpCodeInput.value = "";
-      otpCodeInput.focus();
-    }
+    clearOtpBoxes();
 
-    // Start 30s resend cooldown
-    startResendCooldown(30);
-
-    // Show farmer detail fields if new registration, hide if existing
-    const newFields = document.getElementById("newFarmerFields");
-    if (newFields) {
-      newFields.style.display = data.is_registered ? "none" : "block";
-    }
-    if (!data.is_registered) {
-      onStateChanged();
-    }
+    // Start 30s resend cooldown using canonical resend_after
+    startResendCooldown(data.resend_after || 30);
 
   } catch (e) {
     if (errorMsg) {
@@ -1206,41 +1334,20 @@ async function handleSendOtp(isResend = false) {
   }
 }
 
-// Step 2: Verify OTP and Login
+// Step 2: Verify 6-Digit OTP and Establish Session
 async function handleVerifyOtp() {
-  const otpInput = document.getElementById("otpCodeInput");
-  const otp = otpInput ? otpInput.value.trim() : "";
+  const otp = getOtpCode();
   const errorMsg = document.getElementById("authErrorMsg");
   if (errorMsg) errorMsg.style.display = "none";
 
-  if (!otp || otp.length !== 4 || !/^\d{4}$/.test(otp)) {
+  if (!otp || otp.length !== 6 || !/^\d{6}$/.test(otp)) {
     if (errorMsg) {
-      errorMsg.textContent = "Please enter a valid 4-digit numeric verification code.";
+      errorMsg.textContent = "Please enter a valid 6-digit numeric verification code.";
       errorMsg.style.display = "block";
     }
-    if (otpInput) otpInput.focus();
+    focusFirstOtpBox();
     return;
   }
-
-  const newFieldsEl = document.getElementById("newFarmerFields");
-  const isNewFarmer = newFieldsEl && newFieldsEl.style.display !== "none";
-  const name = isNewFarmer ? (document.getElementById("farmerNameInput")?.value?.trim() || "Farmer") : null;
-  const state = isNewFarmer ? (document.getElementById("farmerStateInput")?.value || null) : null;
-  const district = isNewFarmer ? (document.getElementById("farmerDistrictInput")?.value?.trim() || null) : null;
-  const village = isNewFarmer ? (document.getElementById("farmerVillageInput")?.value?.trim() || null) : null;
-  const crop = isNewFarmer ? (document.getElementById("farmerCropInput")?.value?.trim() || null) : null;
-  const variety = isNewFarmer ? (document.getElementById("farmerVarietyInput")?.value?.trim() || null) : null;
-  const acresVal = document.getElementById("farmerAcresInput")?.value;
-  const acres = (isNewFarmer && acresVal) ? parseFloat(acresVal) : null;
-
-  const labFields = document.getElementById("labSoilFields");
-  const isSoilManual = isNewFarmer && labFields && labFields.style.display !== "none";
-  const soilN = isSoilManual && document.getElementById("farmerSoilN")?.value ? parseFloat(document.getElementById("farmerSoilN").value) : null;
-  const soilP = isSoilManual && document.getElementById("farmerSoilP")?.value ? parseFloat(document.getElementById("farmerSoilP").value) : null;
-  const soilK = isSoilManual && document.getElementById("farmerSoilK")?.value ? parseFloat(document.getElementById("farmerSoilK").value) : null;
-  const soilPh = isSoilManual && document.getElementById("farmerSoilPh")?.value ? parseFloat(document.getElementById("farmerSoilPh").value) : null;
-
-  const soilSourceType = (soilN !== null || soilP !== null || soilK !== null) ? "farmer_entered" : "estimated";
 
   const btnVerify = document.getElementById("btnVerifyOtp");
   const origBtnVerifyText = btnVerify ? btnVerify.innerHTML : "";
@@ -1249,78 +1356,58 @@ async function handleVerifyOtp() {
     btnVerify.innerHTML = "<span>⏳</span> Verifying Code...";
   }
 
+  const isSignup = currentAuthMode === "SIGNUP";
+  const endpoint = isSignup
+    ? "/api/v1/auth/signup/verify-otp"
+    : "/api/v1/auth/login/verify-otp";
+
   try {
-    const res = await fetch("/api/v1/auth/verify-otp", {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         phone_number: pendingOtpPhone,
-        otp: otp,
-        full_name: name,
-        preferred_language: currentLanguage,
-        state: state,
-        district: district,
-        village: village,
-        current_crop: crop,
-        crop_variety: variety,
-        land_area_acres: acres,
-        soil_type: currentSoilEstimate?.soil_type || null,
-        soil_source_type: soilSourceType,
-        soil_n: soilN,
-        soil_p: soilP,
-        soil_k: soilK,
-        soil_ph: soilPh || currentSoilEstimate?.estimated_ph || 6.5,
-        latitude: detectedLat,
-        longitude: detectedLon
+        otp: otp
       })
     });
 
-    if (res.ok) {
-      const data = await res.json();
-      authToken = data.access_token;
-      localStorage.setItem("bhoomi_auth_token", authToken);
+    const data = await res.json().catch(() => ({}));
 
-      const resolvedFarmerId = data.farmer_id || data.user_id || `usr_${pendingOtpPhone}`;
+    if (res.ok) {
+      authToken = data.access_token;
+      const refreshToken = data.refresh_token;
+      localStorage.setItem("bhoomi_auth_token", authToken);
+      if (refreshToken) {
+        localStorage.setItem("bhoomi_refresh_token", refreshToken);
+      }
+
+      const userId = data.user?.id || `usr_${pendingOtpPhone}`;
       currentUser = {
-        id: resolvedFarmerId,
-        farmer_id: resolvedFarmerId,
-        farm_id: data.farm_id || null,
-        user_id: data.user_id,
+        id: userId,
+        farmer_id: userId,
+        user_id: userId,
         phone_number: pendingOtpPhone,
-        full_name: data.name || data.full_name || name || "Farmer",
-        preferred_language: currentLanguage,
-        state: data.state || state,
-        district: data.district || district,
-        village: data.village || village,
-        land_area_acres: data.area_acres || acres,
-        current_crop: data.crop_name || crop,
-        crop_variety: data.crop_variety || variety,
-        active_crop: data.crop_name || crop,
-        soil_type: data.soil_type || currentSoilEstimate?.soil_type || "black",
-        soil_source_type: soilSourceType,
-        soil_n: (data.soil_n !== undefined && data.soil_n !== null) ? data.soil_n : soilN,
-        soil_p: (data.soil_p !== undefined && data.soil_p !== null) ? data.soil_p : soilP,
-        soil_k: (data.soil_k !== undefined && data.soil_k !== null) ? data.soil_k : soilK,
-        soil_ph: data.soil_ph || soilPh || currentSoilEstimate?.estimated_ph || 6.5
+        full_name: data.user?.full_name || "Farmer",
+        preferred_language: currentLanguage
       };
-      localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
-      localStorage.setItem("bhoomi_lang", currentLanguage);
 
       // Check authoritative GET /api/v1/auth/me for farm profile & onboarding_required
-      let onboardingReq = !data.farm_id && !currentUser.farm_id;
+      let onboardingReq = Boolean(data.onboarding_required);
       try {
         const meRes = await fetch("/api/v1/auth/me", {
           headers: { "Authorization": `Bearer ${authToken}` }
         });
         if (meRes.ok) {
           const meData = await meRes.json();
-          onboardingReq = Boolean(meData.onboarding_required);
+          if (meData.onboarding_required !== undefined) {
+            onboardingReq = Boolean(meData.onboarding_required);
+          }
           if (meData.farmer_profile?.name) currentUser.full_name = meData.farmer_profile.name;
           if (meData.farm?.total_area_acres) currentUser.land_area_acres = meData.farm.total_area_acres;
           if (meData.farm?.crop_name) currentUser.current_crop = meData.farm.crop_name;
         }
       } catch (e) {
-        console.debug("Authoritative check notice:", e);
+        console.debug("Authoritative /auth/me check notice:", e);
       }
 
       localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
@@ -1335,25 +1422,19 @@ async function handleVerifyOtp() {
         transitionToAuthenticated(currentUser, authToken, "/home");
       }
     } else {
-      const err = await res.json().catch(() => ({}));
       let msg = "Invalid verification code. Please try again.";
-      if (typeof err.detail === "string") {
-        msg = err.detail;
-      } else if (Array.isArray(err.detail)) {
-        msg = err.detail.map(d => d.msg || JSON.stringify(d)).join("; ");
-      } else if (err.error && err.error.message) {
-        msg = err.error.message;
-      } else if (err.message) {
-        msg = err.message;
+      if (typeof data.detail === "string") {
+        msg = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        msg = data.detail.map(d => d.msg || JSON.stringify(d)).join("; ");
+      } else if (data.message) {
+        msg = data.message;
       }
       if (errorMsg) {
         errorMsg.textContent = msg;
         errorMsg.style.display = "block";
       }
-      if (otpInput) {
-        otpInput.value = "";
-        otpInput.focus();
-      }
+      clearOtpBoxes();
     }
   } catch (e) {
     if (errorMsg) {
@@ -1368,7 +1449,6 @@ async function handleVerifyOtp() {
   }
 }
 
-
 function backToOtpStep1() {
   const step1 = document.getElementById("otpStep1");
   const step2 = document.getElementById("otpStep2");
@@ -1379,11 +1459,24 @@ function backToOtpStep1() {
   if (onboardStep) onboardStep.style.display = "none";
   if (errorMsg) errorMsg.style.display = "none";
   stopResendCooldown();
-  navigateTo("/login", false);
+  clearOtpBoxes();
+  if (currentAuthMode === "SIGNUP") {
+    navigateTo("/signup", false);
+  } else {
+    navigateTo("/login", false);
+  }
 }
 
 
 function switchAuthMode(mode, updateUrl = true) {
+  if (mode === "reviewer") {
+    currentAuthMode = "REVIEWER";
+  } else if (mode === "signup") {
+    currentAuthMode = "SIGNUP";
+  } else {
+    currentAuthMode = "LOGIN";
+  }
+
   const tabLogin = document.getElementById("tabLoginMode");
   const tabSignup = document.getElementById("tabSignupMode");
   const tabReviewer = document.getElementById("tabReviewerMode");
@@ -1591,7 +1684,23 @@ async function handleLogout(skipConfirm = false) {
         console.debug("Backend logout call notice:", e);
       }
     }
+    const refreshToken = localStorage.getItem("bhoomi_refresh_token");
+    if (token) {
+      try {
+        await fetch("/api/v1/auth/logout", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ refresh_token: refreshToken || null })
+        });
+      } catch (e) {
+        console.debug("Backend logout call notice:", e);
+      }
+    }
     localStorage.removeItem("bhoomi_auth_token");
+    localStorage.removeItem("bhoomi_refresh_token");
     localStorage.removeItem("bhoomi_current_user");
     authToken = null;
     currentUser = null;
@@ -4741,3 +4850,9 @@ window.handleCompleteOnboarding = handleCompleteOnboarding;
 window.navigateTo = navigateTo;
 window.AuthState = AuthState;
 window.setAppState = setAppState;
+
+window.initOtpInputBoxes = initOtpInputBoxes;
+window.getOtpCode = getOtpCode;
+window.clearOtpBoxes = clearOtpBoxes;
+window.distributeOtpDigits = distributeOtpDigits;
+window.focusFirstOtpBox = focusFirstOtpBox;

@@ -111,10 +111,18 @@
             <span id="txtOtpSentInfo">Verification code requested.</span>
           </div>
 
-          <!-- OTP Code Input -->
-          <div class="form-group" style="margin-top: 14px;">
-            <label for="otpCodeInput" id="lblOtpCode">🔢 Enter 4-Digit Verification Code:</label>
-            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otpCodeInput" placeholder="••••" maxlength="4" style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 700; width: 100%; padding: 10px; box-sizing: border-box;" autocomplete="one-time-code">
+          <!-- 6-Digit OTP Code Input Grid -->
+          <div class="form-group" style="margin-top: 14px; text-align: center;">
+            <label id="lblOtpCode" style="display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-primary, #f8fafc);">🔢 Enter 6-Digit Verification Code:</label>
+            <div class="otp-digits-container" id="otpDigitsContainer" style="display: flex; justify-content: center; gap: 8px; margin: 12px 0;">
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="otp-digit-box" id="otpDigit1" maxlength="1" autocomplete="one-time-code" data-index="1">
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="otp-digit-box" id="otpDigit2" maxlength="1" data-index="2">
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="otp-digit-box" id="otpDigit3" maxlength="1" data-index="3">
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="otp-digit-box" id="otpDigit4" maxlength="1" data-index="4">
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="otp-digit-box" id="otpDigit5" maxlength="1" data-index="5">
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="otp-digit-box" id="otpDigit6" maxlength="1" data-index="6">
+            </div>
+            <input type="hidden" id="otpCodeInput" value="">
           </div>
 
           <div class="otp-action-row" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
