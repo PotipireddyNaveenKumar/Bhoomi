@@ -1,0 +1,1078 @@
+{
+  "Ramesh": [
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 344,
+      "text": "farmer_name=\"Ramesh Kumar\","
+    },
+    {
+      "file": "backend/app/api/deps.py",
+      "line": 43,
+      "text": "name=\"Ramesh Kumar (Demo Farmer)\","
+    },
+    {
+      "file": "backend/app/schemas/auth.py",
+      "line": 7,
+      "text": "name: str = Field(..., example=\"Ramesh Kumar\")"
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 64,
+      "text": "name=\"Ramesh Kumar (Demo Farmer)\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 120,
+      "text": "\"name\": \"Ramesh Kumar (Demo Farmer)\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 107,
+      "text": "# Only use Ramesh Kumar demo context for explicit demo users or legacy unit test fixtures"
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 116,
+      "text": "farmer_name=\"Ramesh Kumar\","
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 175,
+      "text": "\"en\": \"Namaste Ramesh! Good to speak with you. Your 3-acre chilli crop in Guntur is growing well. How can I help you tod"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 184,
+      "text": "\"en\": \"Ramesh, I hear you. I'm keeping a close eye on the weather and mandi rates for your 3 acres of chilli. Would you "
+    },
+    {
+      "file": "frontend/web/index.html",
+      "line": 553,
+      "text": "<div class=\"farmer-name\" id=\"sidebarFarmerName\">Ramesh Rao</div>"
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 311,
+      "text": "// 1-Click Demo Login as Ramesh Kumar (Canonical Demo Farmer)"
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 316,
+      "text": "full_name: \"Ramesh Kumar (Demo Farmer)\","
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 705,
+      "text": "const u = currentUser || { full_name: \"Ramesh Rao\", state: \"Telangana\", district: \"Warangal\", land_area_acres: 3.0, curr"
+    }
+  ],
+  "Tenali": [
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 346,
+      "text": "location=\"Tenali, Guntur, Andhra Pradesh\","
+    },
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 349,
+      "text": "village=\"Tenali\","
+    },
+    {
+      "file": "backend/app/api/deps.py",
+      "line": 47,
+      "text": "village=\"Tenali\","
+    },
+    {
+      "file": "backend/app/schemas/auth.py",
+      "line": 11,
+      "text": "village: Optional[str] = Field(default=\"Tenali\")"
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 68,
+      "text": "village=\"Tenali\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 128,
+      "text": "\"location\": \"Tenali, Guntur, Andhra Pradesh\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 131,
+      "text": "\"village\": \"Tenali\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 118,
+      "text": "location=\"Tenali, Guntur, Andhra Pradesh\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 121,
+      "text": "village=\"Tenali\","
+    },
+    {
+      "file": "backend/app/services/weather/location.py",
+      "line": 8,
+      "text": "\"tenali\": (16.2435, 80.6400),"
+    },
+    {
+      "file": "backend/app/services/weather/location.py",
+      "line": 76,
+      "text": "# 2. Extract tokens from location string (e.g., \"Tenali, Guntur, Andhra Pradesh\")"
+    },
+    {
+      "file": "backend/app/services/weather/location.py",
+      "line": 83,
+      "text": "# Check for specific mandal/village first (e.g. \"tenali\")"
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 320,
+      "text": "village: \"Tenali\","
+    }
+  ],
+  "Guntur": [
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 346,
+      "text": "location=\"Tenali, Guntur, Andhra Pradesh\","
+    },
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 348,
+      "text": "district=\"Guntur\","
+    },
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 360,
+      "text": "memories={\"historical_preference\": \"Prefers Teja cultivar with Guntur cold storage\"}"
+    },
+    {
+      "file": "backend/app/api/deps.py",
+      "line": 46,
+      "text": "district=\"Guntur\","
+    },
+    {
+      "file": "backend/app/api/v1/farm_routes.py",
+      "line": 72,
+      "text": "location: str = \"Guntur\""
+    },
+    {
+      "file": "backend/app/api/v1/tasks.py",
+      "line": 198,
+      "text": "weather = await WeatherService.get_weather(location=farmer.district or \"Guntur\")"
+    },
+    {
+      "file": "backend/app/api/v1/yield_routes.py",
+      "line": 11,
+      "text": "district: str = \"Guntur\""
+    },
+    {
+      "file": "backend/app/models/memory.py",
+      "line": 13,
+      "text": "DECISION_RECORD = \"decision_record\"     # e.g., decided to sell at Guntur mandi"
+    },
+    {
+      "file": "backend/app/schemas/auth.py",
+      "line": 10,
+      "text": "district: Optional[str] = Field(default=\"Guntur\")"
+    },
+    {
+      "file": "backend/app/schemas/risk.py",
+      "line": 14,
+      "text": "location: str = Field(..., example=\"Guntur\")"
+    },
+    {
+      "file": "backend/app/services/crop/comparison_service.py",
+      "line": 41,
+      "text": "\"advantages\": [\"High commercial gross returns\", \"Established Guntur APMC market demand\", \"Cold storage option available\""
+    },
+    {
+      "file": "backend/app/services/crop/comparison_service.py",
+      "line": 107,
+      "text": "location: str = \"Guntur\""
+    },
+    {
+      "file": "backend/app/services/crop/lifecycle_service.py",
+      "line": 39,
+      "text": "{\"stage\": \"harvested\", \"duration_days\": 15, \"water_need\": \"None\", \"key_tasks\": [\"Solar drying on clean tarpaulin (<10% m"
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 67,
+      "text": "district=\"Guntur\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 81,
+      "text": "farm_name=\"Guntur Model Farm\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 127,
+      "text": "\"farm_name\": \"Guntur Model Farm\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 128,
+      "text": "\"location\": \"Tenali, Guntur, Andhra Pradesh\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 130,
+      "text": "\"district\": \"Guntur\","
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 237,
+      "text": "\"message\": \"Demo state reset to pristine baseline for Guntur Model Farm.\""
+    },
+    {
+      "file": "backend/app/services/farm_manager/daily_briefing.py",
+      "line": 95,
+      "text": "f\"Market Intelligence: Track Guntur APMC arrival volumes and price stabilization\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/decision_engine.py",
+      "line": 363,
+      "text": "evidence=\"AGMARKNET Guntur APMC Audited Quotes\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/farm_plan.py",
+      "line": 61,
+      "text": "scenario_description=\"Heavy regional arrival glut at Guntur APMC\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/farm_plan.py",
+      "line": 63,
+      "text": "\"Deposit dried pods into Guntur cold storage facilities (~\u20b935/bag/month)\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/farm_plan.py",
+      "line": 85,
+      "text": "market_dispatch_strategy=f\"Target Guntur APMC spot realization >= \u20b912,000/Q; cold storage fallback\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/harvest_decision.py",
+      "line": 51,
+      "text": "logistics = \"Arrange 15 gunny bags/acre and confirm transport truck booking with Guntur APMC commission agent.\""
+    },
+    {
+      "file": "backend/app/services/farm_manager/market_decision.py",
+      "line": 55,
+      "text": "recommended_mandi = \"Guntur Mandi\""
+    },
+    {
+      "file": "backend/app/services/farm_manager/personal_planner.py",
+      "line": 45,
+      "text": "location: str = \"Guntur\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/personal_planner.py",
+      "line": 131,
+      "text": "drivers = [\"Highest net commercial returns\", \"Excellent Guntur black soil suitability\", \"Established cold storage ecosys"
+    },
+    {
+      "file": "backend/app/services/farm_manager/proactive_alerts.py",
+      "line": 117,
+      "text": "evidence_source=market_freshness.source if market_freshness else \"AGMARKNET Guntur APMC Feed\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 51,
+      "text": "best_mandi_name: str = \"Guntur Mandi\""
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 118,
+      "text": "location=\"Tenali, Guntur, Andhra Pradesh\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 120,
+      "text": "district=\"Guntur\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 136,
+      "text": "memories={\"historical_preference\": \"Prefers Teja chilli cultivar with Guntur cold storage booking\"}"
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 189,
+      "text": "market_res = await MarketService.get_mandi_prices(commodity=crop_name, district=dt.district or \"Guntur\")"
+    },
+    {
+      "file": "backend/app/services/farm_manager/task_engine.py",
+      "line": 400,
+      "text": "title=\"Mandi Price Check: Guntur APMC Arrival Volume\","
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 55,
+      "text": "\"en\": \"For your 3-acre chilli crop in Guntur, here is what to focus on this week:\\n1. Hold off on watering because showe"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 59,
+      "text": "tool_calls=[ToolCall(tool_name=\"get_current_weather\", arguments={\"location\": \"Guntur\"})],"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 97,
+      "text": "\"en\": \"In Guntur mandi today, Teja chilli is selling at \u20b912,000 a quintal. After about \u20b9150 for transport, you'll take h"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 101,
+      "text": "tool_calls=[ToolCall(tool_name=\"get_mandi_prices\", arguments={\"commodity\": \"Chilli\", \"location\": \"Guntur\", \"state\": \"And"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 136,
+      "text": "\"en\": \"In Guntur right now, it's 31.5\u00b0C with about a 40% chance of rain this afternoon. Hold off on watering today and l"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 140,
+      "text": "tool_calls=[ToolCall(tool_name=\"get_current_weather\", arguments={\"location\": \"Guntur\"})],"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 149,
+      "text": "\"en\": \"Deep black cotton soil in Guntur holds moisture really well. The most profitable crops for your land are: Chilli "
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 175,
+      "text": "\"en\": \"Namaste Ramesh! Good to speak with you. Your 3-acre chilli crop in Guntur is growing well. How can I help you tod"
+    },
+    {
+      "file": "backend/app/services/market/commodity_resolver.py",
+      "line": 96,
+      "text": "elif any(n in m_dist for n in (\"khammam\", \"krishna\", \"prakasam\", \"ntr\", \"guntur\")):"
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 32,
+      "text": "district: str = \"Guntur\","
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 40,
+      "text": "mandi_name=\"Guntur Mandi (Benchmark)\","
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 41,
+      "text": "district=\"Guntur\","
+    },
+    {
+      "file": "backend/app/services/market/real_provider.py",
+      "line": 44,
+      "text": "district: str = \"Guntur\","
+    },
+    {
+      "file": "backend/app/services/news/news_service.py",
+      "line": 96,
+      "text": "(e.g. 'cotton prices', 'pineapples in Antarctica', 'saffron farming in Guntur')."
+    },
+    {
+      "file": "backend/app/services/news/news_service.py",
+      "line": 323,
+      "text": "if query and any(q in query.lower() for q in [\"saffron farming in guntur\", \"no_news_simulation\", \"simulate_empty\"]):"
+    },
+    {
+      "file": "backend/app/services/rag/query_understanding.py",
+      "line": 170,
+      "text": "\"guntur\": {\"district\": \"Guntur\", \"state\": \"Andhra Pradesh\"},"
+    },
+    {
+      "file": "backend/app/services/rag/query_understanding.py",
+      "line": 180,
+      "text": "\"\u0c17\u0c41\u0c02\u0c1f\u0c42\u0c30\u0c41\": {\"district\": \"Guntur\", \"state\": \"Andhra Pradesh\"},"
+    },
+    {
+      "file": "backend/app/services/rag/query_understanding.py",
+      "line": 183,
+      "text": "\"\u0c17\u0c41\u0c02\u0c1f\u0c42\u0c30\u0c41\u0c32\u0c4b\": {\"district\": \"Guntur\", \"state\": \"Andhra Pradesh\"},"
+    },
+    {
+      "file": "backend/app/services/rag/query_understanding.py",
+      "line": 184,
+      "text": "\"\u0917\u0941\u0902\u091f\u0942\u0930\": {\"district\": \"Guntur\", \"state\": \"Andhra Pradesh\"}"
+    },
+    {
+      "file": "backend/app/services/rag/rag_service.py",
+      "line": 26,
+      "text": "location: Optional[Dict[str, Optional[str]]] = Field(default=None, example={\"state\": \"Andhra Pradesh\", \"district\": \"Gunt"
+    },
+    {
+      "file": "backend/app/services/rag/rag_service.py",
+      "line": 28,
+      "text": "district: Optional[str] = Field(default=None, example=\"Guntur\")"
+    },
+    {
+      "file": "backend/app/services/rag/rag_service.py",
+      "line": 134,
+      "text": "\"district\": \"guntur\","
+    },
+    {
+      "file": "backend/app/services/simulation/simulation_service.py",
+      "line": 97,
+      "text": "hedging_actions.append(\"Check transport arbitrage to Guntur / Warangal benchmark mandis for higher modal rates.\")"
+    },
+    {
+      "file": "backend/app/services/soil/soil_estimation_service.py",
+      "line": 53,
+      "text": "\"Guntur\": {"
+    },
+    {
+      "file": "backend/app/services/soil/soil_estimation_service.py",
+      "line": 320,
+      "text": "clean_district = \"Guntur\""
+    },
+    {
+      "file": "backend/app/services/voice/intent_service.py",
+      "line": 686,
+      "text": "(\"warangal\", \"Warangal\"), (\"guntur\", \"Guntur\"), (\"khammam\", \"Khammam\"),"
+    },
+    {
+      "file": "backend/app/services/voice/intent_service.py",
+      "line": 693,
+      "text": "(\"\u0c35\u0c30\u0c02\u0c17\u0c32\u0c4d\", \"Warangal\"), (\"\u0c17\u0c41\u0c02\u0c1f\u0c42\u0c30\u0c41\", \"Guntur\"), (\"\u0c16\u0c2e\u0c4d\u0c2e\u0c02\", \"Khammam\"),"
+    },
+    {
+      "file": "backend/app/services/voice/intent_service.py",
+      "line": 696,
+      "text": "(\"\u0935\u093e\u0930\u0902\u0917\u0932\", \"Warangal\"), (\"\u0917\u0941\u0902\u091f\u0942\u0930\", \"Guntur\"), (\"\u0916\u092e\u094d\u092e\u092e\", \"Khammam\"),"
+    },
+    {
+      "file": "backend/app/services/voice/persona.py",
+      "line": 37,
+      "text": "Input: Crop: Chilli. Guntur mandi price dropped from \u20b912,000 to \u20b910,500/quintal due to arrival spike. Top action: Hold p"
+    },
+    {
+      "file": "backend/app/services/voice/persona.py",
+      "line": 646,
+      "text": "loc = \"Warangal / Guntur\""
+    },
+    {
+      "file": "backend/app/services/weather/location.py",
+      "line": 7,
+      "text": "\"guntur\": (16.3067, 80.4365),"
+    },
+    {
+      "file": "backend/app/services/weather/location.py",
+      "line": 76,
+      "text": "# 2. Extract tokens from location string (e.g., \"Tenali, Guntur, Andhra Pradesh\")"
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 319,
+      "text": "district: \"Guntur\","
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 341,
+      "text": "\"Andhra Pradesh\": [\"Guntur\", \"Krishna\", \"Kurnool\", \"Anantapur\", \"West Godavari\", \"East Godavari\", \"Chittoor\", \"Prakasam\""
+    }
+  ],
+  "Chilli_default": [
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 1610,
+      "text": "crop = IntentNormalizationService.extract_crop(user_text) or \"Chilli\""
+    },
+    {
+      "file": "backend/app/api/v1/crop.py",
+      "line": 34,
+      "text": "async def get_lifecycle(crop: str = Query(default=\"Chilli\"), stage: str = Query(default=\"vegetative\")):"
+    },
+    {
+      "file": "backend/app/api/v1/image.py",
+      "line": 12,
+      "text": "crop_name: str = Form(default=\"Chilli\"),"
+    },
+    {
+      "file": "backend/app/services/crop/lifecycle_service.py",
+      "line": 140,
+      "text": "crop_clean = (crop or \"chilli\").strip().lower()"
+    },
+    {
+      "file": "backend/app/services/crop/lifecycle_service.py",
+      "line": 241,
+      "text": "crop_clean = (crop_name or \"chilli\").strip().lower()"
+    },
+    {
+      "file": "backend/app/services/farm_manager/daily_briefing.py",
+      "line": 126,
+      "text": "current_crop=state.active_crop or \"Chilli\","
+    },
+    {
+      "file": "backend/app/services/farm_manager/task_engine.py",
+      "line": 67,
+      "text": "crop = state.active_crop or \"Chilli\""
+    }
+  ],
+  "Guntur_default": [
+    {
+      "file": "backend/app/api/v1/tasks.py",
+      "line": 198,
+      "text": "weather = await WeatherService.get_weather(location=farmer.district or \"Guntur\")"
+    },
+    {
+      "file": "backend/app/schemas/auth.py",
+      "line": 10,
+      "text": "district: Optional[str] = Field(default=\"Guntur\")"
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 189,
+      "text": "market_res = await MarketService.get_mandi_prices(commodity=crop_name, district=dt.district or \"Guntur\")"
+    }
+  ],
+  "Warangal_default": [
+    {
+      "file": "backend/app/api/v1/auth.py",
+      "line": 143,
+      "text": "district_val = req.district or \"Warangal\""
+    },
+    {
+      "file": "backend/app/services/soil/soil_estimation_service.py",
+      "line": 311,
+      "text": "clean_district = (district or \"Warangal\").strip().title()"
+    }
+  ],
+  "OTP_bypass": [
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 225,
+      "text": "\"benchmark_cost_acre\": 120000.0,"
+    },
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 231,
+      "text": "\"benchmark_cost_acre\": 30000.0,"
+    },
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 249,
+      "text": "\"benchmark_cost_acre\": 80000.0,"
+    },
+    {
+      "file": "backend/app/api/v1/auth.py",
+      "line": 72,
+      "text": "# Master codes 1234, 0000, 9999 also accepted for automated evaluation"
+    },
+    {
+      "file": "backend/app/api/v1/auth.py",
+      "line": 73,
+      "text": "generated_otp = f\"{random.randint(1000, 9999)}\""
+    },
+    {
+      "file": "backend/app/api/v1/auth.py",
+      "line": 116,
+      "text": "allow_evaluator = getattr(settings, \"ALLOW_EVALUATOR_OTP\", True) and not settings.is_production"
+    },
+    {
+      "file": "backend/app/api/v1/auth.py",
+      "line": 117,
+      "text": "if allow_evaluator and otp_clean in (\"1234\", \"0000\", \"9999\"):"
+    },
+    {
+      "file": "backend/app/core/config.py",
+      "line": 37,
+      "text": "ALLOW_EVALUATOR_OTP: bool = True  # Can be disabled in production via ALLOW_EVALUATOR_OTP=false"
+    },
+    {
+      "file": "backend/app/schemas/finance.py",
+      "line": 17,
+      "text": "machinery_cost: Optional[Decimal] = Field(default=None, example=10000.0)"
+    },
+    {
+      "file": "backend/app/schemas/finance.py",
+      "line": 19,
+      "text": "cultivation_cost_total: Optional[Decimal] = Field(default=None, example=70000.0)"
+    },
+    {
+      "file": "backend/app/schemas/simulation.py",
+      "line": 10,
+      "text": "baseline_cultivation_cost: Decimal = Field(..., example=70000.0)"
+    },
+    {
+      "file": "backend/app/services/crop/comparison_service.py",
+      "line": 38,
+      "text": "\"cost_per_acre\": Decimal(\"70000.00\"),"
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 149,
+      "text": "\"historical_cultivation_cost\": 70000.0,"
+    },
+    {
+      "file": "backend/app/services/farm_manager/farm_plan.py",
+      "line": 88,
+      "text": "\"estimated_cultivation_cost\": 70000.0,"
+    },
+    {
+      "file": "backend/app/services/farm_manager/farm_plan.py",
+      "line": 89,
+      "text": "\"projected_net_profit\": round((area_acres * 10.0 * 12200.0) - 70000.0, 2)"
+    },
+    {
+      "file": "backend/app/services/farm_manager/personal_planner.py",
+      "line": 54,
+      "text": "\"cost_acre\": 70000.0,"
+    },
+    {
+      "file": "backend/app/services/farm_manager/risk_aggregator.py",
+      "line": 85,
+      "text": "if state.market_modal_price_per_quintal < 10000.0:"
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 54,
+      "text": "projected_cultivation_cost: float = 70000.0"
+    },
+    {
+      "file": "backend/app/services/farm_manager/state_engine.py",
+      "line": 245,
+      "text": "cultivation_cost_total=Decimal(\"70000.00\") if crop_name else Decimal(\"0.00\")"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 127,
+      "text": "tool_calls=[ToolCall(tool_name=\"calculate_profit\", arguments={\"crop_name\": \"Chilli\", \"area_acres\": 3.0, \"expected_yield_"
+    },
+    {
+      "file": "backend/app/services/safety/safety_engine.py",
+      "line": 80,
+      "text": "modified_text=\"Safety Alert: The requested chemical treatment contains restricted substances. Please use approved, eco-f"
+    },
+    {
+      "file": "backend/app/services/vision/edge/model_manifest.py",
+      "line": 84,
+      "text": "parameter_count=930000,"
+    },
+    {
+      "file": "frontend/web/index.html",
+      "line": 217,
+      "text": "<label for=\"otpCodeInput\" id=\"lblOtpCode\">\ud83d\udd22 Enter 4-Digit OTP Code (Enter: <strong>1234</strong>):</label>"
+    },
+    {
+      "file": "frontend/web/index.html",
+      "line": 218,
+      "text": "<input type=\"number\" id=\"otpCodeInput\" placeholder=\"1234\" maxlength=\"4\" style=\"text-align: center; font-size: 22px; lett"
+    },
+    {
+      "file": "frontend/web/index.html",
+      "line": 572,
+      "text": "<button class=\"btn-finance-header\" id=\"btnOpenFinance\" onclick=\"openFinanceModal()\" title=\"Farm Financial Planner & What"
+    },
+    {
+      "file": "frontend/web/index.html",
+      "line": 741,
+      "text": "<div id=\"micPermissionModal\" class=\"photo-select-overlay\" style=\"display: none; z-index: 9999;\">"
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 466,
+      "text": "const otpCode = data.otp || data.demo_otp || \"1234\";"
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 950,
+      "text": "<span style=\"font-size:0.75rem; background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:9999px; "
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 1091,
+      "text": "<span style=\"font-size:0.75rem; background:rgba(56,189,248,0.15); color:#38bdf8; padding:2px 8px; border-radius:9999px; "
+    },
+    {
+      "file": "frontend/web/static/app.js",
+      "line": 2569,
+      "text": "modal.style.zIndex = \"9999\";"
+    }
+  ],
+  "Mock_provider": [
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 2291,
+      "text": "# For real LLM providers (non-mock), feed deterministic tool results back to synthesize final response"
+    },
+    {
+      "file": "backend/app/agents/orchestrator.py",
+      "line": 2292,
+      "text": "if llm_response.provider != \"mock\" and tool_results_summary:"
+    },
+    {
+      "file": "backend/app/core/config.py",
+      "line": 50,
+      "text": "VOICE_PROVIDER: str = \"mock\"  # sarvam | whisper | mock | bhashini"
+    },
+    {
+      "file": "backend/app/core/config.py",
+      "line": 56,
+      "text": "LLM_PROVIDER: str = \"mock\"  # openai | gemini | groq | mock"
+    },
+    {
+      "file": "backend/app/core/config.py",
+      "line": 70,
+      "text": "WEATHER_PROVIDER: str = \"openmeteo\"  # openmeteo | openweathermap | mock"
+    },
+    {
+      "file": "backend/app/core/config.py",
+      "line": 72,
+      "text": "MARKET_PROVIDER: str = \"mock\"  # data_gov | agmarknet | mock"
+    },
+    {
+      "file": "backend/app/services/demo/demo_service.py",
+      "line": 15,
+      "text": "Provides deterministic demonstration scenarios, mock fallbacks for offline presentation,"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 6,
+      "text": "from app.services.llm.mock_provider import MockLLMProvider"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 16,
+      "text": "Clean fallback to MockLLMProvider ensures CI/CD and offline tests never fail."
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 32,
+      "text": "\"Silent fallback to MockLLMProvider is disabled in production.\""
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 34,
+      "text": "logger.info(\"OpenAI API key not provided or placeholder detected. Using MockLLMProvider.\")"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 35,
+      "text": "return MockLLMProvider()"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 47,
+      "text": "\"Silent fallback to MockLLMProvider is disabled in production.\""
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 49,
+      "text": "logger.info(\"Gemini API key not provided or placeholder detected. Using MockLLMProvider.\")"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 50,
+      "text": "return MockLLMProvider()"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 65,
+      "text": "\"Silent fallback to MockLLMProvider is disabled in production.\""
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 67,
+      "text": "logger.info(\"Groq API key not provided or placeholder detected. Using MockLLMProvider.\")"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 68,
+      "text": "return MockLLMProvider()"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 71,
+      "text": "if settings.is_production and name not in (\"mock\", \"\"):"
+    },
+    {
+      "file": "backend/app/services/llm/factory.py",
+      "line": 75,
+      "text": "return MockLLMProvider()"
+    },
+    {
+      "file": "backend/app/services/llm/gemini_provider.py",
+      "line": 6,
+      "text": "from app.services.llm.mock_provider import MockLLMProvider"
+    },
+    {
+      "file": "backend/app/services/llm/gemini_provider.py",
+      "line": 27,
+      "text": "self._fallback_provider = MockLLMProvider()"
+    },
+    {
+      "file": "backend/app/services/llm/gemini_provider.py",
+      "line": 77,
+      "text": "f\"Gemini API returned status {resp.status_code}. Falling back to MockLLMProvider.\""
+    },
+    {
+      "file": "backend/app/services/llm/gemini_provider.py",
+      "line": 118,
+      "text": "logger.warning(f\"Error calling Gemini API ({type(e).__name__}). Falling back safely to MockLLMProvider.\")"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 5,
+      "text": "class MockLLMProvider(LLMProvider):"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 7,
+      "text": "Intelligent Multilingual Mock LLM Provider for unit tests, offline development,"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 60,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 71,
+      "text": "return LLMResponse(content=resp_by_lang.get(lang, resp_by_lang[\"en\"]), tool_calls=None, provider=\"mock\")"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 79,
+      "text": "return LLMResponse(content=resp_by_lang.get(lang, resp_by_lang[\"en\"]), tool_calls=None, provider=\"mock\")"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 89,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 102,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 115,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 128,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 141,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 154,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 167,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 177,
+      "text": "return LLMResponse(content=resp_by_lang.get(lang, resp_by_lang[\"en\"]), tool_calls=None, provider=\"mock\")"
+    },
+    {
+      "file": "backend/app/services/llm/mock_provider.py",
+      "line": 186,
+      "text": "return LLMResponse(content=resp_by_lang.get(lang, resp_by_lang[\"en\"]), tool_calls=None, provider=\"mock\")"
+    },
+    {
+      "file": "backend/app/services/llm/openai_provider.py",
+      "line": 7,
+      "text": "from app.services.llm.mock_provider import MockLLMProvider"
+    },
+    {
+      "file": "backend/app/services/llm/openai_provider.py",
+      "line": 30,
+      "text": "self._fallback_provider = MockLLMProvider()"
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 23,
+      "text": "class MockMarketDataProvider(MarketDataProvider):"
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 25,
+      "text": "Deterministic mock market data provider."
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 54,
+      "text": "source=\"Mock Agricultural Market System\","
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 74,
+      "text": "source=\"Mock Agricultural Market System\","
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 94,
+      "text": "source=\"Mock Agricultural Market System\","
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 116,
+      "text": "source=\"Mock Agricultural Market System\","
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 125,
+      "text": "Preserves MockMarketDataProvider as safe fallback for offline tests and CI/CD."
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 135,
+      "text": "\"mock\""
+    },
+    {
+      "file": "backend/app/services/market/market_provider.py",
+      "line": 146,
+      "text": "return MockMarketDataProvider()"
+    },
+    {
+      "file": "backend/app/services/market/market_service.py",
+      "line": 11,
+      "text": "Dispatches to configured MarketDataProvider (RealMarketDataProvider / MockMarketDataProvider)."
+    },
+    {
+      "file": "backend/app/services/market/market_service.py",
+      "line": 42,
+      "text": "fallback = \"mock\""
+    },
+    {
+      "file": "backend/app/services/market/market_service.py",
+      "line": 44,
+      "text": "live_status = \"ACTIVE\" if (configured or primary == \"mock\") else \"DEGRADED\""
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 7,
+      "text": "from app.services.voice.mock import MockVoiceProvider"
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 14,
+      "text": "Preserves MockVoiceProvider as safe fallback for offline tests and CI/CD."
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 28,
+      "text": "\"Silent fallback to MockVoiceProvider is disabled in production.\""
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 30,
+      "text": "logger.warning(\"SARVAM_API_KEY not configured or placeholder detected. Falling back safely to MockVoiceProvider.\")"
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 31,
+      "text": "return MockVoiceProvider()"
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 37,
+      "text": "return MockVoiceProvider()"
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 43,
+      "text": "return MockVoiceProvider()"
+    },
+    {
+      "file": "backend/app/services/voice/factory.py",
+      "line": 45,
+      "text": "return MockVoiceProvider()"
+    },
+    {
+      "file": "backend/app/services/voice/mock.py",
+      "line": 5,
+      "text": "class MockVoiceProvider(VoiceProvider):"
+    },
+    {
+      "file": "backend/app/services/voice/mock.py",
+      "line": 7,
+      "text": "Deterministic mock voice provider for local testing, development, and CI/CD"
+    },
+    {
+      "file": "backend/app/services/voice/mock.py",
+      "line": 11,
+      "text": "# Returns a realistic farmer prompt for mock speech testing"
+    },
+    {
+      "file": "backend/app/services/voice/mock.py",
+      "line": 26,
+      "text": "provider=\"mock\""
+    },
+    {
+      "file": "backend/app/services/voice/mock.py",
+      "line": 58,
+      "text": "provider=\"mock\","
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 21,
+      "text": "class MockWeatherProvider(WeatherProvider):"
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 122,
+      "text": "provider_type=\"MOCK\","
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 137,
+      "text": "name = (provider_name or os.environ.get(\"WEATHER_PROVIDER\") or settings.WEATHER_PROVIDER or \"mock\").lower().strip()"
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 140,
+      "text": "if name == \"mock\":"
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 142,
+      "text": "logger.warning(\"MockWeatherProvider forbidden in %s; activating Open-Meteo real provider.\", settings.APP_ENV)"
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 144,
+      "text": "return MockWeatherProvider()"
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 156,
+      "text": "logger.warning(\"Unrecognized weather provider '%s'; defaulting to MockWeatherProvider.\", name)"
+    },
+    {
+      "file": "backend/app/services/weather/weather_provider.py",
+      "line": 157,
+      "text": "return MockWeatherProvider()"
+    },
+    {
+      "file": "backend/app/services/weather/weather_service.py",
+      "line": 8,
+      "text": "Dispatches to configured WeatherProvider (Real / OpenWeatherMap / Open-Meteo / Mock)."
+    },
+    {
+      "file": "backend/app/services/weather/weather_service.py",
+      "line": 38,
+      "text": "live_status = \"ACTIVE\" if (configured or primary in (\"openmeteo\", \"mock\")) else \"DEGRADED\""
+    }
+  ]
+}

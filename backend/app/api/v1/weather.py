@@ -15,7 +15,13 @@ async def get_weather(
     lon: Optional[float] = Query(default=None),
     farmer: FarmerProfile = Depends(get_current_farmer_profile),
 ):
-    loc = location or getattr(farmer, "district", None) or "Guntur"
+    loc = location or getattr(farmer, "district", None) or getattr(farmer, "location", None)
+    if not loc and (lat is None or lon is None):
+        from fastapi import HTTPException, status
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Farm location or geographic coordinates must be provided or configured in farmer profile."
+        )
     return await WeatherService.get_weather(location=loc, lat=lat, lon=lon)
 
 @router.get("/forecast")
@@ -26,7 +32,13 @@ async def get_weather_forecast(
     crop_stage: str = Query(default="flowering"),
     farmer: FarmerProfile = Depends(get_current_farmer_profile),
 ):
-    loc = location or getattr(farmer, "district", None) or "Guntur"
+    loc = location or getattr(farmer, "district", None) or getattr(farmer, "location", None)
+    if not loc and (lat is None or lon is None):
+        from fastapi import HTTPException, status
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Farm location or geographic coordinates must be provided or configured in farmer profile."
+        )
     weather_res = await WeatherService.get_weather(location=loc, lat=lat, lon=lon)
     decision = WeatherDecisionEngine.evaluate(
         weather_data=weather_res.current.model_dump(),

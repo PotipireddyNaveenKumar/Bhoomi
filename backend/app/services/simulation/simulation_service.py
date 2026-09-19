@@ -32,11 +32,15 @@ class SimulationService:
         )
 
         # Apply shifts
-        # Price shift
+        # 1. Area shift
+        area_factor = (Decimal("1") + (Decimal(str(req.area_change_percent)) / Decimal("100")))
+        sim_area = (area * area_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+        # 2. Price shift
         price_factor = (Decimal("1") + (Decimal(str(req.price_change_percent)) / Decimal("100")))
         sim_price = (base_price * price_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
-        # Yield shift (affected by direct yield % change or rainfall deficit correlation)
+        # 3. Yield shift (affected by direct yield % change or rainfall deficit correlation)
         yield_shift = Decimal(str(req.yield_change_percent))
         if req.rainfall_change_percent < Decimal("0"):
             # e.g., -25% rainfall without adequate irrigation could reduce yield by approx 0.4x rainfall deficit
@@ -44,10 +48,17 @@ class SimulationService:
             yield_shift = yield_shift + rain_yield_penalty
 
         yield_factor = (Decimal("1") + (yield_shift / Decimal("100")))
-        sim_total_yield = (base_total_yield * yield_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        # Yield scales with simulated area and yield factor
+        sim_total_yield = (sim_area * base_yield_acre * yield_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
-        # Cost shift
-        cost_factor = (Decimal("1") + (Decimal(str(req.cost_change_percent)) / Decimal("100")))
+        # 4. Cost shift (total cost, with proportional adjustments for fertilizer and labour)
+        fert_shift = Decimal(str(req.fertilizer_cost_change_percent))
+        labour_shift = Decimal(str(req.labour_cost_change_percent))
+        general_cost_shift = Decimal(str(req.cost_change_percent))
+        
+        # Combined cost factor: general cost shift plus weighted components if specified
+        combined_cost_shift = general_cost_shift + (fert_shift * Decimal("0.25")) + (labour_shift * Decimal("0.35"))
+        cost_factor = (Decimal("1") + (combined_cost_shift / Decimal("100"))) * area_factor
         sim_cost = (base_cost * cost_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
         # Scenario Results

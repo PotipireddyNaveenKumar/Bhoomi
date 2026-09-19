@@ -287,52 +287,7 @@ async function initAuth() {
     }
   }
 
-  // If reviewer logged in via demo profile without JWT
-  if (savedUser) {
-    try {
-      currentUser = JSON.parse(savedUser);
-      authToken = null;
-      updateSidebarFarmerProfile(currentUser);
-      hideAuthModal();
-      loadUserScopedSessions();
-      return;
-    } catch (e) {}
-  }
-
-  // Fresh / incognito reviewer visit: check if backend is running with DEMO_MODE=true
-  try {
-    const healthRes = await fetch("/health");
-    if (healthRes.ok) {
-      const healthData = await healthRes.json();
-      if (healthData.demo_mode === true) {
-        currentUser = {
-          id: "demo_farmer_1",
-          phone_number: "+919876543210 (Demo Contact)",
-          full_name: "Ramesh Kumar (Demo Farmer)",
-          preferred_language: currentLanguage || "te",
-          state: "Andhra Pradesh",
-          district: "Guntur",
-          village: "Tenali",
-          land_area_acres: 3.0,
-          current_crop: "Chilli",
-          soil_n: 90.0,
-          soil_p: 42.0,
-          soil_k: 43.0,
-          soil_ph: 6.5
-        };
-        authToken = null;
-        localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
-        updateSidebarFarmerProfile(currentUser);
-        hideAuthModal();
-        loadUserScopedSessions();
-        return;
-      }
-    }
-  } catch (err) {
-    console.warn("Error checking demo_mode from /health:", err);
-  }
-
-  // Not in DEMO_MODE and not logged in -> Show Authentication Modal
+  // Not logged in -> Show Authentication Modal
   showAuthModal();
 }
 
@@ -516,7 +471,11 @@ async function handleSendOtp() {
 
     const sentBanner = document.getElementById("txtOtpSentInfo");
     if (sentBanner) {
-      sentBanner.innerHTML = `📲 SMS sent to +91 ${phone} • (Your OTP is: <b style="color:#10B981; font-size:14px;">${otpCode}</b>)`;
+      if (data.is_registered) {
+        sentBanner.innerHTML = `📲 Welcome back! SMS sent to +91 ${phone} • (Your OTP is: <b style="color:#10B981; font-size:14px;">${otpCode}</b>)`;
+      } else {
+        sentBanner.innerHTML = `📲 SMS sent to +91 ${phone} • (Your OTP is: <b style="color:#10B981; font-size:14px;">${otpCode}</b>)`;
+      }
     }
 
     const otpCodeInput = document.getElementById("otpCodeInput");
@@ -526,10 +485,14 @@ async function handleSendOtp() {
       otpCodeInput.focus();
     }
 
-    // Show farmer detail fields & trigger initial soil estimate
+    // Show farmer detail fields if new registration, hide if existing
     const newFields = document.getElementById("newFarmerFields");
-    if (newFields) newFields.style.display = "block";
-    onStateChanged();
+    if (newFields) {
+      newFields.style.display = data.is_registered ? "none" : "block";
+    }
+    if (!data.is_registered) {
+      onStateChanged();
+    }
 
   } catch (e) {
     if (errorMsg) {
@@ -554,16 +517,18 @@ async function handleVerifyOtp() {
     return;
   }
 
-  const name = document.getElementById("farmerNameInput")?.value?.trim() || "Farmer";
-  const state = document.getElementById("farmerStateInput")?.value || "Telangana";
-  const district = document.getElementById("farmerDistrictInput")?.value?.trim() || "Warangal";
-  const village = document.getElementById("farmerVillageInput")?.value?.trim() || "Rural";
-  const crop = document.getElementById("farmerCropInput")?.value?.trim() || "Chilli";
-  const variety = document.getElementById("farmerVarietyInput")?.value?.trim() || "";
-  const acres = parseFloat(document.getElementById("farmerAcresInput")?.value || 3.0);
+  const newFieldsEl = document.getElementById("newFarmerFields");
+  const isNewFarmer = newFieldsEl && newFieldsEl.style.display !== "none";
+  const name = isNewFarmer ? (document.getElementById("farmerNameInput")?.value?.trim() || "Farmer") : null;
+  const state = isNewFarmer ? (document.getElementById("farmerStateInput")?.value || "Telangana") : null;
+  const district = isNewFarmer ? (document.getElementById("farmerDistrictInput")?.value?.trim() || "Warangal") : null;
+  const village = isNewFarmer ? (document.getElementById("farmerVillageInput")?.value?.trim() || "Rural") : null;
+  const crop = isNewFarmer ? (document.getElementById("farmerCropInput")?.value?.trim() || "Chilli") : null;
+  const variety = isNewFarmer ? (document.getElementById("farmerVarietyInput")?.value?.trim() || "") : null;
+  const acres = isNewFarmer ? parseFloat(document.getElementById("farmerAcresInput")?.value || 3.0) : null;
 
   const labFields = document.getElementById("labSoilFields");
-  const isSoilManual = labFields && labFields.style.display !== "none";
+  const isSoilManual = isNewFarmer && labFields && labFields.style.display !== "none";
   const soilN = isSoilManual && document.getElementById("farmerSoilN")?.value ? parseFloat(document.getElementById("farmerSoilN").value) : null;
   const soilP = isSoilManual && document.getElementById("farmerSoilP")?.value ? parseFloat(document.getElementById("farmerSoilP").value) : null;
   const soilK = isSoilManual && document.getElementById("farmerSoilK")?.value ? parseFloat(document.getElementById("farmerSoilK").value) : null;
@@ -602,23 +567,28 @@ async function handleVerifyOtp() {
       authToken = data.access_token;
       localStorage.setItem("bhoomi_auth_token", authToken);
 
+      const resolvedFarmerId = data.farmer_id || data.user_id || `usr_${pendingOtpPhone}`;
       currentUser = {
-        id: `usr_${pendingOtpPhone}`,
+        id: resolvedFarmerId,
+        farmer_id: resolvedFarmerId,
+        farm_id: data.farm_id || null,
+        user_id: data.user_id,
         phone_number: pendingOtpPhone,
-        full_name: name,
+        full_name: data.name || data.full_name || name || "Farmer",
         preferred_language: currentLanguage,
-        state: state,
-        district: district,
-        village: village,
-        land_area_acres: acres,
-        current_crop: crop,
-        crop_variety: variety,
-        active_crop: crop,
+        state: data.state || state,
+        district: data.district || district,
+        village: data.village || village,
+        land_area_acres: data.area_acres || acres,
+        current_crop: data.crop_name || crop,
+        crop_variety: data.crop_variety || variety,
+        active_crop: data.crop_name || crop,
+        soil_type: data.soil_type || currentSoilEstimate?.soil_type || "black",
         soil_source_type: soilSourceType,
-        soil_n: soilN,
-        soil_p: soilP,
-        soil_k: soilK,
-        soil_ph: soilPh || currentSoilEstimate?.estimated_ph || 6.5
+        soil_n: (data.soil_n !== undefined && data.soil_n !== null) ? data.soil_n : soilN,
+        soil_p: (data.soil_p !== undefined && data.soil_p !== null) ? data.soil_p : soilP,
+        soil_k: (data.soil_k !== undefined && data.soil_k !== null) ? data.soil_k : soilK,
+        soil_ph: data.soil_ph || soilPh || currentSoilEstimate?.estimated_ph || 6.5
       };
       localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
       localStorage.setItem("bhoomi_lang", currentLanguage);
@@ -663,8 +633,8 @@ function backToOtpStep1() {
 }
 
 
-function handleLogout() {
-  if (confirm("మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా? (Are you sure you want to log out?)")) {
+function handleLogout(skipConfirm = false) {
+  if (skipConfirm || confirm("మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా? (Are you sure you want to log out?)")) {
     localStorage.removeItem("bhoomi_auth_token");
     localStorage.removeItem("bhoomi_current_user");
     authToken = null;
@@ -672,6 +642,7 @@ function handleLogout() {
     closeProfileModal();
     sessionsList = [];
     renderSessionList();
+    startNewChat();
     showAuthModal();
   }
 }
@@ -795,6 +766,383 @@ async function handleProfileUpdate(event) {
 
   closeProfileModal();
   alert("రైతు మరియు పొలం వివరాలు విజయవంతంగా సేవ్ చేయబడ్డాయి! (Profile saved successfully)");
+}
+
+// ==========================================
+// Farm Finance, Profit & What-If Simulation
+// ==========================================
+function openFinanceModal() {
+  const modal = document.getElementById("financeModal");
+  if (!modal) return;
+  if (currentUser) {
+    if (currentUser.current_crop && document.getElementById("finCrop")) {
+      document.getElementById("finCrop").value = currentUser.current_crop;
+    }
+    if (currentUser.land_area_acres && document.getElementById("finArea")) {
+      document.getElementById("finArea").value = currentUser.land_area_acres;
+    }
+  }
+  modal.style.display = "flex";
+}
+
+function closeFinanceModal() {
+  const modal = document.getElementById("financeModal");
+  if (modal) modal.style.display = "none";
+}
+
+async function calculateFinance() {
+  const crop = document.getElementById("finCrop") ? document.getElementById("finCrop").value.trim() : "Crop";
+  const area = parseFloat(document.getElementById("finArea")?.value) || 1.0;
+  const areaUnit = document.getElementById("finAreaUnit")?.value || "acre";
+
+  const seed = parseFloat(document.getElementById("finCostSeed")?.value);
+  const fertilizer = parseFloat(document.getElementById("finCostFertilizer")?.value);
+  const pesticide = parseFloat(document.getElementById("finCostPesticide")?.value);
+  const labour = parseFloat(document.getElementById("finCostLabour")?.value);
+  const irrigation = parseFloat(document.getElementById("finCostIrrigation")?.value);
+  const machinery = parseFloat(document.getElementById("finCostMachinery")?.value);
+  const other = parseFloat(document.getElementById("finCostOther")?.value);
+  const totalCostInput = parseFloat(document.getElementById("finCostTotal")?.value);
+
+  const yieldVal = parseFloat(document.getElementById("finYield")?.value);
+  const yieldUnit = document.getElementById("finYieldUnit")?.value || "quintal";
+
+  const priceVal = parseFloat(document.getElementById("finPrice")?.value);
+  const priceUnit = document.getElementById("finPriceUnit")?.value || "rupees_per_quintal";
+
+  const payload = {
+    crop_name: crop,
+    land_area: area,
+    area_unit: areaUnit
+  };
+
+  if (!isNaN(seed)) payload.seed_cost = seed;
+  if (!isNaN(fertilizer)) payload.fertilizer_cost = fertilizer;
+  if (!isNaN(pesticide)) payload.pesticide_cost = pesticide;
+  if (!isNaN(labour)) payload.labour_cost = labour;
+  if (!isNaN(irrigation)) payload.irrigation_cost = irrigation;
+  if (!isNaN(machinery)) payload.machinery_cost = machinery;
+  if (!isNaN(other)) payload.other_cost = other;
+  if (!isNaN(totalCostInput)) payload.cultivation_cost_total = totalCostInput;
+
+  if (!isNaN(yieldVal)) {
+    payload.expected_yield = yieldVal;
+    payload.yield_unit = yieldUnit;
+  }
+  if (!isNaN(priceVal)) {
+    payload.expected_market_price = priceVal;
+    payload.price_unit = priceUnit;
+  }
+
+  const resultsPanel = document.getElementById("finResultsPanel");
+  if (resultsPanel) {
+    resultsPanel.style.display = "block";
+    resultsPanel.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 12px;">⏳ Calculating deterministic farm finance...</div>`;
+  }
+
+  try {
+    const headers = { "Content-Type": "application/json" };
+    if (authToken && !authToken.startsWith("demo_")) {
+      headers["Authorization"] = `Bearer ${authToken}`;
+    }
+
+    const res = await fetch("/api/v1/profit/calculate", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = typeof err.detail === "string" ? err.detail : "Calculation failed. Please verify your inputs.";
+      if (resultsPanel) {
+        resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ ${escapeHtml(msg)}</div>`;
+      }
+      return;
+    }
+
+    const data = await res.json();
+    renderFinanceResults(data);
+  } catch (err) {
+    console.error("Finance calculation error:", err);
+    if (resultsPanel) {
+      resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ Network error while connecting to finance service.</div>`;
+    }
+  }
+}
+
+function renderFinanceResults(data) {
+  const panel = document.getElementById("finResultsPanel");
+  if (!panel) return;
+  panel.style.display = "block";
+
+  const totalCost = Number(data.total_cost || data.cultivation_cost_total || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+  const grossRev = data.gross_revenue !== null && data.gross_revenue !== undefined 
+    ? `₹${Number(data.gross_revenue).toLocaleString('en-IN', {minimumFractionDigits: 2})}` 
+    : 'N/A';
+  const netProfit = data.net_profit !== null && data.net_profit !== undefined 
+    ? Number(data.net_profit) 
+    : null;
+  const netProfitStr = netProfit !== null 
+    ? `₹${netProfit.toLocaleString('en-IN', {minimumFractionDigits: 2})}` 
+    : 'N/A';
+  const profitPerArea = data.profit_per_area !== null && data.profit_per_area !== undefined
+    ? `₹${Number(data.profit_per_area).toLocaleString('en-IN', {minimumFractionDigits: 2})} / ${escapeHtml(data.area_unit || 'acre')}`
+    : 'N/A';
+  const roi = data.return_on_investment_percent !== null && data.return_on_investment_percent !== undefined
+    ? `${Number(data.return_on_investment_percent).toFixed(1)}%`
+    : 'N/A';
+
+  // Cost breakdown
+  let breakdownHtml = "";
+  if (data.cost_breakdown && Object.keys(data.cost_breakdown).length > 0) {
+    const items = Object.entries(data.cost_breakdown).map(([k, v]) => {
+      const label = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      return `<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.06); font-size:0.82rem;">
+        <span style="color:var(--text-sub);">${label}:</span>
+        <strong style="color:var(--text-main);">₹${Number(v).toLocaleString('en-IN')}</strong>
+      </div>`;
+    }).join("");
+    breakdownHtml = `
+      <div style="margin-top:10px; background:rgba(0,0,0,0.15); padding:10px; border-radius:6px;">
+        <div style="font-size:0.8rem; font-weight:600; color:var(--accent-emerald); margin-bottom:6px;">7-Component Cost Breakdown:</div>
+        ${items}
+      </div>
+    `;
+  }
+
+  // Partial status / Break-even
+  let partialHtml = "";
+  if (data.is_partial) {
+    let beItems = [];
+    if (data.break_even_price !== null && data.break_even_price !== undefined) {
+      beItems.push(`<div>🎯 <strong>Break-Even Market Price:</strong> ₹${Number(data.break_even_price).toLocaleString('en-IN')}/Qtl (Minimum price needed to avoid loss)</div>`);
+    }
+    if (data.break_even_yield !== null && data.break_even_yield !== undefined) {
+      beItems.push(`<div>🎯 <strong>Break-Even Yield:</strong> ${Number(data.break_even_yield).toFixed(2)} Qtl/${escapeHtml(data.area_unit || 'acre')} (Minimum production needed to cover cost)</div>`);
+    }
+    partialHtml = `
+      <div style="margin-top:10px; padding:10px; background:rgba(234, 179, 8, 0.12); border-left:3px solid #eab308; border-radius:4px; font-size:0.83rem; color:#fde047;">
+        <div style="font-weight:600;">⚠️ Partial Calculation (Missing: ${escapeHtml((data.missing_fields || []).join(', '))})</div>
+        ${beItems.join('')}
+      </div>
+    `;
+  }
+
+  // Calculation trace
+  let traceHtml = "";
+  if (Array.isArray(data.calculation_trace) && data.calculation_trace.length > 0) {
+    const steps = data.calculation_trace.map(s => `<li style="margin-bottom:3px;">${escapeHtml(s)}</li>`).join("");
+    traceHtml = `
+      <details style="margin-top:10px; font-size:0.8rem; color:var(--text-sub);">
+        <summary style="cursor:pointer; font-weight:600; color:#38bdf8;">🔍 View Deterministic Calculation Trace (${data.calculation_trace.length} steps)</summary>
+        <ol style="margin-top:6px; padding-left:18px; line-height:1.4;">
+          ${steps}
+        </ol>
+      </details>
+    `;
+  }
+
+  panel.innerHTML = `
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h4 style="margin:0; font-size:1rem; color:var(--accent-emerald);">📊 Financial Calculation: ${escapeHtml(data.crop_name)} (${Number(data.land_area)} ${escapeHtml(data.area_unit)})</h4>
+        <span style="font-size:0.75rem; background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:9999px; font-weight:600;">Deterministic</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-bottom:12px;">
+        <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
+          <div style="font-size:0.72rem; color:var(--text-sub);">Total Cost</div>
+          <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">₹${totalCost}</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
+          <div style="font-size:0.72rem; color:var(--text-sub);">Gross Revenue</div>
+          <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">${grossRev}</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
+          <div style="font-size:0.72rem; color:var(--text-sub);">Net Profit</div>
+          <div style="font-size:1.1rem; font-weight:700; color:${netProfit !== null && netProfit < 0 ? '#ef4444' : '#10b981'};">${netProfitStr}</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
+          <div style="font-size:0.72rem; color:var(--text-sub);">Profit per ${escapeHtml(data.area_unit || 'Acre')}</div>
+          <div style="font-size:0.95rem; font-weight:700; color:var(--text-main);">${profitPerArea}</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
+          <div style="font-size:0.72rem; color:var(--text-sub);">Return on Investment</div>
+          <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">${roi}</div>
+        </div>
+      </div>
+
+      ${breakdownHtml}
+      ${partialHtml}
+      ${traceHtml}
+    </div>
+  `;
+}
+
+async function runWhatIfSimulation() {
+  const crop = document.getElementById("finCrop") ? document.getElementById("finCrop").value.trim() : "Crop";
+  const area = parseFloat(document.getElementById("finArea")?.value) || 1.0;
+  
+  const seed = parseFloat(document.getElementById("finCostSeed")?.value) || 0;
+  const fertilizer = parseFloat(document.getElementById("finCostFertilizer")?.value) || 0;
+  const pesticide = parseFloat(document.getElementById("finCostPesticide")?.value) || 0;
+  const labour = parseFloat(document.getElementById("finCostLabour")?.value) || 0;
+  const irrigation = parseFloat(document.getElementById("finCostIrrigation")?.value) || 0;
+  const machinery = parseFloat(document.getElementById("finCostMachinery")?.value) || 0;
+  const other = parseFloat(document.getElementById("finCostOther")?.value) || 0;
+  let totalCost = seed + fertilizer + pesticide + labour + irrigation + machinery + other;
+  const directTotal = parseFloat(document.getElementById("finCostTotal")?.value);
+  if (!isNaN(directTotal) && directTotal > 0) {
+    totalCost = directTotal;
+  }
+  if (totalCost <= 0) {
+    showToast("Please enter cultivation costs before running simulation", "warning");
+    return;
+  }
+
+  const yieldVal = parseFloat(document.getElementById("finYield")?.value);
+  const priceVal = parseFloat(document.getElementById("finPrice")?.value);
+  if (isNaN(yieldVal) || yieldVal <= 0 || isNaN(priceVal) || priceVal <= 0) {
+    showToast("Please enter baseline Yield and Market Price for What-If Simulation", "warning");
+    return;
+  }
+
+  const priceChange = parseFloat(document.getElementById("simPriceChange")?.value) || 0;
+  const yieldChange = parseFloat(document.getElementById("simYieldChange")?.value) || 0;
+  const costChange = parseFloat(document.getElementById("simCostChange")?.value) || 0;
+  const fertChange = parseFloat(document.getElementById("simFertilizerChange")?.value) || 0;
+
+  const payload = {
+    crop_name: crop,
+    area_acres: area,
+    baseline_yield_quintals_per_acre: yieldVal,
+    baseline_market_price_per_quintal: priceVal,
+    baseline_cultivation_cost: totalCost,
+    price_change_percent: priceChange,
+    yield_change_percent: yieldChange,
+    cost_change_percent: costChange,
+    fertilizer_cost_change_percent: fertChange
+  };
+
+  const resultsPanel = document.getElementById("finResultsPanel");
+  if (resultsPanel) {
+    resultsPanel.style.display = "block";
+    resultsPanel.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 12px;">⚡ Running multi-lever scenario simulation...</div>`;
+  }
+
+  try {
+    const headers = { "Content-Type": "application/json" };
+    if (authToken && !authToken.startsWith("demo_")) {
+      headers["Authorization"] = `Bearer ${authToken}`;
+    }
+
+    const res = await fetch("/api/v1/simulation/what-if", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = typeof err.detail === "string" ? err.detail : "Simulation failed.";
+      if (resultsPanel) {
+        resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ ${escapeHtml(msg)}</div>`;
+      }
+      return;
+    }
+
+    const data = await res.json();
+    renderSimulationResults(data);
+  } catch (err) {
+    console.error("Simulation error:", err);
+    if (resultsPanel) {
+      resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ Network error while connecting to simulation service.</div>`;
+    }
+  }
+}
+
+function renderSimulationResults(data) {
+  const panel = document.getElementById("finResultsPanel");
+  if (!panel) return;
+  panel.style.display = "block";
+
+  const b = data.baseline;
+  const s = data.simulated_scenario;
+  const isLoss = Number(s.net_profit) < 0;
+  const diffColor = Number(s.profit_difference) >= 0 ? '#10b981' : '#ef4444';
+  const diffSign = Number(s.profit_difference) >= 0 ? '+' : '';
+
+  let actionsHtml = "";
+  if (Array.isArray(data.recommended_hedging_actions) && data.recommended_hedging_actions.length > 0) {
+    const list = data.recommended_hedging_actions.map(a => `<li>${escapeHtml(a)}</li>`).join("");
+    actionsHtml = `
+      <div style="margin-top:10px; padding:10px; background:rgba(56, 189, 248, 0.08); border-left:3px solid #38bdf8; border-radius:4px; font-size:0.8rem;">
+        <div style="font-weight:600; color:#38bdf8; margin-bottom:4px;">🛡️ Recommended Risk Mitigation Actions:</div>
+        <ul style="margin:0; padding-left:16px; color:var(--text-sub);">${list}</ul>
+      </div>
+    `;
+  }
+
+  panel.innerHTML = `
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h4 style="margin:0; font-size:1rem; color:#38bdf8;">⚡ Multi-Lever What-If Simulation: ${escapeHtml(data.crop_name)}</h4>
+        <span style="font-size:0.75rem; background:rgba(56,189,248,0.15); color:#38bdf8; padding:2px 8px; border-radius:9999px; font-weight:600;">Scenario Comparison</span>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.82rem; text-align:left;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border-subtle); color:var(--text-sub);">
+              <th style="padding:6px 8px;">Metric</th>
+              <th style="padding:6px 8px;">Baseline</th>
+              <th style="padding:6px 8px;">Simulated Scenario</th>
+              <th style="padding:6px 8px;">Difference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
+              <td style="padding:6px 8px; color:var(--text-sub);">Market Price</td>
+              <td style="padding:6px 8px;">₹${Number(b.price_per_quintal).toLocaleString('en-IN')}/Qtl</td>
+              <td style="padding:6px 8px; font-weight:600;">₹${Number(s.price_per_quintal).toLocaleString('en-IN')}/Qtl</td>
+              <td style="padding:6px 8px;">${((Number(s.price_per_quintal) - Number(b.price_per_quintal)) >= 0 ? '+' : '') + (Number(s.price_per_quintal) - Number(b.price_per_quintal)).toLocaleString('en-IN')}</td>
+            </tr>
+            <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
+              <td style="padding:6px 8px; color:var(--text-sub);">Total Production</td>
+              <td style="padding:6px 8px;">${Number(b.total_yield_quintals).toFixed(1)} Qtl</td>
+              <td style="padding:6px 8px; font-weight:600;">${Number(s.total_yield_quintals).toFixed(1)} Qtl</td>
+              <td style="padding:6px 8px;">${((Number(s.total_yield_quintals) - Number(b.total_yield_quintals)) >= 0 ? '+' : '') + (Number(s.total_yield_quintals) - Number(b.total_yield_quintals)).toFixed(1)} Qtl</td>
+            </tr>
+            <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
+              <td style="padding:6px 8px; color:var(--text-sub);">Cultivation Cost</td>
+              <td style="padding:6px 8px;">₹${Number(b.cultivation_cost).toLocaleString('en-IN')}</td>
+              <td style="padding:6px 8px; font-weight:600;">₹${Number(s.cultivation_cost).toLocaleString('en-IN')}</td>
+              <td style="padding:6px 8px;">${((Number(s.cultivation_cost) - Number(b.cultivation_cost)) >= 0 ? '+' : '') + (Number(s.cultivation_cost) - Number(b.cultivation_cost)).toLocaleString('en-IN')}</td>
+            </tr>
+            <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
+              <td style="padding:6px 8px; color:var(--text-sub);">Gross Revenue</td>
+              <td style="padding:6px 8px;">₹${Number(b.gross_revenue).toLocaleString('en-IN')}</td>
+              <td style="padding:6px 8px; font-weight:600;">₹${Number(s.gross_revenue).toLocaleString('en-IN')}</td>
+              <td style="padding:6px 8px;">${((Number(s.gross_revenue) - Number(b.gross_revenue)) >= 0 ? '+' : '') + (Number(s.gross_revenue) - Number(b.gross_revenue)).toLocaleString('en-IN')}</td>
+            </tr>
+            <tr style="background:rgba(255,255,255,0.04); font-weight:700;">
+              <td style="padding:8px 8px;">Net Profit</td>
+              <td style="padding:8px 8px; color:#10b981;">₹${Number(b.net_profit).toLocaleString('en-IN')}</td>
+              <td style="padding:8px 8px; color:${isLoss ? '#ef4444' : '#10b981'};">₹${Number(s.net_profit).toLocaleString('en-IN')}</td>
+              <td style="padding:8px 8px; color:${diffColor};">${diffSign}₹${Number(s.profit_difference).toLocaleString('en-IN')} (${diffSign}${Number(s.percentage_profit_impact).toFixed(1)}%)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:12px; font-size:0.83rem; line-height:1.4; color:var(--text-sub);">
+        <strong>💡 Risk Explanation:</strong> ${escapeHtml(data.risk_impact_explanation || '')}
+      </div>
+
+      ${actionsHtml}
+    </div>
+  `;
 }
 
 // ==========================================
@@ -1431,21 +1779,42 @@ function buildStructuredCard(sd) {
 
       // 3. Mandi Market Realization Card
       else if (type === "market_card") {
-        const recMandi = data.recommended_mandi || "Regional Mandi";
+        const recMandi = data.recommended_mandi || data.market_name || "Regional Mandi";
         const netReal = data.best_net_realization || data.net_realization || 0;
         const modal = data.benchmark_modal_price || data.modal_price || 0;
+        const minP = data.min_price || data.modal_min || 0;
+        const maxP = data.max_price || data.modal_max || 0;
         const trend = data.price_trend || "";
-        cardsHtml.push(`
-          <div class="assistant-card">
-            <div class="card-title">🏪 ${escapeHtml(title)}</div>
-            <div class="metrics-pill-grid">
-              <div class="metric-pill highlight">Best Mandi: <strong>${escapeHtml(recMandi)}</strong></div>
-              ${modal ? `<div class="metric-pill">Modal Price: <strong>₹${Number(modal).toLocaleString('en-IN')}/Qtl</strong></div>` : ''}
-              <div class="metric-pill highlight">Net Realization: <strong>₹${Number(netReal).toLocaleString('en-IN')}/Qtl</strong></div>
-              ${trend ? `<div class="metric-pill">Trend: <strong>${escapeHtml(trend)}</strong></div>` : ''}
+        const status = data.status || data.price_status || "ACTIVE";
+        const src = data.source || data.provider || "Agmarknet (data.gov.in)";
+        const dateStr = data.arrival_date || data.timestamp || "";
+
+        if (status === "UNAVAILABLE" || (!modal && !netReal)) {
+          cardsHtml.push(`
+            <div class="assistant-card" style="border-left: 3px solid var(--accent-amber);">
+              <div class="card-title">🏪 ${escapeHtml(title)}</div>
+              <div class="metrics-pill-grid">
+                <div class="metric-pill" style="color: #f59e0b;">Status: <strong>Live Data Unavailable</strong></div>
+                <div class="metric-pill" style="width: 100%;">Source: <strong>${escapeHtml(src)}</strong></div>
+                <div class="metric-pill" style="width: 100%; color: var(--text-sub);">Live mandi prices for this commodity in this district are not currently reported by Agmarknet.</div>
+              </div>
             </div>
-          </div>
-        `);
+          `);
+        } else {
+          cardsHtml.push(`
+            <div class="assistant-card">
+              <div class="card-title">🏪 ${escapeHtml(title)}</div>
+              <div class="metrics-pill-grid">
+                <div class="metric-pill highlight">Best Mandi: <strong>${escapeHtml(recMandi)}</strong></div>
+                ${modal ? `<div class="metric-pill">Modal: <strong>₹${Number(modal).toLocaleString('en-IN')}/Qtl</strong></div>` : ''}
+                ${(minP && maxP) ? `<div class="metric-pill">Range: <strong>₹${Number(minP).toLocaleString('en-IN')} - ₹${Number(maxP).toLocaleString('en-IN')}/Qtl</strong></div>` : ''}
+                <div class="metric-pill highlight">Net Realization: <strong>₹${Number(netReal).toLocaleString('en-IN')}/Qtl</strong></div>
+                ${trend ? `<div class="metric-pill">Trend: <strong>${escapeHtml(trend)}</strong></div>` : ''}
+                <div class="metric-pill" style="font-size: 0.75rem; color: var(--text-sub); width: 100%;">Source: ${escapeHtml(src)}${dateStr ? ` • Date: ${escapeHtml(dateStr)}` : ''}</div>
+              </div>
+            </div>
+          `);
+        }
       }
 
       // 4. Profit & Economic Simulation Card
@@ -1471,19 +1840,42 @@ function buildStructuredCard(sd) {
       // 5. Weather Advisory Card
       else if (type === "weather_card") {
         const cur = data.current || {};
-        const temp = cur.temperature_celsius || 31.5;
-        const cond = cur.condition || "Partly Cloudy";
-        const rain = cur.precipitation_probability !== undefined ? cur.precipitation_probability : 40;
-        const hum = cur.humidity_percent || 65;
-        const wind = cur.wind_speed_kmh || 12;
+        const temp = cur.temperature_celsius !== undefined && cur.temperature_celsius !== null ? `${cur.temperature_celsius}°C` : 'N/A';
+        const cond = cur.condition || "Clear";
+        const rain = cur.precipitation_probability !== undefined && cur.precipitation_probability !== null ? `${cur.precipitation_probability}%` : 'N/A';
+        const hum = cur.humidity_percent !== undefined && cur.humidity_percent !== null ? `${cur.humidity_percent}%` : 'N/A';
+        const wind = cur.wind_speed_kmh !== undefined && cur.wind_speed_kmh !== null ? `${cur.wind_speed_kmh} km/h` : 'N/A';
+        const calDate = cur.calendar_date || data.target_date || "";
+        const dayName = cur.day_name || "";
+        const tz = cur.timezone || data.timezone || "Asia/Kolkata";
+        const provider = data.provider_type || data.provider || "OpenWeatherMap";
+        
+        let sprayPill = "";
+        if (data.spray_window_evaluation) {
+          const sw = data.spray_window_evaluation;
+          if (sw.is_safe_to_spray) {
+            sprayPill = `<div class="metric-pill" style="color: #10b981; border-color: #10b981; width: 100%;">🌿 <strong>Spray Safe:</strong> Yes (${escapeHtml(sw.rationale || 'Conditions favorable')})</div>`;
+          } else if (sw.is_safe_to_spray === false) {
+            sprayPill = `<div class="metric-pill" style="color: #ef4444; border-color: #ef4444; width: 100%;">⚠️ <strong>Spray Advisory:</strong> Do NOT Spray (${escapeHtml(sw.rationale || 'High rain or wind')})</div>`;
+          }
+        }
+
+        let dateHeader = "";
+        if (calDate) {
+          dateHeader = `<div style="font-size: 0.75rem; color: var(--accent-emerald); margin-bottom: 6px;">📅 ${escapeHtml(dayName ? `${dayName}, ` : '')}${escapeHtml(calDate)} (${escapeHtml(tz)})</div>`;
+        }
+
         cardsHtml.push(`
           <div class="assistant-card">
             <div class="card-title">🌦️ ${escapeHtml(title)}</div>
+            ${dateHeader}
             <div class="metrics-pill-grid">
-              <div class="metric-pill highlight">Temp: <strong>${temp}°C (${escapeHtml(cond)})</strong></div>
-              <div class="metric-pill">Rain Chance: <strong>${rain}%</strong></div>
-              <div class="metric-pill">Humidity: <strong>${hum}%</strong></div>
-              <div class="metric-pill">Wind: <strong>${wind} km/h</strong></div>
+              <div class="metric-pill highlight">Temp: <strong>${temp} (${escapeHtml(cond)})</strong></div>
+              <div class="metric-pill">Rain Chance: <strong>${rain}</strong></div>
+              <div class="metric-pill">Humidity: <strong>${hum}</strong></div>
+              <div class="metric-pill">Wind: <strong>${wind}</strong></div>
+              ${sprayPill}
+              <div class="metric-pill" style="font-size: 0.72rem; color: var(--text-sub); width: 100%;">Provider: ${escapeHtml(provider)} • Timezone: ${escapeHtml(tz)}</div>
             </div>
           </div>
         `);
@@ -1714,9 +2106,6 @@ async function handleLeafImageUpload(file, customTitle) {
           cropHint = canon;
           break;
         }
-      }
-      if (!cropHint && currentUser && currentUser.active_crop) {
-        cropHint = cropMap[currentUser.active_crop.toLowerCase()] || "";
       }
       if (cropHint) {
         formData.append("crop_hint", cropHint);
@@ -3073,3 +3462,7 @@ window.onDistrictChanged = onDistrictChanged;
 window.detectFarmerLocation = detectFarmerLocation;
 window.toggleSoilTestFields = toggleSoilTestFields;
 window.analyzeSampleLeaf = analyzeSampleLeaf;
+window.openFinanceModal = openFinanceModal;
+window.closeFinanceModal = closeFinanceModal;
+window.calculateFinance = calculateFinance;
+window.runWhatIfSimulation = runWhatIfSimulation;

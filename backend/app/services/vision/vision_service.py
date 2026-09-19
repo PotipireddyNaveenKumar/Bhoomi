@@ -21,6 +21,8 @@ class VisionAnalysisOutput(BaseModel):
     common_name: str
     confidence: float
     confidence_percentage: float
+    crop_confidence: float = 0.0
+    disease_confidence: float = 0.0
     uncertainty_level: str
     symptoms: List[str]
     ipm_recommendation: str
@@ -88,6 +90,8 @@ class VisionService:
                 common_name="Image Quality Verification Failed",
                 confidence=0.0,
                 confidence_percentage=0.0,
+                crop_confidence=0.0,
+                disease_confidence=0.0,
                 uncertainty_level="REJECTED",
                 symptoms=[],
                 ipm_recommendation="None",
@@ -116,7 +120,7 @@ class VisionService:
 
         # If crop_hint was not specified OR if dedicated prediction is below 0.80 confidence,
         # scan across all registered crop models to identify the best-matching pathology candidate
-        if not pred or not pred.is_reliable or pred.is_ood or pred.quality_status == "FAILED" or pred.calibrated_confidence < 0.80:
+        if not pred or not pred.is_reliable or pred.is_ood or pred.quality_status == "FAILED" or pred.calibrated_confidence < 0.80 or (not canonical_crop):
             candidate = CropModelRegistry.identify_best_candidate(image_bytes=image_bytes)
             if candidate:
                 detected_crop, candidate_pred = candidate
@@ -131,6 +135,12 @@ class VisionService:
                 elif not canonical_crop:
                     canonical_crop = detected_crop
                     pred = candidate_pred
+            elif canonical_crop and (not pred or not pred.is_reliable or pred.calibrated_confidence < 0.80):
+                # Hinted crop was weak/unreliable and candidate scan found model disagreement / ambiguity
+                logger.info("Vision crop uncertain: requested=%s has weak confidence (%.2f) and multi-model scan shows disagreement",
+                            canonical_crop, pred.calibrated_confidence if pred else 0.0)
+                canonical_crop = "Uncertain"
+                pred = None
 
         # 3. Handle Low Confidence / OOD / Uncertain Crop
         if not pred or not pred.is_reliable or pred.is_ood or pred.quality_status == "FAILED":
@@ -152,13 +162,23 @@ class VisionService:
                 common_name="Crop Type / Lesion Pattern Uncertain",
                 confidence=pred.calibrated_confidence if pred else 0.0,
                 confidence_percentage=round((pred.calibrated_confidence if pred else 0.0) * 100, 1),
+                crop_confidence=round(getattr(pred, "crop_confidence", 0.0) or 0.0, 4) if pred else 0.0,
+                disease_confidence=0.0,
                 uncertainty_level=pred.uncertainty_status if pred else "UNRELIABLE",
                 symptoms=[],
                 ipm_recommendation="Consult your local agricultural extension officer (KVK) or verify the crop type.",
-                chemical_treatment="Do not spray unvetted chemicals without confirmed crop and disease diagnosis.",
-                safety_advisories=["Model confidence is insufficient or input is out-of-distribution."],
+                chemical_treatment="Chemical treatment withheld: Crop species cannot be reliably confirmed. Do not spray chemicals without confirmed crop and disease diagnosis.",
+                safety_advisories=(
+                    ["Crop conflict notice: Uploaded leaf visual features are inconsistent with registered crop (" + original_hint.title() + ")."]
+                    if (original_hint and canonical_crop != original_hint)
+                    else ["Model confidence is insufficient or input is out-of-distribution."]
+                ),
                 quality_gate_metrics=(pred.quality_metrics if pred else None) or gate_result.metrics,
-                farmer_explanation=f"I could not reliably verify the diagnosis. Which crop is this image from? Please confirm your crop or capture a clearer photo of the affected leaf in daylight.",
+                farmer_explanation=(
+                    f"Crop Notice: The uploaded leaf appears inconsistent with your registered {original_hint.title()} crop context. Which crop is this image from? Please confirm your crop or capture a clearer photo of the affected leaf in daylight."
+                    if (original_hint and canonical_crop != original_hint)
+                    else f"I could not reliably verify the diagnosis. Which crop is this image from? Please confirm your crop or capture a clearer photo of the affected leaf in daylight."
+                ),
                 spoken_explanation=spoken,
                 assistant_audio_base64=audio_b64,
                 requires_retake=True
@@ -186,10 +206,12 @@ class VisionService:
                 common_name="Uncertain Lesion Pattern",
                 confidence=raw_conf,
                 confidence_percentage=round(raw_conf * 100, 1),
+                crop_confidence=round(getattr(pred, "crop_confidence", 0.0) or (0.95 if crop_hint else raw_conf), 4),
+                disease_confidence=0.0,
                 uncertainty_level=ood_res.uncertainty_level,
                 symptoms=[],
                 ipm_recommendation="Consult local agricultural university / KVK extension officer.",
-                chemical_treatment="Do not spray unvetted chemicals without confirmed diagnosis.",
+                chemical_treatment="Chemical treatment withheld: Lesion pattern is uncertain or out-of-distribution.",
                 safety_advisories=[ood_res.warning or "Low Confidence Alert"],
                 quality_gate_metrics=gate_result.metrics,
                 farmer_explanation=ood_res.advisory,
@@ -292,6 +314,8 @@ class VisionService:
                 f"Chemical Option: {chem_treatment}."
             )
 
+        crop_conf_val = round(getattr(pred, "crop_confidence", None) or (0.95 if crop_hint else raw_conf), 4)
+        disease_conf_val = round(getattr(pred, "disease_confidence", None) or raw_conf, 4)
         return VisionAnalysisOutput(
             success=not safety_blocked,
             crop_identified=canonical_crop.title(),
@@ -299,6 +323,8 @@ class VisionService:
             common_name=disease_info.common_name,
             confidence=round(raw_conf, 4),
             confidence_percentage=round(raw_conf * 100, 1),
+            crop_confidence=crop_conf_val,
+            disease_confidence=disease_conf_val,
             uncertainty_level=ood_res.uncertainty_level,
             symptoms=disease_info.symptoms,
             ipm_recommendation=disease_info.ipm_treatment,

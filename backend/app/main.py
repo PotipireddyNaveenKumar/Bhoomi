@@ -94,12 +94,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Upload Limit & Rate Limiting Middleware
+import time
+from collections import defaultdict
+
+_rate_limits = defaultdict(list)
+MAX_REQUEST_SIZE = 15 * 1024 * 1024  # 15 MB
+
+@app.middleware("http")
+async def security_and_rate_limit_middleware(request: Request, call_next):
+    # 1. Enforce payload size limit
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            if int(content_length) > MAX_REQUEST_SIZE:
+                return JSONResponse(
+                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                    content={"success": False, "error": {"code": "PAYLOAD_TOO_LARGE", "message": "Uploaded content exceeds 15MB limit."}}
+                )
+        except ValueError:
+            pass
+
+    # 2. Rate limiting (120 requests / 60 seconds per IP, exempt static assets & health checks)
+    path = request.url.path
+    if not (path.startswith("/static") or path in ("/", "/docs", "/openapi.json")):
+        client_ip = request.client.host if request.client else "unknown"
+        now = time.time()
+        reqs = [t for t in _rate_limits[client_ip] if now - t < 60]
+        if len(reqs) >= 120:
+            return JSONResponse(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                content={"success": False, "error": {"code": "RATE_LIMIT_EXCEEDED", "message": "Too many requests. Please slow down."}}
+            )
+        reqs.append(now)
+        _rate_limits[client_ip] = reqs
+
+    return await call_next(request)
+
 # Global Exception Handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled Exception on {request.url.path}: {str(exc)}", exc_info=True)
     err_str = str(exc)
-    for secret in [settings.SECRET_KEY, settings.GEMINI_API_KEY, settings.SARVAM_API_KEY, settings.OPENAI_API_KEY]:
+    for secret in [settings.SECRET_KEY, settings.GEMINI_API_KEY, settings.SARVAM_API_KEY, settings.OPENAI_API_KEY, settings.GROQ_API_KEY, settings.DATA_GOV_API_KEY, settings.WEATHER_API_KEY]:
         if secret and len(secret) > 6 and secret in err_str:
             err_str = err_str.replace(secret, "[REDACTED]")
     return JSONResponse(
@@ -108,7 +145,7 @@ async def global_exception_handler(request: Request, exc: Exception):
             "success": False,
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
-                "message": err_str or "An unexpected error occurred. Please try again.",
+                "message": "An unexpected error occurred. Please try again later." if settings.is_production else (err_str or "An unexpected error occurred. Please try again."),
             }
         }
     )
@@ -148,6 +185,10 @@ async def root(request: Request):
 
 @app.get("/health", tags=["Health"])
 async def health():
+    from app.services.weather.weather_service import WeatherService
+    from app.services.market.market_service import MarketService
+    w_status = WeatherService.get_provider_status()
+    m_status = MarketService.get_provider_status()
     return {
         "app": settings.APP_NAME,
         "status": "healthy",
@@ -156,7 +197,9 @@ async def health():
         "voice_provider": settings.VOICE_PROVIDER,
         "llm_provider": settings.LLM_PROVIDER,
         "weather_provider": settings.WEATHER_PROVIDER,
-        "market_provider": settings.MARKET_PROVIDER
+        "market_provider": settings.MARKET_PROVIDER,
+        **w_status,
+        **m_status
     }
 
 # Register V1 Routers

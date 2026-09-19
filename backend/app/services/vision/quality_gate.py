@@ -28,7 +28,7 @@ class ImageQualityGate:
     """
     MIN_WIDTH = 112
     MIN_HEIGHT = 112
-    MIN_SHARPNESS = 4.5
+    MIN_SHARPNESS = 5.5
     MAX_FILE_SIZE_MB = 15.0
 
     @classmethod

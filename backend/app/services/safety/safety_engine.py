@@ -23,7 +23,17 @@ class SafetyEngine:
     BANNED_SUBSTANCES = [
         "endosulfan", "monocrotophos", "paraquat", "phorate", "methyl parathion",
         "ddt", "aldrin", "dieldrin", "chlorpyrifos on vegetables", "carbofuran",
-        "phosphamidon", "triazophos on vegetables"
+        "phosphamidon", "triazophos on vegetables",
+        # Multilingual Vernacular Aliases (Telugu, Hindi, Tamil, Kannada)
+        "మోనోక్రోటోఫాస్", "మోనోక్రోటోపాస్", "मोनोक्रोटोफॉस", "मोनोक्रोटोफास", "மோனோக்ரோட்டோபாஸ்", "ಮೊನೊಕ್ರೋಟೊಫಾಸ್",
+        "ఎండోసల్ఫాన్", "ఎండోసల్ఫన్", "एंडोसल्फान", "எண்டோசல்பான்", "ಎಂಡೋಸಲ್ಫಾನ್",
+        "పారాక్వాట్", "पैराक्वाट", "பராக்வாட்", "ಪ್ಯಾರಾಕ್ವಾಟ್",
+        "ఫోరేట్", "फोरेट", "போரேட்", "ಫೋರೇಟ್",
+        "మిథైల్ పారాథియాన్", "मिथाइल पैराथियान",
+        "కార్బోఫ్యూరాన్", "కార్బోఫ్యురాన్", "कार्बोफ्यूरान", "கார்போபியூரான்",
+        "డిడిటి", "डीडीटी", "டிடிடி",
+        "ఆల్డ్రిన్", "एल्ड्रिन", "డైల్డ్రిన్", "डिल्ड्रिन",
+        "ఫాస్ఫామిడాన్", "फॉस्फामिडॉन", "ట్రైయాజోఫాస్", "ट्रायजोफॉस"
     ]
 
     CROP_DOSAGE_LIMITS = {
@@ -61,6 +71,16 @@ class SafetyEngine:
                 blocked_reasons.append(
                     f"Blocked hazardous chemical: '{banned.title()}' is restricted/banned under Central Insecticides Board (CIBRC) regulations."
                 )
+
+        if "chlorpyrifos" in text_lower and any(v in text_lower for v in ["vegetable", "vegetables", "leafy", "కూరగాయలు", "ఆకుకూరలు", "సబ్జీ", "सब्जी", "सब्जियां", "सब्जियों"]):
+            blocked_reasons.append(
+                "Blocked hazardous chemical: 'Chlorpyrifos on vegetables' is strictly prohibited under Central Insecticides Board (CIBRC) regulations."
+            )
+
+        if "triazophos" in text_lower and any(v in text_lower for v in ["vegetable", "vegetables", "leafy", "కూరగాయలు", "ఆకుకూరలు", "సబ్జీ", "सब्जी", "सब्जियां"]):
+            blocked_reasons.append(
+                "Blocked hazardous chemical: 'Triazophos on vegetables' is strictly prohibited under Central Insecticides Board (CIBRC) regulations."
+            )
 
         if blocked_reasons:
             return SafetyCheckResult(

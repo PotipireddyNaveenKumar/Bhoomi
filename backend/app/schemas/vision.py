@@ -23,3 +23,5 @@ class VisionPrediction(BaseModel):
     inference_time_ms: float = 0.0
     quality_metrics: Dict[str, Any] = {}
     is_reliable: bool = True
+    crop_confidence: Optional[float] = None
+    disease_confidence: Optional[float] = None

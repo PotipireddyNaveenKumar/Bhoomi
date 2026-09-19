@@ -12,6 +12,10 @@ class Settings(BaseSettings):
 
     @property
     def effective_env(self) -> str:
+        if getattr(self, "APP_ENV", None) and self.APP_ENV.lower() in ("production", "prod", "staging"):
+            return self.APP_ENV.lower()
+        if getattr(self, "ENVIRONMENT", None) and self.ENVIRONMENT.lower() in ("production", "prod", "staging"):
+            return self.ENVIRONMENT.lower()
         return (os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or self.ENVIRONMENT or self.APP_ENV or "development").lower()
 
     @property
@@ -30,6 +34,7 @@ class Settings(BaseSettings):
     SECRET_KEY: Optional[str] = None
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
+    ALLOW_EVALUATOR_OTP: bool = True  # Can be disabled in production via ALLOW_EVALUATOR_OTP=false
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]

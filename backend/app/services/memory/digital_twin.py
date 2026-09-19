@@ -118,12 +118,13 @@ class DigitalTwinService:
 
         farmer = await farmer_repo.get_profile_by_id(farmer_id)
         if not farmer:
-            return DigitalTwinContext("Farmer", "en", "India", "Telangana", "Warangal", "", 3.0, "red", "borewell", [], [], {})
+            return None
 
-        farms = await farm_repo.get_farms_by_farmer(farmer_id)
+        resolved_farmer_id = farmer.id
+        farms = await farm_repo.get_farms_by_farmer(resolved_farmer_id)
         active_crops = []
         total_acres = 0.0
-        soil_type = "red" if (farmer.state == "Telangana") else "black"
+        soil_type = "black" if (farmer.state and farmer.state in ["Andhra Pradesh", "Maharashtra"]) else "red"
         irr_source = "borewell"
         farm_id = None
         soil_health_data = {}
@@ -131,7 +132,7 @@ class DigitalTwinService:
         for farm in farms:
             if not farm_id:
                 farm_id = farm.id
-            total_acres += float(farm.total_area_acres)
+            total_acres += float(farm.total_area_acres or 0.0)
             if farm.soil_type:
                 soil_type = farm.soil_type
             if farm.irrigation_source:
@@ -152,23 +153,25 @@ class DigitalTwinService:
                 })
 
         memories = await memory_repo.get_memories_as_dict(farmer_id)
-        location = f"{farmer.village or ''}, {farmer.district or 'Warangal'}, {farmer.state or 'Telangana'}".strip(", ")
+        loc_parts = [p for p in [farmer.village, farmer.district, farmer.state] if p]
+        location = ", ".join(loc_parts) if loc_parts else (farmer.district or farmer.state or "India")
 
         historical = [v for k, v in memories.items() if "history" in k or "previous_crop" in k]
 
         return DigitalTwinContext(
             farmer_name=farmer.name,
-            language=farmer.preferred_language,
+            language=farmer.preferred_language or "en",
             location=location,
-            state=farmer.state or "Telangana",
-            district=farmer.district or "Warangal",
-            village=farmer.village or "Rural",
-            total_acres=round(total_acres, 1) if total_acres > 0 else 3.0,
+            state=farmer.state or "",
+            district=farmer.district or "",
+            village=farmer.village or "",
+            total_acres=round(total_acres, 1) if total_acres > 0 else 1.0,
             soil_type=soil_type,
             irrigation_source=irr_source,
             active_crops=active_crops,
             historical_crops=historical,
             memories=memories,
             farm_id=farm_id,
-            soil_health_data=soil_health_data
+            soil_health_data=soil_health_data,
+            farmer_id=farmer.id
         )

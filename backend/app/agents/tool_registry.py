@@ -245,10 +245,10 @@ class ToolRegistry:
 
         elif tool_name == "yield_prediction":
             inp = YieldPredictionInput(
-                crop_name=arguments.get("crop_name", "Chilli"),
-                state=arguments.get("state", "Andhra Pradesh"),
+                crop_name=arguments.get("crop_name") or arguments.get("crop") or "Crop",
+                state=arguments.get("state") or "India",
                 season=arguments.get("season", "Kharif"),
-                area_acres=float(arguments.get("area_acres", 3.0)),
+                area_acres=float(arguments.get("area_acres", 1.0)),
                 annual_rainfall_mm=float(arguments.get("annual_rainfall_mm", 850.0))
             )
             res = YieldPredictionService.predict(inp)
@@ -260,9 +260,9 @@ class ToolRegistry:
 
         elif tool_name == "fertilizer_recommendation":
             inp = FertilizerInput(
-                crop_name=arguments.get("crop_name", "Chilli"),
+                crop_name=arguments.get("crop_name") or arguments.get("crop") or "Crop",
                 crop_stage=arguments.get("crop_stage", "vegetative"),
-                soil_type=arguments.get("soil_type", "black"),
+                soil_type=arguments.get("soil_type", "Loam"),
                 nitrogen=float(arguments.get("nitrogen", 40.0)),
                 phosphorus=float(arguments.get("phosphorus", 20.0)),
                 potassium=float(arguments.get("potassium", 30.0))
@@ -275,12 +275,12 @@ class ToolRegistry:
             }
 
         elif tool_name == "compare_crops":
-            crops = arguments.get("crops", ["chilli", "cotton"])
+            crops = arguments.get("crops", ["tomato", "potato"])
             res = CropComparisonService.compare_crops(
                 crop_names=crops,
-                area_acres=Decimal(str(arguments.get("area_acres", 3.0))),
-                soil_type=arguments.get("soil_type", "black"),
-                location=arguments.get("location", "Guntur")
+                area_acres=Decimal(str(arguments.get("area_acres", 1.0))),
+                soil_type=arguments.get("soil_type", "Loam"),
+                location=arguments.get("location", "")
             )
             return {
                 "card_type": "comparison_card",
@@ -290,7 +290,7 @@ class ToolRegistry:
 
         elif tool_name == "search_agricultural_rag":
             q_in = RAGQueryInput(
-                query=arguments.get("query", "chilli disease management"),
+                query=arguments.get("query", "crop disease management"),
                 crop=arguments.get("crop"),
                 language=arguments.get("language"),
                 intent=arguments.get("intent"),
@@ -307,7 +307,7 @@ class ToolRegistry:
             }
 
         elif tool_name == "get_current_weather" or tool_name == "get_farm_weekly_advisory":
-            loc = arguments.get("location", "Guntur")
+            loc = arguments.get("location") or "Farm Location"
             lat = arguments.get("lat")
             lon = arguments.get("lon")
             res = await WeatherService.get_weather(location=loc, lat=lat, lon=lon)
@@ -318,9 +318,9 @@ class ToolRegistry:
             }
 
         elif tool_name == "get_mandi_prices":
-            commodity = arguments.get("commodity", arguments.get("crop", "Chilli"))
-            loc = arguments.get("location", arguments.get("district", "Guntur"))
-            st = arguments.get("state", "Andhra Pradesh")
+            commodity = arguments.get("commodity", arguments.get("crop", "Potato"))
+            loc = arguments.get("location", arguments.get("district", ""))
+            st = arguments.get("state", "")
             m_name = arguments.get("market")
             res = await MarketService.get_mandi_prices(commodity=commodity, state=st, district=loc, market_name=m_name)
             return {
@@ -330,12 +330,39 @@ class ToolRegistry:
             }
 
         elif tool_name == "calculate_profit":
+            crop = arguments.get("crop_name") or arguments.get("crop") or "Crop"
+            raw_area = arguments.get("land_area") or arguments.get("area_acres")
+            area = Decimal(str(raw_area)) if raw_area is not None else None
+            area_unit = arguments.get("area_unit", "acre")
+
+            raw_y = arguments.get("expected_yield") or arguments.get("expected_yield_quintals_per_acre")
+            y_val = Decimal(str(raw_y)) if raw_y is not None else None
+
+            raw_p = arguments.get("expected_market_price") or arguments.get("expected_market_price_per_quintal")
+            p_val = Decimal(str(raw_p)) if raw_p is not None else None
+
+            raw_cost = arguments.get("cultivation_cost_total")
+            cost_total = Decimal(str(raw_cost)) if raw_cost is not None else None
+
             req = ProfitCalculationRequest(
-                crop_name=arguments.get("crop_name", "Chilli"),
-                area_acres=Decimal(str(arguments.get("area_acres", 3.0))),
-                expected_yield_quintals_per_acre=Decimal(str(arguments.get("expected_yield_quintals_per_acre", 10.0))),
-                expected_market_price_per_quintal=Decimal(str(arguments.get("expected_market_price_per_quintal", 12000.0))),
-                cultivation_cost_total=Decimal(str(arguments.get("cultivation_cost_total", 70000.0))),
+                crop_name=crop,
+                land_area=area,
+                area_acres=area,
+                area_unit=area_unit,
+                seed_cost=Decimal(str(arguments["seed_cost"])) if "seed_cost" in arguments and arguments["seed_cost"] is not None else None,
+                fertilizer_cost=Decimal(str(arguments["fertilizer_cost"])) if "fertilizer_cost" in arguments and arguments["fertilizer_cost"] is not None else None,
+                pesticide_cost=Decimal(str(arguments["pesticide_cost"])) if "pesticide_cost" in arguments and arguments["pesticide_cost"] is not None else None,
+                labour_cost=Decimal(str(arguments["labour_cost"])) if "labour_cost" in arguments and arguments["labour_cost"] is not None else None,
+                irrigation_cost=Decimal(str(arguments["irrigation_cost"])) if "irrigation_cost" in arguments and arguments["irrigation_cost"] is not None else None,
+                machinery_cost=Decimal(str(arguments["machinery_cost"])) if "machinery_cost" in arguments and arguments["machinery_cost"] is not None else None,
+                other_cost=Decimal(str(arguments["other_cost"])) if "other_cost" in arguments and arguments["other_cost"] is not None else None,
+                cultivation_cost_total=cost_total,
+                expected_yield=y_val,
+                expected_yield_quintals_per_acre=y_val,
+                yield_unit=arguments.get("yield_unit", "quintal"),
+                expected_market_price=p_val,
+                expected_market_price_per_quintal=p_val,
+                price_unit=arguments.get("price_unit", "rupees_per_quintal"),
             )
             res = FinancialService.calculate_profit(req)
             return {
@@ -345,15 +372,26 @@ class ToolRegistry:
             }
 
         elif tool_name == "run_what_if_simulation":
+            crop = arguments.get("crop_name") or arguments.get("crop") or "Crop"
+            raw_area = arguments.get("land_area") or arguments.get("area_acres") or 1.0
+            area = Decimal(str(raw_area))
+            b_yield = Decimal(str(arguments.get("baseline_yield_quintals_per_acre") or arguments.get("expected_yield") or 10.0))
+            b_price = Decimal(str(arguments.get("baseline_market_price_per_quintal") or arguments.get("expected_market_price") or 3000.0))
+            b_cost = Decimal(str(arguments.get("baseline_cultivation_cost") or arguments.get("cultivation_cost_total") or 25000.0))
+
             req = SimulationRequest(
-                crop_name=arguments.get("crop_name", "Chilli"),
-                area_acres=Decimal(str(arguments.get("area_acres", 3.0))),
-                baseline_yield_quintals_per_acre=Decimal("10.0"),
-                baseline_market_price_per_quintal=Decimal("12000.0"),
-                baseline_cultivation_cost=Decimal("70000.0"),
-                price_change_percent=Decimal(str(arguments.get("price_change_percent", -20.0))),
+                crop_name=crop,
+                area_acres=area,
+                baseline_yield_quintals_per_acre=b_yield,
+                baseline_market_price_per_quintal=b_price,
+                baseline_cultivation_cost=b_cost,
+                price_change_percent=Decimal(str(arguments.get("price_change_percent", 0.0))),
                 yield_change_percent=Decimal(str(arguments.get("yield_change_percent", 0.0))),
-                rainfall_change_percent=Decimal(str(arguments.get("rainfall_change_percent", -25.0))),
+                cost_change_percent=Decimal(str(arguments.get("cost_change_percent", 0.0))),
+                fertilizer_cost_change_percent=Decimal(str(arguments.get("fertilizer_cost_change_percent", 0.0))),
+                labour_cost_change_percent=Decimal(str(arguments.get("labour_cost_change_percent", 0.0))),
+                area_change_percent=Decimal(str(arguments.get("area_change_percent", 0.0))),
+                rainfall_change_percent=Decimal(str(arguments.get("rainfall_change_percent", 0.0))),
             )
             res = SimulationService.run_simulation(req)
             return {
@@ -363,11 +401,12 @@ class ToolRegistry:
             }
 
         elif tool_name == "assess_farm_risk":
+            crop = arguments.get("crop_name") or arguments.get("crop") or "Crop"
             req = RiskAssessmentRequest(
-                crop_name=arguments.get("crop_name", "Chilli"),
+                crop_name=crop,
                 crop_stage=arguments.get("crop_stage", "flowering"),
-                location=arguments.get("location", "Guntur"),
-                area_acres=3.0,
+                location=arguments.get("location", ""),
+                area_acres=float(arguments.get("area_acres", 1.0)),
             )
             res = RiskAssessmentService.assess_risk(req)
             return {

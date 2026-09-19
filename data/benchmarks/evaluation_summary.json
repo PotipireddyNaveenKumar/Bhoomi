@@ -1,0 +1,73 @@
+{
+  "total_scenarios": 300,
+  "executed": 300,
+  "passed": 294,
+  "failed": 0,
+  "blocked": 6,
+  "pending": 0,
+  "skipped": 0,
+  "pass_rate_executed_pct": 98.0,
+  "pass_rate_all_300_pct": 98.0,
+  "breakdown_by_mode": {
+    "chat": {
+      "total": 100,
+      "passed": 94,
+      "failed": 0,
+      "blocked": 6,
+      "pending": 0,
+      "pass_rate_pct": 94.0
+    },
+    "voice": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0,
+      "blocked": 0,
+      "pending": 0,
+      "pass_rate_pct": 100.0
+    },
+    "vision": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0,
+      "blocked": 0,
+      "pending": 0,
+      "pass_rate_pct": 100.0
+    }
+  },
+  "breakdown_by_language": {
+    "te": {
+      "total": 67,
+      "passed": 63,
+      "failed": 0,
+      "blocked": 4,
+      "pending": 0,
+      "pass_rate_pct": 94.0
+    },
+    "hi": {
+      "total": 65,
+      "passed": 64,
+      "failed": 0,
+      "blocked": 1,
+      "pending": 0,
+      "pass_rate_pct": 98.5
+    },
+    "en": {
+      "total": 168,
+      "passed": 167,
+      "failed": 0,
+      "blocked": 1,
+      "pending": 0,
+      "pass_rate_pct": 99.4
+    }
+  },
+  "breakdown_by_provider_mode": {
+    "DETERMINISTIC_LOCAL": 294,
+    "UNAVAILABLE": 6
+  },
+  "voice_breakdown": {
+    "transcript_only_tested": 100,
+    "real_audio_tested": 0,
+    "audio_note": "Sarvam API live audio returns HTTP 402 Insufficient Credits; voice benchmark verified via transcript-only pipeline with intent normalization and localized synthesis. Browser microphone verified via Playwright E2E."
+  },
+  "timestamp": "2026-09-18 01:59:05 UTC"
+}

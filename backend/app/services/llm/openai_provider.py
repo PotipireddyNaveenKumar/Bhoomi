@@ -76,63 +76,93 @@ class OpenAIProvider(LLMProvider):
 
         endpoint = f"{self.base_url}/chat/completions"
 
+        max_retries = 2
+        backoff_delays = [1.0, 2.0]
+
         try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                resp = await client.post(endpoint, headers=headers, json=body)
-                
-                if resp.status_code != 200:
-                    logger.error(
-                        f"LLM Provider {self.provider_name} returned non-200 status {resp.status_code}: {resp.text}"
-                    )
-                    if settings.APP_ENV in ["production", "staging"]:
+            for attempt in range(max_retries + 1):
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    resp = await client.post(endpoint, headers=headers, json=body)
+                    
+                    if resp.status_code == 429:
+                        if attempt < max_retries:
+                            import asyncio
+                            delay = backoff_delays[attempt]
+                            logger.warning(
+                                f"LLM Provider {self.provider_name} returned 429 rate limit. Retrying in {delay}s (attempt {attempt + 1}/{max_retries})."
+                            )
+                            await asyncio.sleep(delay)
+                            continue
+                        logger.error(f"LLM Provider {self.provider_name} rate limit 429 persisted after {max_retries} retries.")
                         return LLMResponse(
-                            content="SERVICE_UNAVAILABLE: The AI language service is temporarily unavailable or experiencing high load. Your farm data and deterministic tools remain safe. Please retry in a moment.",
+                            content=f"SERVICE_UNAVAILABLE: The AI language service ({self.provider_name}) is currently rate-limited (HTTP 429). Your farm data and deterministic tools remain safe. Please retry in a moment.",
+                            tool_calls=None,
+                            finish_reason="rate_limit",
+                            usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+                            provider=f"{self.provider_name}_degraded"
+                        )
+
+                    if resp.status_code != 200:
+                        logger.error(
+                            f"LLM Provider {self.provider_name} returned non-200 status {resp.status_code}: {resp.text}"
+                        )
+                        if settings.APP_ENV in ["production", "staging"] or getattr(settings, "ENVIRONMENT", "") == "production":
+                            return LLMResponse(
+                                content="SERVICE_UNAVAILABLE: The AI language service is temporarily unavailable or experiencing high load. Your farm data and deterministic tools remain safe. Please retry in a moment.",
+                                tool_calls=None,
+                                finish_reason="error",
+                                usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+                                provider=self.provider_name
+                            )
+                        if getattr(settings, "MOCK_LLM_IN_TESTS", False):
+                            return await self._fallback_provider.generate_response(
+                                messages=messages, system_prompt=system_prompt, tools=tools, temperature=temperature
+                            )
+                        return LLMResponse(
+                            content=f"SERVICE_UNAVAILABLE: The AI language service ({self.provider_name}) returned error status {resp.status_code}.",
                             tool_calls=None,
                             finish_reason="error",
                             usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
-                            provider=self.provider_name
+                            provider="unavailable"
                         )
-                    return await self._fallback_provider.generate_response(
-                        messages=messages, system_prompt=system_prompt, tools=tools, temperature=temperature
+
+                    data = resp.json()
+                    choice = data["choices"][0]
+                    message = choice["message"]
+                    content = message.get("content") or ""
+
+                    tool_calls: Optional[List[ToolCall]] = None
+                    raw_tool_calls = message.get("tool_calls")
+                    if raw_tool_calls:
+                        tool_calls = []
+                        for tc in raw_tool_calls:
+                            func = tc.get("function", {})
+                            t_name = func.get("name", "")
+                            raw_args = func.get("arguments", "{}")
+                            try:
+                                t_args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
+                            except json.JSONDecodeError:
+                                t_args = {}
+                            tool_calls.append(ToolCall(tool_name=t_name, arguments=t_args))
+
+                    usage = data.get("usage", {})
+                    usage_dict = {
+                        "prompt_tokens": usage.get("prompt_tokens", 0),
+                        "completion_tokens": usage.get("completion_tokens", 0),
+                        "total_tokens": usage.get("total_tokens", 0)
+                    }
+
+                    return LLMResponse(
+                        content=content,
+                        tool_calls=tool_calls,
+                        finish_reason=choice.get("finish_reason", "stop"),
+                        usage=usage_dict,
+                        provider=self.provider_name
                     )
-
-                data = resp.json()
-                choice = data["choices"][0]
-                message = choice["message"]
-                content = message.get("content") or ""
-
-                tool_calls: Optional[List[ToolCall]] = None
-                raw_tool_calls = message.get("tool_calls")
-                if raw_tool_calls:
-                    tool_calls = []
-                    for tc in raw_tool_calls:
-                        func = tc.get("function", {})
-                        t_name = func.get("name", "")
-                        raw_args = func.get("arguments", "{}")
-                        try:
-                            t_args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
-                        except json.JSONDecodeError:
-                            t_args = {}
-                        tool_calls.append(ToolCall(tool_name=t_name, arguments=t_args))
-
-                usage = data.get("usage", {})
-                usage_dict = {
-                    "prompt_tokens": usage.get("prompt_tokens", 0),
-                    "completion_tokens": usage.get("completion_tokens", 0),
-                    "total_tokens": usage.get("total_tokens", 0)
-                }
-
-                return LLMResponse(
-                    content=content,
-                    tool_calls=tool_calls,
-                    finish_reason=choice.get("finish_reason", "stop"),
-                    usage=usage_dict,
-                    provider=self.provider_name
-                )
 
         except Exception as e:
             logger.error(f"Error calling {self.provider_name} API ({type(e).__name__}): {e}")
-            if settings.APP_ENV in ["production", "staging"]:
+            if settings.APP_ENV in ["production", "staging"] or getattr(settings, "ENVIRONMENT", "") == "production":
                 return LLMResponse(
                     content=f"SERVICE_UNAVAILABLE: Unable to connect to AI language service ({type(e).__name__}). Please check server network and try again.",
                     tool_calls=None,
@@ -140,6 +170,15 @@ class OpenAIProvider(LLMProvider):
                     usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
                     provider=self.provider_name
                 )
-            return await self._fallback_provider.generate_response(
-                messages=messages, system_prompt=system_prompt, tools=tools, temperature=temperature
+            if getattr(settings, "MOCK_LLM_IN_TESTS", False):
+                return await self._fallback_provider.generate_response(
+                    messages=messages, system_prompt=system_prompt, tools=tools, temperature=temperature
+                )
+            return LLMResponse(
+                content=f"SERVICE_UNAVAILABLE: Unable to connect to AI language service ({type(e).__name__}).",
+                tool_calls=None,
+                finish_reason="error",
+                usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+                provider="unavailable"
             )
+

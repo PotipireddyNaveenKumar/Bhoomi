@@ -42,7 +42,10 @@ class TaskIntelligenceEngine:
 
     @classmethod
     def get_tasks_for_farm(cls, farm_id: str) -> List[FarmTask]:
-        return cls._tasks_by_farm.get(farm_id, [])
+        tasks = cls._tasks_by_farm.get(farm_id, [])
+        if not tasks and farm_id in ["farm_demo_1", "demo_farm_1"]:
+            return cls._tasks_by_farm.get("farm_1", [])
+        return tasks
 
     @classmethod
     def clear_tasks_for_farm(cls, farm_id: str):

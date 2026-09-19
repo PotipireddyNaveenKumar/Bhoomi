@@ -27,7 +27,7 @@ class MarketDecisionEngine:
     def evaluate(
         cls,
         crop_name: str,
-        current_modal_price: Optional[Decimal] = Decimal("12200.00"),
+        current_modal_price: Optional[Decimal] = None,
         transport_cost: Decimal = Decimal("80.00"),
         min_acceptable_price: Decimal = Decimal("11500.00"),
         has_cold_storage: bool = True,

@@ -25,7 +25,14 @@ class MockWeatherProvider(WeatherProvider):
         lat: Optional[float] = None,
         lon: Optional[float] = None
     ) -> WeatherResponse:
+        from datetime import timedelta, date
         now_utc = datetime.now(timezone.utc)
+        today_date = date.today()
+        today_iso = today_date.isoformat()
+        tomorrow_iso = (today_date + timedelta(days=1)).isoformat()
+        day2_iso = (today_date + timedelta(days=2)).isoformat()
+        day3_iso = (today_date + timedelta(days=3)).isoformat()
+
         current = WeatherCurrent(
             temperature_c=31.5,
             humidity_percent=68.0,
@@ -37,15 +44,70 @@ class MockWeatherProvider(WeatherProvider):
             is_live=False,
             timestamp=now_utc,
             retrieved_at=now_utc,
+            calendar_date=today_iso,
+            timezone="Asia/Kolkata",
+            observation_type="CURRENT_OBSERVATION",
             freshness=FreshnessStatus.CURRENT.value,
             source="IMD Agro-Meteorological Advisory (Certified Offline Cache)"
         )
 
         forecast = [
-            WeatherForecastDay(date="Tomorrow", temp_max=33.0, temp_min=24.0, rain_probability=45, condition="Scattered Clouds", rainfall_mm=2.0),
-            WeatherForecastDay(date="Day 2", temp_max=34.0, temp_min=25.0, rain_probability=20, condition="Sunny / Clear", rainfall_mm=0.0),
-            WeatherForecastDay(date="Day 3", temp_max=35.0, temp_min=25.0, rain_probability=10, condition="Clear Sky", rainfall_mm=0.0),
+            WeatherForecastDay(
+                date="Tomorrow",
+                calendar_date=tomorrow_iso,
+                day_name="Tomorrow",
+                timezone="Asia/Kolkata",
+                observation_type="FORECAST",
+                temp_max=33.0,
+                temp_min=24.0,
+                rain_probability=45,
+                condition="Scattered Clouds",
+                rainfall_mm=2.0,
+                wind_speed_kmh=11.0
+            ),
+            WeatherForecastDay(
+                date=f"Day 2 ({day2_iso})",
+                calendar_date=day2_iso,
+                day_name=(today_date + timedelta(days=2)).strftime("%A"),
+                timezone="Asia/Kolkata",
+                observation_type="FORECAST",
+                temp_max=34.0,
+                temp_min=25.0,
+                rain_probability=20,
+                condition="Sunny / Clear",
+                rainfall_mm=0.0,
+                wind_speed_kmh=9.0
+            ),
+            WeatherForecastDay(
+                date=f"Day 3 ({day3_iso})",
+                calendar_date=day3_iso,
+                day_name=(today_date + timedelta(days=3)).strftime("%A"),
+                timezone="Asia/Kolkata",
+                observation_type="FORECAST",
+                temp_max=35.0,
+                temp_min=25.0,
+                rain_probability=10,
+                condition="Clear Sky",
+                rainfall_mm=0.0,
+                wind_speed_kmh=8.0
+            ),
         ]
+
+        from app.services.weather.real_provider import RealWeatherProvider
+        spray_eval = RealWeatherProvider.evaluate_spray_window(
+            rain_prob=forecast[0].rain_probability,
+            rainfall_mm=forecast[0].rainfall_mm,
+            wind_speed_kmh=forecast[0].wind_speed_kmh,
+            temp_c=forecast[0].temp_max,
+            target_date=tomorrow_iso,
+            data_freshness=FreshnessStatus.CURRENT.value
+        )
+        irr_eval = RealWeatherProvider.evaluate_irrigation(
+            today_rain_prob=current.rain_probability_percent,
+            today_rainfall_mm=current.rainfall_mm,
+            tomorrow_rain_prob=forecast[0].rain_probability,
+            tomorrow_rainfall_mm=forecast[0].rainfall_mm
+        )
 
         return WeatherResponse(
             location=location,
@@ -54,8 +116,14 @@ class MockWeatherProvider(WeatherProvider):
             current=current,
             forecast_3_days=forecast,
             source="IMD Agro-Meteorological Advisory (Certified Offline Cache)",
+            target_date=tomorrow_iso,
+            target_date_range=f"{today_iso} to {day3_iso}",
+            timezone="Asia/Kolkata",
+            provider_type="MOCK",
             freshness=FreshnessStatus.CURRENT.value,
-            retrieved_at=now_utc.isoformat()
+            retrieved_at=now_utc.isoformat(),
+            spray_window_evaluation=spray_eval,
+            irrigation_evaluation=irr_eval
         )
 
 class WeatherProviderFactory:

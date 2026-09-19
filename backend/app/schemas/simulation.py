@@ -12,6 +12,9 @@ class SimulationRequest(BaseModel):
     price_change_percent: Decimal = Field(default=Decimal("0.0"), example=-20.0)
     yield_change_percent: Decimal = Field(default=Decimal("0.0"), example=0.0)
     cost_change_percent: Decimal = Field(default=Decimal("0.0"), example=0.0)
+    fertilizer_cost_change_percent: Decimal = Field(default=Decimal("0.0"), example=0.0)
+    labour_cost_change_percent: Decimal = Field(default=Decimal("0.0"), example=0.0)
+    area_change_percent: Decimal = Field(default=Decimal("0.0"), example=0.0)
     rainfall_change_percent: Decimal = Field(default=Decimal("0.0"), example=-25.0)
 
 class ScenarioResult(BaseModel):

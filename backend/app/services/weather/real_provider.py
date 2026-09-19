@@ -157,37 +157,54 @@ class RealWeatherProvider(WeatherProvider):
             item_pop = int(float(item.get("pop", 0.0)) * 100)
             item_temp = float(item.get("main", {}).get("temp", temp_c if temp_c is not None else 30.0))
             item_cond = item.get("weather", [{}])[0].get("description", "Scattered Clouds").title()
+            item_wind = float(item.get("wind", {}).get("speed", 3.0)) * 3.6
             
             if dt_txt not in day_buckets:
                 day_buckets[dt_txt] = {
                     "temps": [],
                     "pops": [],
+                    "winds": [],
                     "cond": item_cond
                 }
             day_buckets[dt_txt]["temps"].append(item_temp)
             day_buckets[dt_txt]["pops"].append(item_pop)
+            day_buckets[dt_txt]["winds"].append(item_wind)
             if rain_prob_max is not None and item_pop > rain_prob_max:
                 rain_prob_max = item_pop
 
-        # Build 3 forecast days
+        # Build forecast days with explicit calendar dates
         for i, (d_str, b_data) in enumerate(list(day_buckets.items())[:3]):
-            d_label = "Tomorrow" if i == 0 else f"Day {i+1}"
             fallback_t = temp_c if temp_c is not None else 30.0
             t_max = max(b_data["temps"]) if b_data["temps"] else fallback_t + 2.0
             t_min = min(b_data["temps"]) if b_data["temps"] else fallback_t - 4.0
             p_max = max(b_data["pops"]) if b_data["pops"] else 20
+            w_max = max(b_data["winds"]) if b_data.get("winds") else (wind_kmh or 10.0)
+            
+            # Determine calendar date and day label
+            try:
+                parsed_dt = datetime.fromisoformat(d_str)
+                d_name = "Tomorrow" if i == 0 else parsed_dt.strftime("%A")
+            except Exception:
+                d_name = "Tomorrow" if i == 0 else f"Day {i+1}"
+
             forecast_days.append(
                 WeatherForecastDay(
-                    date=d_label,
+                    date=d_name,
+                    calendar_date=d_str,
+                    day_name=d_name,
+                    timezone="Asia/Kolkata",
+                    observation_type="FORECAST",
                     temp_max=round(t_max, 1),
                     temp_min=round(t_min, 1),
                     rain_probability=p_max,
                     condition=b_data["cond"],
-                    rainfall_mm=0.0
+                    rainfall_mm=0.0,
+                    wind_speed_kmh=round(w_max, 1)
                 )
             )
 
         now_utc = datetime.now(timezone.utc)
+        today_iso = now_utc.date().isoformat()
         advisory = self._generate_agronomic_advisory(rain_prob_max, rain_mm, temp_c)
 
         current = WeatherCurrent(
@@ -201,9 +218,30 @@ class RealWeatherProvider(WeatherProvider):
             is_live=True,
             timestamp=now_utc,
             retrieved_at=now_utc,
+            calendar_date=today_iso,
+            timezone="Asia/Kolkata",
+            observation_type="CURRENT_OBSERVATION",
             freshness=FreshnessStatus.CURRENT.value,
             source="OpenWeatherMap API"
         )
+
+        tomorrow_f = forecast_days[0] if forecast_days else None
+        spray_eval = self.evaluate_spray_window(
+            rain_prob=tomorrow_f.rain_probability if tomorrow_f else None,
+            rainfall_mm=tomorrow_f.rainfall_mm if tomorrow_f else None,
+            wind_speed_kmh=tomorrow_f.wind_speed_kmh if tomorrow_f else None,
+            temp_c=tomorrow_f.temp_max if tomorrow_f else None,
+            target_date=tomorrow_f.calendar_date if tomorrow_f and tomorrow_f.calendar_date else "Tomorrow",
+            data_freshness=FreshnessStatus.CURRENT.value
+        )
+        irr_eval = self.evaluate_irrigation(
+            today_rain_prob=rain_prob_max,
+            today_rainfall_mm=rain_mm,
+            tomorrow_rain_prob=tomorrow_f.rain_probability if tomorrow_f else None,
+            tomorrow_rainfall_mm=tomorrow_f.rainfall_mm if tomorrow_f else None
+        )
+
+        date_range = f"{today_iso} to {forecast_days[-1].calendar_date}" if forecast_days and forecast_days[-1].calendar_date else today_iso
 
         return WeatherResponse(
             location=location_name,
@@ -212,8 +250,14 @@ class RealWeatherProvider(WeatherProvider):
             current=current,
             forecast_3_days=forecast_days,
             source="OpenWeatherMap Real-Time Meteorologic Data",
+            target_date=tomorrow_f.calendar_date if tomorrow_f else today_iso,
+            target_date_range=date_range,
+            timezone="Asia/Kolkata",
+            provider_type="OPENWEATHERMAP",
             freshness=FreshnessStatus.CURRENT.value,
-            retrieved_at=now_utc.isoformat()
+            retrieved_at=now_utc.isoformat(),
+            spray_window_evaluation=spray_eval,
+            irrigation_evaluation=irr_eval
         )
 
     async def _fetch_open_meteo(self, location_name: str, lat: float, lon: float) -> WeatherResponse:
@@ -222,8 +266,8 @@ class RealWeatherProvider(WeatherProvider):
             f"https://api.open-meteo.com/v1/forecast?"
             f"latitude={lat}&longitude={lon}&"
             f"current=temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,wind_speed_10m&"
-            f"daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&"
-            f"timezone=auto"
+            f"daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&"
+            f"timezone=Asia%2FKolkata"
         )
 
         async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
@@ -247,40 +291,58 @@ class RealWeatherProvider(WeatherProvider):
         w_code = int(cur.get("weather_code", 0)) if cur else 0
         condition = WMO_WEATHER_CODES.get(w_code, "Partly Cloudy") if cur else "Unavailable"
 
-        # Daily Forecast
+        # Daily Forecast Arrays: index 0 is Today, index 1 is Tomorrow, index 2 is Day 2, etc.
         times = daily.get("time", [])
         t_maxs = daily.get("temperature_2m_max", [])
         t_mins = daily.get("temperature_2m_min", [])
         rain_probs = daily.get("precipitation_probability_max", [])
         rain_sums = daily.get("precipitation_sum", [])
+        wind_maxs = daily.get("wind_speed_10m_max", [])
         daily_codes = daily.get("weather_code", [])
 
+        now_utc = datetime.now(timezone.utc)
+        today_cal_date = times[0] if times else now_utc.date().isoformat()
+
         forecast_days: List[WeatherForecastDay] = []
-        # Skip day 0 (today), take days 1..3
+        # Days 1..3 correspond to Tomorrow and subsequent days
         for i in range(1, min(4, len(times))):
-            d_label = "Tomorrow" if i == 1 else f"Day {i}"
+            cal_date = times[i]
+            try:
+                parsed_dt = datetime.fromisoformat(cal_date)
+                day_name = "Tomorrow" if i == 1 else parsed_dt.strftime("%A")
+            except Exception:
+                day_name = "Tomorrow" if i == 1 else f"Day {i}"
+
             fallback_t = temp_c if temp_c is not None else 30.0
             t_max = float(t_maxs[i]) if i < len(t_maxs) else fallback_t + 2.0
             t_min = float(t_mins[i]) if i < len(t_mins) else fallback_t - 4.0
             p_prob = int(rain_probs[i]) if i < len(rain_probs) and rain_probs[i] is not None else 10
             r_mm = float(rain_sums[i]) if i < len(rain_sums) and rain_sums[i] is not None else 0.0
+            w_max = float(wind_maxs[i]) if i < len(wind_maxs) and wind_maxs[i] is not None else (wind_kmh or 10.0)
             d_code = int(daily_codes[i]) if i < len(daily_codes) else 0
             d_cond = WMO_WEATHER_CODES.get(d_code, "Partly Cloudy")
 
             forecast_days.append(
                 WeatherForecastDay(
-                    date=d_label,
+                    date="Tomorrow" if i == 1 else f"Day {i} ({cal_date})",
+                    calendar_date=cal_date,
+                    day_name=day_name,
+                    timezone="Asia/Kolkata",
+                    observation_type="FORECAST",
                     temp_max=round(t_max, 1),
                     temp_min=round(t_min, 1),
                     rain_probability=p_prob,
                     condition=d_cond,
-                    rainfall_mm=round(r_mm, 1)
+                    rainfall_mm=round(r_mm, 1),
+                    wind_speed_kmh=round(w_max, 1)
                 )
             )
 
-        upcoming_rain_prob = forecast_days[0].rain_probability if forecast_days and forecast_days[0].rain_probability is not None else int(rain_probs[0]) if rain_probs and rain_probs[0] is not None else None
-        advisory = self._generate_agronomic_advisory(upcoming_rain_prob, rain_mm, temp_c)
-        now_utc = datetime.now(timezone.utc)
+        # Today's indicators (index 0)
+        today_rain_prob = int(rain_probs[0]) if rain_probs and rain_probs[0] is not None else (forecast_days[0].rain_probability if forecast_days else None)
+        today_rain_sum = float(rain_sums[0]) if rain_sums and rain_sums[0] is not None else rain_mm
+
+        advisory = self._generate_agronomic_advisory(today_rain_prob, rain_mm, temp_c)
 
         current = WeatherCurrent(
             temperature_c=round(temp_c, 1) if temp_c is not None else None,
@@ -288,14 +350,35 @@ class RealWeatherProvider(WeatherProvider):
             rainfall_mm=round(rain_mm, 1) if rain_mm is not None else None,
             wind_speed_kmh=round(wind_kmh, 1) if wind_kmh is not None else None,
             weather_condition=condition,
-            rain_probability_percent=upcoming_rain_prob,
+            rain_probability_percent=today_rain_prob,
             advisory=advisory,
             is_live=True,
             timestamp=now_utc,
             retrieved_at=now_utc,
+            calendar_date=today_cal_date,
+            timezone="Asia/Kolkata",
+            observation_type="CURRENT_OBSERVATION",
             freshness=FreshnessStatus.CURRENT.value,
             source="Open-Meteo Agro-Meteorological Service"
         )
+
+        tomorrow_f = forecast_days[0] if forecast_days else None
+        spray_eval = self.evaluate_spray_window(
+            rain_prob=tomorrow_f.rain_probability if tomorrow_f else None,
+            rainfall_mm=tomorrow_f.rainfall_mm if tomorrow_f else None,
+            wind_speed_kmh=tomorrow_f.wind_speed_kmh if tomorrow_f else None,
+            temp_c=tomorrow_f.temp_max if tomorrow_f else None,
+            target_date=tomorrow_f.calendar_date if tomorrow_f and tomorrow_f.calendar_date else "Tomorrow",
+            data_freshness=FreshnessStatus.CURRENT.value
+        )
+        irr_eval = self.evaluate_irrigation(
+            today_rain_prob=today_rain_prob,
+            today_rainfall_mm=today_rain_sum,
+            tomorrow_rain_prob=tomorrow_f.rain_probability if tomorrow_f else None,
+            tomorrow_rainfall_mm=tomorrow_f.rainfall_mm if tomorrow_f else None
+        )
+
+        date_range = f"{today_cal_date} to {forecast_days[-1].calendar_date}" if forecast_days and forecast_days[-1].calendar_date else today_cal_date
 
         return WeatherResponse(
             location=location_name,
@@ -304,9 +387,132 @@ class RealWeatherProvider(WeatherProvider):
             current=current,
             forecast_3_days=forecast_days,
             source="Open-Meteo High-Precision Weather Service",
+            target_date=tomorrow_f.calendar_date if tomorrow_f else today_cal_date,
+            target_date_range=date_range,
+            timezone="Asia/Kolkata",
+            provider_type="OPEN_METEO",
             freshness=FreshnessStatus.CURRENT.value,
-            retrieved_at=now_utc.isoformat()
+            retrieved_at=now_utc.isoformat(),
+            spray_window_evaluation=spray_eval,
+            irrigation_evaluation=irr_eval
         )
+
+    @staticmethod
+    def evaluate_spray_window(
+        rain_prob: Optional[int],
+        rainfall_mm: Optional[float],
+        wind_speed_kmh: Optional[float],
+        temp_c: Optional[float],
+        target_date: str,
+        data_freshness: str = "CURRENT"
+    ) -> Dict[str, Any]:
+        """
+        Deterministic Agronomic Spray Window Assessment.
+        Evaluates rain probability, expected precipitation, wind speed, temperature,
+        and data freshness. Returns INSUFFICIENT_DATA if required telemetry is missing,
+        never inventing safe/unsafe recommendations without data.
+        """
+        missing_fields = []
+        if rain_prob is None:
+            missing_fields.append("rain_probability")
+        if rainfall_mm is None:
+            missing_fields.append("rainfall_mm")
+        if wind_speed_kmh is None:
+            missing_fields.append("wind_speed_kmh")
+
+        if missing_fields:
+            return {
+                "status": "INSUFFICIENT_DATA",
+                "is_safe": None,
+                "missing_fields": missing_fields,
+                "explanation": f"Missing critical meteorological fields: {', '.join(missing_fields)}. Cannot provide an authoritative spray safety recommendation without risking chemical washoff or non-target drift.",
+                "target_date": target_date,
+                "data_freshness": data_freshness,
+                "safe_window": None,
+                "reasons": []
+            }
+
+        is_safe = True
+        reasons = []
+
+        # 1. Precipitation & Rain Probability
+        if rain_prob >= 35 or rainfall_mm > 1.0:
+            is_safe = False
+            reasons.append(f"Rain probability ({rain_prob}%) or expected rainfall ({rainfall_mm}mm) exceeds safety limit (washoff risk).")
+
+        # 2. Wind Speed
+        if wind_speed_kmh > 15.0:
+            is_safe = False
+            reasons.append(f"Wind speed ({wind_speed_kmh} km/h) exceeds 15 km/h threshold, causing severe spray drift onto non-target crops.")
+        elif wind_speed_kmh < 2.5 and (temp_c is not None and temp_c > 32.0):
+            reasons.append("Very low wind speed (<2.5 km/h) with elevated heat creates risk of thermal inversion; spray only in early dawn.")
+
+        # 3. Temperature Threshold
+        if temp_c is not None and temp_c > 35.0:
+            is_safe = False
+            reasons.append(f"Temperature ({temp_c}°C) exceeds 35°C limit, risking chemical flash evaporation and leaf scorch.")
+
+        safe_window = "06:00 AM - 09:00 AM or 04:30 PM - 06:30 PM" if is_safe else None
+
+        return {
+            "status": "VALIDATED",
+            "is_safe": is_safe,
+            "missing_fields": [],
+            "target_date": target_date,
+            "data_freshness": data_freshness,
+            "rain_probability_percent": rain_prob,
+            "expected_rainfall_mm": rainfall_mm,
+            "wind_speed_kmh": wind_speed_kmh,
+            "temperature_c": temp_c,
+            "safe_window": safe_window,
+            "reasons": reasons,
+            "explanation": "Conditions favorable for application." if is_safe else "Spraying is unsafe due to: " + " ".join(reasons)
+        }
+
+    @staticmethod
+    def evaluate_irrigation(
+        today_rain_prob: Optional[int],
+        today_rainfall_mm: Optional[float],
+        tomorrow_rain_prob: Optional[int],
+        tomorrow_rainfall_mm: Optional[float],
+        soil_type: str = "Loam",
+        soil_moisture_available: bool = False,
+        soil_moisture_kpa: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """
+        Deterministic Agronomic Irrigation Decision.
+        Distinguishes today vs tomorrow conditions. Labels weather-based estimation
+        explicitly when soil moisture sensors are absent, displaying underlying assumptions.
+        """
+        assumptions = [
+            "Weather-based estimation; soil moisture tension sensors not detected.",
+            f"Assumed soil water retention capacity based on '{soil_type}'.",
+            "Farmer must physically verify root-zone moisture at 15 cm depth before valve operation."
+        ]
+
+        # Tomorrow rain check: if tomorrow has >=40% rain or >=5mm precipitation, defer today
+        if (tomorrow_rain_prob is not None and tomorrow_rain_prob >= 40) or (tomorrow_rainfall_mm is not None and tomorrow_rainfall_mm >= 5.0):
+            should_irrigate = False
+            decision = "DEFER_IRRIGATION"
+            explanation = f"Defer irrigation today: Rain forecast indicates {tomorrow_rain_prob}% probability ({tomorrow_rainfall_mm or 0} mm) tomorrow. Pre-wetting root zone risks soil saturation and root hypoxia."
+        elif (today_rain_prob is not None and today_rain_prob >= 45) or (today_rainfall_mm is not None and today_rainfall_mm >= 5.0):
+            should_irrigate = False
+            decision = "DEFER_IRRIGATION"
+            explanation = f"Hold irrigation today: Active rain probability is {today_rain_prob}% with {today_rainfall_mm or 0} mm precipitation expected."
+        else:
+            should_irrigate = True
+            decision = "PROCEED_IRRIGATION"
+            explanation = f"Standard irrigation schedule may proceed. Rain chances remain low ({today_rain_prob or 0}% today, {tomorrow_rain_prob or 0}% tomorrow)."
+
+        return {
+            "decision": decision,
+            "should_irrigate": should_irrigate,
+            "recommendation_type": "SENSOR_VERIFIED" if soil_moisture_available else "WEATHER_BASED_ESTIMATION",
+            "today_rain_probability": today_rain_prob,
+            "tomorrow_rain_probability": tomorrow_rain_prob,
+            "assumptions": assumptions,
+            "explanation": explanation
+        }
 
     def _generate_agronomic_advisory(
         self,
@@ -335,6 +541,7 @@ class RealWeatherProvider(WeatherProvider):
     ) -> WeatherResponse:
         """Returns structured UNAVAILABLE response with explicit null measurements."""
         now_utc = datetime.now(timezone.utc)
+        today_iso = now_utc.date().isoformat()
         current = WeatherCurrent(
             temperature_c=None,
             humidity_percent=None,
@@ -346,8 +553,25 @@ class RealWeatherProvider(WeatherProvider):
             is_live=False,
             timestamp=now_utc,
             retrieved_at=now_utc,
+            calendar_date=today_iso,
+            timezone="Asia/Kolkata",
+            observation_type="CURRENT_OBSERVATION",
             freshness=FreshnessStatus.UNAVAILABLE.value,
             source="Unavailable"
+        )
+        spray_eval = self.evaluate_spray_window(
+            rain_prob=None,
+            rainfall_mm=None,
+            wind_speed_kmh=None,
+            temp_c=None,
+            target_date="Tomorrow",
+            data_freshness=FreshnessStatus.UNAVAILABLE.value
+        )
+        irr_eval = self.evaluate_irrigation(
+            today_rain_prob=None,
+            today_rainfall_mm=None,
+            tomorrow_rain_prob=None,
+            tomorrow_rainfall_mm=None
         )
         return WeatherResponse(
             location=location,
@@ -356,6 +580,12 @@ class RealWeatherProvider(WeatherProvider):
             current=current,
             forecast_3_days=[],
             source="Unavailable",
+            target_date=None,
+            target_date_range=None,
+            timezone="Asia/Kolkata",
+            provider_type="UNAVAILABLE",
             freshness=FreshnessStatus.UNAVAILABLE.value,
-            retrieved_at=now_utc.isoformat()
+            retrieved_at=now_utc.isoformat(),
+            spray_window_evaluation=spray_eval,
+            irrigation_evaluation=irr_eval
         )

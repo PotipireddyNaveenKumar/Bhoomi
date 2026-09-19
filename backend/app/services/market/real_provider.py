@@ -96,15 +96,15 @@ class RealMarketDataProvider(MarketDataProvider):
                     resp = await client.get(self.BASE_URL, params=params)
 
                     if resp.status_code in (401, 403):
-                        raise BhoomiException("data.gov.in authentication failed. Verify DATA_GOV_API_KEY.", status_code=401)
+                        raise BhoomiException(status_code=401, code="MARKET_AUTH_FAILED", message="data.gov.in authentication failed. Verify DATA_GOV_API_KEY.")
                     elif resp.status_code == 404:
-                        raise BhoomiException("data.gov.in resource not found.", status_code=404)
+                        raise BhoomiException(status_code=404, code="MARKET_NOT_FOUND", message="data.gov.in resource not found.")
                     elif resp.status_code == 429:
-                        raise BhoomiException("data.gov.in rate limit exceeded.", status_code=429)
+                        raise BhoomiException(status_code=429, code="MARKET_RATE_LIMIT", message="data.gov.in rate limit exceeded.")
                     elif resp.status_code >= 500:
-                        raise BhoomiException("data.gov.in upstream server error.", status_code=502)
+                        raise BhoomiException(status_code=502, code="MARKET_UPSTREAM_ERROR", message="data.gov.in upstream server error.")
                     elif resp.status_code != 200:
-                        raise BhoomiException(f"data.gov.in error status {resp.status_code}.", status_code=resp.status_code)
+                        raise BhoomiException(status_code=resp.status_code, code="MARKET_API_ERROR", message=f"data.gov.in error status {resp.status_code}.")
 
                     payload = resp.json()
                     term_records = payload.get("records", [])

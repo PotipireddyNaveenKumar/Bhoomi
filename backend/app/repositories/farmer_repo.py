@@ -36,7 +36,17 @@ class FarmerRepository:
                 selectinload(FarmerProfile.memories),
             ).where(FarmerProfile.id == farmer_id)
         )
-        return result.scalars().first()
+        profile = result.scalars().first()
+        if not profile:
+            # Also fallback to matching user_id in case caller supplied user.id
+            result_user = await self.db.execute(
+                select(FarmerProfile).options(
+                    selectinload(FarmerProfile.farms).selectinload(Farm.crops),
+                    selectinload(FarmerProfile.memories),
+                ).where(FarmerProfile.user_id == farmer_id)
+            )
+            profile = result_user.scalars().first()
+        return profile
 
     async def create_user_with_profile(
         self, phone: str, hashed_pw: str, name: str, language: str = "en",

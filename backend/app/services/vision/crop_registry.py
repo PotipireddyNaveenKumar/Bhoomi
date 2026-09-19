@@ -152,8 +152,11 @@ class CropModelRegistry:
     ) -> Optional[tuple]:
         """
         Runs multi-crop vision evaluation across all 10 registered crop providers.
-        Returns (crop_name, best_prediction) sorted by calibrated confidence,
-        filtering for reliable in-distribution predictions.
+        Returns (crop_name, best_prediction) sorted by calibrated confidence.
+        Enforces:
+        - Confidence threshold: top candidate must have calibrated_confidence >= 0.60
+        - Model disagreement handling: if runner-up candidate is within 0.10 margin and top < 0.82, rejects as ambiguous cross-crop conflict
+        - Crop vs disease confidence separation
         """
         cls._initialize()
         candidates = []
@@ -166,8 +169,40 @@ class CropModelRegistry:
                 logger.debug("Provider %s failed during candidate scan: %s", c_name, e)
                 continue
 
-        if candidates:
-            candidates.sort(key=lambda x: x[1].calibrated_confidence, reverse=True)
-            return candidates[0]
-        return None
+        if not candidates:
+            return None
+
+        candidates.sort(key=lambda x: x[1].calibrated_confidence, reverse=True)
+        top_crop, top_pred = candidates[0]
+
+        # 1. Minimum confidence threshold for unhinted crop detection
+        if top_pred.calibrated_confidence < 0.60:
+            logger.info("Multi-crop candidate %s rejected: confidence %.2f below threshold", top_crop, top_pred.calibrated_confidence)
+            return None
+
+        # 2. Model disagreement and multi-model conflict handling
+        second_conf = 0.0
+        if len(candidates) > 1:
+            second_crop, second_pred = candidates[1]
+            second_conf = second_pred.calibrated_confidence
+            margin = top_pred.calibrated_confidence - second_conf
+            high_conf_count = sum(1 for c, p in candidates if p.calibrated_confidence >= 0.70)
+            if margin < 0.10 and (top_pred.calibrated_confidence < 0.90 or high_conf_count >= 3):
+                logger.info(
+                    "Crop candidate rejected due to model disagreement / ambiguity: top=%s (%.2f), runner_up=%s (%.2f), margin=%.2f, high_conf_count=%d",
+                    top_crop, top_pred.calibrated_confidence, second_crop, second_conf, margin, high_conf_count
+                )
+                return None
+
+        # 3. Calculate distinct crop_confidence vs disease_confidence
+        crop_conf = round(top_pred.calibrated_confidence * (1.0 - second_conf / 2.0), 4) if second_conf else round(top_pred.calibrated_confidence, 4)
+        top_pred.crop_confidence = crop_conf
+        top_pred.disease_confidence = round(top_pred.calibrated_confidence, 4)
+
+        # 4. Reject candidate if separated crop_confidence is below threshold (< 0.65)
+        if crop_conf < 0.65:
+            logger.info("Multi-crop candidate %s rejected: crop_confidence %.2f below 0.65 threshold", top_crop, crop_conf)
+            return None
+
+        return (top_crop, top_pred)
 

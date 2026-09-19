@@ -41,25 +41,36 @@ class DailyFarmBriefingService:
     @classmethod
     def generate_today_briefing(cls, state: FarmState, language: Optional[str] = None) -> DailyBriefing:
         plan: DecisionPlan = FarmDecisionEngine.generate_plan(state)
+
         top_action = plan.top_decisions[0]
 
         # Generate contextual real FarmTasks
         farm_tasks = TaskIntelligenceEngine.generate_tasks_for_farm(state, trace_id=plan.trace_id)
 
-        # Highlight top action or critical tasks
-        summary = (
-            f"Namaste {state.farmer_name}! Today your {state.active_crop} is in {state.crop_stage} stage (Day {state.days_after_sowing}). "
-            f"Top priority today: {top_action.action} ({top_action.reason})."
-        )
-
         pref_lang = language or state.preferred_language or "en"
         from app.services.voice.persona import BhoomiPersonaEngine
-        voice_msg = BhoomiPersonaEngine.format_daily_briefing(state, top_action, language=pref_lang)
+
+        if not state.active_crop or state.active_crop == "None":
+            summary = (
+                f"Namaste {state.farmer_name}! No active crop is currently registered. "
+                "Please add your crop in Farm Profile to activate daily agronomic schedules and alerts."
+            )
+            voice_msg = (
+                f"Namaste {state.farmer_name}. Please register your active crop in Farm Profile to receive personalized daily agronomic guidance."
+            )
+            farm_sum = f"Location: {state.location or state.district or 'Pending Setup'}"
+        else:
+            summary = (
+                f"Namaste {state.farmer_name}! Today your {state.active_crop} is in {state.crop_stage} stage (Day {state.days_after_sowing}). "
+                f"Top priority today: {top_action.action} ({top_action.reason})."
+            )
+            voice_msg = BhoomiPersonaEngine.format_daily_briefing(state, top_action, language=pref_lang)
+            farm_sum = f"{state.total_acres} acres of {state.active_crop} in {state.district}"
 
         return DailyBriefing(
             farmer_name=state.farmer_name,
             preferred_language=state.preferred_language,
-            farm_summary=f"{state.total_acres} acres of {state.active_crop} in {state.district}",
+            farm_summary=farm_sum,
             today_summary=summary,
             priority_action=top_action,
             weather_action=plan.weather_action,
@@ -74,9 +85,10 @@ class DailyFarmBriefingService:
     def generate_week_briefing(cls, state: FarmState, language: Optional[str] = None) -> WeeklyBriefing:
         farm_tasks = TaskIntelligenceEngine.generate_tasks_for_farm(state)
         rain_prob = state.weather_summary.get("rain_probability", 0)
+        rain_val = rain_prob if rain_prob is not None else 0
 
         # Baseline backwards-compatible tasks formatted with dynamic weather sensitivity
-        weather_tag = " [WEATHER_DEPENDENT]" if rain_prob >= 40 else ""
+        weather_tag = " [WEATHER_DEPENDENT]" if rain_val >= 40 else ""
         tasks = [
             f"Flowering Nutrient Support: Apply 19:19:19 foliar spray before 10 AM or after 5:30 PM{weather_tag}",
             f"Water Management: Regulate furrow moisture interval to 4-5 days{weather_tag}",

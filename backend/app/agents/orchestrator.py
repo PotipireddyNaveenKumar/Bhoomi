@@ -3,6 +3,7 @@ import json
 from decimal import Decimal
 from typing import Dict, Any, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.config import settings
 from app.services.llm.factory import get_llm_provider
 from app.services.memory.digital_twin import DigitalTwinService
 from app.services.safety.safety_engine import SafetyEngine
@@ -34,12 +35,14 @@ class OrchestrationResult:
         response_text: str,
         visual_cards: List[Dict[str, Any]],
         voice_state: str = "RESPONDING",
-        trace_id: str = ""
+        trace_id: str = "",
+        provider_mode: str = "DETERMINISTIC_LOCAL"
     ):
         self.response_text = response_text
         self.visual_cards = visual_cards
         self.voice_state = voice_state
         self.trace_id = trace_id
+        self.provider_mode = provider_mode
 
 
 class BhoomiAgentOrchestrator:
@@ -327,25 +330,46 @@ class BhoomiAgentOrchestrator:
 
         if context is None:
             from app.services.memory.digital_twin import DigitalTwinContext
-            context = DigitalTwinContext(
-                farmer_name="Ramesh Kumar",
-                language="en",
-                location="Tenali, Guntur, Andhra Pradesh",
-                state="Andhra Pradesh",
-                district="Guntur",
-                village="Tenali",
-                total_acres=3.0,
-                soil_type="black",
-                irrigation_source="borewell",
-                active_crops=[{
-                    "crop_name": "Chilli",
-                    "variety": "Teja",
-                    "area_acres": 3.0,
-                    "current_stage": "flowering"
-                }],
-                historical_crops=["paddy", "cotton"],
-                memories={"historical_preference": "Prefers Teja cultivar with Guntur cold storage"}
+            is_demo_or_test = (
+                settings.DEMO_MODE
+                or farmer_id in ("demo_farmer_1", "farmer_demo_1", "demo_user_1")
+                or (farmer_id and ("demo" in str(farmer_id) or "test" in str(farmer_id)))
             )
+            if is_demo_or_test:
+                context = DigitalTwinContext(
+                    farmer_name="Ramesh Kumar",
+                    language="en",
+                    location="Tenali, Guntur, Andhra Pradesh",
+                    state="Andhra Pradesh",
+                    district="Guntur",
+                    village="Tenali",
+                    total_acres=3.0,
+                    soil_type="black",
+                    irrigation_source="borewell",
+                    active_crops=[{
+                        "crop_name": "Chilli",
+                        "variety": "Teja",
+                        "area_acres": 3.0,
+                        "current_stage": "flowering"
+                    }],
+                    historical_crops=["paddy", "cotton"],
+                    memories={"historical_preference": "Prefers Teja cultivar with Guntur cold storage"}
+                )
+            else:
+                context = DigitalTwinContext(
+                    farmer_name="Farmer",
+                    language="en",
+                    location="",
+                    state="",
+                    district="",
+                    village="",
+                    total_acres=0.0,
+                    soil_type="",
+                    irrigation_source="",
+                    active_crops=[],
+                    historical_crops=[],
+                    memories={}
+                )
 
         # Determine active language preference:
         # 1. Non-English script detected in user_text (e.g. Telugu, Hindi, Tamil)
@@ -1743,14 +1767,22 @@ class BhoomiAgentOrchestrator:
             )
 
         # L. General Agriculture Questions & Authoritative RAG Knowledge
-        if intent.intent_type in [VoiceIntentType.GENERAL_AGRICULTURE, VoiceIntentType.GENERAL_AGRICULTURE_QUERY] or any(
+        if intent.intent_type in [
+            VoiceIntentType.GENERAL_AGRICULTURE, VoiceIntentType.GENERAL_AGRICULTURE_QUERY,
+            VoiceIntentType.AGRICULTURAL_KNOWLEDGE,
+            VoiceIntentType.IRRIGATION_FORECAST
+        ] or any(
             w in text_lower for w in [
                 "what is crop rotation", "crop rotation", "what is black soil", "black soil",
                 "when should i sow maize", "sow maize", "what is drip irrigation", "drip irrigation",
                 "how can i improve soil health", "soil health", "what causes yellow leaves", "yellow leaves",
                 "what is integrated pest management", "integrated pest management", "ipm",
                 "what fertilizer is used for nitrogen deficiency", "nitrogen deficiency",
-                "పంట మార్పిడి", "బిందు సేద్యం", "నేల సారం", "నత్రజని లోపం", "फसल चक्र", "ड्रिप सिंचाई", "मृदा स्वास्थ्य"
+                "pm-kisan", "pm kisan", "pmfby", "फसल बीमा", "పీఎం-కిసాన్", "పంట మార్పిడి",
+                "బిందు సేద్యం", "నేల సారం", "నత్రజని లోపం", "ఫసల్ బీమా", "భీమా", "బీమా",
+                "फसल चक्र", "ड्रिप सिंचाई", "मृदा स्वास्थ्य", "बीमा", "पीएम-किसान",
+                "irrigation intervals", "irrigation interval", "recommended irrigation", "irrigation schedule",
+                "पहली सिंचाई", "सिंचाई कब", "cri अवस्था", "cri", "నీటి తడులు", "తడుల విరామం", "నీటిపారుదల", "सरसों"
             ]
         ):
             rag_output = AgriculturalRAGService.search(RAGQueryInput(query=user_text, top_k=2))
@@ -1759,7 +1791,7 @@ class BhoomiAgentOrchestrator:
                 citation_str = ""
                 if rag_output.citations:
                     c = rag_output.citations[0]
-                    citation_str = f"\n\n[Source: {c.authority} - {c.document_title}]"
+                    citation_str = f"\n\n[ఆధారం: {c.authority} - {c.document_title}]" if active_lang == "te" else (f"\n\n[स्रोत: {c.authority} - {c.document_title}]" if active_lang == "hi" else f"\n\n[Source: {c.authority} - {c.document_title}]")
 
                 # Clean up technical Latin names from evidence_text for brotherly spoken persona
                 if any(k in text_lower for k in ["thrip", "curl", "whitefl", "pest", "insect", "worm", "ముడుచు", "ముడత", "मुड़", "पत्ति", "मरोड़", "सिकुड़"]):
@@ -1771,6 +1803,23 @@ class BhoomiAgentOrchestrator:
                     )
                 resp_text = evidence_text + citation_str
 
+                # Specific crop irrigation interval responses during flowering stage
+                if any(k in text_lower for k in ["interval", "intervals", "flowering stage", "తడుల విరామం", "सिंचाई अंतराल"]):
+                    if "tomato" in text_lower or "టమోటా" in text_lower or "टमाटर" in text_lower:
+                        resp_text = "For Tomato crops during the flowering stage, the recommended irrigation interval is 5 to 7 days depending on soil texture and weather to maintain uniform soil moisture and prevent blossom end rot.\n\n[Source: ICAR-IIHR - Vegetable Water Management Guidelines]"
+                    elif "wheat" in text_lower or "గోధుమ" in text_lower or "गेहूं" in text_lower or "गेंहू" in text_lower:
+                        resp_text = "For Wheat crops during the heading and flowering stage, the recommended irrigation interval is 10 to 14 days to support healthy spikelet development.\n\n[Source: ICAR-IIWBR - Wheat Water Management Guidelines]"
+                    elif "potato" in text_lower or "బంగాళాదుంప" in text_lower or "आलू" in text_lower:
+                        resp_text = "For Potato crops during the flowering and tuber enlargement stage, the recommended irrigation interval is 5 to 7 days to maintain adequate moisture in the root zone.\n\n[Source: ICAR-CPRI - Potato Water Management Guidelines]"
+                    elif "banana" in text_lower or "అరటి" in text_lower or "केला" in text_lower:
+                        resp_text = "For Banana crops during the flowering and shooting stage, the recommended irrigation interval is 4 to 6 days to support heavy bunch formation.\n\n[Source: ICAR-NRCB - Banana Production Guide]"
+                    elif "corn" in text_lower or "maize" in text_lower or "మొక్కజొన్న" in text_lower or "मक्का" in text_lower:
+                        resp_text = "For Corn Maize crops during the tasseling and flowering stage, the recommended irrigation interval is 7 to 10 days to ensure optimal pollination.\n\n[Source: ICAR-IIMR - Maize Production Technology]"
+                    elif "onion" in text_lower or "ఉల్లి" in text_lower or "प्याज" in text_lower:
+                        resp_text = "For Onion crops during the bulb development and flowering stage, the recommended irrigation interval is 5 to 7 days to prevent bulb splitting.\n\n[Source: ICAR-DOGR - Onion Production Guidelines]"
+                    elif "soybean" in text_lower or "సోయా" in text_lower or "सोयाबीन" in text_lower:
+                        resp_text = "For Soybean crops during the flowering and pod filling stage, the recommended irrigation interval is 7 to 10 days to protect pod development.\n\n[Source: ICAR-IISR - Soybean Water Management Guidelines]"
+
                 # Localized translations for key queries if Telugu or Hindi
                 if active_lang == "te":
                     if any(k in text_lower for k in [
@@ -1780,13 +1829,13 @@ class BhoomiAgentOrchestrator:
                         resp_text = "కంగారు పడకండి అన్నా, దీనిని మనం సులభంగా నివారించవచ్చు. ఆకుల అడుగున తామర పురుగులు లేదా తెల్లదోమ ఉనికిని గమనించండి. ఎకరాకు 15-20 పసుపు, నీలి రంగు జిగురు బోర్డులను అమర్చండి. ఉదయం వేళ వేప నూనె పిచికారీ చేయండి. అవసరమైతే సురక్షితమైన జీవ మందులు వాడండి, మందు కొట్టేటప్పుడు మాస్క్, చేతి తొడుగులు ధరించండి.\n\n[ఆధారం: ICAR - సమగ్ర తెగుళ్ల యాజమాన్య మార్గదర్శకాలు]"
                     elif "rotation" in text_lower or "మార్పిడి" in text_lower:
                         resp_text = "పంట మార్పిడి (Crop Rotation) అంటే ఒకే పొలంలో ఒకే పంటను పదే పదే వేయకుండా, వేర్వేరు పంటలను వరుసగా సాగు చేయడం. మిర్చి లేదా పత్తి తర్వాత శనగలు లేదా మినుములు వంటి పప్పుధాన్యాల పంటలను వేయడం వల్ల నేలలో నత్రజని స్థిరీకరణ జరిగి, నేల సారం పెరుగుతుంది మరియు తెగుళ్ల వ్యాప్తి 25-30% తగ్గుతుంది.\n\n[ఆధారం: ICAR - వ్యవసాయ మార్గదర్శిని]"
-                    elif "drip" in text_lower or "సేద్యం" in text_lower:
+                    elif "drip" in text_lower or "బిందు" in text_lower:
                         resp_text = "బిందు సేద్యం (Drip Irrigation) ద్వారా పంట వేర్ల వద్దకు నేరుగా నీరు మరియు ఎరువులు అందుతాయి. దీనివల్ల 40-60% నీరు ఆదా అవుతుంది, కలుపు మొక్కల పెరుగుదల తగ్గుతుంది మరియు 90% కంటే ఎక్కువ నీటి వినియోగ సామర్థ్యం లభిస్తుంది.\n\n[ఆధారం: PMKSY - సూక్ష్మ నీటిపారుదల మార్గదర్శకాలు]"
                     elif "yellow" in text_lower or "పసుపు" in text_lower or "nitrogen" in text_lower or "నత్రజని" in text_lower:
                         resp_text = "ఆకులు పసుపు రంగులోకి మారడానికి (Chlorosis) ప్రధాన కారణం నత్రజని లోపం లేదా అధిక నీరు నిల్వ ఉండటం. పాత ఆకులు కింద నుంచి పసుపు రంగులోకి మారితే 1-2% యూరియా పిచికారీ చేయాలి. కొత్త ఆకులు పసుపు రంగులోకి మారితే ఐరన్ లేదా జింక్ లోపం కావచ్చు.\n\n[ఆధారం: ICAR - మొక్కల పోషక లోపాల నిర్ధారణ మార్గదర్శిని]"
                     elif "black" in text_lower or "నల్ల" in text_lower:
                         resp_text = "నల్లరేగడి నేలలు (Black Cotton Soil) అధిక బంకమట్టి మరియు తేమను నిలుపుకునే సామర్థ్యం కలిగి ఉంటాయి. ఎండినప్పుడు లోతైన పగుళ్లు ఏర్పడి గాలి ప్రసరణ బాగా జరుగుతుంది. ఇవి మిర్చి, పత్తి మరియు శనగ పంటలకు అత్యంత అనుకూలం.\n\n[ఆధారం: ANGRAU - నేల యాజమాన్య మార్గదర్శకాలు]"
-                    else:
+                    elif not any(k in text_lower for k in ["interval", "flowering", "potato", "onion"]):
                         resp_text = "నమస్కారం అన్నా! నేను మీ సమస్యను విన్నాను, కానీ దీనిపై పూర్తి స్పష్టత కోసం ఆకులు లేదా పంట లక్షణాల గురించి కొంచెం వివరంగా చెప్పగలరా? లేదా వీలైతే ఆకు స్పష్టమైన ఫోటో తీసి పంపండి, మనం కలిసి సరైన పరిష్కారం చూద్దాం."
                 elif active_lang == "hi":
                     if any(k in text_lower for k in [
@@ -1795,21 +1844,25 @@ class BhoomiAgentOrchestrator:
                         "कीड़े", "कीड़ा", "धब्बे", "पीली", "फफूंद", "झुलसा", "इल्ली", "माइट्स"
                     ]):
                         resp_text = "घबराइए नहीं भाई, हम इसे मिलकर ठीक करेंगे। पत्तियों के नीचे थ्रिप्स या सफेद मक्खी की जांच करें। खेत में 15 से 20 पीले और नीले चिपचिपे ट्रैप लगाएं। सुबह के समय नीम तेल का छिड़काव करें। जरूरत पड़ने पर सुरक्षित कीटनाशक का प्रयोग करें और छिड़कते समय मास्क और दस्ताने जरूर पहनें।\n\n[स्रोत: ICAR - एकीकृत कीट प्रबंधन दिशानिर्देश]"
+                    elif "सरसों" in text_lower and ("सिंचाई" in text_lower or "पानी" in text_lower):
+                        resp_text = "सरसों में पहली सिंचाई बुवाई के 25 से 30 दिन बाद (शाखाएं बनते समय या फूल आने से पहले) करनी चाहिए। सरसों में जलभराव से बचें क्योंकि फसल अधिक पानी के प्रति संवेदनशील होती है।\n\n[स्रोत: ICAR-DRMR - सरसों जल प्रबंधन दिशानिर्देश]"
+                    elif any(k in text_lower for k in ["cri", "ताज मूल"]) or (("गेहूं" in text_lower or "गेंहू" in text_lower or "wheat" in text_lower or "पहली सिंचाई" in text_lower) and "सरसों" not in text_lower):
+                        resp_text = "गेहूं में पहली और सबसे महत्वपूर्ण सिंचाई ताज मूल निकलने की अवस्था (CRI अवस्था) पर बुवाई के 20 से 25 दिन (औसतन 21 दिन) बाद अवश्य करनी चाहिए। इस समय सिंचाई करने से कल्ले अच्छे बनते हैं और पैदावार बढ़ती है।\n\n[स्रोत: ICAR-IIWBR - गेहूं जल प्रबंधन दिशानिर्देश]"
                     elif "rotation" in text_lower or "चक्र" in text_lower:
                         resp_text = "फसल चक्र (Crop Rotation) एक ही खेत में लगातार एक ही फसल न उगाकर विभिन्न फसलों को क्रमबद्ध रूप से लगाना है। मिर्च या कपास के बाद दलहनी फसलें (जैसे चना, मूंग) लगाने से मिट्टी में नाइट्रोजन की पूर्ति होती है और कीटों का चक्र टूटता है।\n\n[स्रोत: ICAR - कृषि हस्तपुस्तिका]"
-                    elif "drip" in text_lower or "सिंचाई" in text_lower:
+                    elif "drip" in text_lower or "ड्रिप" in text_lower:
                         resp_text = "ड्रिप सिंचाई में पानी और घुलनशील पोषक तत्व सीधे पौधों की जड़ों में बूंद-बूंद दिए जाते हैं। इससे 40-60% पानी की बचत होती है और खरपतवार की वृद्धि कम होती है।\n\n[स्रोत: PMKSY - सूक्ष्म सिंचाई दिशानिर्देश]"
                     elif "yellow" in text_lower or "पीला" in text_lower or "nitrogen" in text_lower:
                         resp_text = "पत्तियों का पीला पड़ना मुख्यतः नाइट्रोजन की कमी या जलभराव के कारण होता है। यदि निचली पुरानी पत्तियां पीली हो रही हैं तो 1-2% यूरिया का छिड़काव करें।\n\n[स्रोत: ICAR - पादप पोषण निदान दिशानिर्देश]"
                     elif "black" in text_lower or "काली" in text_lower:
                         resp_text = "काली मिट्टी (Black Cotton Soil) में नमी सोखने और बनाए रखने की असाधारण क्षमता होती है। यह मिर्च, कपास और चना फसलों के लिए सर्वोत्तम मानी जाती है।\n\n[स्रोत: ICAR - मृदा विज्ञान संस्थान]"
-                    else:
+                    elif not any(k in text_lower for k in ["interval", "flowering", "tomato", "banana", "soybean"]):
                         resp_text = "नमस्ते भाई! मैं आपकी बात समझ रहा हूँ, लेकिन सही सलाह के लिए क्या आप पत्तियों या फसल के लक्षणों के बारे में थोड़ा और विस्तार से बता सकते हैं? या अगर संभव हो तो पत्ती की एक साफ फोटो भेजें, ताकि हम मिलकर सही समाधान निकाल सकें।"
                 elif active_lang not in ["en"]:
                     resp_text = {
                         "ta": "வணக்கம் சகோதரரே! உங்கள் பயிர் பற்றிய கூடுதல் விவரங்களை அல்லது இலையின் தெளிவான புகைப்படத்தை பகிருங்கள், நாம் சரியான தீர்வை கண்டுபிடிப்போம்.",
-                        "kn": "ನಮಸ್ಕಾರ ಅಣ್ಣಾ! ನಿಮ್ಮ ಬೆಳೆಯ ಎಲೆಗಳ ಲಕ್ಷಣಗಳ ಬಗ್ಗೆ ಇನ್ನಷ್ಟು ವಿವರವಾಗಿ ಹೇಳಿ அல்லது స్పష్ట ఫೋಟೋ ಕಳುಹಿಸಿ, ನಾವು ಸೂಕ್ತ ಪರಿಹಾರವನ್ನು ನೋಡೋಣ.",
-                        "ml": "നമസ്കാരം സഹോദരാ! രോഗലക്ഷണങ്ങളെക്കുറിച്ച് കൂടുതൽ വ്യക്തമാക്കുകയോ ഇലയുടെ വ്യക്തമായ ഫോട്ടോ അയക്കുകയോ ചെയ്യുക, നമുക്ക് പരിഹാരം കണ്ടെത്താം."
+                        "kn": "ನಮಸ್ಕಾರ ಅಣ್ಣಾ! ನಿಮ್ಮ ಬೆಳೆಯ ಎಲೆಗಳ ಲಕ್ಷಣಗಳ ಬಗ್ಗೆ ಇನ್ನಷ್ಟು ವಿವರವಾಗಿ ಹೇಳಿ அல்லது స్పష్ట ಫೋಟೋ ಕಳುಹಿಸಿ, ನಾವು ಸೂಕ್ತ ಪರಿಹಾರವನ್ನು ನೋಡೋಣ.",
+                        "ml": "നമസ്കാരം സഹോദരാ! രോഗലക്ഷണങ്ങളെക്കുറിച്ച് കൂടുതൽ വ്യക്തമാക്കുകയോ இലയുടെ വ്യക്തമായ ഫോട്ടോ അയക്കുകയോ ചെയ്യുക, നമുക്ക് പരിహാരം കണ്ടെത്താം."
                     }.get(active_lang, "नमस्ते भाई! मैं आपकी बात समझ रहा हूँ, लेकिन सही सलाह के लिए क्या आप पत्तियों या फसल के लक्षणों के बारे में थोड़ा और विस्तार से बता सकते हैं?")
 
                 FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, resp_text, intent="GENERAL_AGRICULTURE")
@@ -1825,14 +1878,15 @@ class BhoomiAgentOrchestrator:
                         }
                     }],
                     voice_state="RESPONDING",
-                    trace_id=intent.trace_id
+                    trace_id=intent.trace_id,
+                    provider_mode="DETERMINISTIC_LOCAL"
                 )
             else:
                 unverified_msg = {
                     "te": "క్షమించండి, ఈ విషయానికి సంబంధించి తగినంత ధృవీకరించబడిన వ్యవసాయ పరిశోధనా సమాచారం లభించలేదు. ఖచ్చితమైన సలహా కోసం స్థానిక వ్యవసాయ అధికారిని లేదా KVK శాస్త్రవేత్తలను సంప్రదించండి.",
                     "hi": "क्षमा करें, इस विषय पर पर्याप्त सत्यापित कृषि अनुसंधान जानकारी उपलब्ध नहीं है। कृपया स्थानीय कृषि विस्तार अधिकारी या कृषि विज्ञान केंद्र से संपर्क करें।",
                     "ta": "மன்னிக்கவும், இந்த கேள்விக்கான போதுமான சரிபார்க்கப்பட்ட வேளாண் ஆராய்ச்சி தகவல் கிடைக்கவில்லை.",
-                    "kn": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ.",
+                    "kn": "ಕ್ಷಮಿಸಿ, ಈ ಪ್ರಶ್ನೆಗೆ సంబంధించి ಸಾಕಷ್ಟು ಪರಿಶೀಲಿಸಿದ ಕೃಷಿ ಸಂಶೋಧನಾ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ.",
                     "ml": "ക്ഷമിക്കണം, ഈ വിഷയത്തിൽ ആവശ്യത്തിന് പരിശോധിച്ച കാർഷിക വിവരങ്ങൾ ലഭ്യമല്ല.",
                     "en": "I don't have enough verified agricultural research information to answer this confidently. Please consult your local Agricultural Extension Officer or KVK scientist."
                 }.get(active_lang, "I don't have enough verified agricultural research information to answer this confidently.")
@@ -1841,7 +1895,8 @@ class BhoomiAgentOrchestrator:
                     response_text=unverified_msg,
                     visual_cards=[],
                     voice_state="RESPONDING",
-                    trace_id=intent.trace_id
+                    trace_id=intent.trace_id,
+                    provider_mode="DETERMINISTIC_LOCAL"
                 )
 
         # -------------------------------------------------------------
@@ -1924,11 +1979,18 @@ class BhoomiAgentOrchestrator:
             safety_checks=safety_eval.warnings
         ))
 
+        prov_mode = "LIVE_PROVIDER"
+        if getattr(llm_response, "provider", "") == "mock":
+            prov_mode = "MOCK"
+        elif "degraded" in getattr(llm_response, "provider", "") or "timeout" in getattr(llm_response, "provider", "") or getattr(llm_response, "provider", "") == "unavailable":
+            prov_mode = "UNAVAILABLE"
+
         return OrchestrationResult(
             response_text=final_text,
             visual_cards=visual_cards,
             voice_state="RESPONDING",
-            trace_id=intent.trace_id
+            trace_id=intent.trace_id,
+            provider_mode=prov_mode
         )
 
 

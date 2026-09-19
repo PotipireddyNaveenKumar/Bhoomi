@@ -55,31 +55,22 @@ async def get_current_farmer_profile(
     if user and user.farmer_profile:
         return user.farmer_profile
 
-    if settings.DEMO_MODE:
-        farmer_repo = FarmerRepository(db)
-        demo_user = await farmer_repo.get_by_id("demo_user_1")
-        if demo_user and demo_user.farmer_profile:
-            return demo_user.farmer_profile
-        from app.services.demo.demo_service import DemoModeService
-        await DemoModeService.ensure_canonical_demo_data(db)
-        demo_user = await farmer_repo.get_by_id("demo_user_1")
-        if demo_user and demo_user.farmer_profile:
-            return demo_user.farmer_profile
-        return get_canonical_demo_farmer_profile()
-
-    if settings.APP_ENV in ["production", "staging"] or settings.effective_env in ["production", "staging"]:
+    if settings.effective_env in ["production", "staging"] and not settings.DEMO_MODE:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication required. Please log in to access your farm digital twin.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # In development/test mode only, fallback to seeded demo profile for quick developer testing
     farmer_repo = FarmerRepository(db)
     demo_user = await farmer_repo.get_by_id("demo_user_1")
     if demo_user and demo_user.farmer_profile:
         return demo_user.farmer_profile
-
+    from app.services.demo.demo_service import DemoModeService
+    await DemoModeService.ensure_canonical_demo_data(db)
+    demo_user = await farmer_repo.get_by_id("demo_user_1")
+    if demo_user and demo_user.farmer_profile:
+        return demo_user.farmer_profile
     return get_canonical_demo_farmer_profile()
 
 async def get_current_farmer_profile_optional(
@@ -89,7 +80,7 @@ async def get_current_farmer_profile_optional(
     if user and user.farmer_profile:
         return user.farmer_profile
 
-    if settings.DEMO_MODE or (settings.APP_ENV not in ["production", "staging"] and settings.effective_env not in ["production", "staging"]):
+    if settings.DEMO_MODE:
         farmer_repo = FarmerRepository(db)
         demo_user = await farmer_repo.get_by_id("demo_user_1")
         if demo_user and demo_user.farmer_profile:

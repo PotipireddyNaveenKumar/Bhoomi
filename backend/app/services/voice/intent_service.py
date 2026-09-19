@@ -143,23 +143,21 @@ class IntentNormalizationService:
                 language=detected_lang,
                 raw_transcript=raw,
                 normalized_text=normalized,
-                confidence=confidence,
                 target_crop=crop,
                 target_task_type=task_type,
                 trace_id=active_trace
             )
 
-        # 4. Check Task Postponement
+        # 4. Check Task Postpone
         if cls._is_task_postpone(normalized):
             return VoiceIntent(
                 intent_type=VoiceIntentType.TASK_POSTPONE,
                 language=detected_lang,
                 raw_transcript=raw,
                 normalized_text=normalized,
-                confidence=confidence,
                 target_crop=crop,
                 target_task_type=task_type,
-                requested_delay_days=delay_days or 2,
+                requested_delay_days=delay_days,
                 trace_id=active_trace
             )
 
@@ -170,36 +168,20 @@ class IntentNormalizationService:
                 language=detected_lang,
                 raw_transcript=raw,
                 normalized_text=normalized,
-                confidence=confidence,
                 target_crop=crop,
                 target_task_type=task_type,
                 confirmation_required=True,
                 trace_id=active_trace
             )
 
-        # 5.5 Agricultural News & Policy/Market Updates
-        is_news_query = any(w in normalized for w in [
-            "latest agriculture news", "latest news", "agriculture news", "agri news", "farming news",
-            "market updates", "news update", "news updates", "updates on", "any updates", "update on",
-            "what's happening with", "what is happening with", "current updates", "crop news", "price news",
-            "policy news", "subsidy news", "any news", "news",
-            "వార్తలు", "వ్యవసాయ వార్తలు", "తాజా వార్తలు", "రైతు వార్తలు", "మార్కెట్ వార్తలు",
-            "వార్తలేమిటి", "ఏమైనా వార్తలు", "అప్‌డేట్స్", "అప్డేట్స్", "విశేషాలు",
-            "समाचार", "कृषि समाचार", "ताज़ा समाचार", "ताज़ा खबरें", "खेती की खबरें",
-            "किसान समाचार", "मंडी समाचार", "खबरें", "खबर", "अपडेट"
-        ])
-        if is_news_query:
-            return VoiceIntent(
-                intent_type=VoiceIntentType.AGRICULTURAL_NEWS,
-                language=detected_lang,
-                raw_transcript=raw,
-                normalized_text=normalized,
-                target_crop=crop,
-                entities={"topic": crop or "general"},
-                trace_id=active_trace
-            )
+        # Extract entities (Crop, Location, TaskType, DelayDays)
+        location = cls._extract_location(normalized)
+        if location:
+            entities = {"location": location}
+        else:
+            entities = {}
 
-        # 6.0 Spray Weather Safety (weather/spray suitability)
+        # 6.0 Spray Window Forecast (weather/spray suitability)
         spray_words = [
             "spray", "spraying", "herbicide", "pesticide", "fungicide", "insecticide", "weedicide",
             "స్ప్రే", "పిచికారీ", "పురుగుమందు", "మందు",
@@ -207,86 +189,340 @@ class IntentNormalizationService:
         ]
         spray_condition_words = [
             "can i", "should i", "tomorrow", "today", "morning", "weather", "safe to",
-            "between", "forecast", "window", "hour", "hours", "wind", "rain", "suitability",
-            "చేయవచ్చా", "చేయవచ్చ?", "చేయొచ్చా", "కొట్టవచ్చా", "కొట్టొచ్చా", "రేపు", "ఈరోజు", "ఉదయం", "వాతావరణం", "కాలం",
-            "कर सकता", "करना चाहिए", "कल", "आज", "सुबह", "मौसम",
+            "between", "forecast", "window", "hour", "hours", "wind", "rain", "suitability", "suitable",
+            "చేయవచ్చా", "చేయవచ్చ?", "చేయొచ్చా", "కొట్టవచ్చా", "కొట్టొచ్చా", "రేపు", "ఈరోజు", "ఉదయం", "వాతావరణం", "కాలం", "అనుకూలమా",
+            "कर सकता", "करना चाहिए", "कल", "आज", "सुबह", "मौसम", "उपयुक्त",
             "தெளிக்கலாமா", "சிಂಪಡಿಸಬಹುದೇ", "സ്പ്രേ ചെയ്യാമോ"
         ]
         has_spray = any(w in normalized for w in spray_words)
         has_spray_cond = any(w in normalized for w in spray_condition_words)
-        if has_spray and (has_spray_cond or "spray safety" in normalized or "safe to spray" in normalized):
+        if has_spray and (has_spray_cond or "spray safety" in normalized or "safe to spray" in normalized or "spray window" in normalized or "suitable for spraying" in normalized):
             return VoiceIntent(
-                intent_type=VoiceIntentType.SPRAY_WEATHER_SAFETY,
+                intent_type=VoiceIntentType.SPRAY_WINDOW_FORECAST,
                 language=detected_lang,
                 raw_transcript=raw,
                 normalized_text=normalized,
                 target_crop=crop,
                 target_task_type=TaskType.SPRAYING,
+                entities=entities,
                 trace_id=active_trace
             )
 
-        # 6. Environmental and Weather Queries
-        if any(w in normalized for w in ["weather", "rain", "rainfall", "forecast", "temperature", "వాతావరణం", "వాతావరణ", "వర్షం", "వర్ష", "मौसम", "बारिश", "तापमान", "வானிலை", "हवामान", "കാലാവസ്ഥ"]):
-            return VoiceIntent(intent_type=VoiceIntentType.WEATHER_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
-
-        # 7. Irrigation Queries and Decisions
-        if any(w in normalized for w in ["irrigate", "irrigation", "water today", "watering today", "should i irrigate", "need to irrigate", "water the crop", "water available", "నీరు పెట్టాలా", "తడి ఇవ్వాలా", "నీటి పారుదల", "సిరచాల", "నీరు ఇవ్వాలా", "సిరచ", "సిंचाई करनी चाहिए", "पानी देना चाहिए", "सिंचाई", "நீர்ப்பாசனம்", "நೀರಾವರಿ", "നനയ്ക്കണമോ"]):
-            return VoiceIntent(intent_type=VoiceIntentType.IRRIGATION_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, target_task_type=TaskType.IRRIGATION, trace_id=active_trace)
-
-        # 8. Mandi, Market, and Sell Decisions
-        if any(w in normalized for w in ["price", "market", "mandi", "modal", "sell now", "should i sell", "when to sell", "rate", "ధర", "ధరలు", "మార్కెట్", "మండి", "దర", "అమ్మ", "दाम", "मंडी", "भाव", "बेच", "விலை", "ಬೆಲೆ", "വില"]):
-            return VoiceIntent(intent_type=VoiceIntentType.MARKET_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
-
-        # 9. Profit and Financial Simulation
-        if any(w in normalized for w in ["profit", "net profit", "revenue", "margin", "economics", "roi", "profitable", "yield decreases", "price falls", "లాభ", "లాభాల", "ఆదాయం", "मुनाफा", "आमदनी", "लाभ"]):
-            return VoiceIntent(intent_type=VoiceIntentType.PROFIT_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
-
-        # 10. Harvest Queries
-        if any(w in normalized for w in ["harvest", "ready to harvest", "when should i harvest", "picking", "కోత", "కోయడం", "कटाई", "तोड़ाई"]):
-            return VoiceIntent(intent_type=VoiceIntentType.HARVEST_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
-
-        # 11. Fertilizer Inquiries
-        if any(w in normalized for w in ["fertilizer", "urea", "dap", "potash", "19:19:19", "nutrient", "yellow leaves", "nitrogen deficiency", "foliar", "ఎరువు", "ఎరువులు", "खाद", "उर्वरक"]):
-            return VoiceIntent(intent_type=VoiceIntentType.FERTILIZER_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
-
-        # 12. Pest and Disease Queries
-        pest_keywords = [
-            "curling", "curl", "curled", "spots", "leaf curl", "blight", "pests", "insects",
-            "insecticide", "fungicide", "infestation", "yellow mosaic", "wilt", "rot", "damping off",
-            "whitefly", "thrips", "aphids", "mites", "caterpillar", "borer",
-            "ముడుచు", "ముడత", "ముడుచుకుంటున్నాయి", "ముడుచుకుంటుంది", "ఆకు ముడత", "ఆకులు ముడుచు", "ఆకులు",
-            "తెగులు", "పురుగు", "కీటకాలు", "నల్లి", "తామర", "దోమ", "మచ్చలు", "కుళ్లు",
-            "बीमारी", "कीट", "मरोड़िया", "सिकुड़", "सिकुड़ना", "पत्ती मुड़", "पत्तियां मुड़", "पत्तियाँ मुड़", "पत्तियां मुड़", "पत्तियाँ मुड़", "मुड़ रही", "मुड़ रही", "मुड़", "मुड़", "मुड़ना", "मुड़ना", "धब्बे", "सड़न",
-            "சுருட்டை", "இலை சுருட்டை", "நோய்", "பூச்சி",
-            "ಮುದುಡುವಿಕೆ", "ಎಲೆ ಮುದುಡುವುದು", "ರೋಗ", "ಕೀಟ",
-            "ചുരുളൽ", "ഇല ചുരുളൽ", "രോഗം", "കീടം"
+        # 7.0 Irrigation Forecast and Queries
+        irrigation_indicators = [
+            "irrigate", "irrigation", "water today", "watering today", "should i irrigate", "need to irrigate",
+            "water the crop", "water available", "when should i irrigate", "when to irrigate", "irrigate next",
+            "నీరు పెట్టాలా", "తడి ఇవ్వాలా", "నీటి పారుదల", "సిరచాల", "నీరు ఇవ్వాలా", "సిరచ", "ఎప్పుడు తడి", "నీరు ఎప్పుడు",
+            "సిరచా", "సిరచించాలి", "సిరచాలని",
+            "सिंचाई करनी चाहिए", "पानी देना चाहिए", "सिंचाई", "सिंचाई कब करनी चाहिए", "सिंचाई कब करें",
+            "நீர்ப்பாசனம்", "நೀರಾವரி", "നനയ്ക്കണമോ"
         ]
-        if any(w in normalized for w in pest_keywords):
-            return VoiceIntent(intent_type=VoiceIntentType.PEST_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+        if any(w in normalized for w in irrigation_indicators):
+            return VoiceIntent(
+                intent_type=VoiceIntentType.IRRIGATION_FORECAST,
+                language=detected_lang,
+                raw_transcript=raw,
+                normalized_text=normalized,
+                target_crop=crop,
+                target_task_type=TaskType.IRRIGATION,
+                entities=entities,
+                trace_id=active_trace
+            )
 
-        # 13. Crop Recommendation & Selection
-        if any(w in normalized for w in ["which crop", "recommend crop", "crop recommendation", "best crop", "crop for black soil", "suitable for black soil", "grow a crop", "want to grow", "crop selection", "ఏ పంట వేయాలి", "ఏ పంట మంచిది", "నల్లరేగడి", "నల్ల రేగడి", "పంట సిఫార్సు", "कौन सी फसल", "काली मिट्टी", "फसल लगाना"]):
+        # 8.0 Weather Queries: Disambiguate Canonical Weather Intents
+        weather_indicators = [
+            "weather", "rain", "rainfall", "forecast", "temperature", "temp",
+            "వాతావరణం", "వాతావరణ", "వర్షం", "వర్ష", "ఉష్ణోగ్రత",
+            "मौसम", "बारिश", "तापमान",
+            "வானிலை", "வெப்பநிலை", "மழை",
+            "हवामान", "ತಾಪಮಾನ", "ಮಳೆ",
+            "കാലാവസ്ഥ", "താപനില", "മഴ"
+        ]
+        is_weather = any(w in normalized for w in weather_indicators)
+        if is_weather:
+            # 8.1 Multi-day Forecast (weekly / next 5 days / next days)
+            multi_day_indicators = [
+                "next five days", "next 5 days", "next five", "next 5", "next 3 days", "next three days",
+                "next 7 days", "next seven days", "next few days", "this week", "next week", "weekly",
+                "వచ్చే ఐదు", "వచ్చే 5", "వచ్చే వారం", "ఈ వారం", "వచ్చే కొన్ని రోజులు",
+                "अगले पांच", "अगले 5", "इस सप्ताह", "इस हफ्ते", "अगले कुछ दिन",
+                "அடுத்த ஐந்து", "ಮುಂದಿನ ಐದು", "അടുത്ത അഞ്ച്"
+            ]
+            if any(w in normalized for w in multi_day_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.MULTI_DAY_FORECAST,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 8.2 Rain Forecast Specific
+            rain_specific_indicators = [
+                "will it rain", "rain forecast", "chance of rain", "is it going to rain", "probability of rain",
+                "rain chance", "raining", "rainfall forecast",
+                "వర్షం పడుతుందా", "వర్ష సూచన", "వర్షం అవకాశం", "వర్షం వస్తుందా", "వర్షం పడే",
+                "बारिश होगी", "बारिश का पूर्वानुमान", "बारिश की संभावना", "क्या बारिश",
+                "மழை பெய்யுமா", "மழை வாய்ப்பு",
+                "ಮಳೆ ಬರುತ್ತದೆಯೇ", "ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆ",
+                "മഴ പെയ്യുമോ", "മഴ സാധ്യത"
+            ]
+            if any(w in normalized for w in rain_specific_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.RAIN_FORECAST,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 8.3 Tomorrow Forecast
+            tomorrow_indicators = [
+                "tomorrow", "tomorrow's", "tomorrow forecast", "రేపు", "రేపటి", "రాగల", "कल", "कल का",
+                "நாளை", "நாளைக்கு", "ನಾಳೆ", "നാളത്തെ"
+            ]
+            if any(w in normalized for w in tomorrow_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.TOMORROW_FORECAST,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 8.4 Today Weather
+            today_indicators = [
+                "today", "today's", "what will today's weather be like", "how is today's weather",
+                "ఈరోజు", "నేడు", "ఇవాళ", "आज", "आज का", "இன்று", "இன்றைய", "ಇಂದು", "ಇಂದಿನ", "ഇന്ന്", "ഇന്നത്തെ"
+            ]
+            if any(w in normalized for w in today_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.TODAY_WEATHER,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 8.5 Current Weather (Default for current/now/live or general weather query)
+            return VoiceIntent(
+                intent_type=VoiceIntentType.CURRENT_WEATHER,
+                language=detected_lang,
+                raw_transcript=raw,
+                normalized_text=normalized,
+                entities=entities,
+                trace_id=active_trace
+            )
+
+        # 9.0 Mandi, Market, and Sell Decisions: Canonical Market Intents
+        market_indicators = [
+            "price", "market", "mandi", "modal", "sell", "selling", "rate", "rates",
+            "arrivals", "arrival", "trend", "volume",
+            "ధర", "ధరలు", "మార్కెట్", "మండి", "దర", "అమ్మ", "రాకలు", "రాక", "సరళి",
+            "दाम", "मंडी", "भाव", "बेच", "आवक", "रुझान",
+            "விலை", "சந்தை", "விற்பனை", "வரத்து",
+            "ಬೆಲೆ", "ಮಾರುಕಟ್ಟೆ", "ಮಾರಾಟ", "ಆವಕ",
+            "വില", "വിപണി", "വരവ്"
+        ]
+        is_market = any(w in normalized for w in market_indicators)
+        if is_market:
+            # 9.1 Market Trend
+            trend_indicators = [
+                "trend", "price trend", "trend this week", "price increasing", "price decreasing",
+                "going up", "going down", "rising", "falling",
+                "ధరల సరళి", "ధరలు పెరుగుతున్నాయా", "ధర తగ్గుతోందా", "మార్కెట్ సరళి",
+                "भाव का रुझान", "रुझान", "कीमतें बढ़ रही हैं", "दाम गिर रहे हैं",
+                "விலை போக்கு", "ಬೆಲೆ ಪ್ರವೃತ್ತಿ"
+            ]
+            if any(w in normalized for w in trend_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.MARKET_TREND,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    target_crop=crop,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 9.2 Market Comparison
+            compare_indicators = [
+                "compare", "vs", "difference", "which mandi", "which market", "better price",
+                "higher price", "nearby market has a better price", "two mandis",
+                "పోల్చండి", "తేడా", "ఏ మార్కెట్", "మంచి ధర", "ఏ మండి",
+                "तुलना", "कौन सी मंडी", "बेहतर भाव", "दो मंडियों", "किस मंडी",
+                "ஒப்பிட", "எந்த சந்தை", "ಯಾವ ಮಾರುಕಟ್ಟೆ", "ഏത് വിപണി"
+            ]
+            if any(w in normalized for w in compare_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.MARKET_COMPARISON,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    target_crop=crop,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 9.3 Market Arrivals
+            arrivals_indicators = [
+                "arrivals", "arrival", "arrival volume", "today's arrivals", "stock arrived", "how much arrived",
+                "రాకలు", "రాక", "ఎంత సరుకు వచ్చింది", "మార్కెట్ రాక",
+                "आवक", "आज की आवक", "कितनी आवक", "मंडी में आवक",
+                "வரத்து", "இன்றைய வரத்து", "ಆವಕ"
+            ]
+            if any(w in normalized for w in arrivals_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.MARKET_ARRIVALS,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    target_crop=crop,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 9.4 Market Location Search
+            location_search_indicators = [
+                "mandis near", "markets near", "nearby mandis", "nearby markets", "mandis in", "markets in",
+                "find mandis", "list mandis", "list markets",
+                "సమీపంలోని మార్కెట్లు", "సమీప మార్కెట్లు", "జిల్లా మార్కెట్లు",
+                "के पास की मंडियां", "नजदीकी मंडी", "जिले की मंडियां",
+                "அருகிலுள்ள சந்தைகள்", "ಹತ್ತಿರದ ಮಾರುಕಟ್ಟೆಗಳು"
+            ]
+            if any(w in normalized for w in location_search_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.MARKET_LOCATION_SEARCH,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    target_crop=crop,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 9.5 Sell Decision
+            sell_decision_indicators = [
+                "sell now", "should i sell", "when to sell", "is it time to sell", "hold or sell",
+                "అమ్మాలా", "ఎప్పుడు అమ్మాలి", "ఇప్పుడే అమ్మాలా",
+                "बेचना चाहिए", "कब बेचें", "क्या अभी बेचें",
+                "விற்கலாமா", "ಮಾರಾಟ ಮಾಡಬೇಕೆ"
+            ]
+            if any(w in normalized for w in sell_decision_indicators):
+                return VoiceIntent(
+                    intent_type=VoiceIntentType.MARKET_SELL_DECISION,
+                    language=detected_lang,
+                    raw_transcript=raw,
+                    normalized_text=normalized,
+                    target_crop=crop,
+                    entities=entities,
+                    trace_id=active_trace
+                )
+
+            # 9.6 Default Market Price
+            return VoiceIntent(
+                intent_type=VoiceIntentType.MARKET_PRICE,
+                language=detected_lang,
+                raw_transcript=raw,
+                normalized_text=normalized,
+                target_crop=crop,
+                entities=entities,
+                trace_id=active_trace
+            )
+
+        # 10.0 Profit, ROI & What-If Simulation
+        is_simulation = any(w in normalized for w in ["what if", "if price", "if yield", "if rain", "yield decreases", "price falls", "ఒకవేళ", "ధర తగ్గితే", "దిగుబడి తగ్గితే", "अगर दाम गिर", "अगर बारिश"])
+        if is_simulation:
+            return VoiceIntent(intent_type=VoiceIntentType.WHAT_IF_SIMULATION, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+
+        if any(w in normalized for w in ["profit", "net profit", "revenue", "margin", "economics", "roi", "profitable", "cost of cultivation", "income", "లాభ", "లాభాల", "ఆదాయం", "ఖర్చు", "मुनाफा", "आमदनी", "लाभ", "வருமானம்", "ಲಾಭ"]):
+            return VoiceIntent(intent_type=VoiceIntentType.PROFIT_ANALYSIS, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+
+        # 11.0 Harvest Queries and Decisions
+        if any(w in normalized for w in ["harvest", "ready to harvest", "when should i harvest", "picking", "harvest time", "కోత", "కోయడం", "కాయ కోత", "कटाई", "तोड़ाई", "அறுவடை", "ಕೊಯ್ಲು"]):
+            return VoiceIntent(intent_type=VoiceIntentType.HARVEST_DECISION, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+
+        # 12.0 Fertilizer Inquiries & Nutrient Advice
+        if any(w in normalized for w in ["fertilizer", "urea", "dap", "potash", "19:19:19", "nutrient", "yellow leaves", "nitrogen deficiency", "foliar", "dosage", "ఎరువు", "ఎరువులు", "డిఎపి", "యూరియా", "खाद", "उर्वरक", "உரம்", "ಗೊಬ್ಬರ"]):
+            return VoiceIntent(intent_type=VoiceIntentType.FERTILIZER_ADVICE, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+
+        # 13.0 Pest and Disease Queries
+        pest_indicators = [
+            "curling", "curl", "curled", "pests", "insects", "insecticide", "infestation",
+            "whitefly", "thrips", "aphids", "mites", "caterpillar", "borer",
+            "ముడుచు", "ముడత", "ముడుచుకుంటున్నాయి", "ముడుచుకుంటుంది", "ఆకు ముడత", "ఆకులు ముడుచు",
+            "పురుగు", "కీటకాలు", "నల్లి", "తామర", "దోమ",
+            "कीट", "मरोड़िया", "सिकुड़", "सिकुड़ना", "पत्ती मुड़", "पत्तियां मुड़", "पत्तियाँ मुड़", "पत्तियां मुड़", "पत्तियाँ मुड़", "मुड़ रही", "मुड़ रही", "मुड़", "मुड़", "मुड़ना", "मुड़ना",
+            "சுருட்டை", "இலை சுருட்டை", "பூச்சி",
+            "ಮುದುಡುವಿಕೆ", "ಎಲೆ ಮುದುಡುವುದು", "ಕೀಟ",
+            "ചുരുളൽ", "ഇല ചുരുളൽ", "കീടം"
+        ]
+        disease_indicators = [
+            "spots", "blight", "fungicide", "yellow mosaic", "wilt", "rot", "damping off", "disease",
+            "తెగులు", "మచ్చలు", "కుళ్లు",
+            "बीमारी", "धब्बे", "सड़न",
+            "நோய்", "ರೋಗ", "രോഗം"
+        ]
+        if any(w in normalized for w in pest_indicators):
+            return VoiceIntent(intent_type=VoiceIntentType.PEST_QUERY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+        if any(w in normalized for w in disease_indicators):
+            return VoiceIntent(intent_type=VoiceIntentType.DISEASE_DIAGNOSIS, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+
+        # 14.0 Crop Recommendation & Comparison
+        is_crop_rec = any(w in normalized for w in ["which crop", "recommend crop", "crop recommendation", "best crop", "crop for black soil", "suitable for black soil", "grow a crop", "want to grow", "crop selection", "ఏ పంట వేయాలి", "ఏ పంట మంచిది", "నల్లరేగడి", "నల్ల రేగడి", "పంట సిఫార్సు", "कौन सी फसल", "काली मिट्टी", "फसल लगाना"])
+        if is_crop_rec:
+            if any(w in normalized for w in ["compare", "vs", "or", "లేదా", "యా"]):
+                return VoiceIntent(intent_type=VoiceIntentType.CROP_COMPARISON, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
             return VoiceIntent(intent_type=VoiceIntentType.CROP_RECOMMENDATION, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
 
-        # 14. Crop Management & Stage
-        if any(w in normalized for w in ["planted", "crop stage", "what stage", "what should i do now", "management", "పంట దశ", "నాటిన తర్వాత"]):
-            return VoiceIntent(intent_type=VoiceIntentType.CROP_MANAGEMENT, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+        # 16.0 Weekly Task Queries
+        if any(w in normalized for w in ["what should i do this week", "weekly plan", "weekly tasks", "this week", "ఈ వారం", "ఈ వారపు పనులు", "इस हफ्ते", "इस सप्ताह", "இந்த வாரம்", "ಈ ವಾರ", "ഈ ആഴ്ച"]):
+            return VoiceIntent(intent_type=VoiceIntentType.WEEKLY_PLAN, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
 
-        # 15. Farm Changes and What is New
+        # 15.0 Today Specific Farm Manager Priorities and Tasks ("What should I do today?")
+        is_bare_today = normalized.strip() in ["today", "ఈరోజు", "आज", "இன்று", "ಇಂದು", "ഇന്ന്"]
+        is_task_today = (
+            is_bare_today
+            or any(w in normalized for w in ["what should i do today", "what to do today", "today's task", "today's tasks", "tasks for today", "today's priority", "today priorities", "what should i do"])
+            or ("today" in normalized and any(w in normalized for w in ["task", "tasks", "priority", "priorities", "schedule", "work", "do", "action"]))
+            or ("ఈరోజు" in normalized and any(w in normalized for w in ["ఏం చేయాలి", "ఏమి చేయాలి", "పనులు", "చేయాలి", "పని"]))
+            or ("నేను ఏమి చేయాలి" in normalized)
+            or ("आज" in normalized and any(w in normalized for w in ["क्या करना", "क्या करें", "काम", "कार्य", "करना चाहिए", "करना"]))
+            or ("இன்று" in normalized and any(w in normalized for w in ["என்ன செய்ய", "பணிகள்", "வேலை"]))
+            or ("ಇಂದು" in normalized and any(w in normalized for w in ["ಏನು ಮಾಡ", "ಕೆಲಸ"]))
+            or ("ഇന്ന്" in normalized and any(w in normalized for w in ["എന്ത് ചെയ്യ", "ജോലി"]))
+        )
+        if is_task_today:
+            return VoiceIntent(intent_type=VoiceIntentType.TODAY_PLAN, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
+
+        # 17.0 Pending and Overdue Tasks
+        if any(w in normalized for w in ["what is pending", "what did i miss", "what is overdue", "what should i do next", "pending tasks", "tasks", "బాకీ పనులు", "మిగిలిన పనులు", "బాకీ", "बाकी काम", "बकाया काम"]):
+            return VoiceIntent(intent_type=VoiceIntentType.TASK_PENDING, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
+
+        # 18.0 Crop Management & Stage
+        if any(w in normalized for w in ["planted", "crop stage", "what stage", "what should i do now", "management", "పంట దశ", "నాటిన తర్వాత"]):
+            return VoiceIntent(intent_type=VoiceIntentType.CROP_HEALTH, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+
+        # 19.0 Farm Changes and What is New
         if any(w in normalized for w in ["what changed", "what is new", "what's new", "recent changes", "మార్పులు", "ఏమి మారాయి", "क्या बदला", "क्या नया है"]):
             return VoiceIntent(intent_type=VoiceIntentType.FARM_CHANGES, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
 
-        # 16. Farm Status / Crop Health Status
-        if any(w in normalized for w in ["how is my crop", "how is my farm", "crop health", "farm health", "status of my farm", "నా పంట ఎలా ఉంది", "పంట పరిస్థితి"]):
-            return VoiceIntent(intent_type=VoiceIntentType.CROP_STATUS, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+        # 20.0 Farm Status / Profile
+        if any(w in normalized for w in ["farm profile", "profile", "my farm", "farm details", "నా ప్రొఫైల్", "నా పొలం వివరాలు"]):
+            return VoiceIntent(intent_type=VoiceIntentType.FARM_PROFILE, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
 
-        # 17. Why / Reason Queries (Specifically for Farm Tasks & Postponements)
+        if any(w in normalized for w in ["how is my crop", "how is my farm", "crop health", "farm health", "status of my farm", "నా పంట ఎలా ఉంది", "పంట పరిస్థితి"]):
+            return VoiceIntent(intent_type=VoiceIntentType.FARM_STATUS, language=detected_lang, raw_transcript=raw, normalized_text=normalized, target_crop=crop, trace_id=active_trace)
+
+        # 20.5 Task Why Queries (Why was my task postponed / scheduled?)
         task_why_markers = [
-            "why should i", "why was", "why postpone", "why is this task", "why is this due", "why delay",
-            "why irrigate", "why water", "why spray", "why fertilize",
-            "వాయిదా ఎందుకు", "ఈ పని ఎందుకు", "ఎందుకు వాయిదా", "ఎందుకు నీరు పెట్టాలి", "ఎందుకు స్ప్రే చేయాలి",
-            "పని ఎందుకు", "డ్యూ ఎందుకు", "టాస్క్ ఎందుకు",
-            "क्यों टालें", "यह काम क्यों", "काम क्यों", "सिंचाई क्यों", "स्थगित क्यों"
+            "why was", "why is", "why postpone", "why delay", "why cancel", "why irrigation",
+            "ఎందుకు వాయిదా", "ఎందుకు ఆలస్యం", "ఎందుకు చేయాలి", "ఎందుకు",
+            "क्यों स्थगित", "क्यों टाला", "क्यों करें", "यह काम क्यों", "काम क्यों", "सिंचाई क्यों", "स्थगित क्यों"
         ]
         has_foliar_symptom = any(w in normalized for w in [
             "curl", "curling", "spots", "blight", "yellow", "ముడుచు", "ముడత", "నల్లి", "తామర", "పురుగు", "తెగులు", "మచ్చలు", "పసుపు",
@@ -309,37 +545,13 @@ class IntentNormalizationService:
                 trace_id=active_trace
             )
 
-        # 18. Weekly Task Queries
-        if any(w in normalized for w in ["what should i do this week", "weekly plan", "weekly tasks", "this week", "ఈ వారం", "ఈ వారపు పనులు", "इस हफ्ते", "इस सप्ताह", "இந்த வாரம்", "ಈ ವಾರ", "ഈ ആഴ്ച"]):
-            return VoiceIntent(intent_type=VoiceIntentType.TASK_WEEK, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
-
-        # 19. Pending and Overdue Tasks
-        if any(w in normalized for w in ["what is pending", "what did i miss", "what is overdue", "what should i do next", "pending tasks", "బాకీ పనులు", "మిగిలిన పనులు", "बाकी काम", "बकाया काम"]):
-            return VoiceIntent(intent_type=VoiceIntentType.TASK_PENDING, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
-
-        # 20. Today Specific Farm Manager Priorities and Tasks
-        is_bare_today = normalized.strip() in ["today", "ఈరోజు", "आज", "இன்று", "ಇಂದು", "ഇന്ന്"]
-        is_task_today = (
-            is_bare_today
-            or any(w in normalized for w in ["what should i do today", "what to do today", "today's task", "today's tasks", "tasks for today"])
-            or ("today" in normalized and any(w in normalized for w in ["task", "tasks", "priority", "priorities", "schedule", "work", "do", "action"]))
-            or ("ఈరోజు" in normalized and any(w in normalized for w in ["ఏం చేయాలి", "ఏమి చేయాలి", "పనులు", "చేయాలి", "పని"]))
-            or ("నేను ఏమి చేయాలి" in normalized)
-            or ("आज" in normalized and any(w in normalized for w in ["क्या करना", "क्या करें", "काम", "कार्य", "करना चाहिए", "करना"]))
-            or ("இன்று" in normalized and any(w in normalized for w in ["என்ன செய்ய", "பணிகள்", "வேலை"]))
-            or ("ಇಂದು" in normalized and any(w in normalized for w in ["ಏನು ಮಾಡ", "ಕೆಲಸ"]))
-            or ("ഇന്ന്" in normalized and any(w in normalized for w in ["എന്ത് ചെയ്യ", "ജോലി"]))
-        )
-        if is_task_today:
-            return VoiceIntent(intent_type=VoiceIntentType.TASK_TODAY, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
-
-        # 21. General Greetings (short utterances)
+        # 21.0 General Greetings (short utterances)
         if any(w in normalized for w in ["hello", "hi", "hey", "namaste", "namaskaram", "నమస్కారం", "నమస్తే", "హలో", "नमस्ते", "வணக்கம்", "நமஸ்காரம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം"]) and len(normalized.split()) <= 4:
-            return VoiceIntent(intent_type=VoiceIntentType.GENERAL_GREETING, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
+            return VoiceIntent(intent_type=VoiceIntentType.GENERAL_CONVERSATION, language=detected_lang, raw_transcript=raw, normalized_text=normalized, trace_id=active_trace)
 
-        # Default: General Agriculture
+        # Default: General Agricultural Knowledge RAG
         return VoiceIntent(
-            intent_type=VoiceIntentType.GENERAL_AGRICULTURE,
+            intent_type=VoiceIntentType.AGRICULTURAL_KNOWLEDGE,
             language=detected_lang,
             raw_transcript=raw,
             normalized_text=normalized,
@@ -428,6 +640,10 @@ class IntentNormalizationService:
         return any(ind in cleaned for ind in indicators)
 
     @classmethod
+    def extract_crop(cls, text: str) -> Optional[str]:
+        return cls._extract_crop(text)
+
+    @classmethod
     def _extract_crop(cls, text: str) -> Optional[str]:
         cleaned = cls._clean_str(text)
         sorted_aliases = sorted(cls.CROP_ALIASES.keys(), key=len, reverse=True)
@@ -462,3 +678,30 @@ class IntentNormalizationService:
             except Exception:
                 pass
         return None
+
+    @classmethod
+    def _extract_location(cls, text: str) -> Optional[str]:
+        cleaned = text.lower()
+        locations = [
+            ("warangal", "Warangal"), ("guntur", "Guntur"), ("khammam", "Khammam"),
+            ("hyderabad", "Hyderabad"), ("vijayawada", "Vijayawada"), ("visakhapatnam", "Visakhapatnam"),
+            ("kurnool", "Kurnool"), ("nellore", "Nellore"), ("karimnagar", "Karimnagar"),
+            ("nizamabad", "Nizamabad"), ("anantapur", "Anantapur"), ("kadapa", "Kadapa"),
+            ("agra", "Agra"), ("pune", "Pune"), ("delhi", "Delhi"), ("bangalore", "Bangalore"),
+            ("bengaluru", "Bangalore"), ("mumbai", "Mumbai"), ("chennai", "Chennai"),
+            ("nagpur", "Nagpur"), ("nashik", "Nashik"), ("indore", "Indore"), ("jaipur", "Jaipur"),
+            ("వరంగల్", "Warangal"), ("గుంటూరు", "Guntur"), ("ఖమ్మం", "Khammam"),
+            ("హైదరాబాద్", "Hyderabad"), ("విజయవాడ", "Vijayawada"), ("కరీంనగర్", "Karimnagar"),
+            ("కర్నూలు", "Kurnool"), ("నెల్లూరు", "Nellore"), ("అనంతపురం", "Anantapur"),
+            ("वारंगल", "Warangal"), ("गुंटूर", "Guntur"), ("खम्मम", "Khammam"),
+            ("हैदराबाद", "Hyderabad"), ("विजयवाड़ा", "Vijayawada"), ("आगरा", "Agra"),
+            ("पुणे", "Pune"), ("दिल्ली", "Delhi"), ("बेंगलुरु", "Bangalore")
+        ]
+        for term, canonical in locations:
+            if term in cleaned:
+                return canonical
+        return None
+
+# Canonical alias for backward compatibility across agents and tests
+VoiceIntentService = IntentNormalizationService
+
