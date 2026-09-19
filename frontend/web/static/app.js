@@ -758,6 +758,15 @@ window.addEventListener("hashchange", () => {
   applyRouteGuard(getCurrentRoute());
 });
 
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    const savedToken = localStorage.getItem("bhoomi_auth_token");
+    if (!savedToken && currentAppState === AuthState.AUTHENTICATED) {
+      transitionToUnauthenticated("/login");
+    }
+  }
+});
+
 async function initAuth() {
   setAppState(AuthState.AUTH_CHECKING);
 
@@ -766,7 +775,7 @@ async function initAuth() {
 
   if (savedToken && savedToken.startsWith("demo_")) {
     const refreshToken = localStorage.getItem("bhoomi_refresh_token");
-    if (token) {
+    if (savedToken) {
       try {
         await fetch("/api/v1/auth/logout", {
           method: "POST",
@@ -860,7 +869,7 @@ async function initAuth() {
   } catch (err) {
     console.warn("Session verification error:", err);
     const refreshToken = localStorage.getItem("bhoomi_refresh_token");
-    if (token) {
+    if (savedToken) {
       try {
         await fetch("/api/v1/auth/logout", {
           method: "POST",
@@ -1544,6 +1553,118 @@ function switchAuthMode(mode, updateUrl = true) {
   }
 }
 
+
+async function handleReviewerDemoLogin() {
+  const errorMsg = document.getElementById("authErrorMsg");
+  const allDemoBtns = document.querySelectorAll(".btn-reviewer-demo");
+
+  if (errorMsg) errorMsg.style.display = "none";
+
+  allDemoBtns.forEach(btn => {
+    btn.disabled = true;
+    btn.innerHTML = `<span>⏳</span> <span>Authenticating Reviewer...</span>`;
+  });
+
+  try {
+    const res = await fetch("/api/v1/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_demo: true })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      authToken = data.access_token;
+      localStorage.setItem("bhoomi_auth_token", authToken);
+      if (data.refresh_token) {
+        localStorage.setItem("bhoomi_refresh_token", data.refresh_token);
+      }
+
+      // Query /api/v1/auth/me to verify identity directly from canonical endpoint
+      const meRes = await fetch("/api/v1/auth/me", {
+        headers: {
+          "Authorization": `Bearer ${authToken}`,
+          "Accept": "application/json"
+        }
+      });
+
+      if (meRes.ok) {
+        const meData = await meRes.json();
+        currentUser = {
+          id: meData.id,
+          user_id: meData.id,
+          farmer_id: meData.farmer_profile?.id || meData.id,
+          farm_id: meData.farm?.id || null,
+          phone_number: meData.phone_number,
+          full_name: meData.farmer_profile?.name || data.name || "Reviewer Evaluator",
+          preferred_language: meData.farmer_profile?.preferred_language || data.preferred_language || currentLanguage || "en",
+          state: meData.farmer_profile?.state || data.state || null,
+          district: meData.farmer_profile?.district || data.district || null,
+          village: meData.farmer_profile?.village || data.village || null,
+          land_area_acres: meData.farm?.total_area_acres ?? data.area_acres ?? null,
+          current_crop: meData.farm?.crop_name || data.crop_name || null,
+          crop_variety: data.crop_variety || null,
+          active_crop: meData.farm?.crop_name || data.crop_name || null,
+          soil_type: meData.farm?.soil_type || data.soil_type || null
+        };
+      } else {
+        const resolvedFarmerId = data.farmer_id || data.user_id || "reviewer_demo";
+        currentUser = {
+          id: resolvedFarmerId,
+          farmer_id: resolvedFarmerId,
+          farm_id: data.farm_id || null,
+          user_id: data.user_id,
+          phone_number: data.phone_number || "9988776655",
+          full_name: data.name || "Reviewer Evaluator",
+          preferred_language: data.preferred_language || currentLanguage || "en",
+          state: data.state || null,
+          district: data.district || null,
+          village: data.village || null,
+          land_area_acres: (data.area_acres !== undefined && data.area_acres !== null) ? data.area_acres : null,
+          current_crop: data.crop_name || null,
+          crop_variety: data.crop_variety || null,
+          active_crop: data.crop_name || null,
+          soil_type: data.soil_type || null
+        };
+      }
+
+      localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
+      if (currentUser.preferred_language) {
+        currentLanguage = currentUser.preferred_language;
+        localStorage.setItem("bhoomi_lang", currentLanguage);
+      }
+
+      updateSidebarFarmerProfile(currentUser);
+      updateUILanguage(currentLanguage);
+      transitionToAuthenticated(currentUser, authToken, "/home");
+    } else {
+      let msg = "Reviewer demo login is currently unavailable. Please try again.";
+      try {
+        const err = await res.json();
+        if (typeof err.detail === "string") {
+          msg = err.detail;
+        } else if (err.error && err.error.message) {
+          msg = err.error.message;
+        }
+      } catch (_) {}
+
+      if (errorMsg) {
+        errorMsg.textContent = msg;
+        errorMsg.style.display = "block";
+      }
+    }
+  } catch (err) {
+    if (errorMsg) {
+      errorMsg.textContent = "Network error. Please verify your connection and try again.";
+      errorMsg.style.display = "block";
+    }
+  } finally {
+    allDemoBtns.forEach(btn => {
+      btn.disabled = false;
+      btn.innerHTML = `<span>⚡</span> <span>Reviewer Demo Login</span>`;
+    });
+  }
+}
 
 async function handleReviewerLogin() {
   const phoneEl = document.getElementById("reviewerPhoneInput");
@@ -4735,6 +4856,7 @@ window.calculateFinance = calculateFinance;
 window.runWhatIfSimulation = runWhatIfSimulation;
 window.updateFinanceModalLanguage = updateFinanceModalLanguage;
 window.switchAuthMode = switchAuthMode;
+window.handleReviewerDemoLogin = handleReviewerDemoLogin;
 window.handleReviewerLogin = handleReviewerLogin;
 
 async function handleCompleteOnboarding() {

@@ -60,3 +60,24 @@ async def test_tampered_token_rejected_by_auth_me():
         for fake_token in ["demo_fake_token_123", "invalid.jwt.token", "Bearer forged"]:
             resp = await client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {fake_token}"})
             assert resp.status_code == 401
+
+@pytest.mark.asyncio
+async def test_login_page_renders_sms_status_notice_and_demo_button():
+    """Verify that login page displays the exact SMS status notice and Reviewer Demo Login button."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        resp = await client.get("/login", headers={"Accept": "text/html"})
+        assert resp.status_code == 200
+        html = resp.text
+
+        # Verify exact SMS status notice
+        assert "SMS OTP is not configured yet." in html
+        assert "Reviewers can use Demo Login to access the prototype." in html
+
+        # Verify Reviewer Demo Login button
+        assert "btnReviewerDemoLogin" in html
+        assert "Reviewer Demo Login" in html
+
+        # Verify Farmer Login remains distinct
+        assert "Farmer Login" in html
+        assert "btnSendOtp" in html

@@ -356,3 +356,75 @@ class TestReviewerPasswordAuthentication:
         data_rev = res_rev.json()
         assert data_rev["farm_id"] != "farm_custom_cotton_1"
         assert data_rev["crop_name"] != "Cotton"
+
+    # 20. Reviewer Demo Login succeeds without hardcoded client password
+    def test_20_reviewer_demo_login_success(self):
+        res = client.post("/api/v1/auth/login", json={"is_demo": True})
+        assert res.status_code == 200, f"Demo login failed: {res.text}"
+        data = res.json()
+        assert "access_token" in data
+        assert "refresh_token" in data
+        assert data["token_type"] == "bearer"
+        assert data["name"] == "Reviewer Evaluator"
+        assert data["crop_name"] == "Potato"
+        assert data["farm_id"] is not None
+
+    # 21. Reviewer Demo JWT authenticates /api/v1/auth/me
+    def test_21_reviewer_demo_authenticates_me(self):
+        res_login = client.post("/api/v1/auth/login", json={"is_demo": True})
+        assert res_login.status_code == 200
+        token = res_login.json()["access_token"]
+
+        res_me = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+        assert res_me.status_code == 200
+        me_data = res_me.json()
+        assert me_data["farmer_profile"]["name"] == "Reviewer Evaluator"
+        assert me_data["farm"]["crop_name"] == "Potato"
+        assert me_data["farm"]["soil_type"] == "red_sandy_loam"
+        assert me_data["onboarding_required"] is False
+
+    # 22. Reviewer Demo Session can be refreshed via /api/v1/auth/refresh
+    def test_22_reviewer_demo_session_refresh(self):
+        res_login = client.post("/api/v1/auth/login", json={"is_demo": True})
+        assert res_login.status_code == 200
+        refresh_tok = res_login.json()["refresh_token"]
+        assert refresh_tok is not None
+
+        res_ref = client.post("/api/v1/auth/refresh", json={"refresh_token": refresh_tok})
+        assert res_ref.status_code == 200
+        ref_data = res_ref.json()
+        assert "access_token" in ref_data
+        assert "refresh_token" in ref_data
+
+    # 23. Logout revokes the reviewer demo session
+    def test_23_reviewer_demo_logout_revocation(self):
+        res_login = client.post("/api/v1/auth/login", json={"is_demo": True})
+        assert res_login.status_code == 200
+        access_tok = res_login.json()["access_token"]
+        refresh_tok = res_login.json()["refresh_token"]
+
+        # Logout with bearer token
+        res_logout = client.post(
+            "/api/v1/auth/logout",
+            headers={"Authorization": f"Bearer {access_tok}"},
+            json={"refresh_token": refresh_tok}
+        )
+        assert res_logout.status_code == 200
+        assert res_logout.json()["success"] is True
+
+        # Subsequent refresh with revoked token must fail with 401
+        res_ref_fail = client.post("/api/v1/auth/refresh", json={"refresh_token": refresh_tok})
+        assert res_ref_fail.status_code == 401
+
+    # 24. Missing credentials without is_demo=True still rejected with 422
+    def test_24_missing_credentials_without_demo_rejected(self):
+        res = client.post("/api/v1/auth/login", json={})
+        assert res.status_code == 422
+
+    # 25. Farmer OTP routes remain fail-closed when SMS transport unconfigured
+    def test_25_farmer_otp_routes_remain_fail_closed_in_prod(self):
+        with patch.object(settings, "ENVIRONMENT", "production"), \
+             patch.object(settings, "SMS_PROVIDER", "console"):
+            res = client.post("/api/v1/auth/signup/request-otp", json={"phone_number": "9911991199"})
+            assert res.status_code == 502
+

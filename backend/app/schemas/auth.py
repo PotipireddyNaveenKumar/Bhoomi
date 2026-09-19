@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 class UserRegisterRequest(BaseModel):
     phone_number: str = Field(..., json_schema_extra={"example": "+919876543210"})
@@ -11,12 +11,21 @@ class UserRegisterRequest(BaseModel):
     village: Optional[str] = Field(default=None)
 
 class UserLoginRequest(BaseModel):
-    phone_number: str = Field(..., json_schema_extra={"example": "+919876543210"})
-    password: str = Field(...)
+    phone_number: Optional[str] = Field(default=None, json_schema_extra={"example": "+919876543210"})
+    password: Optional[str] = Field(default=None)
+    is_demo: Optional[bool] = Field(default=False)
+
+    @model_validator(mode="after")
+    def validate_credentials_or_demo(self):
+        if not self.is_demo:
+            if not self.phone_number or not self.password:
+                raise ValueError("Both phone_number and password are required unless is_demo is True.")
+        return self
 
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    refresh_token: Optional[str] = None
     user_id: str
     farmer_id: str
     name: str

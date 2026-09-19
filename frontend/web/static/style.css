@@ -2305,6 +2305,64 @@ body {
   font-weight: 500;
 }
 
+.sms-status-notice {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.sms-status-title {
+  font-weight: 700;
+  color: #fbbf24;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.sms-status-desc {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.btn-reviewer-demo {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+.btn-reviewer-demo:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+}
+
+.btn-reviewer-demo:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .otp-sent-banner {
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.35);

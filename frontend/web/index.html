@@ -74,15 +74,29 @@
         </select>
       </div>
 
+      <!-- Reviewer Prototype & SMS OTP Status Notice -->
+      <div id="smsStatusNotice" class="sms-status-notice" style="margin-top: 12px; margin-bottom: 12px;">
+        <div class="sms-status-title">
+          <span>⚠️</span> <span>SMS OTP is not configured yet.</span>
+        </div>
+        <div class="sms-status-desc">
+          Reviewers can use Demo Login to access the prototype.
+        </div>
+        <button type="button" id="btnReviewerDemoLogin" class="btn-reviewer-demo" onclick="handleReviewerDemoLogin()">
+          <span>⚡</span>
+          <span id="txtBtnReviewerDemo">Reviewer Demo Login</span>
+        </button>
+      </div>
+
       <!-- Authentication Mode Selector Tabs -->
-      <div class="auth-mode-tabs" style="display:flex; gap:6px; margin-top:12px; margin-bottom:16px;">
-        <button type="button" id="tabLoginMode" class="auth-mode-tab active" onclick="switchAuthMode('login')" style="flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--accent-emerald, #10b981); background:rgba(16,185,129,0.15); color:#ffffff; font-weight:600; cursor:pointer; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
-          <span>📱</span> Login
+      <div class="auth-mode-tabs" style="display:flex; gap:6px; margin-top:8px; margin-bottom:16px;">
+        <button type="button" id="tabLoginMode" class="auth-mode-tab active" onclick="switchAuthMode('login')" style="flex:1; padding:10px 6px; border-radius:8px; border:1px solid var(--accent-emerald, #10b981); background:rgba(16,185,129,0.15); color:#ffffff; font-weight:600; cursor:pointer; font-size:0.84rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
+          <span>🌾</span> Farmer Login
         </button>
-        <button type="button" id="tabSignupMode" class="auth-mode-tab" onclick="switchAuthMode('signup')" style="flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
-          <span>✍️</span> Sign Up
+        <button type="button" id="tabSignupMode" class="auth-mode-tab" onclick="switchAuthMode('signup')" style="flex:1; padding:10px 6px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.84rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
+          <span>✍️</span> Farmer Sign Up
         </button>
-        <button type="button" id="tabReviewerMode" class="auth-mode-tab" onclick="switchAuthMode('reviewer')" style="flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
+        <button type="button" id="tabReviewerMode" class="auth-mode-tab" onclick="switchAuthMode('reviewer')" style="flex:1; padding:10px 6px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.84rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
           <span>🔐</span> Reviewer
         </button>
       </div>
@@ -278,6 +292,20 @@
 
       <!-- Reviewer Password Login Container -->
       <div id="reviewerLoginForm" style="display: none;">
+        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 14px; text-align: center;">
+          <div style="font-size: 0.85rem; color: #93c5fd; margin-bottom: 8px; line-height: 1.4; font-weight: 500;">One-click demo login for SIH prototype evaluation:</div>
+          <button type="button" class="btn-reviewer-demo" onclick="handleReviewerDemoLogin()" style="margin-top:0;">
+            <span>⚡</span>
+            <span>Reviewer Demo Login</span>
+          </button>
+        </div>
+
+        <div style="display: flex; align-items: center; text-align: center; margin: 12px 0; color: var(--text-muted, #64748b); font-size: 0.78rem;">
+          <span style="flex: 1; border-bottom: 1px solid var(--border-subtle, #334155);"></span>
+          <span style="padding: 0 8px; text-transform: uppercase; letter-spacing: 0.05em;">Or with credentials</span>
+          <span style="flex: 1; border-bottom: 1px solid var(--border-subtle, #334155);"></span>
+        </div>
+
         <div class="form-group">
           <label for="reviewerPhoneInput" id="lblReviewerPhone">📱 Reviewer Phone Number</label>
           <div class="phone-input-wrap">
@@ -291,7 +319,7 @@
         </div>
         <button type="button" class="btn-auth-submit" id="btnReviewerLogin" onclick="handleReviewerLogin()" style="margin-top: 16px; width: 100%;">
           <span>🔐</span>
-          <span id="txtBtnReviewerLogin">Login as Reviewer</span>
+          <span id="txtBtnReviewerLogin">Login with Reviewer Password</span>
         </button>
       </div>
 

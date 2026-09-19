@@ -1,3 +1,4 @@
+import os
 import secrets
 import re
 import time
@@ -724,22 +725,53 @@ async def register(req: UserRegisterRequest, db: AsyncSession = Depends(get_db))
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(req: UserLoginRequest, db: AsyncSession = Depends(get_db)):
-    """Reviewer Password Login endpoint."""
-    phone_raw = (req.phone_number or "").strip()
-    if not phone_raw:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Mobile number cannot be empty."
-        )
-
+async def login(
+    req: UserLoginRequest,
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+):
+    """Reviewer Password & Reviewer Demo Login endpoint."""
+    user = None
     repo = FarmerRepository(db)
-    user = await repo.get_by_phone(phone_raw)
-    if not user or not user.hashed_password or not verify_password(req.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect phone number or password."
+
+    if req.is_demo:
+        # Designated Reviewer Demo Login:
+        # Reuses existing reviewer account provisioning and session generation.
+        from app.services.reviewer_provisioning import ensure_reviewer_account
+        await ensure_reviewer_account(db)
+        reviewer_phone = (getattr(settings, "REVIEWER_PHONE", None) or os.environ.get("REVIEWER_PHONE") or "9988776655").strip()
+        if reviewer_phone.startswith("+91"):
+            phone_clean = reviewer_phone[3:].strip()
+        elif reviewer_phone.startswith("91") and len(reviewer_phone) == 12:
+            phone_clean = reviewer_phone[2:].strip()
+        else:
+            phone_clean = reviewer_phone
+
+        phone_variants = [reviewer_phone, phone_clean, f"+91{phone_clean}"]
+        res = await db.execute(
+            select(User).options(
+                selectinload(User.farmer_profile).selectinload(FarmerProfile.farms).selectinload(Farm.crops)
+            ).where(User.phone_number.in_(phone_variants))
         )
+        user = res.scalars().first()
+        if not user or not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Reviewer demo account is not available."
+            )
+    else:
+        phone_raw = (req.phone_number or "").strip()
+        if not phone_raw:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Mobile number cannot be empty."
+            )
+        user = await repo.get_by_phone(phone_raw)
+        if not user or not user.hashed_password or not verify_password(req.password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect phone number or password."
+            )
 
     farmer_id = user.farmer_profile.id if user.farmer_profile else user.id
     farm_repo = FarmRepository(db)
@@ -753,9 +785,20 @@ async def login(req: UserLoginRequest, db: AsyncSession = Depends(get_db)):
         if farm_crops:
             active_crop_name = farm_crops[0].crop_name
 
-    token = create_access_token(user.id)
+    # Create genuine JWT access token and database-backed refresh session
+    client_ip = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent")
+    access_token, refresh_token = await SessionService.create_session(
+        db=db,
+        user_id=user.id,
+        device_info=user_agent,
+        ip_address=client_ip
+    )
+
     return TokenResponse(
-        access_token=token,
+        access_token=access_token,
+        token_type="bearer",
+        refresh_token=refresh_token,
         user_id=user.id,
         farmer_id=farmer_id,
         name=user.farmer_profile.name if user.farmer_profile else "Farmer",
