@@ -85,11 +85,15 @@ class OTPService:
         )
 
         # Attempt delivery through SMS transport
-        provider = sms_provider or get_sms_provider()
-        delivered = await provider.send_sms(norm_phone, message)
+        masked = mask_phone_number(norm_phone)
+        try:
+            provider = sms_provider or get_sms_provider()
+            delivered = await provider.send_sms(norm_phone, message)
+        except Exception as exc:
+            logger.error(f"SMS transport exception for {masked}: {exc}")
+            return False, "SMS delivery service is unavailable. Please try again later.", None
 
         if not delivered:
-            masked = mask_phone_number(norm_phone)
             logger.error(f"SMS transport failed for {masked}. Aborting OTP challenge creation.")
             return False, "SMS delivery failed. Please check the phone number or try again later.", None
 

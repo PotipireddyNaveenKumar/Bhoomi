@@ -27,8 +27,9 @@ class BaseSMSProvider(ABC):
 
 class ConsoleSMSProvider(BaseSMSProvider):
     """
-    Development, testing, and fallback console transport.
+    Development and local testing console transport.
     Logs masked phone and message structure without exposing secrets or leaking plaintext to public callers.
+    Strictly forbidden in production.
     """
     async def send_sms(self, phone_number: str, message: str) -> bool:
         masked = mask_phone_number(phone_number)
@@ -40,6 +41,7 @@ class MockSMSProvider(BaseSMSProvider):
     """
     In-memory SMS provider for automated testing.
     Records all sent messages and allows simulating network or carrier delivery failure.
+    Strictly forbidden in production.
     """
     def __init__(self):
         self.sent_messages: List[Dict[str, str]] = []
@@ -63,7 +65,8 @@ class MockSMSProvider(BaseSMSProvider):
 
 class HttpSMSProvider(BaseSMSProvider):
     """
-    Generic HTTP / Webhook / REST SMS gateway transport (e.g. MSG91, Fast2SMS, Twilio, or custom SMS gateway).
+    Production HTTP / Webhook / REST SMS gateway transport.
+    Supports generic transactional HTTP gateways, Fast2SMS, MSG91, and Twilio.
     
     IMPORTANT: Sends ONLY the pre-generated BHOOMI message via HTTP POST.
     NEVER invokes any third-party OTP generation or third-party OTP verification endpoint.
@@ -73,50 +76,128 @@ class HttpSMSProvider(BaseSMSProvider):
         endpoint_url: Optional[str] = None,
         api_key: Optional[str] = None,
         sender_id: Optional[str] = None,
-        auth_token: Optional[str] = None
+        auth_token: Optional[str] = None,
+        template_id: Optional[str] = None,
+        timeout: float = 10.0
     ):
         self.endpoint_url = endpoint_url or getattr(settings, "SMS_GATEWAY_URL", None)
         self.api_key = api_key or getattr(settings, "SMS_API_KEY", None)
         self.sender_id = sender_id or getattr(settings, "SMS_SENDER_ID", None) or "BHOOMI"
         self.auth_token = auth_token or getattr(settings, "SMS_AUTH_TOKEN", None)
+        self.template_id = template_id or getattr(settings, "SMS_TEMPLATE_ID", None)
+        self.timeout = timeout
 
     async def send_sms(self, phone_number: str, message: str) -> bool:
+        masked = mask_phone_number(phone_number)
+
+        # 1. Configuration Validation
         if not self.endpoint_url:
-            logger.error("HTTP SMS transport misconfigured: SMS_GATEWAY_URL is missing.")
+            logger.error(f"[HTTP SMS TRANSPORT] Misconfiguration for {masked}: SMS_GATEWAY_URL is missing.")
             return False
 
-        headers = {
+        has_creds = bool(self.api_key or self.auth_token)
+        is_prod = getattr(settings, "is_production", False)
+        if is_prod and not has_creds:
+            logger.error(f"[HTTP SMS TRANSPORT] Misconfiguration for {masked}: SMS_API_KEY or SMS_AUTH_TOKEN is required in production.")
+            return False
+
+        # Extract 10-digit number for Indian telco gateways
+        clean_digits = "".join(c for c in phone_number if c.isdigit())
+        ten_digit = clean_digits[-10:] if len(clean_digits) >= 10 else clean_digits
+
+        # 2. Build Headers and Payload
+        provider_hint = (getattr(settings, "SMS_PROVIDER", None) or "").lower()
+        url_lower = (self.endpoint_url or "").lower()
+
+        headers: Dict[str, str] = {
             "User-Agent": "BHOOMI-FastAPI/2.0",
             "Content-Type": "application/json"
         }
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
-            headers["authkey"] = self.api_key
-        elif self.auth_token:
-            headers["Authorization"] = f"Bearer {self.auth_token}"
+        auth_tuple = None
 
-        # Standard delivery payload for transactional SMS transport
-        payload = {
-            "to": phone_number,
-            "sender": self.sender_id,
-            "message": message,
-            "text": message
-        }
+        if "fast2sms" in provider_hint or "fast2sms.com" in url_lower:
+            headers["authorization"] = self.api_key or self.auth_token or ""
+            payload = {
+                "route": "q",
+                "message": message,
+                "language": "english",
+                "flash": 0,
+                "numbers": ten_digit
+            }
+        elif "msg91" in provider_hint or "msg91.com" in url_lower:
+            headers["authkey"] = self.api_key or self.auth_token or ""
+            payload = {
+                "sender": self.sender_id,
+                "route": "4",
+                "country": "91",
+                "sms": [{"message": message, "to": [ten_digit]}]
+            }
+        elif "twilio" in provider_hint or "twilio.com" in url_lower:
+            account_sid = getattr(settings, "SMS_ACCOUNT_SID", None) or self.api_key or ""
+            auth_tuple = (account_sid, self.auth_token or "")
+            headers["Content-Type"] = "application/x-www-form-urlencoded"
+            payload = {
+                "To": phone_number,
+                "From": self.sender_id,
+                "Body": message
+            }
+        else:
+            # Generic Transactional HTTP Gateway
+            if self.api_key:
+                headers["Authorization"] = f"Bearer {self.api_key}"
+                headers["authkey"] = self.api_key
+                headers["x-api-key"] = self.api_key
+            elif self.auth_token:
+                headers["Authorization"] = f"Bearer {self.auth_token}"
 
-        masked = mask_phone_number(phone_number)
+            payload = {
+                "to": phone_number,
+                "phone": ten_digit,
+                "sender": self.sender_id,
+                "message": message,
+                "text": message
+            }
+            if self.template_id:
+                payload["template_id"] = self.template_id
+
+        # 3. Transport Dispatch with Strict Error Handling
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                resp = await client.post(self.endpoint_url, json=payload, headers=headers)
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                if auth_tuple:
+                    resp = await client.post(self.endpoint_url, data=payload, headers=headers, auth=auth_tuple)
+                else:
+                    resp = await client.post(self.endpoint_url, json=payload, headers=headers)
+
+                # Status code evaluation
                 if 200 <= resp.status_code < 300:
+                    # Check for application-level failure response bodies
+                    try:
+                        data = resp.json()
+                        if isinstance(data, dict):
+                            if data.get("return") is False or data.get("type") == "error" or data.get("status") in ("error", "failed"):
+                                err_info = data.get("message") or data.get("detail") or "Gateway application rejection"
+                                logger.error(f"[HTTP SMS TRANSPORT] Gateway rejected message for {masked}: {err_info}")
+                                return False
+                    except Exception:
+                        pass
                     logger.info(f"[HTTP SMS TRANSPORT] Accepted for {masked} (HTTP {resp.status_code})")
                     return True
-                else:
-                    logger.error(
-                        f"[HTTP SMS TRANSPORT] Gateway rejected message for {masked}: HTTP {resp.status_code}"
-                    )
+                elif 400 <= resp.status_code < 500:
+                    logger.error(f"[HTTP SMS TRANSPORT] Gateway rejected message for {masked}: HTTP {resp.status_code}")
                     return False
+                else:
+                    logger.error(f"[HTTP SMS TRANSPORT] Gateway server error for {masked}: HTTP {resp.status_code}")
+                    return False
+
+        except httpx.TimeoutException:
+            # DO NOT blindly retry: prevent duplicate SMS delivery
+            logger.error(f"[HTTP SMS TRANSPORT] Gateway timed out after {self.timeout}s delivering to {masked}.")
+            return False
+        except (httpx.NetworkError, httpx.RequestError) as exc:
+            logger.error(f"[HTTP SMS TRANSPORT] Network/connection error while delivering to {masked}: {exc.__class__.__name__}")
+            return False
         except Exception as exc:
-            logger.error(f"[HTTP SMS TRANSPORT] Network/connection error while delivering to {masked}: {exc}")
+            logger.error(f"[HTTP SMS TRANSPORT] Unexpected error while delivering to {masked}: {exc.__class__.__name__}")
             return False
 
 
@@ -124,12 +205,31 @@ class HttpSMSProvider(BaseSMSProvider):
 _mock_provider_instance = MockSMSProvider()
 
 def get_sms_provider() -> BaseSMSProvider:
-    """Factory resolving the active SMS transport provider based on configuration."""
-    provider_name = (getattr(settings, "SMS_PROVIDER", None) or "console").lower().strip()
+    """
+    Factory resolving the active SMS transport provider based on configuration.
     
+    SECURITY ENFORCEMENT:
+    In production (ENVIRONMENT=production or APP_ENV=production):
+    - ConsoleSMSProvider is STRICTLY FORBIDDEN and will raise RuntimeError.
+    - MockSMSProvider is STRICTLY FORBIDDEN and will raise RuntimeError.
+    - HttpSMSProvider is MANDATORY.
+    """
+    raw_provider = getattr(settings, "SMS_PROVIDER", None)
+    provider_name = (raw_provider or "").lower().strip()
+    is_prod = getattr(settings, "is_production", False)
+
+    if is_prod:
+        if provider_name in ("console", "mock", "fake", "demo"):
+            raise RuntimeError(
+                f"Production security violation: SMS_PROVIDER '{provider_name}' is not permitted in production. "
+                "Production must use 'http' (HttpSMSProvider) with valid carrier SMS gateway credentials."
+            )
+        return HttpSMSProvider()
+
     if provider_name == "mock":
         return _mock_provider_instance
     elif provider_name in ("http", "generic_http", "msg91", "twilio", "fast2sms"):
         return HttpSMSProvider()
     else:
         return ConsoleSMSProvider()
+
