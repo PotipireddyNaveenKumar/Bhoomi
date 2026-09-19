@@ -98,14 +98,14 @@ class HttpSMSProvider(BaseSMSProvider):
             or "BHOOMI"
         )
         self.auth_token = auth_token or getattr(settings, "SMS_AUTH_TOKEN", None)
-        # Fast2SMS Message ID (DLT template identifier inside Fast2SMS DLT Manager)
+        # Fast2SMS Message ID from the Fast2SMS DLT Manager. This is not a
+        # telecom/DLT Content Template ID, so it must not use the generic
+        # SMS_TEMPLATE_ID fallback.
         self.message_id = (
             message_id
             or getattr(settings, "FAST2SMS_MESSAGE_ID", None)
-            or template_id
-            or getattr(settings, "SMS_TEMPLATE_ID", None)
         )
-        self.template_id = self.message_id
+        self.template_id = template_id or getattr(settings, "SMS_TEMPLATE_ID", None)
         self.timeout = timeout
 
     async def send_sms(self, phone_number: str, message: str) -> bool:
@@ -287,6 +287,29 @@ class HttpSMSProvider(BaseSMSProvider):
 # Singleton mock provider for tests
 _mock_provider_instance = MockSMSProvider()
 
+
+def is_production_sms_configured() -> bool:
+    """Check required production SMS settings without sending a message."""
+    provider_name = (getattr(settings, "SMS_PROVIDER", None) or "").lower().strip()
+
+    if provider_name == "fast2sms":
+        # The Fast2SMS DLT endpoint has a stable default; the remaining three
+        # values are deployment-specific and must be explicit.
+        return bool(
+            getattr(settings, "FAST2SMS_API_KEY", None)
+            and getattr(settings, "FAST2SMS_SENDER_ID", None)
+            and getattr(settings, "FAST2SMS_MESSAGE_ID", None)
+        )
+
+    if provider_name in ("http", "generic_http", "msg91", "twilio"):
+        return bool(
+            getattr(settings, "SMS_GATEWAY_URL", None)
+            and (getattr(settings, "SMS_API_KEY", None) or getattr(settings, "SMS_AUTH_TOKEN", None))
+        )
+
+    # console/mock/demo/fake and an unset provider are not valid in production.
+    return False
+
 def get_sms_provider() -> BaseSMSProvider:
     """
     Factory resolving the active SMS transport provider based on configuration.
@@ -315,4 +338,3 @@ def get_sms_provider() -> BaseSMSProvider:
         return HttpSMSProvider()
     else:
         return ConsoleSMSProvider()
-

@@ -13,7 +13,7 @@ from app.core.logging import logger
 from app.core.phone_utils import normalize_indian_phone, mask_phone_number
 from app.core.rate_limiter import auth_rate_limiter
 from app.models.otp_challenge import OTPChallenge
-from app.services.sms.sms_provider import BaseSMSProvider, get_sms_provider
+from app.services.sms.sms_provider import BaseSMSProvider, get_sms_provider, is_production_sms_configured
 
 OTP_LIFETIME_SECONDS = 600  # 10 minutes
 OTP_RESEND_COOLDOWN_SECONDS = 30  # 30 seconds
@@ -68,6 +68,11 @@ class OTPService:
             norm_phone = normalize_indian_phone(phone_number)
         except ValueError as e:
             return False, str(e), None
+
+        # Do not present a generic broken-SMS error when production has no
+        # delivery configuration. No OTP is generated or activated here.
+        if sms_provider is None and settings.is_production and not is_production_sms_configured():
+            return False, "SMS delivery is not configured. Please contact BHOOMI support.", None
 
         # Enforce rate limits
         auth_rate_limiter.check_otp_request_limits(

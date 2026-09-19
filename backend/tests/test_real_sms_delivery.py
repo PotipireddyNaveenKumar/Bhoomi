@@ -51,6 +51,7 @@ class TestRealSMSDelivery:
         self._orig_fast2sms_api_key = settings.FAST2SMS_API_KEY
         self._orig_fast2sms_sender_id = settings.FAST2SMS_SENDER_ID
         self._orig_fast2sms_message_id = settings.FAST2SMS_MESSAGE_ID
+        self._orig_sms_template_id = settings.SMS_TEMPLATE_ID
         self._orig_fast2sms_gateway_url = settings.FAST2SMS_GATEWAY_URL
         self._orig_fast2sms_route = settings.FAST2SMS_ROUTE
 
@@ -64,6 +65,7 @@ class TestRealSMSDelivery:
         settings.FAST2SMS_API_KEY = self._orig_fast2sms_api_key
         settings.FAST2SMS_SENDER_ID = self._orig_fast2sms_sender_id
         settings.FAST2SMS_MESSAGE_ID = self._orig_fast2sms_message_id
+        settings.SMS_TEMPLATE_ID = self._orig_sms_template_id
         settings.FAST2SMS_GATEWAY_URL = self._orig_fast2sms_gateway_url
         settings.FAST2SMS_ROUTE = self._orig_fast2sms_route
 
@@ -327,6 +329,17 @@ class TestRealSMSDelivery:
         provider = HttpSMSProvider()
         delivered = await provider.send_sms("+919876543210", "Your BHOOMI OTP is 583214")
         assert delivered is False
+
+    def test_16b_fast2sms_does_not_use_generic_template_id_as_message_id(self):
+        """A telecom Content Template ID is not a Fast2SMS Message ID."""
+        settings.SMS_PROVIDER = "fast2sms"
+        settings.FAST2SMS_MESSAGE_ID = None
+        settings.SMS_TEMPLATE_ID = "telecom-content-template-id"
+
+        provider = HttpSMSProvider()
+
+        assert provider.message_id is None
+        assert provider.template_id == "telecom-content-template-id"
 
     @pytest.mark.asyncio
     async def test_17_fast2sms_explicit_quick_route_override(self):

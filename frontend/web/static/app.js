@@ -1293,6 +1293,9 @@ async function handleSendOtp(isResend = false) {
 
     if (!res.ok) {
       let errMsg = data.detail || data.message || "Failed to send verification code. Please try again.";
+      if (res.status === 502 && /sms delivery is not configured/i.test(errMsg)) {
+        errMsg = "SMS delivery is not configured for BHOOMI yet. Please contact BHOOMI support or use Reviewer Login if you are authorized.";
+      }
       if (errorMsg) {
         errorMsg.textContent = errMsg;
         errorMsg.style.display = "block";
