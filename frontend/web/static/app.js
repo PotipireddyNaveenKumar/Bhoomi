@@ -2052,18 +2052,20 @@ function buildStructuredCard(sd) {
       // 2. Yield Prediction Card (ML XGBoost)
       else if (type === "yield_prediction_card") {
         const ypa = data.expected_yield_quintals_per_acre || data.yield_per_acre || 0;
-        const tot = data.expected_total_production_quintals || (ypa * (data.area_acres || 3.0));
+        const area = (data.area_acres !== undefined && data.area_acres !== null) ? data.area_acres : ((currentUser && currentUser.land_area_acres) || null);
+        const tot = data.expected_total_production_quintals || (area ? (ypa * area) : null);
         const conf = data.confidence_interval_95;
         let rangeHtml = "";
         if (Array.isArray(conf) && conf.length === 2) {
           rangeHtml = `<div class="metric-pill">95% CI: <strong>${Number(conf[0]).toFixed(1)} - ${Number(conf[1]).toFixed(1)} Qtl</strong></div>`;
         }
+        const totHtml = (tot !== null && tot !== undefined) ? `<div class="metric-pill">Total Est. Production: <strong>${Number(tot).toFixed(1)} Qtl</strong></div>` : "";
         cardsHtml.push(`
           <div class="assistant-card">
             <div class="card-title">📈 ${escapeHtml(title)}</div>
             <div class="metrics-pill-grid">
               <div class="metric-pill highlight">Expected Yield: <strong>${Number(ypa).toFixed(1)} Qtl/Acre</strong></div>
-              <div class="metric-pill">Total Est. Production: <strong>${Number(tot).toFixed(1)} Qtl</strong></div>
+              ${totHtml}
               ${rangeHtml}
             </div>
           </div>
