@@ -12,8 +12,19 @@ class FarmerRepository:
         self.db = db
 
     async def get_by_phone(self, phone: str) -> Optional[User]:
+        clean = (phone or "").strip()
+        if not clean:
+            return None
+        variations = [clean]
+        if clean.startswith("+91"):
+            variations.append(clean[3:].strip())
+        elif len(clean) == 10 and clean.isdigit():
+            variations.append(f"+91{clean}")
+        elif clean.startswith("91") and len(clean) == 12:
+            variations.append(clean[2:].strip())
+            variations.append(f"+{clean}")
         result = await self.db.execute(
-            select(User).options(selectinload(User.farmer_profile)).where(User.phone_number == phone)
+            select(User).options(selectinload(User.farmer_profile)).where(User.phone_number.in_(variations))
         )
         return result.scalars().first()
 

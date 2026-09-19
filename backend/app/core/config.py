@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
     ALLOW_EVALUATOR_OTP: bool = True  # Can be disabled in production via ALLOW_EVALUATOR_OTP=false
+    REVIEWER_PHONE: Optional[str] = None
+    REVIEWER_PASSWORD: Optional[str] = None
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]

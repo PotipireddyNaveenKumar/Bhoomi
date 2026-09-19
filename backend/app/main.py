@@ -52,11 +52,13 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database schema initialized.")
     from app.services.demo.demo_service import DemoModeService
+    from app.services.reviewer_provisioning import ensure_reviewer_account
     from app.db.session import AsyncSessionLocal
     async with AsyncSessionLocal() as session:
         await DemoModeService.ensure_canonical_demo_data(session)
+        await ensure_reviewer_account(session)
     DemoModeService.reset_demo_state()
-    logger.info("Initialized pristine demo tasks and canonical demo farmer in database.")
+    logger.info("Initialized pristine demo tasks, canonical demo farmer, and reviewer account state.")
     yield
     logger.info("Shutting down BHOOMI V2 backend...")
     await engine.dispose()

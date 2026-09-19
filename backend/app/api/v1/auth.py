@@ -430,20 +430,47 @@ async def register(req: UserRegisterRequest, db: AsyncSession = Depends(get_db))
 
 @router.post("/login", response_model=TokenResponse)
 async def login(req: UserLoginRequest, db: AsyncSession = Depends(get_db)):
+    phone_clean = (req.phone_number or "").strip()
+    if not phone_clean:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mobile number cannot be empty."
+        )
+
     repo = FarmerRepository(db)
-    user = await repo.get_by_phone(req.phone_number)
+    user = await repo.get_by_phone(phone_clean)
     if not user or not verify_password(req.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect phone number or password."
         )
 
+    farmer_id = user.farmer_profile.id if user.farmer_profile else user.id
+    farm_repo = FarmRepository(db)
+    existing_farms = await farm_repo.get_farms_by_farmer(farmer_id) if user.farmer_profile else []
+    farm = existing_farms[0] if existing_farms else None
+
+    active_crop_name = None
+    if farm:
+        res_crops = await db.execute(select(FarmCrop).where(FarmCrop.farm_id == farm.id))
+        farm_crops = list(res_crops.scalars().all())
+        if farm_crops:
+            active_crop_name = farm_crops[0].crop_name
+
     token = create_access_token(user.id)
     return TokenResponse(
         access_token=token,
         user_id=user.id,
-        farmer_id=user.farmer_profile.id,
-        name=user.farmer_profile.name,
-        preferred_language=user.farmer_profile.preferred_language
+        farmer_id=farmer_id,
+        name=user.farmer_profile.name if user.farmer_profile else "Reviewer",
+        preferred_language=user.farmer_profile.preferred_language if user.farmer_profile else "en",
+        state=user.farmer_profile.state if user.farmer_profile else None,
+        district=user.farmer_profile.district if user.farmer_profile else None,
+        village=user.farmer_profile.village if user.farmer_profile else None,
+        farm_id=farm.id if farm else None,
+        crop_name=active_crop_name or "Potato",
+        area_acres=float(farm.total_area_acres) if farm and farm.total_area_acres else 3.0,
+        soil_type=farm.soil_type if farm else "red_sandy_loam",
+        is_new_user=False
     )
 

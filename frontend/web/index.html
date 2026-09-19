@@ -64,9 +64,20 @@
         </select>
       </div>
 
-      <!-- Mobile OTP Login & Onboarding Gate -->
-      <!-- Step 1: Request OTP Form -->
-      <div id="otpStep1">
+      <!-- Authentication Mode Selector -->
+      <div class="auth-mode-tabs" style="display:flex; gap:8px; margin-top:12px; margin-bottom:16px;">
+        <button type="button" id="tabOtpMode" class="auth-mode-tab active" onclick="switchAuthMode('otp')" style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--accent-emerald, #10b981); background:rgba(16,185,129,0.15); color:#ffffff; font-weight:600; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s ease;">
+          <span>📱</span> Mobile OTP
+        </button>
+        <button type="button" id="tabReviewerMode" class="auth-mode-tab" onclick="switchAuthMode('reviewer')" style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s ease;">
+          <span>🔐</span> Reviewer Login
+        </button>
+      </div>
+
+      <!-- Mobile OTP Login & Onboarding Gate Container -->
+      <div id="otpAuthContainer">
+        <!-- Step 1: Request OTP Form -->
+        <div id="otpStep1">
         <div class="form-group">
           <label for="otpMobileInput" id="lblMobile">📱 Mobile Number (10 Digits)</label>
           <div class="phone-input-wrap">
@@ -230,6 +241,26 @@
             <span>←</span> Change Mobile Number
           </button>
         </div>
+      </div>
+      <!-- End otpAuthContainer -->
+
+      <!-- Reviewer Password Login Container -->
+      <div id="reviewerLoginForm" style="display: none;">
+        <div class="form-group">
+          <label for="reviewerPhoneInput" id="lblReviewerPhone">📱 Reviewer Phone Number</label>
+          <div class="phone-input-wrap">
+            <span class="country-prefix">+91</span>
+            <input type="tel" id="reviewerPhoneInput" placeholder="Enter phone number" autocomplete="tel">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label for="reviewerPasswordInput" id="lblReviewerPassword">🔐 Reviewer Password</label>
+          <input type="password" id="reviewerPasswordInput" placeholder="••••••••" autocomplete="current-password" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(15,23,42,0.6); border: 1px solid var(--border-subtle, #334155); color: #fff; font-size: 1rem; box-sizing: border-box;">
+        </div>
+        <button type="button" class="btn-auth-submit" id="btnReviewerLogin" onclick="handleReviewerLogin()" style="margin-top: 16px; width: 100%;">
+          <span>🔐</span>
+          <span id="txtBtnReviewerLogin">Login as Reviewer</span>
+        </button>
       </div>
 
       <div id="authErrorMsg" class="auth-error-msg" style="display: none;"></div>

@@ -745,6 +745,179 @@ function backToOtpStep1() {
 }
 
 
+function switchAuthMode(mode) {
+  const tabOtp = document.getElementById("tabOtpMode");
+  const tabReviewer = document.getElementById("tabReviewerMode");
+  const otpContainer = document.getElementById("otpAuthContainer");
+  const reviewerForm = document.getElementById("reviewerLoginForm");
+  const errorMsg = document.getElementById("authErrorMsg");
+
+  if (errorMsg) errorMsg.style.display = "none";
+
+  if (mode === "reviewer") {
+    if (tabReviewer) {
+      tabReviewer.classList.add("active");
+      tabReviewer.style.borderColor = "var(--accent-emerald, #10b981)";
+      tabReviewer.style.background = "rgba(16,185,129,0.15)";
+      tabReviewer.style.color = "#ffffff";
+    }
+    if (tabOtp) {
+      tabOtp.classList.remove("active");
+      tabOtp.style.borderColor = "var(--border-subtle, #334155)";
+      tabOtp.style.background = "var(--surface-card, #1e293b)";
+      tabOtp.style.color = "var(--text-secondary, #94a3b8)";
+    }
+    if (otpContainer) otpContainer.style.display = "none";
+    if (reviewerForm) reviewerForm.style.display = "block";
+    const phoneInput = document.getElementById("reviewerPhoneInput");
+    if (phoneInput) phoneInput.focus();
+  } else {
+    // OTP mode
+    if (tabOtp) {
+      tabOtp.classList.add("active");
+      tabOtp.style.borderColor = "var(--accent-emerald, #10b981)";
+      tabOtp.style.background = "rgba(16,185,129,0.15)";
+      tabOtp.style.color = "#ffffff";
+    }
+    if (tabReviewer) {
+      tabReviewer.classList.remove("active");
+      tabReviewer.style.borderColor = "var(--border-subtle, #334155)";
+      tabReviewer.style.background = "var(--surface-card, #1e293b)";
+      tabReviewer.style.color = "var(--text-secondary, #94a3b8)";
+    }
+    if (reviewerForm) reviewerForm.style.display = "none";
+    if (otpContainer) otpContainer.style.display = "block";
+  }
+}
+
+
+async function handleReviewerLogin() {
+  const phoneEl = document.getElementById("reviewerPhoneInput");
+  const passEl = document.getElementById("reviewerPasswordInput");
+  const errorMsg = document.getElementById("authErrorMsg");
+  const btnLogin = document.getElementById("btnReviewerLogin");
+
+  if (errorMsg) errorMsg.style.display = "none";
+
+  const rawPhone = (phoneEl?.value || "").trim();
+  const password = passEl?.value || "";
+
+  if (!rawPhone) {
+    if (errorMsg) {
+      errorMsg.textContent = "Please enter your reviewer phone number.";
+      errorMsg.style.display = "block";
+    }
+    if (phoneEl) phoneEl.focus();
+    return;
+  }
+
+  if (!password) {
+    if (errorMsg) {
+      errorMsg.textContent = "Please enter your reviewer password.";
+      errorMsg.style.display = "block";
+    }
+    if (passEl) passEl.focus();
+    return;
+  }
+
+  // Clean phone number
+  let phoneClean = rawPhone;
+  if (phoneClean.startswith && phoneClean.startsWith("+91")) {
+    phoneClean = phoneClean.slice(3).trim();
+  } else if (phoneClean.startsWith("+91")) {
+    phoneClean = phoneClean.slice(3).trim();
+  } else if (phoneClean.startsWith("91") && phoneClean.length === 12) {
+    phoneClean = phoneClean.slice(2).trim();
+  }
+
+  const origBtnText = btnLogin ? btnLogin.innerHTML : "";
+  if (btnLogin) {
+    btnLogin.disabled = true;
+    btnLogin.innerHTML = "<span>⏳</span> Authenticating...";
+  }
+
+  try {
+    const res = await fetch("/api/v1/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phone_number: phoneClean,
+        password: password
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      authToken = data.access_token;
+      localStorage.setItem("bhoomi_auth_token", authToken);
+
+      const resolvedFarmerId = data.farmer_id || data.user_id || `usr_${phoneClean}`;
+      currentUser = {
+        id: resolvedFarmerId,
+        farmer_id: resolvedFarmerId,
+        farm_id: data.farm_id || null,
+        user_id: data.user_id,
+        phone_number: phoneClean,
+        full_name: data.name || "Reviewer Evaluator",
+        preferred_language: data.preferred_language || currentLanguage || "en",
+        state: data.state || "Telangana",
+        district: data.district || "Warangal",
+        village: data.village || "Dharmasagar",
+        land_area_acres: data.area_acres || 3.0,
+        current_crop: data.crop_name || "Potato",
+        crop_variety: data.crop_variety || "Kufri Jyoti",
+        active_crop: data.crop_name || "Potato",
+        soil_type: data.soil_type || "red_sandy_loam",
+        soil_source_type: "estimated",
+        soil_n: 90,
+        soil_p: 42,
+        soil_k: 43,
+        soil_ph: 6.5
+      };
+      localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
+      if (data.preferred_language) {
+        currentLanguage = data.preferred_language;
+        localStorage.setItem("bhoomi_lang", currentLanguage);
+      }
+
+      updateSidebarFarmerProfile(currentUser);
+      hideAuthModal();
+      updateUILanguage(currentLanguage);
+      loadUserScopedSessions();
+    } else {
+      let msg = "Invalid phone number or password. Please try again.";
+      try {
+        const err = await res.json();
+        if (typeof err.detail === "string") {
+          msg = err.detail;
+        } else if (err.error && err.error.message) {
+          msg = err.error.message;
+        }
+      } catch (_) {}
+
+      if (errorMsg) {
+        errorMsg.textContent = msg;
+        errorMsg.style.display = "block";
+      }
+      if (passEl) {
+        passEl.value = "";
+        passEl.focus();
+      }
+    }
+  } catch (err) {
+    if (errorMsg) {
+      errorMsg.textContent = "Network error. Please verify your connection and try again.";
+      errorMsg.style.display = "block";
+    }
+  } finally {
+    if (btnLogin) {
+      btnLogin.disabled = false;
+      btnLogin.innerHTML = origBtnText || `<span>🔐</span> <span id="txtBtnReviewerLogin">Login as Reviewer</span>`;
+    }
+  }
+}
+
+
 function handleLogout(skipConfirm = false) {
   if (skipConfirm || confirm("మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా? (Are you sure you want to log out?)")) {
     localStorage.removeItem("bhoomi_auth_token");
@@ -3579,3 +3752,5 @@ window.openFinanceModal = openFinanceModal;
 window.closeFinanceModal = closeFinanceModal;
 window.calculateFinance = calculateFinance;
 window.runWhatIfSimulation = runWhatIfSimulation;
+window.switchAuthMode = switchAuthMode;
+window.handleReviewerLogin = handleReviewerLogin;
