@@ -78,7 +78,7 @@ class Settings(BaseSettings):
     OBJECT_STORAGE_PROVIDER: str = "local"
     STORAGE_LOCAL_DIR: str = "./uploads"
 
-    # SMS Delivery Transport (console | mock | msg91 | twilio | generic_http)
+    # SMS Delivery Transport (console | mock | fast2sms | msg91 | twilio | generic_http)
     SMS_PROVIDER: str = "console"
     SMS_API_KEY: Optional[str] = None
     SMS_SENDER_ID: Optional[str] = None
@@ -86,6 +86,13 @@ class Settings(BaseSettings):
     SMS_GATEWAY_URL: Optional[str] = None
     SMS_AUTH_TOKEN: Optional[str] = None
     SMS_ACCOUNT_SID: Optional[str] = None
+
+    # Fast2SMS Explicit Variables (DLT-First)
+    FAST2SMS_API_KEY: Optional[str] = None
+    FAST2SMS_SENDER_ID: Optional[str] = None
+    FAST2SMS_MESSAGE_ID: Optional[str] = None
+    FAST2SMS_GATEWAY_URL: Optional[str] = None
+    FAST2SMS_ROUTE: Optional[str] = None  # "dlt" (default in production) | "q" (explicit dev override)
 
     # Refresh Token Expiry (in days)
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30

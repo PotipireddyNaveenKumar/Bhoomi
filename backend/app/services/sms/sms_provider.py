@@ -78,13 +78,34 @@ class HttpSMSProvider(BaseSMSProvider):
         sender_id: Optional[str] = None,
         auth_token: Optional[str] = None,
         template_id: Optional[str] = None,
+        message_id: Optional[str] = None,
         timeout: float = 10.0
     ):
-        self.endpoint_url = endpoint_url or getattr(settings, "SMS_GATEWAY_URL", None)
-        self.api_key = api_key or getattr(settings, "SMS_API_KEY", None)
-        self.sender_id = sender_id or getattr(settings, "SMS_SENDER_ID", None) or "BHOOMI"
+        self.endpoint_url = (
+            endpoint_url
+            or getattr(settings, "FAST2SMS_GATEWAY_URL", None)
+            or getattr(settings, "SMS_GATEWAY_URL", None)
+        )
+        self.api_key = (
+            api_key
+            or getattr(settings, "FAST2SMS_API_KEY", None)
+            or getattr(settings, "SMS_API_KEY", None)
+        )
+        self.sender_id = (
+            sender_id
+            or getattr(settings, "FAST2SMS_SENDER_ID", None)
+            or getattr(settings, "SMS_SENDER_ID", None)
+            or "BHOOMI"
+        )
         self.auth_token = auth_token or getattr(settings, "SMS_AUTH_TOKEN", None)
-        self.template_id = template_id or getattr(settings, "SMS_TEMPLATE_ID", None)
+        # Fast2SMS Message ID (DLT template identifier inside Fast2SMS DLT Manager)
+        self.message_id = (
+            message_id
+            or getattr(settings, "FAST2SMS_MESSAGE_ID", None)
+            or template_id
+            or getattr(settings, "SMS_TEMPLATE_ID", None)
+        )
+        self.template_id = self.message_id
         self.timeout = timeout
 
     async def send_sms(self, phone_number: str, message: str) -> bool:
@@ -132,11 +153,35 @@ class HttpSMSProvider(BaseSMSProvider):
 
         if "fast2sms" in provider_hint or "fast2sms.com" in url_lower:
             headers["authorization"] = self.api_key or self.auth_token or ""
-            if self.template_id:
+            
+            # Explicit route resolution:
+            # - Production strictly defaults to DLT route (route="dlt")
+            # - DLT route requires the Fast2SMS Message ID
+            # - Quick route is only used if FAST2SMS_ROUTE is explicitly set to "q" / "quick"
+            explicit_route = (getattr(settings, "FAST2SMS_ROUTE", None) or "").lower().strip()
+            use_quick_route = explicit_route in ("q", "quick")
+
+            if is_prod and not use_quick_route:
+                if not self.message_id:
+                    logger.error(
+                        f"[HTTP SMS TRANSPORT] Fast2SMS misconfiguration for {masked}: "
+                        "FAST2SMS_MESSAGE_ID (Fast2SMS DLT Message ID) is required in production. "
+                        "Production must use the approved DLT route."
+                    )
+                    return False
                 payload = {
                     "route": "dlt",
                     "sender_id": self.sender_id,
-                    "message": self.template_id,
+                    "message": str(self.message_id).strip(),
+                    "variables_values": otp_code,
+                    "flash": 0,
+                    "numbers": ten_digit
+                }
+            elif self.message_id and not use_quick_route:
+                payload = {
+                    "route": "dlt",
+                    "sender_id": self.sender_id,
+                    "message": str(self.message_id).strip(),
                     "variables_values": otp_code,
                     "flash": 0,
                     "numbers": ten_digit

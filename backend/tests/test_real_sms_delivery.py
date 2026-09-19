@@ -48,6 +48,11 @@ class TestRealSMSDelivery:
         self._orig_gateway_url = settings.SMS_GATEWAY_URL
         self._orig_api_key = settings.SMS_API_KEY
         self._orig_auth_token = settings.SMS_AUTH_TOKEN
+        self._orig_fast2sms_api_key = settings.FAST2SMS_API_KEY
+        self._orig_fast2sms_sender_id = settings.FAST2SMS_SENDER_ID
+        self._orig_fast2sms_message_id = settings.FAST2SMS_MESSAGE_ID
+        self._orig_fast2sms_gateway_url = settings.FAST2SMS_GATEWAY_URL
+        self._orig_fast2sms_route = settings.FAST2SMS_ROUTE
 
     def teardown_method(self):
         settings.ENVIRONMENT = self._orig_env
@@ -56,6 +61,11 @@ class TestRealSMSDelivery:
         settings.SMS_GATEWAY_URL = self._orig_gateway_url
         settings.SMS_API_KEY = self._orig_api_key
         settings.SMS_AUTH_TOKEN = self._orig_auth_token
+        settings.FAST2SMS_API_KEY = self._orig_fast2sms_api_key
+        settings.FAST2SMS_SENDER_ID = self._orig_fast2sms_sender_id
+        settings.FAST2SMS_MESSAGE_ID = self._orig_fast2sms_message_id
+        settings.FAST2SMS_GATEWAY_URL = self._orig_fast2sms_gateway_url
+        settings.FAST2SMS_ROUTE = self._orig_fast2sms_route
 
     def test_01_production_http_provider_configured_and_resolved(self):
         """In production, get_sms_provider resolves to HttpSMSProvider."""
@@ -266,3 +276,77 @@ class TestRealSMSDelivery:
             get_sms_provider()
 
         assert "not permitted in production" in str(exc_info.value)
+
+    @pytest.mark.asyncio
+    async def test_15_fast2sms_dlt_contract_fields_and_otp_variable(self):
+        """Fast2SMS DLT route uses exact payload fields and maps BHOOMI OTP to variables_values."""
+        settings.SMS_PROVIDER = "fast2sms"
+        settings.FAST2SMS_API_KEY = "test_fast2sms_key"
+        settings.FAST2SMS_SENDER_ID = "BHOMEE"
+        settings.FAST2SMS_MESSAGE_ID = "123456"
+
+        provider = HttpSMSProvider()
+
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {
+            "return": True,
+            "request_id": "req_abc123",
+            "message": ["SMS sent successfully."]
+        }
+
+        with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+            mock_post.return_value = mock_resp
+            delivered = await provider.send_sms("+919876543210", "Your BHOOMI verification code is 583214. It is valid for 10 minutes.")
+            assert delivered is True
+
+            # Inspect exact payload sent to Fast2SMS
+            mock_post.assert_called_once()
+            call_url = mock_post.call_args[0][0]
+            call_kwargs = mock_post.call_args[1]
+
+            assert call_url == "https://www.fast2sms.com/dev/bulkV2"
+            assert call_kwargs["headers"]["authorization"] == "test_fast2sms_key"
+
+            payload = call_kwargs["json"]
+            assert payload["route"] == "dlt"
+            assert payload["sender_id"] == "BHOMEE"
+            assert payload["message"] == "123456"  # Fast2SMS Message ID
+            assert payload["variables_values"] == "583214"  # Exact BHOOMI-generated OTP
+            assert payload["numbers"] == "9876543210"
+
+    @pytest.mark.asyncio
+    async def test_16_fast2sms_production_requires_message_id(self):
+        """In production, Fast2SMS rejects execution if FAST2SMS_MESSAGE_ID is missing."""
+        settings.ENVIRONMENT = "production"
+        settings.SMS_PROVIDER = "fast2sms"
+        settings.FAST2SMS_API_KEY = "test_key"
+        settings.FAST2SMS_MESSAGE_ID = None
+        settings.SMS_TEMPLATE_ID = None
+
+        provider = HttpSMSProvider()
+        delivered = await provider.send_sms("+919876543210", "Your BHOOMI OTP is 583214")
+        assert delivered is False
+
+    @pytest.mark.asyncio
+    async def test_17_fast2sms_explicit_quick_route_override(self):
+        """When FAST2SMS_ROUTE is explicitly set to 'q', it transmits via quick route."""
+        settings.SMS_PROVIDER = "fast2sms"
+        settings.FAST2SMS_API_KEY = "test_key"
+        settings.FAST2SMS_ROUTE = "q"
+
+        provider = HttpSMSProvider()
+
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {"return": True, "message": ["SMS sent."]}
+
+        with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+            mock_post.return_value = mock_resp
+            delivered = await provider.send_sms("+919876543210", "Your BHOOMI OTP is 583214")
+            assert delivered is True
+
+            payload = mock_post.call_args[1]["json"]
+            assert payload["route"] == "q"
+            assert "Your BHOOMI OTP is 583214" in payload["message"]
+            assert payload["numbers"] == "9876543210"
