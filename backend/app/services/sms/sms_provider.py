@@ -89,9 +89,21 @@ class HttpSMSProvider(BaseSMSProvider):
 
     async def send_sms(self, phone_number: str, message: str) -> bool:
         masked = mask_phone_number(phone_number)
+        provider_hint = (getattr(settings, "SMS_PROVIDER", None) or "").lower()
 
-        # 1. Configuration Validation
-        if not self.endpoint_url:
+        # 1. Endpoint Resolution & Configuration Validation
+        endpoint = self.endpoint_url
+        if not endpoint:
+            if "fast2sms" in provider_hint:
+                endpoint = "https://www.fast2sms.com/dev/bulkV2"
+            elif "msg91" in provider_hint:
+                endpoint = "https://api.msg91.com/api/v5/flow" if self.template_id else "https://api.msg91.com/api/v2/sendsms"
+            elif "twilio" in provider_hint:
+                account_sid = getattr(settings, "SMS_ACCOUNT_SID", None) or self.api_key
+                if account_sid:
+                    endpoint = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
+
+        if not endpoint:
             logger.error(f"[HTTP SMS TRANSPORT] Misconfiguration for {masked}: SMS_GATEWAY_URL is missing.")
             return False
 
@@ -105,10 +117,13 @@ class HttpSMSProvider(BaseSMSProvider):
         clean_digits = "".join(c for c in phone_number if c.isdigit())
         ten_digit = clean_digits[-10:] if len(clean_digits) >= 10 else clean_digits
 
-        # 2. Build Headers and Payload
-        provider_hint = (getattr(settings, "SMS_PROVIDER", None) or "").lower()
-        url_lower = (self.endpoint_url or "").lower()
+        # Extract 6-digit OTP code for template variable substitution if present
+        import re
+        otp_match = re.search(r"\b\d{6}\b", message)
+        otp_code = otp_match.group(0) if otp_match else ""
 
+        # 2. Build Headers and Payload
+        url_lower = endpoint.lower()
         headers: Dict[str, str] = {
             "User-Agent": "BHOOMI-FastAPI/2.0",
             "Content-Type": "application/json"
@@ -117,21 +132,41 @@ class HttpSMSProvider(BaseSMSProvider):
 
         if "fast2sms" in provider_hint or "fast2sms.com" in url_lower:
             headers["authorization"] = self.api_key or self.auth_token or ""
-            payload = {
-                "route": "q",
-                "message": message,
-                "language": "english",
-                "flash": 0,
-                "numbers": ten_digit
-            }
+            if self.template_id:
+                payload = {
+                    "route": "dlt",
+                    "sender_id": self.sender_id,
+                    "message": self.template_id,
+                    "variables_values": otp_code,
+                    "flash": 0,
+                    "numbers": ten_digit
+                }
+            else:
+                payload = {
+                    "route": "q",
+                    "message": message,
+                    "language": "english",
+                    "flash": 0,
+                    "numbers": ten_digit
+                }
         elif "msg91" in provider_hint or "msg91.com" in url_lower:
             headers["authkey"] = self.api_key or self.auth_token or ""
-            payload = {
-                "sender": self.sender_id,
-                "route": "4",
-                "country": "91",
-                "sms": [{"message": message, "to": [ten_digit]}]
-            }
+            if self.template_id:
+                payload = {
+                    "template_id": self.template_id,
+                    "sender": self.sender_id,
+                    "short_url": "0",
+                    "mobiles": f"91{ten_digit}",
+                    "var1": otp_code,
+                    "otp": otp_code
+                }
+            else:
+                payload = {
+                    "sender": self.sender_id,
+                    "route": "4",
+                    "country": "91",
+                    "sms": [{"message": message, "to": [ten_digit]}]
+                }
         elif "twilio" in provider_hint or "twilio.com" in url_lower:
             account_sid = getattr(settings, "SMS_ACCOUNT_SID", None) or self.api_key or ""
             auth_tuple = (account_sid, self.auth_token or "")
@@ -155,18 +190,21 @@ class HttpSMSProvider(BaseSMSProvider):
                 "phone": ten_digit,
                 "sender": self.sender_id,
                 "message": message,
-                "text": message
+                "text": message,
+                "otp": otp_code
             }
             if self.template_id:
                 payload["template_id"] = self.template_id
 
-        # 3. Transport Dispatch with Strict Error Handling
+        # 3. Safe Runtime Logging and Transport Dispatch
+        logger.info(f"SMS request initiated for {masked}")
+
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 if auth_tuple:
-                    resp = await client.post(self.endpoint_url, data=payload, headers=headers, auth=auth_tuple)
+                    resp = await client.post(endpoint, data=payload, headers=headers, auth=auth_tuple)
                 else:
-                    resp = await client.post(self.endpoint_url, json=payload, headers=headers)
+                    resp = await client.post(endpoint, json=payload, headers=headers)
 
                 # Status code evaluation
                 if 200 <= resp.status_code < 300:
@@ -176,28 +214,28 @@ class HttpSMSProvider(BaseSMSProvider):
                         if isinstance(data, dict):
                             if data.get("return") is False or data.get("type") == "error" or data.get("status") in ("error", "failed"):
                                 err_info = data.get("message") or data.get("detail") or "Gateway application rejection"
-                                logger.error(f"[HTTP SMS TRANSPORT] Gateway rejected message for {masked}: {err_info}")
+                                logger.error(f"SMS provider rejected request for {masked}: {err_info}")
                                 return False
                     except Exception:
                         pass
-                    logger.info(f"[HTTP SMS TRANSPORT] Accepted for {masked} (HTTP {resp.status_code})")
+                    logger.info(f"SMS provider accepted request for {masked} (HTTP {resp.status_code})")
                     return True
                 elif 400 <= resp.status_code < 500:
-                    logger.error(f"[HTTP SMS TRANSPORT] Gateway rejected message for {masked}: HTTP {resp.status_code}")
+                    logger.error(f"SMS provider rejected request for {masked}: HTTP {resp.status_code}")
                     return False
                 else:
-                    logger.error(f"[HTTP SMS TRANSPORT] Gateway server error for {masked}: HTTP {resp.status_code}")
+                    logger.error(f"SMS provider gateway server error for {masked}: HTTP {resp.status_code}")
                     return False
 
         except httpx.TimeoutException:
             # DO NOT blindly retry: prevent duplicate SMS delivery
-            logger.error(f"[HTTP SMS TRANSPORT] Gateway timed out after {self.timeout}s delivering to {masked}.")
+            logger.error(f"SMS provider timed out after {self.timeout}s delivering to {masked}.")
             return False
         except (httpx.NetworkError, httpx.RequestError) as exc:
-            logger.error(f"[HTTP SMS TRANSPORT] Network/connection error while delivering to {masked}: {exc.__class__.__name__}")
+            logger.error(f"SMS provider network/connection error while delivering to {masked}: {exc.__class__.__name__}")
             return False
         except Exception as exc:
-            logger.error(f"[HTTP SMS TRANSPORT] Unexpected error while delivering to {masked}: {exc.__class__.__name__}")
+            logger.error(f"SMS provider unexpected error while delivering to {masked}: {exc.__class__.__name__}")
             return False
 
 
