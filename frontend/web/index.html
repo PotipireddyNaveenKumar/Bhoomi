@@ -373,8 +373,8 @@
         <div class="profile-header-title">
           <span class="profile-icon">💰</span>
           <div>
-            <h3 id="txtFinanceModalTitle">వ్యవసాయ ఆర్థిక విశ్లేషణ & లాభం (Farm Finance & Profit)</h3>
-            <p id="txtFinanceModalSub" style="font-size: 0.82rem; color: var(--text-muted, #94a3b8);">7-వ్యయ విభజన, బ్రేక్-ఈవెన్ లెక్కలు మరియు వాట్-ఇఫ్ సిమ్యులేషన్ (100% Deterministic)</p>
+            <h3 id="txtFinanceModalTitle">Farm Finance & Profit</h3>
+            <p id="txtFinanceModalSub" style="font-size: 0.82rem; color: var(--text-muted, #94a3b8);">7-Component Cost Breakdown, Break-Even Analysis & What-If Simulation (100% Deterministic)</p>
           </div>
         </div>
         <button class="btn-close-modal" onclick="closeFinanceModal()">✕</button>
@@ -384,112 +384,112 @@
         <!-- Crop & Land Area -->
         <div class="form-row">
           <div class="form-group">
-            <label for="finCrop">🌾 పంట పేరు (Crop Name)</label>
+            <label for="finCrop" id="lblFinCrop">🌾 Crop Name</label>
             <input type="text" id="finCrop" value="Chilli" required placeholder="e.g. Chilli, Cotton, Rice">
           </div>
           <div class="form-group">
-            <label for="finArea">📐 సాగు విస్తీర్ణం (Land Area)</label>
+            <label for="finArea" id="lblFinArea">📐 Land Area</label>
             <div style="display: flex; gap: 8px;">
               <input type="number" id="finArea" value="1.0" step="0.1" min="0.1" required style="flex: 2;">
               <select id="finAreaUnit" style="flex: 1;">
-                <option value="acre" selected>Acre</option>
-                <option value="ha">Hectare</option>
-                <option value="bigha">Bigha</option>
-                <option value="guntha">Guntha</option>
+                <option value="acre" id="optAreaAcre" selected>Acre</option>
+                <option value="ha" id="optAreaHa">Hectare</option>
+                <option value="bigha" id="optAreaBigha">Bigha</option>
+                <option value="guntha" id="optAreaGuntha">Guntha</option>
               </select>
             </div>
           </div>
         </div>
 
         <!-- 7-Component Cost Breakdown -->
-        <div class="soil-section-title" style="margin-top: 14px; margin-bottom: 10px; font-weight: 700; color: var(--accent-emerald, #10b981);">
-          📋 7-విభాగాల సాగు ఖర్చులు (7-Component Cost Breakdown in ₹)
+        <div id="txtFinCostSection" class="soil-section-title" style="margin-top: 14px; margin-bottom: 10px; font-weight: 700; color: var(--accent-emerald, #10b981);">
+          📋 7-Component Cultivation Costs (in ₹)
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
           <div class="form-group">
-            <label for="finCostSeed" style="font-size: 0.8rem;">విత్తనాలు (Seed ₹)</label>
+            <label for="finCostSeed" id="lblFinCostSeed" style="font-size: 0.8rem;">Seed (₹)</label>
             <input type="number" id="finCostSeed" placeholder="0" min="0" step="100">
           </div>
           <div class="form-group">
-            <label for="finCostFertilizer" style="font-size: 0.8rem;">ఎరువులు (Fertilizer ₹)</label>
+            <label for="finCostFertilizer" id="lblFinCostFertilizer" style="font-size: 0.8rem;">Fertilizer (₹)</label>
             <input type="number" id="finCostFertilizer" placeholder="0" min="0" step="100">
           </div>
           <div class="form-group">
-            <label for="finCostPesticide" style="font-size: 0.8rem;">పురుగుమందులు (Pesticide ₹)</label>
+            <label for="finCostPesticide" id="lblFinCostPesticide" style="font-size: 0.8rem;">Pesticide (₹)</label>
             <input type="number" id="finCostPesticide" placeholder="0" min="0" step="100">
           </div>
           <div class="form-group">
-            <label for="finCostLabour" style="font-size: 0.8rem;">కూలి ఖర్చులు (Labour ₹)</label>
+            <label for="finCostLabour" id="lblFinCostLabour" style="font-size: 0.8rem;">Labour (₹)</label>
             <input type="number" id="finCostLabour" placeholder="0" min="0" step="100">
           </div>
           <div class="form-group">
-            <label for="finCostIrrigation" style="font-size: 0.8rem;">నీటిపారుదల (Irrigation ₹)</label>
+            <label for="finCostIrrigation" id="lblFinCostIrrigation" style="font-size: 0.8rem;">Irrigation (₹)</label>
             <input type="number" id="finCostIrrigation" placeholder="0" min="0" step="100">
           </div>
           <div class="form-group">
-            <label for="finCostMachinery" style="font-size: 0.8rem;">ట్రాక్టర్/యంత్రాలు (Machinery ₹)</label>
+            <label for="finCostMachinery" id="lblFinCostMachinery" style="font-size: 0.8rem;">Machinery / Tractor (₹)</label>
             <input type="number" id="finCostMachinery" placeholder="0" min="0" step="100">
           </div>
           <div class="form-group">
-            <label for="finCostOther" style="font-size: 0.8rem;">ఇతర ఖర్చులు (Other ₹)</label>
+            <label for="finCostOther" id="lblFinCostOther" style="font-size: 0.8rem;">Other Costs (₹)</label>
             <input type="number" id="finCostOther" placeholder="0" min="0" step="100">
           </div>
         </div>
 
         <!-- Or Lump Sum Total Cost -->
         <div style="margin-top: 6px; font-size: 0.8rem; color: var(--text-muted, #94a3b8); display: flex; align-items: center; gap: 8px;">
-          <span>లేదా మొత్తం ఖర్చు (Or Total Cultivation Cost ₹):</span>
+          <span id="lblFinCostTotal">Or Total Cultivation Cost (₹):</span>
           <input type="number" id="finCostTotal" placeholder="e.g. 35000" min="0" step="500" style="max-width: 140px; padding: 4px 8px; font-size: 0.85rem;">
         </div>
 
         <!-- Yield & Market Price (Optional for Partial Calc) -->
-        <div class="soil-section-title" style="margin-top: 16px; margin-bottom: 10px; font-weight: 700; color: var(--accent-emerald, #10b981);">
-          📈 ఆశించే దిగుబడి & మార్కెట్ ధర (Expected Yield & Market Price)
+        <div id="txtFinYieldSection" class="soil-section-title" style="margin-top: 16px; margin-bottom: 10px; font-weight: 700; color: var(--accent-emerald, #10b981);">
+          📈 Expected Yield & Market Price
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label for="finYield">ఎకరాకు దిగుబడి (Expected Yield per Area)</label>
+            <label for="finYield" id="lblFinYield">Expected Yield per Area</label>
             <div style="display: flex; gap: 8px;">
               <input type="number" id="finYield" placeholder="e.g. 15.0" step="0.1" min="0" style="flex: 2;">
               <select id="finYieldUnit" style="flex: 1;">
-                <option value="quintal" selected>Quintal</option>
-                <option value="kg">Kg</option>
-                <option value="tonne">Tonne</option>
+                <option value="quintal" id="optYieldQtl" selected>Quintal</option>
+                <option value="kg" id="optYieldKg">Kg</option>
+                <option value="tonne" id="optYieldTonne">Tonne</option>
               </select>
             </div>
-            <span style="font-size: 0.75rem; color: var(--text-muted, #94a3b8);">దిగుబడి ఇవ్వకపోతే బ్రేక్-ఈవెన్ దిగుబడి లెక్కించబడుతుంది.</span>
+            <span id="txtFinYieldHint" style="font-size: 0.75rem; color: var(--text-muted, #94a3b8);">If yield is omitted, break-even yield will be calculated.</span>
           </div>
           <div class="form-group">
-            <label for="finPrice">ఆశించే మార్కెట్ ధర (Expected Market Price)</label>
+            <label for="finPrice" id="lblFinPrice">Expected Market Price</label>
             <div style="display: flex; gap: 8px;">
               <input type="number" id="finPrice" placeholder="e.g. 4200" step="10" min="0" style="flex: 2;">
               <select id="finPriceUnit" style="flex: 1;">
-                <option value="rupees_per_quintal" selected>₹ / Quintal</option>
-                <option value="rupees_per_kg">₹ / Kg</option>
+                <option value="rupees_per_quintal" id="optPriceQtl" selected>₹ / Quintal</option>
+                <option value="rupees_per_kg" id="optPriceKg">₹ / Kg</option>
               </select>
             </div>
-            <span style="font-size: 0.75rem; color: var(--text-muted, #94a3b8);">ధర ఇవ్వకపోతే బ్రేక్-ఈవెన్ ధర లెక్కించబడుతుంది.</span>
+            <span id="txtFinPriceHint" style="font-size: 0.75rem; color: var(--text-muted, #94a3b8);">If price is omitted, break-even price will be calculated.</span>
           </div>
         </div>
 
         <!-- What-If Simulation Controls (Collapsible) -->
         <details style="margin-top: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle, #334155); border-radius: 8px; padding: 10px;">
-          <summary style="font-weight: 600; cursor: pointer; color: #38bdf8;">⚡ వాట్-ఇఫ్ సిమ్యులేషన్ సెట్టింగ్‌లు (What-If Simulation Levers)</summary>
+          <summary id="txtSimSummary" style="font-weight: 600; cursor: pointer; color: #38bdf8;">⚡ What-If Simulation Levers</summary>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 12px;">
             <div class="form-group">
-              <label for="simPriceChange" style="font-size: 0.8rem;">మార్కెట్ ధర మార్పు (Price Change %)</label>
+              <label for="simPriceChange" id="lblSimPrice" style="font-size: 0.8rem;">Market Price Change (%)</label>
               <input type="number" id="simPriceChange" value="0" step="1" min="-90" max="200" placeholder="-10, +15">
             </div>
             <div class="form-group">
-              <label for="simYieldChange" style="font-size: 0.8rem;">దిగుబడి మార్పు (Yield Change %)</label>
+              <label for="simYieldChange" id="lblSimYield" style="font-size: 0.8rem;">Yield Change (%)</label>
               <input type="number" id="simYieldChange" value="0" step="1" min="-90" max="200" placeholder="-15, +20">
             </div>
             <div class="form-group">
-              <label for="simCostChange" style="font-size: 0.8rem;">మొత్తం ఖర్చు మార్పు (Cost Change %)</label>
+              <label for="simCostChange" id="lblSimCost" style="font-size: 0.8rem;">Total Cost Change (%)</label>
               <input type="number" id="simCostChange" value="0" step="1" min="-90" max="200" placeholder="+10, -5">
             </div>
             <div class="form-group">
-              <label for="simFertilizerChange" style="font-size: 0.8rem;">ఎరువుల ఖర్చు మార్పు (Fertilizer %)</label>
+              <label for="simFertilizerChange" id="lblSimFertilizer" style="font-size: 0.8rem;">Fertilizer Cost Change (%)</label>
               <input type="number" id="simFertilizerChange" value="0" step="1" min="-90" max="200" placeholder="+15">
             </div>
           </div>
@@ -498,10 +498,10 @@
         <!-- Action Buttons -->
         <div style="display: flex; gap: 12px; margin-top: 20px;">
           <button type="submit" id="btnCalcProfit" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-            📊 లాభం & ఖర్చులు లెక్కించండి (Calculate Profit)
+            📊 Calculate Profit & Costs
           </button>
           <button type="button" id="btnRunSim" onclick="runWhatIfSimulation()" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-            ⚡ సిమ్యులేషన్ రన్ చేయండి (Run What-If)
+            ⚡ Run What-If Simulation
           </button>
         </div>
 

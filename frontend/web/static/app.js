@@ -97,7 +97,65 @@ const I18N = {
       { title: "💰 Paddy Profit Breakdown", sub: "What is the expected revenue, cultivation cost and net profit for paddy?", prompt: "What is the profit of paddy?" },
       { title: "🍃 Disease Management", sub: "What are the major pests, blast symptoms and CIBRC control in rice?", prompt: "What are major issues of growing paddy?" },
       { title: "🌦️ 7-Day Spray Advisory", sub: "Weather forecast, rain probability and optimal spraying window.", prompt: "Will it rain tomorrow in Warangal? Is it safe to spray?" }
-    ]
+    ],
+    finance: {
+      headerBtn: "Finance & Profit",
+      headerBtnTitle: "Farm Financial Planner & What-If Simulation",
+      title: "Farm Finance & Profit",
+      subtitle: "7-Component Cost Breakdown, Break-Even Analysis & What-If Simulation (100% Deterministic)",
+      cropName: "🌾 Crop Name",
+      cropPlaceholder: "e.g. Chilli, Cotton, Rice",
+      landArea: "📐 Land Area",
+      units: { acre: "Acre", ha: "Hectare", bigha: "Bigha", guntha: "Guntha" },
+      costSectionTitle: "📋 7-Component Cultivation Costs (in ₹)",
+      costSeed: "Seed (₹)", costFertilizer: "Fertilizer (₹)", costPesticide: "Pesticide (₹)",
+      costLabour: "Labour (₹)", costIrrigation: "Irrigation (₹)", costMachinery: "Machinery / Tractor (₹)", costOther: "Other Costs (₹)",
+      costTotalLumpSum: "Or Total Cultivation Cost (₹):",
+      costTotalPlaceholder: "e.g. 35000",
+      yieldSectionTitle: "📈 Expected Yield & Market Price",
+      expectedYield: "Expected Yield per Area",
+      yieldUnits: { quintal: "Quintal", kg: "Kg", tonne: "Tonne" },
+      yieldHint: "If yield is omitted, break-even yield will be calculated.",
+      expectedPrice: "Expected Market Price",
+      priceUnits: { rupees_per_quintal: "₹ / Quintal", rupees_per_kg: "₹ / Kg" },
+      priceHint: "If price is omitted, break-even price will be calculated.",
+      simLeversSummary: "⚡ What-If Simulation Levers",
+      simPriceChange: "Market Price Change (%)", simYieldChange: "Yield Change (%)",
+      simCostChange: "Total Cost Change (%)", simFertilizerChange: "Fertilizer Cost Change (%)",
+      btnCalculate: "📊 Calculate Profit & Costs",
+      btnRunSim: "⚡ Run What-If Simulation",
+      calculating: "⏳ Calculating deterministic farm finance...",
+      calcFailed: "Calculation failed. Please verify your inputs.",
+      networkError: "Network error while connecting to finance service.",
+      simRunning: "⚡ Running multi-lever scenario simulation...",
+      simFailed: "Simulation failed.",
+      simNetworkError: "Network error while connecting to simulation service.",
+      cardTotalCost: "Total Cost", cardGrossRevenue: "Gross Revenue", cardNetProfit: "Net Profit",
+      cardProfitPerArea: "Profit per", cardRoi: "Return on Investment", deterministicBadge: "Deterministic",
+      calcTitle: "📊 Financial Calculation",
+      costBreakdownTitle: "7-Component Cost Breakdown:",
+      costLabels: {
+        seed_cost: "Seed",
+        fertilizer_cost: "Fertilizer",
+        pesticide_cost: "Pesticide",
+        labour_cost: "Labour",
+        irrigation_cost: "Irrigation",
+        machinery_cost: "Machinery / Tractor",
+        other_cost: "Other Costs"
+      },
+      breakEvenPriceLabel: "🎯 Break-Even Market Price:", breakEvenPriceDesc: "(Minimum price needed to avoid loss)",
+      breakEvenYieldLabel: "🎯 Break-Even Yield:", breakEvenYieldDesc: "(Minimum production needed to cover cost)",
+      partialCalcWarning: "⚠️ Partial Calculation (Missing: {fields})",
+      viewTrace: "🔍 View Deterministic Calculation Trace ({count} steps)",
+      simResultTitle: "⚡ Multi-Lever What-If Simulation", simScenarioBadge: "Scenario Comparison",
+      tblMetric: "Metric", tblBaseline: "Baseline", tblSimulated: "Simulated Scenario", tblDifference: "Difference",
+      tblMarketPrice: "Market Price", tblTotalProduction: "Total Production", tblGrossRevenue: "Gross Revenue",
+      tblCultivationCost: "Cultivation Cost", tblNetProfit: "Net Profit", tblRoi: "Return on Investment (ROI)",
+      riskExplanationTitle: "💡 Risk Explanation:",
+      mitigationActionsTitle: "🛡️ Recommended Risk Mitigation Actions:",
+      validationCostWarning: "Please enter cultivation costs before running simulation",
+      validationYieldPriceWarning: "Please enter baseline Yield and Market Price for What-If Simulation"
+    }
   },
   te: {
     heroTitle: "మీ వ్యవసాయ సందేహాలు నన్ను అడగండి",
@@ -116,7 +174,65 @@ const I18N = {
       { title: "💰 వరి పంట లాభాల లెక్క", sub: "వరి పంట సాగు చేస్తే ఎకరానికి ఖర్చు మరియు నికర లాభం ఎంత?", prompt: "వరి పంట సాగు చేస్తే ఎంత లాభం వస్తుంది?" },
       { title: "🍃 ఆకు తెగులు & నివారణ", sub: "వరిలో అగ్గి తెగులు నివారణకు ICAR సిఫార్సు చేసిన మందులు ఏమిటి?", prompt: "వరిలో అగ్గి తెగులు నివారణకు ఏ మందు పిచికారీ చేయాలి?" },
       { title: "🌦️ వాతావరణం & స్ప్రే సలహా", sub: "రాబోయే 7 రోజుల వర్ష సూచన మరియు మందులు కొట్టే సమయం.", prompt: "రేపు వర్షం పడుతుందా? మందులు స్ప్రే చేయవచ్చా?" }
-    ]
+    ],
+    finance: {
+      headerBtn: "ఆర్థిక విశ్లేషణ & లాభం",
+      headerBtnTitle: "వ్యవసాయ ఆర్థిక ప్రణాళిక & వాట్-ఇఫ్ సిమ్యులేషన్",
+      title: "వ్యవసాయ ఆర్థిక విశ్లేషణ & లాభం",
+      subtitle: "7-వ్యయ విభజన, బ్రేక్-ఈవెన్ లెక్కలు మరియు వాట్-ఇఫ్ సిమ్యులేషన్ (100% Deterministic)",
+      cropName: "🌾 పంట పేరు",
+      cropPlaceholder: "ఉదా: మిర్చి, పత్తి, వరి",
+      landArea: "📐 సాగు విస్తీర్ణం",
+      units: { acre: "ఎకరం", ha: "హెక్టారు", bigha: "బిఘా", guntha: "గుంట" },
+      costSectionTitle: "📋 7-విభాగాల సాగు ఖర్చులు (₹ లలో)",
+      costSeed: "విత్తనాలు (₹)", costFertilizer: "ఎరువులు (₹)", costPesticide: "పురుగుమందులు (₹)",
+      costLabour: "కూలి ఖర్చులు (₹)", costIrrigation: "నీటిపారుదల (₹)", costMachinery: "ట్రాక్టర్/యంత్రాలు (₹)", costOther: "ఇతర ఖర్చులు (₹)",
+      costTotalLumpSum: "లేదా మొత్తం సాగు ఖర్చు (₹):",
+      costTotalPlaceholder: "ఉదా: 35000",
+      yieldSectionTitle: "📈 ఆశించే దిగుబడి & మార్కెట్ ధర",
+      expectedYield: "ఎకరాకు దిగుబడి",
+      yieldUnits: { quintal: "క్వింటాల్", kg: "కిలో", tonne: "టన్ను" },
+      yieldHint: "దిగుబడి ఇవ్వకపోతే బ్రేక్-ఈవెన్ దిగుబడి లెక్కించబడుతుంది.",
+      expectedPrice: "ఆశించే మార్కెట్ ధర",
+      priceUnits: { rupees_per_quintal: "₹ / క్వింటాల్", rupees_per_kg: "₹ / కిలో" },
+      priceHint: "ధర ఇవ్వకపోతే బ్రేక్-ఈవెన్ ధర లెక్కించబడుతుంది.",
+      simLeversSummary: "⚡ వాట్-ఇఫ్ సిమ్యులేషన్ సెట్టింగ్‌లు",
+      simPriceChange: "మార్కెట్ ధర మార్పు (%)", simYieldChange: "దిగుబడి మార్పు (%)",
+      simCostChange: "మొత్తం ఖర్చు మార్పు (%)", simFertilizerChange: "ఎరువుల ఖర్చు మార్పు (%)",
+      btnCalculate: "📊 లాభం & ఖర్చులు లెక్కించండి",
+      btnRunSim: "⚡ సిమ్యులేషన్ రన్ చేయండి",
+      calculating: "⏳ ఆర్థిక గణాంకాలు లెక్కించబడుతున్నాయి...",
+      calcFailed: "గణన విఫలమైంది. దయచేసి వివరాలను సరిచూసుకోండి.",
+      networkError: "సర్వర్‌ను సంప్రదించడంలో నెట్‌వర్క్ లోపం ఏర్పడింది.",
+      simRunning: "⚡ బహుళ అంశాల సిమ్యులేషన్ రన్ అవుతోంది...",
+      simFailed: "సిమ్యులేషన్ విఫలమైంది.",
+      simNetworkError: "సిమ్యులేషన్ సర్వర్‌కు కనెక్ట్ చేయడంలో నెట్‌వర్క్ లోపం.",
+      cardTotalCost: "మొత్తం ఖర్చు", cardGrossRevenue: "స్థూల ఆదాయం", cardNetProfit: "నికర లాభం",
+      cardProfitPerArea: "ప్రతి విస్తీర్ణానికి లాభం", cardRoi: "పెట్టుబడిపై రాబడి (ROI)", deterministicBadge: "ఖచ్చితమైన గణన",
+      calcTitle: "📊 ఆర్థిక గణాంకాలు",
+      costBreakdownTitle: "7-విభాగాల సాగు ఖర్చులు:",
+      costLabels: {
+        seed_cost: "విత్తనాలు",
+        fertilizer_cost: "ఎరువులు",
+        pesticide_cost: "పురుగుమందులు",
+        labour_cost: "కూలి ఖర్చులు",
+        irrigation_cost: "నీటిపారుదల",
+        machinery_cost: "ట్రాక్టర్/యంత్రాలు",
+        other_cost: "ఇతర ఖర్చులు"
+      },
+      breakEvenPriceLabel: "🎯 బ్రేక్-ఈవెన్ మార్కెట్ ధర:", breakEvenPriceDesc: "(నష్టం రాకుండా ఉండటానికి కనీస ధర)",
+      breakEvenYieldLabel: "🎯 బ్రేక్-ఈవెన్ దిగుబడి:", breakEvenYieldDesc: "(ఖర్చులు తీరడానికి కనీస ఉత్పత్తి)",
+      partialCalcWarning: "⚠️ పాక్షిక గణన (అసంపూర్ణ వివరాలు: {fields})",
+      viewTrace: "🔍 ఖచ్చితమైన గణన వివరాలు చూడండి ({count} దశలు)",
+      simResultTitle: "⚡ బహుళ అంశాల వాట్-ఇఫ్ సిమ్యులేషన్", simScenarioBadge: "పరిస్థితుల పోలిక",
+      tblMetric: "కొలమానం", tblBaseline: "ప్రస్తుత స్థితి", tblSimulated: "సిమ్యులేట్ చేసిన స్థితి", tblDifference: "తేడా",
+      tblMarketPrice: "మార్కెట్ ధర", tblTotalProduction: "మొత్తం దిగుబడి", tblGrossRevenue: "స్థూల రాబడి",
+      tblCultivationCost: "సాగు ఖర్చు", tblNetProfit: "నికర లాభం", tblRoi: "రాబడి శాతం (ROI)",
+      riskExplanationTitle: "💡 రిస్క్ విశ్లేషణ:",
+      mitigationActionsTitle: "🛡️ సిఫార్సు చేసిన నష్ట నివారణ చర్యలు:",
+      validationCostWarning: "సిమ్యులేషన్ చేయడానికి ముందు సాగు ఖర్చులను నమోదు చేయండి",
+      validationYieldPriceWarning: "సిమ్యులేషన్ కోసం ఆశించే దిగుబడి మరియు మార్కెట్ ధరను నమోదు చేయండి"
+    }
   },
   hi: {
     heroTitle: "अपने कृषि संबंधी प्रश्न मुझसे पूछें",
@@ -135,7 +251,65 @@ const I18N = {
       { title: "💰 धान की खेती में मुनाफा", sub: "धान की खेती में कुल लागत, पैदावार और शुद्ध मुनाफा कितना होगा?", prompt: "धान की खेती में कितना मुनाफा होगा?" },
       { title: "🍃 झुलसा रोग एवं रोकथाम", sub: "धान में झुलसा रोग के लक्षण और CIBRC अनुमोदित दवाएं।", prompt: "धान में झुलसा रोग की रोकथाम के लिए कौन सी दवा डालें?" },
       { title: "🌦️ मौसम एवं छिड़काव", sub: "क्या कल बारिश होगी? कीटनाशक छिड़काव का सही समय।", prompt: "क्या कल बारिश होगी? कीटनाशक छिड़काव कर सकते हैं?" }
-    ]
+    ],
+    finance: {
+      headerBtn: "वित्त एवं मुनाफा",
+      headerBtnTitle: "फार्म वित्तीय योजना एवं वाट-इफ सिमुलेशन",
+      title: "कृषि वित्त एवं मुनाफा विश्लेषण",
+      subtitle: "7-लागत घटक, ब्रेक-ईवन विश्लेषण एवं परिदृश्य सिमुलेशन (100% सटीक)",
+      cropName: "🌾 फसल का नाम",
+      cropPlaceholder: "उदा: मिर्च, कपास, धान",
+      landArea: "📐 भूमि क्षेत्रफल",
+      units: { acre: "एकड़", ha: "हेक्टेयर", bigha: "बीघा", guntha: "गुंठा" },
+      costSectionTitle: "📋 7-घटक खेती की लागत (₹ में)",
+      costSeed: "बीज (₹)", costFertilizer: "उर्वरक / खाद (₹)", costPesticide: "कीटनाशक (₹)",
+      costLabour: "मजदूरी (₹)", costIrrigation: "सिंचाई (₹)", costMachinery: "मशीनरी / ट्रैक्टर (₹)", costOther: "अन्य लागत (₹)",
+      costTotalLumpSum: "या कुल खेती लागत (₹):",
+      costTotalPlaceholder: "उदा: 35000",
+      yieldSectionTitle: "📈 अनुमानित पैदावार एवं बाजार भाव",
+      expectedYield: "प्रति एकड़ अनुमानित पैदावार",
+      yieldUnits: { quintal: "क्विंटल", kg: "किग्रा", tonne: "टन" },
+      yieldHint: "पैदावार न देने पर ब्रेक-ईवन पैदावार की गणना की जाएगी।",
+      expectedPrice: "अनुमानित बाजार भाव",
+      priceUnits: { rupees_per_quintal: "₹ / क्विंटल", rupees_per_kg: "₹ / किग्रा" },
+      priceHint: "भाव न देने पर ब्रेक-ईवन बाजार भाव की गणना की जाएगी।",
+      simLeversSummary: "⚡ वाट-इफ सिमुलेशन सेटिंग्स",
+      simPriceChange: "बाजार भाव में बदलाव (%)", simYieldChange: "पैदावार में बदलाव (%)",
+      simCostChange: "कुल लागत में बदलाव (%)", simFertilizerChange: "उर्वरक लागत में बदलाव (%)",
+      btnCalculate: "📊 लागत एवं मुनाफा गणना करें",
+      btnRunSim: "⚡ सिमुलेशन चलाएं",
+      calculating: "⏳ सटीक वित्तीय गणना की जा रही है...",
+      calcFailed: "गणना विफल रही। कृपया दर्ज जानकारी जांचें।",
+      networkError: "वित्त सेवा से जुड़ने में नेटवर्क त्रुटि हुई।",
+      simRunning: "⚡ बहु-कारक परिदृश्य सिमुलेशन चल रहा है...",
+      simFailed: "सिमुलेशन विफल रहा।",
+      simNetworkError: "सिमुलेशन सेवा से जुड़ने में नेटवर्क त्रुटि हुई।",
+      cardTotalCost: "कुल लागत", cardGrossRevenue: "सकल आमदनी", cardNetProfit: "शुद्ध मुनाफा",
+      cardProfitPerArea: "प्रति क्षेत्र मुनाफा", cardRoi: "निवेश पर रिटर्न (ROI)", deterministicBadge: "सटीक गणना",
+      calcTitle: "📊 वित्तीय गणना",
+      costBreakdownTitle: "7-घटक खेती लागत विवरण:",
+      costLabels: {
+        seed_cost: "बीज",
+        fertilizer_cost: "उर्वरक / खाद",
+        pesticide_cost: "कीटनाशक",
+        labour_cost: "मजदूरी",
+        irrigation_cost: "सिंचाई",
+        machinery_cost: "मशीनरी / ट्रैक्टर",
+        other_cost: "अन्य लागत"
+      },
+      breakEvenPriceLabel: "🎯 ब्रेक-ईवन बाजार भाव:", breakEvenPriceDesc: "(नुकसान से बचने हेतु न्यूनतम भाव)",
+      breakEvenYieldLabel: "🎯 ब्रेक-ईवन पैदावार:", breakEvenYieldDesc: "(लागत निकालने हेतु न्यूनतम उत्पादन)",
+      partialCalcWarning: "⚠️ आंशिक गणना (अधूरी जानकारी: {fields})",
+      viewTrace: "🔍 सटीक गणना विवरण देखें ({count} चरण)",
+      simResultTitle: "⚡ बहु-कारक वाट-इफ सिमुलेशन", simScenarioBadge: "परिदृश्य तुलना",
+      tblMetric: "पैमाना", tblBaseline: "वर्तमान स्थिति", tblSimulated: "सिम्युलेटेड स्थिति", tblDifference: "अंतर",
+      tblMarketPrice: "बाजार भाव", tblTotalProduction: "कुल पैदावार", tblGrossRevenue: "सकल आमदनी",
+      tblCultivationCost: "खेती लागत", tblNetProfit: "शुद्ध मुनाफा", tblRoi: "रिटर्न दर (ROI)",
+      riskExplanationTitle: "💡 जोखिम विश्लेषण:",
+      mitigationActionsTitle: "🛡️ अनुशंसित जोखिम न्यूनीकरण उपाय:",
+      validationCostWarning: "सिमुलेशन चलाने से पहले कृपया खेती की लागत दर्ज करें",
+      validationYieldPriceWarning: "सिमुलेशन के लिए कृपया पैदावार और बाजार भाव दर्ज करें"
+    }
   },
   ta: {
     heroTitle: "உங்கள் விவசாயக் கேள்விகளை பூமியிடம் கேளுங்கள்",
@@ -173,7 +347,65 @@ const I18N = {
       { title: "💰 ಭತ್ತದ ಕೃಷಿ ಲಾಭ", sub: "ಭತ್ತದ ಕೃಷಿಯಲ್ಲಿ ಎಕರೆಗೆ ನಿವ್ವಳ ಲಾಭ ಎಷ್ಟು?", prompt: "ಭತ್ತದ ಕೃಷಿಯಲ್ಲಿ ಎಷ್ಟು ಲಾಭ ಸಿಗುತ್ತದೆ?" },
       { title: "🍃 ಎಲೆ ರೋಗ & ನಿವಾರಣೆ", sub: "ಭತ್ತದ ಬೆಂಕಿರೋಗ ನಿವಾರಣೆಗೆ ಶಿಫಾರಸು ಮಾಡಿದ ಔಷಧಿಗಳು ಯಾವುವು?", prompt: "ಭತ್ತದ ಬೆಂಕಿರೋಗಕ್ಕೆ ಯಾವ ಔಷಧಿ ಸಿಂಪಡಿಸಬೇಕು?" },
       { title: "🌦️ ಹವಾಮಾನ & ಸಿಂಪರಣೆ", sub: "ಮುಂದಿನ 7 ದಿನಗಳಲ್ಲಿ ಮಳೆಯಾಗಲಿದೆಯೇ? ಸಿಂಪರಣೆ ಮಾಡಬಹುದೇ?", prompt: "ನಾಳೆ ಮಳೆಯಾಗಲಿದೆಯೇ? ಔಷಧಿ ಸಿಂಪಡಿಸಬಹುದೇ?" }
-    ]
+    ],
+    finance: {
+      headerBtn: "ಹಣಕಾಸು & ಲಾಭ",
+      headerBtnTitle: "ಕೃಷಿ ಹಣಕಾಸು ಯೋಜನೆ & ಸಿಮ್ಯುಲೇಶನ್",
+      title: "ಕೃಷಿ ಹಣಕಾಸು ಮತ್ತು ಲಾಭ ವಿಶ್ಲೇಷಣೆ",
+      subtitle: "7-ಘಟಕ ವೆಚ್ಚ ವಿಶ್ಲೇಷಣೆ, ಬ್ರೇಕ್-ಈವನ್ ಲೆಕ್ಕಾಚಾರ & ವಾಟ್-ಇಫ್ ಸಿಮ್ಯುಲೇಶನ್",
+      cropName: "🌾 ಬೆಳೆಯ ಹೆಸರು",
+      cropPlaceholder: "ಉದಾ: ಮೆಣಸಿನಕಾಯಿ, ಹತ್ತಿ, ಭತ್ತ",
+      landArea: "📐 ಜಮೀನಿನ ವಿಸ್ತೀರ್ಣ",
+      units: { acre: "ಎಕರೆ", ha: "ಹೆಕ್ಟೇರ್", bigha: "ಬಿಘಾ", guntha: "ಗುಂಟಾ" },
+      costSectionTitle: "📋 7-ಘಟಕ ಕೃಷಿ ವೆಚ್ಚಗಳು (₹ ಗಳಲ್ಲಿ)",
+      costSeed: "ಬೀಜ (₹)", costFertilizer: "ಗೊಬ್ಬರ (₹)", costPesticide: "ಕೀಟನಾಶಕ (₹)",
+      costLabour: "ಕೂಲಿ (₹)", costIrrigation: "ನೀರಾವರಿ (₹)", costMachinery: "ಯಂತ್ರೋಪಕರಣ (₹)", costOther: "ಇತರ ವೆಚ್ಚಗಳು (₹)",
+      costTotalLumpSum: "ಅಥವಾ ಒಟ್ಟು ಕೃಷಿ ವೆಚ್ಚ (₹):",
+      costTotalPlaceholder: "ಉದಾ: 35000",
+      yieldSectionTitle: "📈 ನಿರೀಕ್ಷಿತ ಇಳುವರಿ ಮತ್ತು ಮಾರುಕಟ್ಟೆ ದರ",
+      expectedYield: "ಪ್ರತಿ ವಿಸ್ತೀರ್ಣಕ್ಕೆ ಇಳುವರಿ",
+      yieldUnits: { quintal: "ಕ್ವಿಂಟಾಲ್", kg: "ಕೆಜಿ", tonne: "ಟನ್" },
+      yieldHint: "ಇಳುವರಿ ನೀಡದಿದ್ದರೆ ಬ್ರೇಕ್-ಈವನ್ ಇಳುವರಿ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ.",
+      expectedPrice: "ನಿರೀಕ್ಷಿತ ಮಾರುಕಟ್ಟೆ ದರ",
+      priceUnits: { rupees_per_quintal: "₹ / ಕ್ವಿಂಟಾಲ್", rupees_per_kg: "₹ / ಕೆಜಿ" },
+      priceHint: "ದರ ನೀಡದಿದ್ದರೆ ಬ್ರೇಕ್-ಈವನ್ ದರ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ.",
+      simLeversSummary: "⚡ ವಾಟ್-ಇಫ್ ಸಿಮ್ಯುಲೇಶನ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+      simPriceChange: "ಮಾರುಕಟ್ಟೆ ದರ ಬದಲಾವಣೆ (%)", simYieldChange: "ಇಳುವರಿ ಬದಲಾವಣೆ (%)",
+      simCostChange: "ಒಟ್ಟು ವೆಚ್ಚ ಬದಲಾವಣೆ (%)", simFertilizerChange: "ಗೊಬ್ಬರ ವೆಚ್ಚ ಬದಲಾವಣೆ (%)",
+      btnCalculate: "📊 ವೆಚ್ಚ ಮತ್ತು ಲಾಭ ಲೆಕ್ಕ ಹಾಕಿ",
+      btnRunSim: "⚡ ಸಿಮ್ಯುಲೇಶನ್ ರನ್ ಮಾಡಿ",
+      calculating: "⏳ ಹಣಕಾಸಿನ ಲೆಕ್ಕಾಚಾರ ಮಾಡಲಾಗುತ್ತಿದೆ...",
+      calcFailed: "ಲೆಕ್ಕಾಚಾರ ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.",
+      networkError: "ಹಣಕಾಸು ಸೇವೆ ಸಂಪರ್ಕದಲ್ಲಿ ನೆಟ್‌ವರ್ಕ್ ದೋಷ.",
+      simRunning: "⚡ ಸಿಮ್ಯುಲೇಶನ್ ಚಾಲನೆಯಲ್ಲಿದೆ...",
+      simFailed: "ಸಿಮ್ಯುಲೇಶನ್ ವಿಫಲವಾಗಿದೆ.",
+      simNetworkError: "ಸಿಮ್ಯುಲೇಶನ್ ಸೇವೆ ಸಂಪರ್ಕ ದೋಷ.",
+      cardTotalCost: "ಒಟ್ಟು ವೆಚ್ಚ", cardGrossRevenue: "ಒಟ್ಟು ಆದಾಯ", cardNetProfit: "ನಿವ್ವಳ ಲಾಭ",
+      cardProfitPerArea: "ಪ್ರತಿ ಎಕರೆ ಲಾಭ", cardRoi: "ಹೂಡಿಕೆಯ ಮೇಲಿನ ಲಾಭ (ROI)", deterministicBadge: "ನಿಖರವಾದ",
+      calcTitle: "📊 ಕೃಷಿ ಹಣಕಾಸು ಲೆಕ್ಕಾಚಾರ",
+      costBreakdownTitle: "7-ಘಟಕ ವೆಚ್ಚ ವಿಶ್ಲೇಷಣೆ:",
+      costLabels: {
+        seed_cost: "ಬೀಜ",
+        fertilizer_cost: "ಗೊಬ್ಬರ",
+        pesticide_cost: "ಕೀಟನಾಶಕ",
+        labour_cost: "ಕೂಲಿ",
+        irrigation_cost: "ನೀರಾವರಿ",
+        machinery_cost: "ಯಂತ್ರೋಪಕರಣ",
+        other_cost: "ಇತರ ವೆಚ್ಚಗಳು"
+      },
+      breakEvenPriceLabel: "🎯 ಬ್ರೇಕ್-ಈವನ್ ಮಾರುಕಟ್ಟೆ ದರ:", breakEvenPriceDesc: "(ನಷ್ಟ ತಪ್ಪಿಸಲು ಕನಿಷ್ಠ ದರ)",
+      breakEvenYieldLabel: "🎯 ಬ್ರೇಕ್-ಈವನ್ ಇಳುವರಿ:", breakEvenYieldDesc: "(ವೆಚ್ಚ ಸರಿದೂಗಿಸಲು ಕನಿಷ್ಠ ಉತ್ಪಾದನೆ)",
+      partialCalcWarning: "⚠️ ಅಪೂರ್ಣ ಲೆಕ್ಕಾಚಾರ (ಖಾಲಿ ವಿವರಗಳು: {fields})",
+      viewTrace: "🔍 ಲೆಕ್ಕಾಚಾರದ ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ ({count} ಹಂತಗಳು)",
+      simResultTitle: "⚡ ವಾಟ್-ಇಫ್ ಸಿಮ್ಯುಲೇಶನ್ ಫಲಿತಾಂಶ", simScenarioBadge: "ಪರಿಸ್ಥಿತಿ ಹೋಲಿಕೆ",
+      tblMetric: "ಮಾನದಂಡ", tblBaseline: "ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ", tblSimulated: "ಸಿಮ್ಯುಲೇಟೆಡ್ ಸ್ಥಿತಿ", tblDifference: "ವ್ಯತ್ಯಾಸ",
+      tblMarketPrice: "ಮಾರುಕಟ್ಟೆ ದರ", tblTotalProduction: "ಒಟ್ಟು ಉತ್ಪಾದನೆ", tblGrossRevenue: "ಒಟ್ಟು ಆದಾಯ",
+      tblCultivationCost: "ಕೃಷಿ ವೆಚ್ಚ", tblNetProfit: "ನಿವ್ವಳ ಲಾಭ", tblRoi: "ಲಾಭದ ದರ (ROI)",
+      riskExplanationTitle: "💡 ಅಪಾಯ ವಿಶ್ಲೇಷಣೆ:",
+      mitigationActionsTitle: "🛡️ ಶಿಫಾರಸು ಮಾಡಿದ ಅಪಾಯ ನಿಯಂತ್ರಣ ಕ್ರಮಗಳು:",
+      validationCostWarning: "ಸಿಮ್ಯುಲೇಶನ್ ಮೊದಲು ದಯವಿಟ್ಟು ಕೃಷಿ ವೆಚ್ಚಗಳನ್ನು ನಮೂದಿಸಿ",
+      validationYieldPriceWarning: "ಸಿಮ್ಯುಲೇಶನ್‌ಗಾಗಿ ಇಳುವರಿ ಮತ್ತು ಮಾರುಕಟ್ಟೆ ದರ ನಮೂದಿಸಿ"
+    }
   },
   mr: {
     heroTitle: "आपले शेती विषयक प्रश्न भूमीला विचारा",
@@ -192,7 +424,65 @@ const I18N = {
       { title: "💰 भात शेतीतील नफा", sub: "भात शेतीत एकरी खर्च व निव्वळ नफा किती होईल?", prompt: "भात शेतीत किती नफा मिळेल?" },
       { title: "🍃 पानांवरील करपा रोग", sub: "भात पिकावरील करपा रोगाची लक्षणे व नियंत्रण उपाय.", prompt: "भातावरील करपा रोगासाठी कोणती औषधे फवारावीत?" },
       { title: "🌦️ हवामान व फवारणी", sub: "उद्या पाऊस पडेल का? कीटकनाशक फवारणीची योग्य वेळ.", prompt: "उद्या पाऊस पडेल का? औषध फवारणी करू शकतो का?" }
-    ]
+    ],
+    finance: {
+      headerBtn: "वित्त व नफा",
+      headerBtnTitle: "शेती वित्त नियोजन व व्हॉट-इफ सिम्युलेशन",
+      title: "शेती वित्त आणि नफा विश्लेषण",
+      subtitle: "7-घटक खर्च विभाजन, ब्रेक-इव्हन विश्लेषण व परिदृश्य सिम्युलेशन",
+      cropName: "🌾 पिकाचे नाव",
+      cropPlaceholder: "उदा: मिरची, कापूस, भात",
+      landArea: "📐 शेती क्षेत्रफळ",
+      units: { acre: "एकर", ha: "हेक्टर", bigha: "बिघा", guntha: "गुंठा" },
+      costSectionTitle: "📋 7-घटक शेती खर्च (₹ मध्ये)",
+      costSeed: "बियाणे (₹)", costFertilizer: "खते (₹)", costPesticide: "कीटकनाशके (₹)",
+      costLabour: "मजुरी (₹)", costIrrigation: "सिंचन (₹)", costMachinery: "यंत्रसामग्री (₹)", costOther: "इतर खर्च (₹)",
+      costTotalLumpSum: "किंवा एकूण शेती खर्च (₹):",
+      costTotalPlaceholder: "उदा: 35000",
+      yieldSectionTitle: "📈 अपेक्षित उत्पादन आणि बाजार भाव",
+      expectedYield: "प्रति क्षेत्रफळ अपेक्षित उत्पादन",
+      yieldUnits: { quintal: "क्विंटल", kg: "किग्रॅ", tonne: "टन" },
+      yieldHint: "उत्पादन न दिल्यास ब्रेक-इव्हन उत्पादन मोजले जाईल.",
+      expectedPrice: "अपेक्षित बाजार भाव",
+      priceUnits: { rupees_per_quintal: "₹ / क्विंटल", rupees_per_kg: "₹ / किग्रॅ" },
+      priceHint: "भाव न दिल्यास ब्रेक-इव्हन भाव मोजला जाईल.",
+      simLeversSummary: "⚡ व्हॉट-इफ सिम्युलेशन सेटिंग्ज",
+      simPriceChange: "बाजार भावातील बदल (%)", simYieldChange: "उत्पादनातील बदल (%)",
+      simCostChange: "एकूण खर्चातील बदल (%)", simFertilizerChange: "खतांच्या खर्चातील बदल (%)",
+      btnCalculate: "📊 खर्च व नफा मोजा",
+      btnRunSim: "⚡ सिम्युलेशन चालवा",
+      calculating: "⏳ वित्तीय हिशोब केला जात आहे...",
+      calcFailed: "हिशोब अयशस्वी झाला. कृपया माहिती तपासा.",
+      networkError: "वित्त सेवेशी जोडताना नेटवर्क त्रुटी.",
+      simRunning: "⚡ सिम्युलेशन चालू आहे...",
+      simFailed: "सिम्युलेशन अयशस्वी झाले.",
+      simNetworkError: "सिम्युलेशन सेवेशी जोडताना त्रुटी.",
+      cardTotalCost: "एकूण खर्च", cardGrossRevenue: "एकूण उत्पन्न", cardNetProfit: "निव्वळ नफा",
+      cardProfitPerArea: "प्रति एकर नफा", cardRoi: "गुंतवणुकीवरील परतावा (ROI)", deterministicBadge: "अचूक",
+      calcTitle: "📊 शेती वित्त हिशोब",
+      costBreakdownTitle: "7-घटक खर्च विभाजन:",
+      costLabels: {
+        seed_cost: "बियाणे",
+        fertilizer_cost: "खते",
+        pesticide_cost: "कीटकनाशके",
+        labour_cost: "मजुरी",
+        irrigation_cost: "सिंचन",
+        machinery_cost: "यंत्रसामग्री",
+        other_cost: "इतर खर्च"
+      },
+      breakEvenPriceLabel: "🎯 ब्रेक-इव्हन बाजार भाव:", breakEvenPriceDesc: "(तोटा टाळण्यासाठी किमान भाव)",
+      breakEvenYieldLabel: "🎯 ब्रेक-इव्हन उत्पादन:", breakEvenYieldDesc: "(खर्च भरून काढण्यासाठी किमान उत्पादन)",
+      partialCalcWarning: "⚠️ अपूर्ण हिशोब (अपूर्ण माहिती: {fields})",
+      viewTrace: "🔍 अचूक हिशोबाचे टप्पे पहा ({count} टप्पे)",
+      simResultTitle: "⚡ व्हॉट-इफ सिम्युलेशन", simScenarioBadge: "परिदृश्य तुलना",
+      tblMetric: "मापदंड", tblBaseline: "सध्याची स्थिती", tblSimulated: "सिम्युलेटेड स्थिती", tblDifference: "तफावत",
+      tblMarketPrice: "बाजार भाव", tblTotalProduction: "एकूण उत्पादन", tblGrossRevenue: "एकूण उत्पन्न",
+      tblCultivationCost: "शेती खर्च", tblNetProfit: "निव्वळ नफा", tblRoi: "परतावा दर (ROI)",
+      riskExplanationTitle: "💡 जोखीम विश्लेषण:",
+      mitigationActionsTitle: "🛡️ शिफारस केलेले जोखीम निवारण उपाय:",
+      validationCostWarning: "सिम्युलेशन चालवण्यापूर्वी कृपया शेती खर्च प्रविष्ट करा",
+      validationYieldPriceWarning: "सिम्युलेशनसाठी कृपया उत्पादन आणि बाजार भाव प्रविष्ट करा"
+    }
   },
   ml: {
     heroTitle: "നിങ്ങളുടെ കാർഷിക സംശയങ്ങൾ ഭൂമിയോട് ചോദിക്കൂ",
@@ -211,7 +501,65 @@ const I18N = {
       { title: "💰 നെൽകൃഷി ലാഭം", sub: "നെൽകൃഷിയിൽ നിന്ന് പ്രതീക്ഷിക്കുന്ന വരുമാനവും ലാഭവും എത്ര?", prompt: "നെൽകൃഷിയിൽ നിന്ന് എത്ര ലാഭം ലഭിക്കും?" },
       { title: "🍃 ഇല രോഗങ്ങൾ", sub: "വിളകളിലെ പ്രധാന രോഗങ്ങളും നിയന്ത്രണ മാർഗ്ഗങ്ങളും.", prompt: "ഇല ചുരുളലിന് എന്ത് മരുന്ന് തളിക്കണം?" },
       { title: "🌦️ കാലാവസ്ഥാ മുന്നറിയിപ്പ്", sub: "നാളെ മഴ പെയ്യുമോ? കീടനാശിനി തളിക്കാൻ അനുയോജ്യമാണോ?", prompt: "നാളെ മഴ പെയ്യുമോ? സ്പ്രേ ചെയ്യാമോ?" }
-    ]
+    ],
+    finance: {
+      headerBtn: "ധനകാര്യം & ലാഭം",
+      headerBtnTitle: "കാർഷിക സാമ്പത്തിക ആസൂത്രണം & സിമുലേഷൻ",
+      title: "കാർഷിക സാമ്പത്തിക & ലാഭ വിശകലനം",
+      subtitle: "7-ഘടക ചെലവ് വിശകലനം, ബ്രേക്ക്-ഈവൻ കണക്കുകൂട്ടൽ & സിമുലേഷൻ",
+      cropName: "🌾 വിളയുടെ പേര്",
+      cropPlaceholder: "ഉദാ: മുളക്, പരുത്തി, നെല്ല്",
+      landArea: "📐 കൃഷിസ്ഥലത്തിന്റെ വിസ്തീർണ്ണം",
+      units: { acre: "ഏക്കർ", ha: "ഹെക്ടർ", bigha: "ബിഘ", guntha: "ഗുന്ത" },
+      costSectionTitle: "📋 7-ഘടക കൃഷി ചെലവുകൾ (₹ ൽ)",
+      costSeed: "വിത്ത് (₹)", costFertilizer: "വളം (₹)", costPesticide: "കീടനാശിനി (₹)",
+      costLabour: "കൂലി (₹)", costIrrigation: "നനയ്ക്കൽ (₹)", costMachinery: "യന്ത്രങ്ങൾ (₹)", costOther: "മറ്റ് ചെലവുകൾ (₹)",
+      costTotalLumpSum: "അല്ലെങ്കിൽ ആകെ കൃഷി ചെലവ് (₹):",
+      costTotalPlaceholder: "ഉദാ: 35000",
+      yieldSectionTitle: "📈 പ്രതീക്ഷിക്കുന്ന വിളവും വിപണി വിലയും",
+      expectedYield: "പ്രതീക്ഷിക്കുന്ന വിളവ്",
+      yieldUnits: { quintal: "ക്വിന്റൽ", kg: "കിലോഗ്രാം", tonne: "ടൺ" },
+      yieldHint: "വിളവ് നൽകിയില്ലെങ്കിൽ ബ്രേക്ക്-ഈവൻ വിളവ് കണക്കാക്കും.",
+      expectedPrice: "പ്രതീക്ഷിക്കുന്ന വിപണി വില",
+      priceUnits: { rupees_per_quintal: "₹ / ക്വിന്റൽ", rupees_per_kg: "₹ / കിലോ" },
+      priceHint: "വില നൽകിയില്ലെങ്കിൽ ബ്രേക്ക്-ഈവൻ വില കണക്കാക്കും.",
+      simLeversSummary: "⚡ വാട്ട്-ഇഫ് സിമുലേഷൻ ക്രമീകരണങ്ങൾ",
+      simPriceChange: "വിപണി വിലയിലെ മാറ്റം (%)", simYieldChange: "വിളവിലെ മാറ്റം (%)",
+      simCostChange: "ആകെ ചെലവിലെ മാറ്റം (%)", simFertilizerChange: "വളച്ചെലവിലെ മാറ്റം (%)",
+      btnCalculate: "📊 ചെലവും ലാഭവും കണക്കാക്കുക",
+      btnRunSim: "⚡ സിമുലേഷൻ പ്രവർത്തിപ്പിക്കുക",
+      calculating: "⏳ സാമ്പത്തിക കണക്കുകൂട്ടലുകൾ നടക്കുന്നു...",
+      calcFailed: "കണക്കുകൂട്ടൽ പരാജയപ്പെട്ടു. ദയവായി വിവരങ്ങൾ പരിശോധിക്കുക.",
+      networkError: "സേവനവുമായി ബന്ധപ്പെടുന്നതിൽ തകരാർ.",
+      simRunning: "⚡ സിമുലേഷൻ പ്രവർത്തിക്കുന്നു...",
+      simFailed: "സിമുലേഷൻ പരാജയപ്പെട്ടു.",
+      simNetworkError: "സിമുലേഷൻ സെർവർ ബന്ധപ്പെടൽ തകരാർ.",
+      cardTotalCost: "ആകെ ചെലവ്", cardGrossRevenue: "ആകെ വരുമാനം", cardNetProfit: "അറ്റാദായം",
+      cardProfitPerArea: "ഏക്കറിലെ ലാഭം", cardRoi: "നിക്ഷേപ ലാഭം (ROI)", deterministicBadge: "കൃത്യതയുള്ളത്",
+      calcTitle: "📊 കാർഷിക സാമ്പത്തിക കണക്കുകൂട്ടൽ",
+      costBreakdownTitle: "7-ഘടക ചെലവ് വിവരങ്ങൾ:",
+      costLabels: {
+        seed_cost: "വിത്ത്",
+        fertilizer_cost: "വളം",
+        pesticide_cost: "കീടനാശിനി",
+        labour_cost: "കൂലി",
+        irrigation_cost: "നനയ്ക്കൽ",
+        machinery_cost: "യന്ത്രങ്ങൾ",
+        other_cost: "മറ്റ് ചെലവുകൾ"
+      },
+      breakEvenPriceLabel: "🎯 ബ്രേക്ക്-ഈവൻ വിപണി വില:", breakEvenPriceDesc: "(നഷ്ടം ഒഴിവാക്കാനുള്ള കുറഞ്ഞ വില)",
+      breakEvenYieldLabel: "🎯 ബ്രേക്ക്-ഈവൻ വിളവ്:", breakEvenYieldDesc: "(ചെലവ് ലഭിക്കാനുള്ള കുറഞ്ഞ ഉത്പാദനം)",
+      partialCalcWarning: "⚠️ ഭാഗിക കണക്കുകൂട്ടൽ (നൽകാത്തവ: {fields})",
+      viewTrace: "🔍 കണക്കുകൂട്ടൽ ഘട്ടങ്ങൾ കാണുക ({count} ഘട്ടങ്ങൾ)",
+      simResultTitle: "⚡ വാട്ട്-ഇഫ് സിമുലേഷൻ", simScenarioBadge: "സാഹചര്യ താരതമ്യം",
+      tblMetric: "മാനദണ്ഡം", tblBaseline: "നിലവിലെ അവസ്ഥ", tblSimulated: "സിമുലേഷൻ അവസ്ഥ", tblDifference: "വ്യത്യാസം",
+      tblMarketPrice: "വിപണി വില", tblTotalProduction: "ആകെ വിളവ്", tblGrossRevenue: "ആകെ വരുമാനം",
+      tblCultivationCost: "കൃഷി ചെലവ്", tblNetProfit: "അറ്റാദായം", tblRoi: "വരുമാന നിരക്ക് (ROI)",
+      riskExplanationTitle: "💡 അപകടസാധ്യത വിവരണം:",
+      mitigationActionsTitle: "🛡️ നിർദ്ദേശിച്ച അപകടസാധ്യത കുറയ്ക്കൽ നടപടികൾ:",
+      validationCostWarning: "സിമുലേഷന് മുൻപ് കൃഷി ചെലവുകൾ നൽകുക",
+      validationYieldPriceWarning: "സിമുലേഷനായി വിളവും വിപണി വിലയും നൽകുക"
+    }
   }
 };
 
@@ -319,7 +667,7 @@ async function quickDemoLogin() {
     id: "demo_farmer_1",
     phone_number: "+919876543210 (Demo Contact)",
     full_name: "Ramesh Kumar (Demo Farmer)",
-    preferred_language: currentLanguage || "te",
+    preferred_language: currentLanguage || "en",
     state: "Andhra Pradesh",
     district: "Guntur",
     village: "Tenali",
@@ -1085,9 +1433,135 @@ async function handleProfileUpdate(event) {
 // ==========================================
 // Farm Finance, Profit & What-If Simulation
 // ==========================================
+
+// ==========================================
+// Farm Finance Localization Helper & State
+// ==========================================
+function getFinanceDict(lang) {
+  const current = (lang && I18N[lang] && I18N[lang].finance) ? I18N[lang].finance : null;
+  const english = (I18N.en && I18N.en.finance) ? I18N.en.finance : {};
+  if (!current) return english;
+  return Object.assign({}, english, current);
+}
+
+function updateFinanceModalLanguage(lang) {
+  const f = getFinanceDict(lang);
+  if (!f) return;
+
+  // Header Open Button
+  const btnOpenFin = document.getElementById("btnOpenFinance");
+  if (btnOpenFin) {
+    const txtFin = document.getElementById("txtFinanceBtn");
+    if (txtFin && f.headerBtn) txtFin.textContent = f.headerBtn;
+    if (f.headerBtnTitle) btnOpenFin.title = f.headerBtnTitle;
+  }
+
+  // Modal Header
+  const titleEl = document.getElementById("txtFinanceModalTitle");
+  if (titleEl && f.title) titleEl.textContent = f.title;
+  const subEl = document.getElementById("txtFinanceModalSub");
+  if (subEl && f.subtitle) subEl.textContent = f.subtitle;
+
+  // Crop & Land Area Inputs
+  const lblCrop = document.getElementById("lblFinCrop");
+  if (lblCrop && f.cropName) lblCrop.textContent = f.cropName;
+  const inCrop = document.getElementById("finCrop");
+  if (inCrop && f.cropPlaceholder) inCrop.placeholder = f.cropPlaceholder;
+
+  const lblArea = document.getElementById("lblFinArea");
+  if (lblArea && f.landArea) lblArea.textContent = f.landArea;
+
+  if (f.units) {
+    const optAcre = document.getElementById("optAreaAcre");
+    if (optAcre && f.units.acre) optAcre.textContent = f.units.acre;
+    const optHa = document.getElementById("optAreaHa");
+    if (optHa && f.units.ha) optHa.textContent = f.units.ha;
+    const optBigha = document.getElementById("optAreaBigha");
+    if (optBigha && f.units.bigha) optBigha.textContent = f.units.bigha;
+    const optGuntha = document.getElementById("optAreaGuntha");
+    if (optGuntha && f.units.guntha) optGuntha.textContent = f.units.guntha;
+  }
+
+  // Cost Section
+  const costSec = document.getElementById("txtFinCostSection");
+  if (costSec && f.costSectionTitle) costSec.textContent = f.costSectionTitle;
+
+  const lblSeed = document.getElementById("lblFinCostSeed");
+  if (lblSeed && f.costSeed) lblSeed.textContent = f.costSeed;
+  const lblFert = document.getElementById("lblFinCostFertilizer");
+  if (lblFert && f.costFertilizer) lblFert.textContent = f.costFertilizer;
+  const lblPest = document.getElementById("lblFinCostPesticide");
+  if (lblPest && f.costPesticide) lblPest.textContent = f.costPesticide;
+  const lblLabour = document.getElementById("lblFinCostLabour");
+  if (lblLabour && f.costLabour) lblLabour.textContent = f.costLabour;
+  const lblIrr = document.getElementById("lblFinCostIrrigation");
+  if (lblIrr && f.costIrrigation) lblIrr.textContent = f.costIrrigation;
+  const lblMach = document.getElementById("lblFinCostMachinery");
+  if (lblMach && f.costMachinery) lblMach.textContent = f.costMachinery;
+  const lblOther = document.getElementById("lblFinCostOther");
+  if (lblOther && f.costOther) lblOther.textContent = f.costOther;
+  const lblTotal = document.getElementById("lblFinCostTotal");
+  if (lblTotal && f.costTotalLumpSum) lblTotal.textContent = f.costTotalLumpSum;
+  const inTotal = document.getElementById("finCostTotal");
+  if (inTotal && f.costTotalPlaceholder) inTotal.placeholder = f.costTotalPlaceholder;
+
+  // Yield & Price Section
+  const yldSec = document.getElementById("txtFinYieldSection");
+  if (yldSec && f.yieldSectionTitle) yldSec.textContent = f.yieldSectionTitle;
+  const lblYld = document.getElementById("lblFinYield");
+  if (lblYld && f.expectedYield) lblYld.textContent = f.expectedYield;
+  if (f.yieldUnits) {
+    const optQtl = document.getElementById("optYieldQtl");
+    if (optQtl && f.yieldUnits.quintal) optQtl.textContent = f.yieldUnits.quintal;
+    const optKg = document.getElementById("optYieldKg");
+    if (optKg && f.yieldUnits.kg) optKg.textContent = f.yieldUnits.kg;
+    const optTon = document.getElementById("optYieldTonne");
+    if (optTon && f.yieldUnits.tonne) optTon.textContent = f.yieldUnits.tonne;
+  }
+  const hintYld = document.getElementById("txtFinYieldHint");
+  if (hintYld && f.yieldHint) hintYld.textContent = f.yieldHint;
+
+  const lblPrc = document.getElementById("lblFinPrice");
+  if (lblPrc && f.expectedPrice) lblPrc.textContent = f.expectedPrice;
+  if (f.priceUnits) {
+    const optPQtl = document.getElementById("optPriceQtl");
+    if (optPQtl && f.priceUnits.rupees_per_quintal) optPQtl.textContent = f.priceUnits.rupees_per_quintal;
+    const optPKg = document.getElementById("optPriceKg");
+    if (optPKg && f.priceUnits.rupees_per_kg) optPKg.textContent = f.priceUnits.rupees_per_kg;
+  }
+  const hintPrc = document.getElementById("txtFinPriceHint");
+  if (hintPrc && f.priceHint) hintPrc.textContent = f.priceHint;
+
+  // What-If Levers Section
+  const simSum = document.getElementById("txtSimSummary");
+  if (simSum && f.simLeversSummary) simSum.textContent = f.simLeversSummary;
+  const lblSPrice = document.getElementById("lblSimPrice");
+  if (lblSPrice && f.simPriceChange) lblSPrice.textContent = f.simPriceChange;
+  const lblSYield = document.getElementById("lblSimYield");
+  if (lblSYield && f.simYieldChange) lblSYield.textContent = f.simYieldChange;
+  const lblSCost = document.getElementById("lblSimCost");
+  if (lblSCost && f.simCostChange) lblSCost.textContent = f.simCostChange;
+  const lblSFert = document.getElementById("lblSimFertilizer");
+  if (lblSFert && f.simFertilizerChange) lblSFert.textContent = f.simFertilizerChange;
+
+  // Buttons
+  const btnCalc = document.getElementById("btnCalcProfit");
+  if (btnCalc && f.btnCalculate) btnCalc.textContent = f.btnCalculate;
+  const btnSim = document.getElementById("btnRunSim");
+  if (btnSim && f.btnRunSim) btnSim.textContent = f.btnRunSim;
+
+  // Re-render cached results dynamically if already displayed
+  if (window._lastActiveFinanceTab === 'sim' && window._lastSimulationData) {
+    renderSimulationResults(window._lastSimulationData);
+  } else if (window._lastFinanceData) {
+    renderFinanceResults(window._lastFinanceData);
+  }
+}
+
 function openFinanceModal() {
   const modal = document.getElementById("financeModal");
   if (!modal) return;
+  updateFinanceModalLanguage(currentLanguage);
   if (currentUser) {
     if (currentUser.current_crop && document.getElementById("finCrop")) {
       document.getElementById("finCrop").value = currentUser.current_crop;
@@ -1105,6 +1579,7 @@ function closeFinanceModal() {
 }
 
 async function calculateFinance() {
+  const f = getFinanceDict(currentLanguage);
   const crop = document.getElementById("finCrop") ? document.getElementById("finCrop").value.trim() : "Crop";
   const area = parseFloat(document.getElementById("finArea")?.value) || 1.0;
   const areaUnit = document.getElementById("finAreaUnit")?.value || "acre";
@@ -1151,7 +1626,7 @@ async function calculateFinance() {
   const resultsPanel = document.getElementById("finResultsPanel");
   if (resultsPanel) {
     resultsPanel.style.display = "block";
-    resultsPanel.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 12px;">⏳ Calculating deterministic farm finance...</div>`;
+    resultsPanel.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 12px;">${escapeHtml(f.calculating || "⏳ Calculating deterministic farm finance...")}</div>`;
   }
 
   try {
@@ -1168,7 +1643,7 @@ async function calculateFinance() {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const msg = typeof err.detail === "string" ? err.detail : "Calculation failed. Please verify your inputs.";
+      const msg = typeof err.detail === "string" ? err.detail : (f.calcFailed || "Calculation failed. Please verify your inputs.");
       if (resultsPanel) {
         resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ ${escapeHtml(msg)}</div>`;
       }
@@ -1176,11 +1651,13 @@ async function calculateFinance() {
     }
 
     const data = await res.json();
+    window._lastFinanceData = data;
+    window._lastActiveFinanceTab = 'calc';
     renderFinanceResults(data);
   } catch (err) {
     console.error("Finance calculation error:", err);
     if (resultsPanel) {
-      resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ Network error while connecting to finance service.</div>`;
+      resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ ${escapeHtml(f.networkError || "Network error while connecting to finance service.")}</div>`;
     }
   }
 }
@@ -1189,6 +1666,8 @@ function renderFinanceResults(data) {
   const panel = document.getElementById("finResultsPanel");
   if (!panel) return;
   panel.style.display = "block";
+
+  const f = getFinanceDict(currentLanguage);
 
   const totalCost = Number(data.total_cost || data.cultivation_cost_total || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
   const grossRev = data.gross_revenue !== null && data.gross_revenue !== undefined 
@@ -1200,8 +1679,13 @@ function renderFinanceResults(data) {
   const netProfitStr = netProfit !== null 
     ? `₹${netProfit.toLocaleString('en-IN', {minimumFractionDigits: 2})}` 
     : 'N/A';
+  
+  // Localized area unit for display
+  const areaUnitKey = (data.area_unit || 'acre').toLowerCase();
+  const localizedUnit = (f.units && f.units[areaUnitKey]) ? f.units[areaUnitKey] : (data.area_unit || 'acre');
+
   const profitPerArea = data.profit_per_area !== null && data.profit_per_area !== undefined
-    ? `₹${Number(data.profit_per_area).toLocaleString('en-IN', {minimumFractionDigits: 2})} / ${escapeHtml(data.area_unit || 'acre')}`
+    ? `₹${Number(data.profit_per_area).toLocaleString('en-IN', {minimumFractionDigits: 2})} / ${escapeHtml(localizedUnit)}`
     : 'N/A';
   const roi = data.return_on_investment_percent !== null && data.return_on_investment_percent !== undefined
     ? `${Number(data.return_on_investment_percent).toFixed(1)}%`
@@ -1210,16 +1694,29 @@ function renderFinanceResults(data) {
   // Cost breakdown
   let breakdownHtml = "";
   if (data.cost_breakdown && Object.keys(data.cost_breakdown).length > 0) {
-    const items = Object.entries(data.cost_breakdown).map(([k, v]) => {
-      const label = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const rawKeys = Object.keys(data.cost_breakdown);
+    const hasSuffixKeys = rawKeys.some(k => k.endsWith('_cost'));
+    const filteredEntries = Object.entries(data.cost_breakdown).filter(([k]) => {
+      if (hasSuffixKeys && !k.endsWith('_cost') && rawKeys.includes(k + '_cost')) {
+        return false;
+      }
+      return true;
+    });
+    const items = filteredEntries.map(([k, v]) => {
+      const normalizedKey = k.endsWith('_cost') ? k : (k + '_cost');
+      let label = (f.costLabels && f.costLabels[k])
+        ? f.costLabels[k]
+        : (f.costLabels && f.costLabels[normalizedKey])
+          ? f.costLabels[normalizedKey]
+          : k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       return `<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.06); font-size:0.82rem;">
-        <span style="color:var(--text-sub);">${label}:</span>
+        <span style="color:var(--text-sub);">${escapeHtml(label)}:</span>
         <strong style="color:var(--text-main);">₹${Number(v).toLocaleString('en-IN')}</strong>
       </div>`;
     }).join("");
     breakdownHtml = `
       <div style="margin-top:10px; background:rgba(0,0,0,0.15); padding:10px; border-radius:6px;">
-        <div style="font-size:0.8rem; font-weight:600; color:var(--accent-emerald); margin-bottom:6px;">7-Component Cost Breakdown:</div>
+        <div style="font-size:0.8rem; font-weight:600; color:var(--accent-emerald); margin-bottom:6px;">${escapeHtml(f.costBreakdownTitle || "7-Component Cost Breakdown:")}</div>
         ${items}
       </div>
     `;
@@ -1230,14 +1727,16 @@ function renderFinanceResults(data) {
   if (data.is_partial) {
     let beItems = [];
     if (data.break_even_price !== null && data.break_even_price !== undefined) {
-      beItems.push(`<div>🎯 <strong>Break-Even Market Price:</strong> ₹${Number(data.break_even_price).toLocaleString('en-IN')}/Qtl (Minimum price needed to avoid loss)</div>`);
+      beItems.push(`<div>${escapeHtml(f.breakEvenPriceLabel || "🎯 Break-Even Market Price:")} <strong>₹${Number(data.break_even_price).toLocaleString('en-IN')}/Qtl</strong> ${escapeHtml(f.breakEvenPriceDesc || "(Minimum price needed to avoid loss)")}</div>`);
     }
     if (data.break_even_yield !== null && data.break_even_yield !== undefined) {
-      beItems.push(`<div>🎯 <strong>Break-Even Yield:</strong> ${Number(data.break_even_yield).toFixed(2)} Qtl/${escapeHtml(data.area_unit || 'acre')} (Minimum production needed to cover cost)</div>`);
+      beItems.push(`<div>${escapeHtml(f.breakEvenYieldLabel || "🎯 Break-Even Yield:")} <strong>${Number(data.break_even_yield).toFixed(2)} Qtl/${escapeHtml(localizedUnit)}</strong> ${escapeHtml(f.breakEvenYieldDesc || "(Minimum production needed to cover cost)")}</div>`);
     }
+    const warnTemplate = f.partialCalcWarning || "⚠️ Partial Calculation (Missing: {fields})";
+    const warnText = warnTemplate.replace('{fields}', escapeHtml((data.missing_fields || []).join(', ')));
     partialHtml = `
       <div style="margin-top:10px; padding:10px; background:rgba(234, 179, 8, 0.12); border-left:3px solid #eab308; border-radius:4px; font-size:0.83rem; color:#fde047;">
-        <div style="font-weight:600;">⚠️ Partial Calculation (Missing: ${escapeHtml((data.missing_fields || []).join(', '))})</div>
+        <div style="font-weight:600;">${warnText}</div>
         ${beItems.join('')}
       </div>
     `;
@@ -1247,9 +1746,10 @@ function renderFinanceResults(data) {
   let traceHtml = "";
   if (Array.isArray(data.calculation_trace) && data.calculation_trace.length > 0) {
     const steps = data.calculation_trace.map(s => `<li style="margin-bottom:3px;">${escapeHtml(s)}</li>`).join("");
+    const traceTitle = (f.viewTrace || "🔍 View Deterministic Calculation Trace ({count} steps)").replace('{count}', data.calculation_trace.length);
     traceHtml = `
       <details style="margin-top:10px; font-size:0.8rem; color:var(--text-sub);">
-        <summary style="cursor:pointer; font-weight:600; color:#38bdf8;">🔍 View Deterministic Calculation Trace (${data.calculation_trace.length} steps)</summary>
+        <summary style="cursor:pointer; font-weight:600; color:#38bdf8;">${escapeHtml(traceTitle)}</summary>
         <ol style="margin-top:6px; padding-left:18px; line-height:1.4;">
           ${steps}
         </ol>
@@ -1257,32 +1757,34 @@ function renderFinanceResults(data) {
     `;
   }
 
+  const calcTitle = `${f.calcTitle || "📊 Financial Calculation"}: ${escapeHtml(data.crop_name)} (${Number(data.land_area)} ${escapeHtml(localizedUnit)})`;
+
   panel.innerHTML = `
     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h4 style="margin:0; font-size:1rem; color:var(--accent-emerald);">📊 Financial Calculation: ${escapeHtml(data.crop_name)} (${Number(data.land_area)} ${escapeHtml(data.area_unit)})</h4>
-        <span style="font-size:0.75rem; background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:9999px; font-weight:600;">Deterministic</span>
+        <h4 style="margin:0; font-size:1rem; color:var(--accent-emerald);">${calcTitle}</h4>
+        <span style="font-size:0.75rem; background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:9999px; font-weight:600;">${escapeHtml(f.deterministicBadge || "Deterministic")}</span>
       </div>
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-bottom:12px;">
         <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
-          <div style="font-size:0.72rem; color:var(--text-sub);">Total Cost</div>
+          <div style="font-size:0.72rem; color:var(--text-sub);">${escapeHtml(f.cardTotalCost || "Total Cost")}</div>
           <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">₹${totalCost}</div>
         </div>
         <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
-          <div style="font-size:0.72rem; color:var(--text-sub);">Gross Revenue</div>
+          <div style="font-size:0.72rem; color:var(--text-sub);">${escapeHtml(f.cardGrossRevenue || "Gross Revenue")}</div>
           <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">${grossRev}</div>
         </div>
         <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
-          <div style="font-size:0.72rem; color:var(--text-sub);">Net Profit</div>
+          <div style="font-size:0.72rem; color:var(--text-sub);">${escapeHtml(f.cardNetProfit || "Net Profit")}</div>
           <div style="font-size:1.1rem; font-weight:700; color:${netProfit !== null && netProfit < 0 ? '#ef4444' : '#10b981'};">${netProfitStr}</div>
         </div>
         <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
-          <div style="font-size:0.72rem; color:var(--text-sub);">Profit per ${escapeHtml(data.area_unit || 'Acre')}</div>
+          <div style="font-size:0.72rem; color:var(--text-sub);">${escapeHtml(f.cardProfitPerArea || "Profit per")} ${escapeHtml(localizedUnit)}</div>
           <div style="font-size:0.95rem; font-weight:700; color:var(--text-main);">${profitPerArea}</div>
         </div>
         <div style="background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:6px;">
-          <div style="font-size:0.72rem; color:var(--text-sub);">Return on Investment</div>
+          <div style="font-size:0.72rem; color:var(--text-sub);">${escapeHtml(f.cardRoi || "Return on Investment")}</div>
           <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">${roi}</div>
         </div>
       </div>
@@ -1295,6 +1797,7 @@ function renderFinanceResults(data) {
 }
 
 async function runWhatIfSimulation() {
+  const f = getFinanceDict(currentLanguage);
   const crop = document.getElementById("finCrop") ? document.getElementById("finCrop").value.trim() : "Crop";
   const area = parseFloat(document.getElementById("finArea")?.value) || 1.0;
   
@@ -1311,14 +1814,14 @@ async function runWhatIfSimulation() {
     totalCost = directTotal;
   }
   if (totalCost <= 0) {
-    showToast("Please enter cultivation costs before running simulation", "warning");
+    showToast(f.validationCostWarning || "Please enter cultivation costs before running simulation", "warning");
     return;
   }
 
   const yieldVal = parseFloat(document.getElementById("finYield")?.value);
   const priceVal = parseFloat(document.getElementById("finPrice")?.value);
   if (isNaN(yieldVal) || yieldVal <= 0 || isNaN(priceVal) || priceVal <= 0) {
-    showToast("Please enter baseline Yield and Market Price for What-If Simulation", "warning");
+    showToast(f.validationYieldPriceWarning || "Please enter baseline Yield and Market Price for What-If Simulation", "warning");
     return;
   }
 
@@ -1342,7 +1845,7 @@ async function runWhatIfSimulation() {
   const resultsPanel = document.getElementById("finResultsPanel");
   if (resultsPanel) {
     resultsPanel.style.display = "block";
-    resultsPanel.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 12px;">⚡ Running multi-lever scenario simulation...</div>`;
+    resultsPanel.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 12px;">${escapeHtml(f.simRunning || "⚡ Running multi-lever scenario simulation...")}</div>`;
   }
 
   try {
@@ -1359,7 +1862,7 @@ async function runWhatIfSimulation() {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const msg = typeof err.detail === "string" ? err.detail : "Simulation failed.";
+      const msg = typeof err.detail === "string" ? err.detail : (f.simFailed || "Simulation failed.");
       if (resultsPanel) {
         resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ ${escapeHtml(msg)}</div>`;
       }
@@ -1367,11 +1870,13 @@ async function runWhatIfSimulation() {
     }
 
     const data = await res.json();
+    window._lastSimulationData = data;
+    window._lastActiveFinanceTab = 'sim';
     renderSimulationResults(data);
   } catch (err) {
     console.error("Simulation error:", err);
     if (resultsPanel) {
-      resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ Network error while connecting to simulation service.</div>`;
+      resultsPanel.innerHTML = `<div style="color: #ef4444; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">⚠️ ${escapeHtml(f.simNetworkError || "Network error while connecting to simulation service.")}</div>`;
     }
   }
 }
@@ -1380,6 +1885,8 @@ function renderSimulationResults(data) {
   const panel = document.getElementById("finResultsPanel");
   if (!panel) return;
   panel.style.display = "block";
+
+  const f = getFinanceDict(currentLanguage);
 
   const b = data.baseline;
   const s = data.simulated_scenario;
@@ -1392,56 +1899,58 @@ function renderSimulationResults(data) {
     const list = data.recommended_hedging_actions.map(a => `<li>${escapeHtml(a)}</li>`).join("");
     actionsHtml = `
       <div style="margin-top:10px; padding:10px; background:rgba(56, 189, 248, 0.08); border-left:3px solid #38bdf8; border-radius:4px; font-size:0.8rem;">
-        <div style="font-weight:600; color:#38bdf8; margin-bottom:4px;">🛡️ Recommended Risk Mitigation Actions:</div>
+        <div style="font-weight:600; color:#38bdf8; margin-bottom:4px;">${escapeHtml(f.mitigationActionsTitle || "🛡️ Recommended Risk Mitigation Actions:")}</div>
         <ul style="margin:0; padding-left:16px; color:var(--text-sub);">${list}</ul>
       </div>
     `;
   }
 
+  const simHeading = `${escapeHtml(f.simResultTitle || "⚡ Multi-Lever What-If Simulation")}: ${escapeHtml(data.crop_name)}`;
+
   panel.innerHTML = `
     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h4 style="margin:0; font-size:1rem; color:#38bdf8;">⚡ Multi-Lever What-If Simulation: ${escapeHtml(data.crop_name)}</h4>
-        <span style="font-size:0.75rem; background:rgba(56,189,248,0.15); color:#38bdf8; padding:2px 8px; border-radius:9999px; font-weight:600;">Scenario Comparison</span>
+        <h4 style="margin:0; font-size:1rem; color:#38bdf8;">${simHeading}</h4>
+        <span style="font-size:0.75rem; background:rgba(56,189,248,0.15); color:#38bdf8; padding:2px 8px; border-radius:9999px; font-weight:600;">${escapeHtml(f.simScenarioBadge || "Scenario Comparison")}</span>
       </div>
 
       <div style="overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; font-size:0.82rem; text-align:left;">
           <thead>
             <tr style="border-bottom:1px solid var(--border-subtle); color:var(--text-sub);">
-              <th style="padding:6px 8px;">Metric</th>
-              <th style="padding:6px 8px;">Baseline</th>
-              <th style="padding:6px 8px;">Simulated Scenario</th>
-              <th style="padding:6px 8px;">Difference</th>
+              <th style="padding:6px 8px;">${escapeHtml(f.tblMetric || "Metric")}</th>
+              <th style="padding:6px 8px;">${escapeHtml(f.tblBaseline || "Baseline")}</th>
+              <th style="padding:6px 8px;">${escapeHtml(f.tblSimulated || "Simulated Scenario")}</th>
+              <th style="padding:6px 8px;">${escapeHtml(f.tblDifference || "Difference")}</th>
             </tr>
           </thead>
           <tbody>
             <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
-              <td style="padding:6px 8px; color:var(--text-sub);">Market Price</td>
+              <td style="padding:6px 8px; color:var(--text-sub);">${escapeHtml(f.tblMarketPrice || "Market Price")}</td>
               <td style="padding:6px 8px;">₹${Number(b.price_per_quintal).toLocaleString('en-IN')}/Qtl</td>
               <td style="padding:6px 8px; font-weight:600;">₹${Number(s.price_per_quintal).toLocaleString('en-IN')}/Qtl</td>
               <td style="padding:6px 8px;">${((Number(s.price_per_quintal) - Number(b.price_per_quintal)) >= 0 ? '+' : '') + (Number(s.price_per_quintal) - Number(b.price_per_quintal)).toLocaleString('en-IN')}</td>
             </tr>
             <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
-              <td style="padding:6px 8px; color:var(--text-sub);">Total Production</td>
+              <td style="padding:6px 8px; color:var(--text-sub);">${escapeHtml(f.tblTotalProduction || "Total Production")}</td>
               <td style="padding:6px 8px;">${Number(b.total_yield_quintals).toFixed(1)} Qtl</td>
               <td style="padding:6px 8px; font-weight:600;">${Number(s.total_yield_quintals).toFixed(1)} Qtl</td>
               <td style="padding:6px 8px;">${((Number(s.total_yield_quintals) - Number(b.total_yield_quintals)) >= 0 ? '+' : '') + (Number(s.total_yield_quintals) - Number(b.total_yield_quintals)).toFixed(1)} Qtl</td>
             </tr>
             <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
-              <td style="padding:6px 8px; color:var(--text-sub);">Cultivation Cost</td>
+              <td style="padding:6px 8px; color:var(--text-sub);">${escapeHtml(f.tblCultivationCost || "Cultivation Cost")}</td>
               <td style="padding:6px 8px;">₹${Number(b.cultivation_cost).toLocaleString('en-IN')}</td>
               <td style="padding:6px 8px; font-weight:600;">₹${Number(s.cultivation_cost).toLocaleString('en-IN')}</td>
               <td style="padding:6px 8px;">${((Number(s.cultivation_cost) - Number(b.cultivation_cost)) >= 0 ? '+' : '') + (Number(s.cultivation_cost) - Number(b.cultivation_cost)).toLocaleString('en-IN')}</td>
             </tr>
             <tr style="border-bottom:1px dashed rgba(255,255,255,0.06);">
-              <td style="padding:6px 8px; color:var(--text-sub);">Gross Revenue</td>
+              <td style="padding:6px 8px; color:var(--text-sub);">${escapeHtml(f.tblGrossRevenue || "Gross Revenue")}</td>
               <td style="padding:6px 8px;">₹${Number(b.gross_revenue).toLocaleString('en-IN')}</td>
               <td style="padding:6px 8px; font-weight:600;">₹${Number(s.gross_revenue).toLocaleString('en-IN')}</td>
               <td style="padding:6px 8px;">${((Number(s.gross_revenue) - Number(b.gross_revenue)) >= 0 ? '+' : '') + (Number(s.gross_revenue) - Number(b.gross_revenue)).toLocaleString('en-IN')}</td>
             </tr>
             <tr style="background:rgba(255,255,255,0.04); font-weight:700;">
-              <td style="padding:8px 8px;">Net Profit</td>
+              <td style="padding:8px 8px;">${escapeHtml(f.tblNetProfit || "Net Profit")}</td>
               <td style="padding:8px 8px; color:#10b981;">₹${Number(b.net_profit).toLocaleString('en-IN')}</td>
               <td style="padding:8px 8px; color:${isLoss ? '#ef4444' : '#10b981'};">₹${Number(s.net_profit).toLocaleString('en-IN')}</td>
               <td style="padding:8px 8px; color:${diffColor};">${diffSign}₹${Number(s.profit_difference).toLocaleString('en-IN')} (${diffSign}${Number(s.percentage_profit_impact).toFixed(1)}%)</td>
@@ -1451,7 +1960,7 @@ function renderSimulationResults(data) {
       </div>
 
       <div style="margin-top:12px; font-size:0.83rem; line-height:1.4; color:var(--text-sub);">
-        <strong>💡 Risk Explanation:</strong> ${escapeHtml(data.risk_impact_explanation || '')}
+        <strong>${escapeHtml(f.riskExplanationTitle || "💡 Risk Explanation:")}</strong> ${escapeHtml(data.risk_impact_explanation || '')}
       </div>
 
       ${actionsHtml}
@@ -1714,6 +2223,7 @@ function updateUILanguage(lang) {
   }
 
   updateVoiceModalLabels();
+  updateFinanceModalLanguage(lang);
 
   // Update all listen buttons in existing chat rows
   document.querySelectorAll(".btn-speak-audio").forEach(btn => {
@@ -2889,6 +3399,7 @@ function openVoiceCallMode() {
   stopAllActiveAudio();
 
   updateVoiceModalLabels();
+  updateFinanceModalLanguage(lang);
   startVoiceCallListening();
 }
 
@@ -3783,5 +4294,6 @@ window.openFinanceModal = openFinanceModal;
 window.closeFinanceModal = closeFinanceModal;
 window.calculateFinance = calculateFinance;
 window.runWhatIfSimulation = runWhatIfSimulation;
+window.updateFinanceModalLanguage = updateFinanceModalLanguage;
 window.switchAuthMode = switchAuthMode;
 window.handleReviewerLogin = handleReviewerLogin;
