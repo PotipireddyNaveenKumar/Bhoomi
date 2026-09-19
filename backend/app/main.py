@@ -48,8 +48,24 @@ from app.api.v1.demo import router as demo_router
 async def lifespan(app: FastAPI):
     # Initialize DB tables for development/testing
     logger.info("Initializing BHOOMI V2 database schema...")
+    from sqlalchemy import text
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Idempotent startup schema migration for existing databases
+        is_sqlite = "sqlite" in settings.DATABASE_URL.lower()
+        if is_sqlite:
+            res = await conn.execute(text("PRAGMA table_info(users)"))
+            cols = [row[1] for row in res.fetchall()]
+            if "phone_number_verified" not in cols:
+                await conn.execute(text("ALTER TABLE users ADD COLUMN phone_number_verified BOOLEAN DEFAULT 0"))
+                logger.info("Applied migration: Added phone_number_verified to SQLite users table.")
+        else:
+            await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone_number_verified BOOLEAN DEFAULT FALSE;"))
+            try:
+                await conn.execute(text("ALTER TABLE users ALTER COLUMN hashed_password DROP NOT NULL;"))
+            except Exception:
+                pass
+            logger.info("Applied migration: Ensured PostgreSQL users table columns.")
     logger.info("Database schema initialized.")
     from app.services.demo.demo_service import DemoModeService
     from app.services.reviewer_provisioning import ensure_reviewer_account

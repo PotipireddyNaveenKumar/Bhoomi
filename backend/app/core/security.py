@@ -31,5 +31,8 @@ def get_password_hash(password: str) -> str:
     return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
 
 def get_current_user_id() -> str:
-    return "farmer_demo_1"
+    """
+    Deprecated: Identity must be derived from authenticated session via get_current_user in app.api.deps.
+    """
+    raise RuntimeError("get_current_user_id() is deprecated. Derive identity via Depends(get_current_user) or Depends(get_current_farmer_profile).")
 

@@ -3,7 +3,8 @@ from typing import List, Dict, Any, Optional
 from decimal import Decimal
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
-from app.core.security import get_current_user_id
+from app.api.deps import get_current_farmer_profile
+from app.models.farmer import FarmerProfile
 from app.services.memory.digital_twin import DigitalTwinService
 from app.services.crop.comparison_service import CropComparisonService, CropComparisonResponse
 from app.repositories.farm_repo import FarmRepository
@@ -15,12 +16,13 @@ router = APIRouter(prefix="/farm", tags=["Farm Digital Twin & Management"])
 @router.get("/summary")
 async def get_farm_summary(
     db: AsyncSession = Depends(get_db),
-    user_id: str = Depends(get_current_user_id)
+    farmer: FarmerProfile = Depends(get_current_farmer_profile)
 ):
     """
-    Get full Digital Twin summary for the active farmer.
+    Get full Digital Twin summary for the authenticated farmer.
+    Strictly isolated: identity derived from authenticated JWT session.
     """
-    context = await DigitalTwinService.get_farmer_context(db, user_id)
+    context = await DigitalTwinService.get_farmer_context(db, farmer.id)
     return {
         "status": "success",
         "farmer": context.to_dict(),
@@ -30,13 +32,13 @@ async def get_farm_summary(
 @router.get("/crops")
 async def get_farm_crops(
     db: AsyncSession = Depends(get_db),
-    user_id: str = Depends(get_current_user_id)
+    farmer: FarmerProfile = Depends(get_current_farmer_profile)
 ):
     """
-    Get all active crops and lifecycle stages.
+    Get all active crops and lifecycle stages for the authenticated farmer.
     """
     farm_repo = FarmRepository(db)
-    farms = await farm_repo.get_farms_by_farmer(user_id)
+    farms = await farm_repo.get_farms_by_farmer(farmer.id)
     crops = []
     for f in farms:
         for c in f.crops:
@@ -55,13 +57,13 @@ async def get_farm_crops(
 @router.get("/tasks")
 async def get_farm_tasks(
     db: AsyncSession = Depends(get_db),
-    user_id: str = Depends(get_current_user_id)
+    farmer: FarmerProfile = Depends(get_current_farmer_profile)
 ):
     """
-    Get dynamic scheduled farm tasks.
+    Get dynamic scheduled farm tasks for the authenticated farmer.
     """
     task_repo = TaskRepository(db)
-    tasks = await task_repo.get_tasks_by_farmer(user_id)
+    tasks = await task_repo.get_tasks_by_farmer(farmer.id)
     return {"status": "success", "tasks": [FarmTaskResponse.model_validate(t) for t in tasks]}
 
 @router.post("/compare-crops", response_model=CropComparisonResponse)

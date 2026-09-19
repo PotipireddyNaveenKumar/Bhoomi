@@ -78,6 +78,18 @@ class Settings(BaseSettings):
     OBJECT_STORAGE_PROVIDER: str = "local"
     STORAGE_LOCAL_DIR: str = "./uploads"
 
+    # SMS Delivery Transport (console | mock | msg91 | twilio | generic_http)
+    SMS_PROVIDER: str = "console"
+    SMS_API_KEY: Optional[str] = None
+    SMS_SENDER_ID: Optional[str] = None
+    SMS_TEMPLATE_ID: Optional[str] = None
+    SMS_GATEWAY_URL: Optional[str] = None
+    SMS_AUTH_TOKEN: Optional[str] = None
+    SMS_ACCOUNT_SID: Optional[str] = None
+
+    # Refresh Token Expiry (in days)
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")

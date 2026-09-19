@@ -7,6 +7,8 @@ from app.models.chat import ChatSession, ChatMessage
 from app.models.memory import FarmerMemory
 from app.models.task import FarmTask
 from app.models.prediction import PredictionHistory
+from app.models.otp_challenge import OTPChallenge
+from app.models.auth_session import AuthSession
 
 __all__ = [
     "Base",
@@ -19,4 +21,6 @@ __all__ = [
     "FarmerMemory",
     "FarmTask",
     "PredictionHistory",
+    "OTPChallenge",
+    "AuthSession",
 ]

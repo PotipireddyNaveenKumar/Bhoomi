@@ -3,7 +3,7 @@ import io
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import app, _rate_limits
 from app.core.config import settings
 from app.services.farm_manager.recommendation_trace import RecommendationTraceStore
 from app.services.memory.digital_twin import DigitalTwinService
@@ -25,6 +25,9 @@ class TestE2EReviewerJourney:
       - Multi-crop vision routing to Potato model
       - Recommendation feedback and trace persistence
     """
+
+    def setup_method(self):
+        _rate_limits.clear()
 
     def test_complete_reviewer_lifecycle(self):
         import random
