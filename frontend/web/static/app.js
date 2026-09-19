@@ -439,9 +439,49 @@ function toggleSoilTestFields() {
 }
 
 // Step 1: Send OTP to Mobile Number
-async function handleSendOtp() {
-  const phoneInput = document.getElementById("otpMobileInput");
-  const phone = phoneInput ? phoneInput.value.trim() : "";
+let resendOtpTimer = null;
+let resendOtpCountdown = 0;
+
+function startResendCooldown(seconds = 30) {
+  resendOtpCountdown = seconds;
+  const btn = document.getElementById("btnResendOtp");
+  const txt = document.getElementById("txtBtnResend");
+  if (resendOtpTimer) clearInterval(resendOtpTimer);
+  if (btn) btn.disabled = true;
+  if (txt) txt.textContent = `⏳ Resend (${resendOtpCountdown}s)`;
+  resendOtpTimer = setInterval(() => {
+    resendOtpCountdown--;
+    if (resendOtpCountdown <= 0) {
+      clearInterval(resendOtpTimer);
+      resendOtpTimer = null;
+      if (btn) btn.disabled = false;
+      if (txt) txt.textContent = "🔄 Resend Code";
+    } else {
+      if (txt) txt.textContent = `⏳ Resend (${resendOtpCountdown}s)`;
+    }
+  }, 1000);
+}
+
+async function handleResendOtp() {
+  if (!pendingOtpPhone) {
+    backToOtpStep1();
+    return;
+  }
+  const btn = document.getElementById("btnResendOtp");
+  const txt = document.getElementById("txtBtnResend");
+  if (btn) btn.disabled = true;
+  if (txt) txt.textContent = "⏳ Sending...";
+  await handleSendOtp(true);
+}
+
+async function handleSendOtp(isResend = false) {
+  let phone = "";
+  if (isResend && pendingOtpPhone) {
+    phone = pendingOtpPhone;
+  } else {
+    const phoneInput = document.getElementById("otpMobileInput");
+    phone = phoneInput ? phoneInput.value.trim() : "";
+  }
   const errorMsg = document.getElementById("authErrorMsg");
   if (errorMsg) errorMsg.style.display = "none";
 
@@ -455,6 +495,13 @@ async function handleSendOtp() {
 
   pendingOtpPhone = phone;
 
+  const btnSend = document.getElementById("btnSendOtp");
+  const origBtnText = btnSend ? btnSend.innerHTML : "";
+  if (btnSend && !isResend) {
+    btnSend.disabled = true;
+    btnSend.innerHTML = "<span>⏳</span> Sending Code...";
+  }
+
   try {
     const res = await fetch("/api/v1/auth/send-otp", {
       method: "POST",
@@ -463,27 +510,66 @@ async function handleSendOtp() {
     });
 
     const data = await res.json();
-    const otpCode = data.otp || data.demo_otp || "1234";
+
+    if (!res.ok) {
+      const errMsg = data.detail || data.message || "Failed to send verification code. Please try again.";
+      if (errorMsg) {
+        errorMsg.textContent = errMsg;
+        errorMsg.style.display = "block";
+      }
+      return;
+    }
 
     // Switch to Step 2
     document.getElementById("otpStep1").style.display = "none";
     document.getElementById("otpStep2").style.display = "block";
 
+    const lblOtpCode = document.getElementById("lblOtpCode");
     const sentBanner = document.getElementById("txtOtpSentInfo");
-    if (sentBanner) {
-      if (data.is_registered) {
-        sentBanner.innerHTML = `📲 Welcome back! SMS sent to +91 ${phone} • (Your OTP is: <b style="color:#10B981; font-size:14px;">${otpCode}</b>)`;
-      } else {
-        sentBanner.innerHTML = `📲 SMS sent to +91 ${phone} • (Your OTP is: <b style="color:#10B981; font-size:14px;">${otpCode}</b>)`;
+    const otpCodeInput = document.getElementById("otpCodeInput");
+
+    // Dynamically configure OTP input and banner based on delivery channel and auth mode
+    if (data.auth_mode === "evaluator" || (data.otp || data.otp_code)) {
+      const code = data.otp || data.otp_code;
+      if (lblOtpCode) {
+        lblOtpCode.innerHTML = `🔢 Enter Evaluator Verification Code:`;
+      }
+      if (sentBanner) {
+        sentBanner.innerHTML = `🔐 <b>Evaluator Session Active</b> • Use verification code: <b style="color:#10B981; font-size:16px; letter-spacing:3px;">${code}</b>`;
+      }
+      if (otpCodeInput) {
+        otpCodeInput.placeholder = "••••";
+      }
+    } else if (data.delivery_channel === "sms") {
+      if (lblOtpCode) {
+        lblOtpCode.innerHTML = `🔢 Enter Verification Code Sent to Your Phone:`;
+      }
+      if (sentBanner) {
+        sentBanner.innerHTML = `📲 Verification code sent via SMS to +91 ${phone}.`;
+      }
+      if (otpCodeInput) {
+        otpCodeInput.placeholder = "••••";
+      }
+    } else {
+      // Production without SMS gateway: Honest messaging, no fake default OTP
+      if (lblOtpCode) {
+        lblOtpCode.innerHTML = `🔢 Enter 4-Digit Verification Code:`;
+      }
+      if (sentBanner) {
+        sentBanner.innerHTML = `ℹ️ <b>Production Environment:</b> SMS delivery gateway is not configured for public broadcast. Please enter authorized verification code or use pre-registered credentials.`;
+      }
+      if (otpCodeInput) {
+        otpCodeInput.placeholder = "••••";
       }
     }
 
-    const otpCodeInput = document.getElementById("otpCodeInput");
     if (otpCodeInput) {
-      otpCodeInput.value = ""; // Empty so farmer types the code
-      otpCodeInput.placeholder = "Enter 4-digit OTP";
+      otpCodeInput.value = "";
       otpCodeInput.focus();
     }
+
+    // Start 30s resend cooldown
+    startResendCooldown(30);
 
     // Show farmer detail fields if new registration, hide if existing
     const newFields = document.getElementById("newFarmerFields");
@@ -496,8 +582,13 @@ async function handleSendOtp() {
 
   } catch (e) {
     if (errorMsg) {
-      errorMsg.textContent = "Failed to send OTP. Please check your connection.";
+      errorMsg.textContent = "Failed to send verification code. Please check your network connection.";
       errorMsg.style.display = "block";
+    }
+  } finally {
+    if (btnSend && !isResend) {
+      btnSend.disabled = false;
+      btnSend.innerHTML = origBtnText || `<span>📲</span> <span id="txtBtnSendOtp">Send OTP Verification Code</span>`;
     }
   }
 }
@@ -509,11 +600,12 @@ async function handleVerifyOtp() {
   const errorMsg = document.getElementById("authErrorMsg");
   if (errorMsg) errorMsg.style.display = "none";
 
-  if (!otp || otp.length < 4) {
+  if (!otp || otp.length !== 4 || !/^\d{4}$/.test(otp)) {
     if (errorMsg) {
-      errorMsg.textContent = "Please enter the 4-digit OTP code received on your phone.";
+      errorMsg.textContent = "Please enter a valid 4-digit numeric verification code.";
       errorMsg.style.display = "block";
     }
+    if (otpInput) otpInput.focus();
     return;
   }
 
@@ -535,6 +627,13 @@ async function handleVerifyOtp() {
   const soilPh = isSoilManual && document.getElementById("farmerSoilPh")?.value ? parseFloat(document.getElementById("farmerSoilPh").value) : null;
 
   const soilSourceType = (soilN !== null || soilP !== null || soilK !== null) ? "farmer_entered" : "estimated";
+
+  const btnVerify = document.getElementById("btnVerifyOtp");
+  const origBtnVerifyText = btnVerify ? btnVerify.innerHTML : "";
+  if (btnVerify) {
+    btnVerify.disabled = true;
+    btnVerify.innerHTML = "<span>⏳</span> Verifying Code...";
+  }
 
   try {
     const res = await fetch("/api/v1/auth/verify-otp", {
@@ -599,7 +698,7 @@ async function handleVerifyOtp() {
       loadUserScopedSessions();
     } else {
       const err = await res.json().catch(() => ({}));
-      let msg = "Invalid OTP code entered. Please try again.";
+      let msg = "Invalid verification code. Please try again.";
       if (typeof err.detail === "string") {
         msg = err.detail;
       } else if (Array.isArray(err.detail)) {
@@ -613,11 +712,20 @@ async function handleVerifyOtp() {
         errorMsg.textContent = msg;
         errorMsg.style.display = "block";
       }
+      if (otpInput) {
+        otpInput.value = "";
+        otpInput.focus();
+      }
     }
   } catch (e) {
     if (errorMsg) {
-      errorMsg.textContent = "Server error verifying OTP: " + (e.message || "Please try again.");
+      errorMsg.textContent = "Server error verifying code: " + (e.message || "Please try again.");
       errorMsg.style.display = "block";
+    }
+  } finally {
+    if (btnVerify) {
+      btnVerify.disabled = false;
+      btnVerify.innerHTML = origBtnVerifyText || `<span>✅</span> <span id="txtBtnVerify">Verify OTP & Enter Dashboard</span>`;
     }
   }
 }
@@ -630,6 +738,10 @@ function backToOtpStep1() {
   if (step1) step1.style.display = "block";
   if (step2) step2.style.display = "none";
   if (errorMsg) errorMsg.style.display = "none";
+  if (resendOtpTimer) {
+    clearInterval(resendOtpTimer);
+    resendOtpTimer = null;
+  }
 }
 
 
@@ -3450,6 +3562,7 @@ window.toggleTheme = toggleTheme;
 window.toggleMobileSidebar = toggleMobileSidebar;
 window.clearAllSessions = clearAllSessions;
 window.handleSendOtp = handleSendOtp;
+window.handleResendOtp = handleResendOtp;
 window.handleVerifyOtp = handleVerifyOtp;
 window.backToOtpStep1 = backToOtpStep1;
 window.onAuthLanguageChanged = onAuthLanguageChanged;

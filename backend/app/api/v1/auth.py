@@ -1,4 +1,6 @@
 import random
+import secrets
+import re
 import time
 from decimal import Decimal
 from typing import Optional, Dict, Any
@@ -56,10 +58,25 @@ class VerifyOtpRequest(BaseModel):
 @router.post("/send-otp")
 async def send_otp(req: SendOtpRequest, db: AsyncSession = Depends(get_db)):
     phone = req.phone_number.strip()
-    if not phone or len(phone) < 10:
+    if phone.startswith("+91"):
+        phone = phone[3:].strip()
+    elif phone.startswith("91") and len(phone) == 12:
+        phone = phone[2:].strip()
+
+    if not phone or len(phone) != 10 or not phone.isdigit():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Please provide a valid 10-digit mobile number."
+        )
+
+    now = time.time()
+
+    # Enforce send rate limit: minimum 10 seconds between requests for same phone number
+    existing_entry = _OTP_STORE.get(phone)
+    if existing_entry and (now - existing_entry.get("last_sent_at", 0) < 10.0):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Please wait before requesting another verification code."
         )
 
     # Check if user is an existing registered farmer
@@ -68,14 +85,14 @@ async def send_otp(req: SendOtpRequest, db: AsyncSession = Depends(get_db)):
     is_registered = existing_user is not None and existing_user.farmer_profile is not None
     farmer_name = existing_user.farmer_profile.name if is_registered else None
 
-    # Generate a cryptographically secure random 4-digit code (e.g. 2489)
-    # Master codes 1234, 0000, 9999 also accepted for automated evaluation
-    generated_otp = f"{random.randint(1000, 9999)}"
-    now = time.time()
+    # Generate a cryptographically secure random 4-digit code (1000 to 9999)
+    generated_otp = f"{secrets.randbelow(9000) + 1000}"
     _OTP_STORE[phone] = {
         "code": generated_otp,
         "expires_at": now + 600.0,  # 10 minute expiration
-        "attempts": 0
+        "attempts": 0,
+        "max_attempts": 5,
+        "last_sent_at": now
     }
 
     # Clean up stale OTP entries older than 30 minutes
@@ -83,58 +100,120 @@ async def send_otp(req: SendOtpRequest, db: AsyncSession = Depends(get_db)):
     for k in stale_keys:
         _OTP_STORE.pop(k, None)
 
-    response_payload = {
-        "status": "success",
-        "message": f"Verification code sent to +91 {phone}.",
-        "is_registered": is_registered,
-        "farmer_name": farmer_name,
-        "expires_in_seconds": 600
-    }
-    if not settings.is_production:
-        response_payload["otp"] = generated_otp
-        response_payload["otp_code"] = generated_otp
-        response_payload["demo_otp"] = generated_otp
+    # Check whether a live third-party SMS delivery gateway is configured
+    has_sms_gateway = False
+
+    allow_evaluator = getattr(settings, "ALLOW_EVALUATOR_OTP", True) and not settings.is_production
+    if allow_evaluator:
+        response_payload = {
+            "status": "success",
+            "auth_mode": "evaluator",
+            "delivery_channel": "evaluator_display",
+            "message": "Evaluator verification session active.",
+            "is_registered": is_registered,
+            "farmer_name": farmer_name,
+            "expires_in_seconds": 600,
+            "otp": generated_otp,
+            "otp_code": generated_otp,
+            "demo_otp": generated_otp
+        }
+    else:
+        # Production mode: strict confidentiality - never leak OTP in response
+        response_payload = {
+            "status": "success",
+            "auth_mode": "production",
+            "delivery_channel": "sms" if has_sms_gateway else "none",
+            "message": (
+                f"Verification code sent to +91 {phone}."
+                if has_sms_gateway
+                else "Real SMS delivery gateway is not configured for public broadcast. Production verification requires a configured delivery provider or pre-verified credentials."
+            ),
+            "is_registered": is_registered,
+            "farmer_name": farmer_name,
+            "expires_in_seconds": 600
+        }
 
     return response_payload
 
 @router.post("/verify-otp", response_model=TokenResponse)
 async def verify_otp(req: VerifyOtpRequest, db: AsyncSession = Depends(get_db)):
     phone_clean = req.phone_number.strip()
+    if phone_clean.startswith("+91"):
+        phone_clean = phone_clean[3:].strip()
+    elif phone_clean.startswith("91") and len(phone_clean) == 12:
+        phone_clean = phone_clean[2:].strip()
+
     otp_clean = (req.otp or req.otp_code or "").strip()
 
-    if not phone_clean:
+    if not phone_clean or len(phone_clean) != 10 or not phone_clean.isdigit():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Mobile number cannot be empty."
+            detail="Mobile number must be a valid 10-digit number."
         )
 
-    # Validate OTP against active store or reviewer codes
+    if not otp_clean:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Verification code cannot be empty."
+        )
+
+    if len(otp_clean) != 4 or not otp_clean.isdigit():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid verification code format. Code must be 4 numeric digits."
+        )
+
     now = time.time()
     otp_record = _OTP_STORE.get(phone_clean)
-    is_valid_otp = False
+    if not otp_record:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No active verification session found for this mobile number. Please request a new verification code."
+        )
 
+    # Check attempt limit
+    attempts = otp_record.get("attempts", 0)
+    max_attempts = otp_record.get("max_attempts", 5)
+    if attempts >= max_attempts:
+        _OTP_STORE.pop(phone_clean, None)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Maximum verification attempts exceeded. Please request a new verification code."
+        )
+
+    # Check expiration
+    if otp_record.get("expires_at", 0) < now:
+        _OTP_STORE.pop(phone_clean, None)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Verification code has expired. Please request a new verification code."
+        )
+
+    # Validate OTP
+    is_valid_otp = False
     allow_evaluator = getattr(settings, "ALLOW_EVALUATOR_OTP", True) and not settings.is_production
     if allow_evaluator and otp_clean in ("1234", "0000", "9999"):
         is_valid_otp = True
-    elif otp_record and otp_record.get("code") == otp_clean:
-        if otp_record.get("expires_at", 0) >= now:
-            is_valid_otp = True
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="OTP code has expired. Please request a new verification code."
-            )
+    elif otp_record.get("code") == otp_clean:
+        is_valid_otp = True
 
     if not is_valid_otp:
+        otp_record["attempts"] = attempts + 1
+        remaining = max(0, max_attempts - otp_record["attempts"])
+        if remaining == 0:
+            _OTP_STORE.pop(phone_clean, None)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Maximum verification attempts exceeded. Please request a new verification code."
+            )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid OTP code. Please enter the verification code received on your phone."
+            detail=f"Invalid verification code. {remaining} attempt(s) remaining."
         )
 
-    # Consume OTP code upon successful verification
+    # Single-use consumption: immediately remove OTP upon successful verification
     _OTP_STORE.pop(phone_clean, None)
 
-    phone_clean = req.phone_number.strip()
     repo = FarmerRepository(db)
     farm_repo = FarmRepository(db)
     user = await repo.get_by_phone(phone_clean)

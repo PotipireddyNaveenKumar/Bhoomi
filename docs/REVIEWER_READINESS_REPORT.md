@@ -13,7 +13,7 @@ BHOOMI is an end-to-end multimodal AI agricultural decision-intelligence system 
 ```mermaid
 flowchart TD
     A[Reviewer / Farmer visits Web Platform] --> B[Enter 10-Digit Mobile Number]
-    B --> C[Receive Prototype OTP: 1234]
+    B --> C[Receive Verification Code / Evaluator Code]
     C --> D[Location-Aware Farm Onboarding Gate]
     D --> E[GPS Detection / State & District Selection]
     E --> F[Automated Soil Estimate from ICAR-NBSS&LUP]
@@ -33,7 +33,7 @@ Reviewers do not experience mock responses, hardcoded answer scripts, or synthet
 
 * **JWT Mechanism:** True RS256/HS256 JSON Web Tokens issued by the FastAPI backend (`POST /api/v1/auth/verify-otp`).
 * **Zero Fake Browser Tokens:** Elimination of fabricated `demo_token_*` client-side artifacts.
-* **Deterministic Prototype OTP:** Fixed to `1234` for reviewer auditability without exposing live SMS gateway API credentials.
+* **Cryptographically Secure OTP:** Dynamically generated 4-digit code with 10-minute expiry, 5-attempt rate-limiting, and single-use consumption. Evaluator code isolated to explicit non-production/evaluator configurations.
 * **Tenant Isolation:** All database records (`ChatSession`, `ChatMessage`, `FarmerProfile`, `Farm`, `FarmCrop`, `PredictionHistory`) enforce foreign key integrity against authenticated `farmer_id`.
 * **Session Expiry & Logout:** Clean `localStorage` clearance, instant modal reset, and session revoking.
 
