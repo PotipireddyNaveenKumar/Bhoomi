@@ -230,3 +230,129 @@ class TestReviewerPasswordAuthentication:
                     assert result is False
 
         asyncio.run(_test_idem())
+
+    # 15. Reviewer farm, crop, area, and soil are genuinely DB-backed
+    def test_15_reviewer_digital_twin_db_backed(self):
+        res = client.post("/api/v1/auth/login", json={
+            "phone_number": TEST_REVIEWER_PHONE,
+            "password": TEST_REVIEWER_PW
+        })
+        assert res.status_code == 200
+        data = res.json()
+        assert data["farm_id"] == f"farm_reviewer_{TEST_REVIEWER_PHONE}"
+        assert data["crop_name"] == "Potato"
+        assert data["area_acres"] == 3.0
+        assert data["soil_type"] == "red_sandy_loam"
+
+    # 16. Normal farmer receives own farm, crop, area, and soil from database
+    def test_16_normal_farmer_receives_own_data(self):
+        import asyncio
+        from decimal import Decimal
+        from app.models.farmer import FarmerProfile
+        from app.models.farm import Farm
+        from app.models.crop import FarmCrop
+
+        normal_phone = "9112233445"
+        normal_pw = "CustomFarmerPass1"
+
+        async def _seed_custom_farmer():
+            async with AsyncSessionLocal() as session:
+                res_u = await session.execute(select(User).where(User.phone_number == normal_phone))
+                u = res_u.scalars().first()
+                if not u:
+                    u = User(id="custom_farmer_u1", phone_number=normal_phone, hashed_password=get_password_hash(normal_pw))
+                    session.add(u)
+                    await session.flush()
+                    prof = FarmerProfile(id="prof_custom_u1", user_id=u.id, name="Srinivas Rao", state="Telangana", district="Khammam")
+                    session.add(prof)
+                    await session.flush()
+                    farm = Farm(id="farm_custom_cotton_1", farmer_id=prof.id, farm_name="Khammam Cotton Farm", total_area_acres=Decimal("7.5"), soil_type="black_cotton")
+                    session.add(farm)
+                    await session.flush()
+                    crop = FarmCrop(id="crop_custom_cotton_1", farm_id=farm.id, crop_name="Cotton", variety="Bt-Cotton", area_acres=Decimal("7.5"))
+                    session.add(crop)
+                    await session.commit()
+
+        asyncio.run(_seed_custom_farmer())
+
+        res = client.post("/api/v1/auth/login", json={
+            "phone_number": normal_phone,
+            "password": normal_pw
+        })
+        assert res.status_code == 200
+        data = res.json()
+        assert data["farm_id"] == "farm_custom_cotton_1"
+        assert data["crop_name"] == "Cotton"
+        assert data["area_acres"] == 7.5
+        assert data["soil_type"] == "black_cotton"
+
+    # 17. Un-onboarded user receives null/unconfigured farm context
+    def test_17_un_onboarded_user_receives_null_farm_context(self):
+        import asyncio
+        unonboarded_phone = "9223344556"
+        unonboarded_pw = "UnonboardedPass1"
+
+        async def _seed_unonboarded_user():
+            async with AsyncSessionLocal() as session:
+                res_u = await session.execute(select(User).where(User.phone_number == unonboarded_phone))
+                u = res_u.scalars().first()
+                if not u:
+                    u = User(id="unonboarded_u1", phone_number=unonboarded_phone, hashed_password=get_password_hash(unonboarded_pw))
+                    session.add(u)
+                    await session.flush()
+                    from app.models.farmer import FarmerProfile
+                    prof = FarmerProfile(id="prof_unonboarded_1", user_id=u.id, name="New Farmer", preferred_language="en")
+                    session.add(prof)
+                    await session.commit()
+
+        asyncio.run(_seed_unonboarded_user())
+
+        res = client.post("/api/v1/auth/login", json={
+            "phone_number": unonboarded_phone,
+            "password": unonboarded_pw
+        })
+        assert res.status_code == 200
+        data = res.json()
+        # Must strictly be null/None — never fabricated defaults
+        assert data["farm_id"] is None
+        assert data["crop_name"] is None
+        assert data["area_acres"] is None
+        assert data["soil_type"] is None
+        assert data["is_new_user"] is True
+
+    # 18. Un-onboarded user never receives Potato, 3.0, or red_sandy_loam
+    def test_18_un_onboarded_user_never_gets_fabricated_defaults(self):
+        unonboarded_phone = "9223344556"
+        unonboarded_pw = "UnonboardedPass1"
+
+        res = client.post("/api/v1/auth/login", json={
+            "phone_number": unonboarded_phone,
+            "password": unonboarded_pw
+        })
+        assert res.status_code == 200
+        data = res.json()
+        assert data["crop_name"] != "Potato"
+        assert data["area_acres"] != 3.0
+        assert data["soil_type"] != "red_sandy_loam"
+
+    # 19. Farm isolation remains strictly enforced across accounts
+    def test_19_farm_isolation_strictly_enforced(self):
+        # Normal farmer cannot get reviewer farm
+        res_normal = client.post("/api/v1/auth/login", json={
+            "phone_number": "9112233445",
+            "password": "CustomFarmerPass1"
+        })
+        assert res_normal.status_code == 200
+        data_normal = res_normal.json()
+        assert data_normal["farm_id"] != f"farm_reviewer_{TEST_REVIEWER_PHONE}"
+        assert data_normal["crop_name"] != "Potato"
+
+        # Reviewer cannot get normal farmer farm
+        res_rev = client.post("/api/v1/auth/login", json={
+            "phone_number": TEST_REVIEWER_PHONE,
+            "password": TEST_REVIEWER_PW
+        })
+        assert res_rev.status_code == 200
+        data_rev = res_rev.json()
+        assert data_rev["farm_id"] != "farm_custom_cotton_1"
+        assert data_rev["crop_name"] != "Cotton"

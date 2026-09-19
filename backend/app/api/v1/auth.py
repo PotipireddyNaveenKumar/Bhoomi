@@ -462,15 +462,15 @@ async def login(req: UserLoginRequest, db: AsyncSession = Depends(get_db)):
         access_token=token,
         user_id=user.id,
         farmer_id=farmer_id,
-        name=user.farmer_profile.name if user.farmer_profile else "Reviewer",
+        name=user.farmer_profile.name if user.farmer_profile else "Farmer",
         preferred_language=user.farmer_profile.preferred_language if user.farmer_profile else "en",
         state=user.farmer_profile.state if user.farmer_profile else None,
         district=user.farmer_profile.district if user.farmer_profile else None,
         village=user.farmer_profile.village if user.farmer_profile else None,
         farm_id=farm.id if farm else None,
-        crop_name=active_crop_name or "Potato",
-        area_acres=float(farm.total_area_acres) if farm and farm.total_area_acres else 3.0,
-        soil_type=farm.soil_type if farm else "red_sandy_loam",
-        is_new_user=False
+        crop_name=active_crop_name if active_crop_name else None,
+        area_acres=float(farm.total_area_acres) if farm and farm.total_area_acres is not None else None,
+        soil_type=farm.soil_type if farm and farm.soil_type else None,
+        is_new_user=not bool(existing_farms)
     )
 

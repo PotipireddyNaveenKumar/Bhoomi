@@ -858,21 +858,21 @@ async function handleReviewerLogin() {
         farm_id: data.farm_id || null,
         user_id: data.user_id,
         phone_number: phoneClean,
-        full_name: data.name || "Reviewer Evaluator",
+        full_name: data.name || "Farmer",
         preferred_language: data.preferred_language || currentLanguage || "en",
-        state: data.state || "Telangana",
-        district: data.district || "Warangal",
-        village: data.village || "Dharmasagar",
-        land_area_acres: data.area_acres || 3.0,
-        current_crop: data.crop_name || "Potato",
-        crop_variety: data.crop_variety || "Kufri Jyoti",
-        active_crop: data.crop_name || "Potato",
-        soil_type: data.soil_type || "red_sandy_loam",
-        soil_source_type: "estimated",
-        soil_n: 90,
-        soil_p: 42,
-        soil_k: 43,
-        soil_ph: 6.5
+        state: data.state || null,
+        district: data.district || null,
+        village: data.village || null,
+        land_area_acres: (data.area_acres !== undefined && data.area_acres !== null) ? data.area_acres : null,
+        current_crop: data.crop_name || null,
+        crop_variety: data.crop_variety || null,
+        active_crop: data.crop_name || null,
+        soil_type: data.soil_type || null,
+        soil_source_type: data.soil_type ? "database_record" : "unconfigured",
+        soil_n: (data.soil_n !== undefined && data.soil_n !== null) ? data.soil_n : null,
+        soil_p: (data.soil_p !== undefined && data.soil_p !== null) ? data.soil_p : null,
+        soil_k: (data.soil_k !== undefined && data.soil_k !== null) ? data.soil_k : null,
+        soil_ph: (data.soil_ph !== undefined && data.soil_ph !== null) ? data.soil_ph : null
       };
       localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
       if (data.preferred_language) {
@@ -937,11 +937,19 @@ function updateSidebarFarmerProfile(user) {
   const farmEl = document.getElementById("sidebarFarmerFarm");
   if (nameEl) nameEl.textContent = user.full_name || "Farmer";
   if (farmEl) {
-    const district = user.district || "Warangal";
-    const state = user.state || "Telangana";
-    const acres = user.land_area_acres || 3.0;
-    const crop = user.current_crop || "Rice";
-    farmEl.textContent = `${district}, ${state} • ${acres} Acres (${crop})`;
+    if (!user.farm_id && !user.current_crop && !user.land_area_acres) {
+      farmEl.textContent = "Farm profile not configured";
+    } else {
+      const locParts = [user.village, user.district, user.state].filter(Boolean);
+      const locStr = locParts.length > 0 ? locParts.join(", ") : (user.district || user.state || "");
+      const acresStr = (user.land_area_acres !== undefined && user.land_area_acres !== null) ? `${user.land_area_acres} Acres` : "Area unconfigured";
+      const cropStr = user.current_crop ? `(${user.current_crop})` : "(No crop registered)";
+      if (locStr) {
+        farmEl.textContent = `${locStr} • ${acresStr} ${cropStr}`;
+      } else {
+        farmEl.textContent = `${acresStr} ${cropStr}`;
+      }
+    }
   }
 }
 
@@ -987,7 +995,7 @@ function openProfileModal() {
   const modal = document.getElementById("profileModal");
   if (!modal) return;
 
-  const u = currentUser || { full_name: "Ramesh Rao", state: "Telangana", district: "Warangal", land_area_acres: 3.0, current_crop: "Rice", soil_n: 90, soil_p: 42, soil_k: 43, soil_ph: 6.5 };
+  const u = currentUser || {};
 
   document.getElementById("profName").value = u.full_name || "";
   document.getElementById("profState").value = u.state || "Telangana";
@@ -1000,14 +1008,14 @@ function openProfileModal() {
       const opt = new Option(u.current_crop, u.current_crop, true, true);
       profCropEl.add(opt);
     }
-    profCropEl.value = u.current_crop || "Rice";
+    profCropEl.value = u.current_crop || (profCropEl.options.length > 0 ? profCropEl.options[0].value : "");
   }
 
-  document.getElementById("profAcres").value = u.land_area_acres || 3.0;
-  document.getElementById("profSoilN").value = u.soil_n || 90;
-  document.getElementById("profSoilP").value = u.soil_p || 42;
-  document.getElementById("profSoilK").value = u.soil_k || 43;
-  document.getElementById("profSoilPh").value = u.soil_ph || 6.5;
+  document.getElementById("profAcres").value = (u.land_area_acres !== undefined && u.land_area_acres !== null) ? u.land_area_acres : "";
+  document.getElementById("profSoilN").value = (u.soil_n !== undefined && u.soil_n !== null) ? u.soil_n : "";
+  document.getElementById("profSoilP").value = (u.soil_p !== undefined && u.soil_p !== null) ? u.soil_p : "";
+  document.getElementById("profSoilK").value = (u.soil_k !== undefined && u.soil_k !== null) ? u.soil_k : "";
+  document.getElementById("profSoilPh").value = (u.soil_ph !== undefined && u.soil_ph !== null) ? u.soil_ph : "";
 
   modal.style.display = "flex";
 }
