@@ -252,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const authLangSelect = document.getElementById("authLangSelect");
   if (authLangSelect) authLangSelect.value = currentLanguage;
 
-  populateDistricts("farmerStateInput", "farmerDistrictInput", "Warangal");
   updateUILanguage(currentLanguage);
   initSpeechRecognition();
   initAuth();
@@ -288,6 +287,12 @@ async function initAuth() {
   }
 
   // Not logged in -> Show Authentication Modal
+  const nameEl = document.getElementById("sidebarFarmerName");
+  const farmEl = document.getElementById("sidebarFarmerFarm");
+  if (nameEl) nameEl.textContent = "BHOOMI User";
+  if (farmEl) farmEl.textContent = "Farm profile not configured";
+  currentUser = null;
+  authToken = null;
   showAuthModal();
 }
 
@@ -364,15 +369,21 @@ function onStateChanged() {
   if (!stateSelect || !districtSelect) return;
 
   const state = stateSelect.value;
-  const districts = STATE_DISTRICTS[state] || ["Central District"];
-  districtSelect.innerHTML = districts.map(d => `<option value="${d}">${d}</option>`).join("");
-  onDistrictChanged();
+  if (!state) {
+    districtSelect.innerHTML = '<option value="" disabled selected>Select District</option>';
+    return;
+  }
+  const districts = STATE_DISTRICTS[state] || [];
+  districtSelect.innerHTML = '<option value="" disabled selected>Select District</option>' + 
+    districts.map(d => `<option value="${d}">${d}</option>`).join("");
 }
 
 function onDistrictChanged() {
-  const state = document.getElementById("farmerStateInput")?.value || "Telangana";
-  const district = document.getElementById("farmerDistrictInput")?.value || "Warangal";
-  fetchSoilEstimate(state, district, detectedLat, detectedLon);
+  const state = document.getElementById("farmerStateInput")?.value;
+  const district = document.getElementById("farmerDistrictInput")?.value;
+  if (state && district) {
+    fetchSoilEstimate(state, district, detectedLat, detectedLon);
+  }
 }
 
 async function fetchSoilEstimate(state, district, lat = null, lon = null) {
@@ -414,9 +425,11 @@ function detectFarmerLocation() {
       }
       if (btn) btn.innerHTML = "<span>✅</span> Location Set";
       showToast(`Location detected: ${detectedLat}, ${detectedLon}`, "success");
-      const state = document.getElementById("farmerStateInput")?.value || "Telangana";
-      const district = document.getElementById("farmerDistrictInput")?.value || "Warangal";
-      fetchSoilEstimate(state, district, detectedLat, detectedLon);
+      const state = document.getElementById("farmerStateInput")?.value;
+      const district = document.getElementById("farmerDistrictInput")?.value;
+      if (state && district) {
+        fetchSoilEstimate(state, district, detectedLat, detectedLon);
+      }
     },
     (err) => {
       console.warn("Geolocation denied/unavailable:", err);
@@ -612,12 +625,13 @@ async function handleVerifyOtp() {
   const newFieldsEl = document.getElementById("newFarmerFields");
   const isNewFarmer = newFieldsEl && newFieldsEl.style.display !== "none";
   const name = isNewFarmer ? (document.getElementById("farmerNameInput")?.value?.trim() || "Farmer") : null;
-  const state = isNewFarmer ? (document.getElementById("farmerStateInput")?.value || "Telangana") : null;
-  const district = isNewFarmer ? (document.getElementById("farmerDistrictInput")?.value?.trim() || "Warangal") : null;
-  const village = isNewFarmer ? (document.getElementById("farmerVillageInput")?.value?.trim() || "Rural") : null;
-  const crop = isNewFarmer ? (document.getElementById("farmerCropInput")?.value?.trim() || "Chilli") : null;
-  const variety = isNewFarmer ? (document.getElementById("farmerVarietyInput")?.value?.trim() || "") : null;
-  const acres = isNewFarmer ? parseFloat(document.getElementById("farmerAcresInput")?.value || 3.0) : null;
+  const state = isNewFarmer ? (document.getElementById("farmerStateInput")?.value || null) : null;
+  const district = isNewFarmer ? (document.getElementById("farmerDistrictInput")?.value?.trim() || null) : null;
+  const village = isNewFarmer ? (document.getElementById("farmerVillageInput")?.value?.trim() || null) : null;
+  const crop = isNewFarmer ? (document.getElementById("farmerCropInput")?.value?.trim() || null) : null;
+  const variety = isNewFarmer ? (document.getElementById("farmerVarietyInput")?.value?.trim() || null) : null;
+  const acresVal = document.getElementById("farmerAcresInput")?.value;
+  const acres = (isNewFarmer && acresVal) ? parseFloat(acresVal) : null;
 
   const labFields = document.getElementById("labSoilFields");
   const isSoilManual = isNewFarmer && labFields && labFields.style.display !== "none";
@@ -924,6 +938,10 @@ function handleLogout(skipConfirm = false) {
     localStorage.removeItem("bhoomi_current_user");
     authToken = null;
     currentUser = null;
+    const nameEl = document.getElementById("sidebarFarmerName");
+    const farmEl = document.getElementById("sidebarFarmerFarm");
+    if (nameEl) nameEl.textContent = "BHOOMI User";
+    if (farmEl) farmEl.textContent = "Farm profile not configured";
     closeProfileModal();
     sessionsList = [];
     renderSessionList();
@@ -964,27 +982,30 @@ function populateDistricts(stateSelectId, districtSelectId, selectedDistrict = n
   const distEl = document.getElementById(districtSelectId);
   if (!stateEl || !distEl) return;
 
-  const stateVal = stateEl.value || "Telangana";
-  const districts = STATE_DISTRICTS[stateVal] || STATE_DISTRICTS["Telangana"];
+  const stateVal = stateEl.value;
+  if (!stateVal) {
+    distEl.innerHTML = '<option value="" disabled selected>Select District</option>';
+    return;
+  }
+  const districts = STATE_DISTRICTS[stateVal] || [];
 
-  distEl.innerHTML = "";
+  distEl.innerHTML = '<option value="" disabled' + (!selectedDistrict ? ' selected' : '') + '>Select District</option>';
   districts.forEach(d => {
     const opt = document.createElement("option");
     opt.value = d;
     opt.textContent = d;
+    if (selectedDistrict && d === selectedDistrict) {
+      opt.selected = true;
+    }
     distEl.appendChild(opt);
   });
 
-  if (selectedDistrict && districts.includes(selectedDistrict)) {
-    distEl.value = selectedDistrict;
-  } else if (selectedDistrict) {
+  if (selectedDistrict && !districts.includes(selectedDistrict)) {
     const customOpt = document.createElement("option");
     customOpt.value = selectedDistrict;
     customOpt.textContent = selectedDistrict;
+    customOpt.selected = true;
     distEl.appendChild(customOpt);
-    distEl.value = selectedDistrict;
-  } else {
-    distEl.value = districts[0];
   }
 }
 
@@ -998,9 +1019,9 @@ function openProfileModal() {
   const u = currentUser || {};
 
   document.getElementById("profName").value = u.full_name || "";
-  document.getElementById("profState").value = u.state || "Telangana";
+  document.getElementById("profState").value = u.state || "";
   
-  populateDistricts("profState", "profDistrict", u.district || "Warangal");
+  populateDistricts("profState", "profDistrict", u.district || null);
 
   const profCropEl = document.getElementById("profCrop");
   if (profCropEl) {

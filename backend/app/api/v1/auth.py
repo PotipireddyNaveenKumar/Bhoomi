@@ -218,26 +218,26 @@ async def verify_otp(req: VerifyOtpRequest, db: AsyncSession = Depends(get_db)):
     farm_repo = FarmRepository(db)
     user = await repo.get_by_phone(phone_clean)
     
-    state_val = req.state or "Telangana"
-    district_val = req.district or "Warangal"
-    village_val = req.village or "Rural"
+    state_val = req.state or None
+    district_val = req.district or None
+    village_val = req.village or None
     name_val = req.full_name or req.name or "Farmer"
     lang_val = req.preferred_language or "en"
-    crop_val = req.current_crop or req.crop_name or "Potato"
-    acres_val = float(req.land_area_acres if req.land_area_acres is not None else (req.area_acres if req.area_acres is not None else 3.0))
+    crop_val = req.current_crop or req.crop_name or None
+    acres_val = float(req.land_area_acres) if req.land_area_acres is not None else (float(req.area_acres) if req.area_acres is not None else None)
     n_val = req.soil_n if req.soil_n is not None else req.nitrogen
     p_val = req.soil_p if req.soil_p is not None else req.phosphorus
     k_val = req.soil_k if req.soil_k is not None else req.potassium
     ph_val = req.soil_ph if req.soil_ph is not None else req.ph
 
-    # Obtain location soil estimation if soil_type not provided
+    # Obtain location soil estimation
     soil_est = SoilEstimationService.get_soil_estimate(
         state=state_val,
         district=district_val,
         latitude=req.latitude,
         longitude=req.longitude
     )
-    resolved_soil_type = req.soil_type or soil_est.soil_type
+    resolved_soil_type = req.soil_type or (soil_est.soil_type if (state_val or district_val or (req.latitude and req.longitude)) else None)
 
     # Construct structured soil health data with explicit provenance
     source_type = req.soil_source_type or ("farmer_entered" if (n_val or p_val or k_val) else "estimated")
@@ -328,23 +328,27 @@ async def verify_otp(req: VerifyOtpRequest, db: AsyncSession = Depends(get_db)):
     farmer_id = user.farmer_profile.id
     existing_farms = await farm_repo.get_farms_by_farmer(farmer_id)
     farm = None
-    if not existing_farms:
+    has_farm_data = bool(acres_val is not None or crop_val or resolved_soil_type or (state_val and district_val))
+    if not existing_farms and has_farm_data:
         farm_create = FarmCreate(
             farm_name=f"{name_val}'s Farm",
-            total_area_acres=Decimal(str(acres_val)),
+            total_area_acres=Decimal(str(acres_val if acres_val is not None else 1.0)),
             latitude=req.latitude or (17.9689 if state_val == "Telangana" else 16.3067),
             longitude=req.longitude or (79.5941 if state_val == "Telangana" else 80.4365),
-            soil_type=resolved_soil_type,
+            soil_type=resolved_soil_type or "loam",
             irrigation_source="borewell",
             soil_health_data=soil_health
         )
         farm = await farm_repo.create_farm(farmer_id, farm_create)
-    else:
+    elif existing_farms:
         farm = existing_farms[0]
         # Update farm attributes if newly provided
-        farm.total_area_acres = Decimal(str(req.land_area_acres or farm.total_area_acres))
-        farm.soil_type = resolved_soil_type
-        farm.soil_health_data = soil_health
+        if req.land_area_acres is not None:
+            farm.total_area_acres = Decimal(str(req.land_area_acres))
+        if resolved_soil_type:
+            farm.soil_type = resolved_soil_type
+        if soil_health:
+            farm.soil_health_data = soil_health
         if req.latitude:
             farm.latitude = req.latitude
         if req.longitude:
@@ -352,30 +356,30 @@ async def verify_otp(req: VerifyOtpRequest, db: AsyncSession = Depends(get_db)):
         await db.commit()
         await db.refresh(farm)
 
-    # Ensure the active crop is registered on this farm
-    crop_name = crop_val
+    # Ensure the active crop is registered / loaded for this farm
     active_crop = None
     if farm:
         res_crops = await db.execute(select(FarmCrop).where(FarmCrop.farm_id == farm.id))
         farm_crops = list(res_crops.scalars().all())
-        if not farm_crops:
-            crop_in = CropCreate(
-                crop_name=crop_name,
-                variety=req.crop_variety,
-                area_acres=Decimal(str(acres_val)),
-                current_stage="vegetative"
-            )
-            active_crop = await farm_repo.add_crop_to_farm(farm.id, crop_in)
-        else:
+        if farm_crops:
             primary_crop = farm_crops[0]
-            if req.current_crop or req.crop_name:
+            if crop_val:
                 primary_crop.crop_name = crop_val
                 if req.crop_variety:
                     primary_crop.variety = req.crop_variety
-                primary_crop.area_acres = Decimal(str(acres_val))
+                if acres_val is not None:
+                    primary_crop.area_acres = Decimal(str(acres_val))
                 await db.commit()
                 await db.refresh(primary_crop)
             active_crop = primary_crop
+        elif crop_val:
+            crop_in = CropCreate(
+                crop_name=crop_val,
+                variety=req.crop_variety,
+                area_acres=Decimal(str(acres_val if acres_val is not None else farm.total_area_acres)),
+                current_stage="vegetative"
+            )
+            active_crop = await farm_repo.add_crop_to_farm(farm.id, crop_in)
 
     # Determine resolved crop name, area, and farm_id
     active_crop_name = active_crop.crop_name if active_crop else crop_val

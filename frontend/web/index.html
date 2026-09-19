@@ -110,7 +110,8 @@
             <div class="form-group">
               <label for="farmerStateInput">🏛️ State</label>
               <select id="farmerStateInput" onchange="onStateChanged()">
-                <option value="Telangana" selected>Telangana</option>
+                <option value="" disabled selected>Select State</option>
+                <option value="Telangana">Telangana</option>
                 <option value="Andhra Pradesh">Andhra Pradesh</option>
                 <option value="Karnataka">Karnataka</option>
                 <option value="Tamil Nadu">Tamil Nadu</option>
@@ -130,7 +131,7 @@
             <div class="form-group">
               <label for="farmerDistrictInput">📍 District</label>
               <select id="farmerDistrictInput" onchange="onDistrictChanged()">
-                <option value="Warangal" selected>Warangal</option>
+                <option value="" disabled selected>Select District</option>
               </select>
             </div>
           </div>
@@ -153,10 +154,11 @@
             <div class="form-group">
               <label for="farmerCropInput">🌾 Current Crop</label>
               <select id="farmerCropInput">
+                <option value="" disabled selected>Select Crop</option>
                 <option value="Potato">Potato (బంగాళాదుంప / आलू)</option>
                 <option value="Guava">Guava (జామ / अमरूद)</option>
                 <option value="Tomato">Tomato (టమోటా / टमाटर)</option>
-                <option value="Chilli" selected>Chilli (మిర్చి / मिर्च)</option>
+                <option value="Chilli">Chilli (మిర్చి / मिर्च)</option>
                 <option value="Rice">Rice / Paddy (వరి / धान)</option>
                 <option value="Banana">Banana (అరటి / केला)</option>
                 <option value="Corn">Corn / Maize (మొక్కజొన్న / मक्का)</option>
@@ -172,7 +174,7 @@
             </div>
             <div class="form-group">
               <label for="farmerAcresInput">📐 Land Area (Acres)</label>
-              <input type="number" id="farmerAcresInput" step="0.1" min="0.1" value="3.0">
+              <input type="number" id="farmerAcresInput" step="0.1" min="0.1" placeholder="e.g. 3.0" value="">
             </div>
           </div>
 
@@ -186,11 +188,11 @@
           <div class="soil-onboarding-panel" style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.22); border-radius: 10px; padding: 12px; margin-top: 10px; margin-bottom: 12px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
               <span style="font-weight: 700; font-size: 0.92rem; color: var(--accent-emerald, #10b981);">🧪 Soil Information (Estimated from Location)</span>
-              <span id="soilEstConfidenceBadge" style="font-size: 11px; background: rgba(16,185,129,0.2); color: var(--accent-emerald, #10b981); padding: 2px 8px; border-radius: 12px; font-weight: 600;">89% Coverage</span>
+              <span id="soilEstConfidenceBadge" style="display:none; font-size: 11px; background: rgba(16,185,129,0.2); color: var(--accent-emerald, #10b981); padding: 2px 8px; border-radius: 12px; font-weight: 600;"></span>
             </div>
             <div style="font-size: 0.85rem; color: var(--text-secondary, #94a3b8); margin-bottom: 8px;">
-              <strong>Soil Type:</strong> <span id="soilEstTypeLabel" style="color:var(--text-primary, #f8fafc);">Red Sandy Loam (Chalka)</span> | 
-              <strong>Estimated pH:</strong> <span id="soilEstPhLabel" style="color:var(--text-primary, #f8fafc);">6.6 (Near Neutral)</span>
+              <strong>Soil Type:</strong> <span id="soilEstTypeLabel" style="color:var(--text-primary, #f8fafc);">Select location to estimate</span> | 
+              <strong>Estimated pH:</strong> <span id="soilEstPhLabel" style="color:var(--text-primary, #f8fafc);">-</span>
             </div>
             <div style="font-size: 0.78rem; color: var(--text-muted, #64748b); line-height: 1.35; margin-bottom: 8px;">
               ℹ️ <em>N/P/K soil-test values not available from location alone. Derived from ICAR-NBSS&LUP Regional Agro-Ecological Survey.</em>
@@ -291,7 +293,8 @@
           <div class="form-group">
             <label>🏛️ రాష్ట్రం (State)</label>
             <select id="profState" onchange="populateDistricts('profState', 'profDistrict')" required>
-              <option value="Telangana" selected>Telangana</option>
+              <option value="" disabled selected>Select State</option>
+              <option value="Telangana">Telangana</option>
               <option value="Andhra Pradesh">Andhra Pradesh</option>
               <option value="Maharashtra">Maharashtra</option>
               <option value="Karnataka">Karnataka</option>
@@ -302,7 +305,7 @@
           <div class="form-group">
             <label>📍 జిల్లా (District)</label>
             <select id="profDistrict" required>
-              <option value="Warangal" selected>Warangal</option>
+              <option value="" disabled selected>Select District</option>
             </select>
           </div>
         </div>
@@ -312,7 +315,8 @@
           <div class="form-group">
             <label>🌾 ప్రస్తుత పంట (Current Crop)</label>
             <select id="profCrop" required>
-              <option value="Rice" selected>Rice (Paddy / వరి)</option>
+              <option value="" disabled selected>Select Crop</option>
+              <option value="Rice">Rice (Paddy / వరి)</option>
               <option value="Cotton">Cotton (పత్తి)</option>
               <option value="Maize">Maize (మొక్కజొన్న)</option>
               <option value="Chilli">Chilli (మిర్చి)</option>
@@ -584,8 +588,8 @@
         <div class="farmer-profile-card" onclick="openProfileModal()" title="Click to Edit Profile or Logout">
           <div class="farmer-avatar">👨‍🌾</div>
           <div class="farmer-info">
-            <div class="farmer-name" id="sidebarFarmerName">Ramesh Rao</div>
-            <div class="farmer-farm" id="sidebarFarmerFarm">Warangal, Telangana • 3.0 Acres</div>
+            <div class="farmer-name" id="sidebarFarmerName">BHOOMI User</div>
+            <div class="farmer-farm" id="sidebarFarmerFarm">Farm profile not configured</div>
           </div>
           <span class="farmer-edit-badge">✏️ Edit</span>
         </div>
