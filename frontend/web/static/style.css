@@ -2073,6 +2073,104 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* ====================================================================
+   BHOOMI AUTHENTICATION STATE & PAGE GATING SYSTEM
+   ==================================================================== */
+.auth-splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--bg-main, #0b0f17);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.splash-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px;
+  animation: fadeInSplash 0.3s ease;
+}
+
+.splash-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25);
+  animation: pulseLogo 2s infinite ease-in-out;
+}
+
+.splash-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.splash-sub {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: 24px;
+}
+
+.splash-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(16, 185, 129, 0.15);
+  border-top-color: var(--accent-emerald, #10b981);
+  border-radius: 50%;
+  animation: spinSplash 0.8s linear infinite;
+}
+
+@keyframes spinSplash {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseLogo {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes fadeInSplash {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Dedicated Standalone Authentication View */
+.auth-page-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.12) 0%, rgba(11, 15, 23, 1) 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.auth-page-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Dashboard Page Container (Authenticated App) */
+.dashboard-page-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* ==========================================
    Auth Modal & Mobile Registration Form Card
    ========================================== */

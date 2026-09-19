@@ -38,16 +38,26 @@
     </div>
   </div>
 
-  <!-- Fullscreen Farmer Authentication Gate (English Login + Language Chooser) -->
-  <div id="authModal" class="auth-modal-overlay">
-    <div class="auth-modal-backdrop"></div>
-    <div class="auth-card">
+  
+  <!-- 1. Auth Checking Loading Splash (Prevents Flash of Authenticated Content) -->
+  <div id="authLoadingSplash" class="auth-splash-screen">
+    <div class="splash-card">
+      <img src="/static/icon-192.png?v=20260905_v1" alt="BHOOMI" class="splash-logo">
+      <h1 class="splash-title">BHOOMI <span class="brand-sub">AI</span></h1>
+      <p class="splash-sub" id="txtSplashTagline">Multimodal AI Agronomist & Decision Support</p>
+      <div class="splash-spinner"></div>
+    </div>
+  </div>
+
+  <!-- 2. Dedicated Standalone Fullscreen Authentication Page -->
+  <div id="authView" class="auth-page-container" style="display: none;">
+    <div class="auth-page-backdrop"></div>
+    <div id="authModal" class="auth-card">
       <div class="auth-header">
         <div class="auth-brand">
           <img src="/static/icon-192.png?v=20260905_v1" alt="BHOOMI logo" style="width:48px; height:48px; border-radius:12px; margin-bottom:8px; box-shadow:0 4px 16px rgba(0,0,0,0.3);">
           <h2>BHOOMI <span class="brand-sub">AI</span></h2>
         </div>
-
         <p class="auth-tagline" id="txtAuthTagline">Multimodal AI Agronomist & Decision Support System</p>
       </div>
 
@@ -64,183 +74,195 @@
         </select>
       </div>
 
-      <!-- Authentication Mode Selector -->
-      <div class="auth-mode-tabs" style="display:flex; gap:8px; margin-top:12px; margin-bottom:16px;">
-        <button type="button" id="tabOtpMode" class="auth-mode-tab active" onclick="switchAuthMode('otp')" style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--accent-emerald, #10b981); background:rgba(16,185,129,0.15); color:#ffffff; font-weight:600; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s ease;">
-          <span>📱</span> Mobile OTP
+      <!-- Authentication Mode Selector Tabs -->
+      <div class="auth-mode-tabs" style="display:flex; gap:6px; margin-top:12px; margin-bottom:16px;">
+        <button type="button" id="tabLoginMode" class="auth-mode-tab active" onclick="switchAuthMode('login')" style="flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--accent-emerald, #10b981); background:rgba(16,185,129,0.15); color:#ffffff; font-weight:600; cursor:pointer; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
+          <span>📱</span> Login
         </button>
-        <button type="button" id="tabReviewerMode" class="auth-mode-tab" onclick="switchAuthMode('reviewer')" style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s ease;">
-          <span>🔐</span> Reviewer Login
+        <button type="button" id="tabSignupMode" class="auth-mode-tab" onclick="switchAuthMode('signup')" style="flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
+          <span>✍️</span> Sign Up
+        </button>
+        <button type="button" id="tabReviewerMode" class="auth-mode-tab" onclick="switchAuthMode('reviewer')" style="flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--border-subtle, #334155); background:var(--surface-card, #1e293b); color:var(--text-secondary, #94a3b8); font-weight:600; cursor:pointer; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s ease;">
+          <span>🔐</span> Reviewer
         </button>
       </div>
 
       <!-- Mobile OTP Login & Onboarding Gate Container -->
       <div id="otpAuthContainer">
-        <!-- Step 1: Request OTP Form -->
+        <!-- Step 1: Request OTP Form (Login & Sign Up) -->
         <div id="otpStep1">
-        <div class="form-group">
-          <label for="otpMobileInput" id="lblMobile">📱 Mobile Number (10 Digits)</label>
-          <div class="phone-input-wrap">
-            <span class="country-prefix">+91</span>
-            <input type="tel" id="otpMobileInput" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" autocomplete="tel">
-          </div>
-        </div>
-        <button type="button" class="btn-auth-submit" id="btnSendOtp" onclick="handleSendOtp()">
-          <span>📲</span>
-          <span id="txtBtnSendOtp">Send OTP Verification Code</span>
-        </button>
-      </div>
-
-      <!-- Step 2: Verify OTP & Farm Onboarding Form -->
-      <div id="otpStep2" style="display: none;">
-        <div class="otp-sent-banner" id="otpSentBanner">
-          <span>📩</span>
-          <span id="txtOtpSentInfo">Verification code requested.</span>
-        </div>
-
-        <div id="newFarmerFields">
-          <!-- 1. Full Name -->
           <div class="form-group">
-            <label for="farmerNameInput">👤 Farmer Name (Full Name)</label>
-            <input type="text" id="farmerNameInput" placeholder="e.g. Rajesh Reddy" value="">
-          </div>
-
-          <!-- 2. State & District (2-Column) -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="farmerStateInput">🏛️ State</label>
-              <select id="farmerStateInput" onchange="onStateChanged()">
-                <option value="" disabled selected>Select State</option>
-                <option value="Telangana">Telangana</option>
-                <option value="Andhra Pradesh">Andhra Pradesh</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Tamil Nadu">Tamil Nadu</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Punjab">Punjab</option>
-                <option value="Haryana">Haryana</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                <option value="Madhya Pradesh">Madhya Pradesh</option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Rajasthan">Rajasthan</option>
-                <option value="West Bengal">West Bengal</option>
-                <option value="Bihar">Bihar</option>
-                <option value="Odisha">Odisha</option>
-                <option value="Kerala">Kerala</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="farmerDistrictInput">📍 District</label>
-              <select id="farmerDistrictInput" onchange="onDistrictChanged()">
-                <option value="" disabled selected>Select District</option>
-              </select>
+            <label for="otpMobileInput" id="lblMobile">📱 Mobile Number (10 Digits)</label>
+            <div class="phone-input-wrap">
+              <span class="country-prefix">+91</span>
+              <input type="tel" id="otpMobileInput" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" autocomplete="tel">
             </div>
           </div>
+          <button type="button" class="btn-auth-submit" id="btnSendOtp" onclick="handleSendOtp()">
+            <span>📲</span>
+            <span id="txtBtnSendOtp">Send OTP Verification Code</span>
+          </button>
+        </div>
 
-          <!-- 3. Location: Geolocation & Village -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="farmerVillageInput">🏡 Village / Mandal</label>
-              <input type="text" id="farmerVillageInput" placeholder="e.g. Hasanparthy / Atmakur" value="">
-            </div>
-            <div class="form-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
-              <button type="button" class="btn-geo-detect" id="btnDetectLocation" onclick="detectFarmerLocation()" style="padding: 10px; background: var(--surface-card, #1e293b); border: 1px solid var(--border-subtle, #334155); border-radius: 8px; color: var(--accent-emerald, #10b981); cursor: pointer; font-size: 0.88rem; font-weight: 600;">
-                <span>📍</span> Detect Location (GPS)
-              </button>
-            </div>
+        <!-- Step 2: Verify OTP View -->
+        <div id="otpStep2" style="display: none;">
+          <div class="otp-sent-banner" id="otpSentBanner">
+            <span>📩</span>
+            <span id="txtOtpSentInfo">Verification code requested.</span>
           </div>
 
-          <!-- 4. Current Crop & Land Area -->
-          <div class="form-row">
+          <!-- OTP Code Input -->
+          <div class="form-group" style="margin-top: 14px;">
+            <label for="otpCodeInput" id="lblOtpCode">🔢 Enter 4-Digit Verification Code:</label>
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otpCodeInput" placeholder="••••" maxlength="4" style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 700; width: 100%; padding: 10px; box-sizing: border-box;" autocomplete="one-time-code">
+          </div>
+
+          <div class="otp-action-row" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+            <button type="button" class="btn-auth-submit" id="btnVerifyOtp" onclick="handleVerifyOtp()" style="flex:2;">
+              <span>✅</span>
+              <span id="txtBtnVerify">Verify OTP & Enter Dashboard</span>
+            </button>
+            <button type="button" class="btn-resend-otp" id="btnResendOtp" onclick="handleResendOtp()" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border-subtle, #334155); color:var(--text-secondary, #94a3b8); border-radius:8px; padding:10px 12px; cursor:pointer; font-size:0.85rem; font-weight:600; transition: all 0.2s ease;">
+              <span id="txtBtnResend">🔄 Resend Code</span>
+            </button>
+            <button type="button" class="btn-back-otp" onclick="backToOtpStep1()" style="width:100%; margin-top:4px;">
+              <span>←</span> Change Mobile Number
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Farm Onboarding View (Rendered when onboarding_required) -->
+        <div id="onboardingStep" style="display: none;">
+          <div style="text-align:center; margin-bottom:14px;">
+            <h3 style="color:#fff; font-size:1.15rem; font-weight:700;">🌱 Farm Profile Setup</h3>
+            <p style="color:var(--text-secondary,#94a3b8); font-size:0.82rem; margin-top:4px;">Please complete your farm details to activate agronomic recommendations.</p>
+          </div>
+
+          <div id="newFarmerFields">
+            <!-- 1. Full Name -->
             <div class="form-group">
-              <label for="farmerCropInput">🌾 Current Crop</label>
-              <select id="farmerCropInput">
-                <option value="" disabled selected>Select Crop</option>
-                <option value="Potato">Potato (బంగాళాదుంప / आलू)</option>
-                <option value="Guava">Guava (జామ / अमरूद)</option>
-                <option value="Tomato">Tomato (టమోటా / टमाटर)</option>
-                <option value="Chilli">Chilli (మిర్చి / मिर्च)</option>
-                <option value="Rice">Rice / Paddy (వరి / धान)</option>
-                <option value="Banana">Banana (అరటి / केला)</option>
-                <option value="Corn">Corn / Maize (మొక్కజొన్న / मक्का)</option>
-                <option value="Apple">Apple (ఆపిల్ / सेब)</option>
-                <option value="Cucumber">Cucumber / Pumpkin (దోస / कद्दू)</option>
-                <option value="Sugarcane">Sugarcane (చెరకు / गन्ना)</option>
-                <option value="Cotton">Cotton (పత్తి / कपास)</option>
-                <option value="Wheat">Wheat (గోధుమ / गेहूं)</option>
-                <option value="Soybean">Soybean (సోయాబీన్ / सोयाबीन)</option>
-                <option value="Groundnut">Groundnut (వేరుశనగ / मूंगफली)</option>
-                <option value="Pulses">Pulses / Red Gram (కందులు / दालें)</option>
-              </select>
+              <label for="farmerNameInput">👤 Farmer Name (Full Name)</label>
+              <input type="text" id="farmerNameInput" placeholder="e.g. Rajesh Reddy" value="">
             </div>
+
+            <!-- 2. State & District (2-Column) -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="farmerStateInput">🏛️ State</label>
+                <select id="farmerStateInput" onchange="onStateChanged()">
+                  <option value="" disabled selected>Select State</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Kerala">Kerala</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="farmerDistrictInput">📍 District</label>
+                <select id="farmerDistrictInput" onchange="onDistrictChanged()">
+                  <option value="" disabled selected>Select District</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 3. Village & Location Auto-detect -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="farmerVillageInput">🏡 Village / Town (Optional)</label>
+                <input type="text" id="farmerVillageInput" placeholder="e.g. Rampur">
+              </div>
+              <div class="form-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
+                <button type="button" class="btn-location-detect" id="btnDetectLocation" onclick="detectFarmerLocation()" title="Auto-detect GPS coordinates">
+                  <span>📍</span> Auto-Detect GPS
+                </button>
+              </div>
+            </div>
+
+            <!-- 4. Primary Crop & Variety -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="farmerCropInput">🌾 Primary Crop</label>
+                <select id="farmerCropInput">
+                  <option value="" disabled selected>Select Crop</option>
+                  <option value="Rice">Rice (Paddy / వరి)</option>
+                  <option value="Cotton">Cotton (పత్తి)</option>
+                  <option value="Maize">Maize (మొక్కజొన్న)</option>
+                  <option value="Chilli">Chilli (మిర్చి)</option>
+                  <option value="Soybean">Soybean (సోయాబీన్)</option>
+                  <option value="Wheat">Wheat (గోధుమ)</option>
+                  <option value="Sugarcane">Sugarcane (చెరకు)</option>
+                  <option value="Groundnut">Groundnut (వేరుశనగ)</option>
+                  <option value="Pulses">Pulses / Red Gram (కందులు)</option>
+                  <option value="Vegetables">Vegetables (కూరగాయలు)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="farmerVarietyInput">🏷️ Crop Variety (Optional)</label>
+                <input type="text" id="farmerVarietyInput" placeholder="e.g. BPT 5204 (Samba Mahsuri)">
+              </div>
+            </div>
+
+            <!-- 5. Land Area -->
             <div class="form-group">
               <label for="farmerAcresInput">📐 Land Area (Acres)</label>
-              <input type="number" id="farmerAcresInput" step="0.1" min="0.1" placeholder="e.g. 3.0" value="">
+              <input type="number" id="farmerAcresInput" step="0.1" min="0.1" max="100" placeholder="e.g. 2.5">
             </div>
-          </div>
 
-          <!-- 5. Optional Crop Variety -->
-          <div class="form-group">
-            <label for="farmerVarietyInput">🌱 Crop Variety (Optional)</label>
-            <input type="text" id="farmerVarietyInput" placeholder="e.g. Kufri Jyoti / Teja / Arka Rakshak">
-          </div>
+            <!-- 6. Soil Information (Estimated from Location) -->
+            <div class="soil-onboarding-panel" style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; padding: 10px; margin-top: 8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+                <span style="font-weight: 700; font-size: 0.92rem; color: var(--accent-emerald, #10b981);">🧪 Soil Information (Estimated from Location)</span>
+                <span id="soilEstConfidenceBadge" style="display:none; font-size: 11px; background: rgba(16,185,129,0.2); color: var(--accent-emerald, #10b981); padding: 2px 8px; border-radius: 12px; font-weight: 600;"></span>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary, #94a3b8); margin-bottom: 8px;">
+                <strong>Soil Type:</strong> <span id="soilEstTypeLabel" style="color:var(--text-primary, #f8fafc);">Select location to estimate</span> | 
+                <strong>Estimated pH:</strong> <span id="soilEstPhLabel" style="color:var(--text-primary, #f8fafc);">-</span>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted, #64748b); line-height: 1.35; margin-bottom: 8px;">
+                ℹ️ <em>N/P/K soil-test values not available from location alone. Derived from ICAR-NBSS&LUP Regional Agro-Ecological Survey.</em>
+              </div>
+              <button type="button" id="btnToggleSoilTest" onclick="toggleSoilTestFields()" style="background: none; border: none; color: var(--accent-emerald, #10b981); text-decoration: underline; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 0;">
+                + [Enter Measured Soil Test Values (N, P, K, pH)]
+              </button>
 
-          <!-- 6. Soil Information (Location Estimate + Optional Lab Entry) -->
-          <div class="soil-onboarding-panel" style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.22); border-radius: 10px; padding: 12px; margin-top: 10px; margin-bottom: 12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-weight: 700; font-size: 0.92rem; color: var(--accent-emerald, #10b981);">🧪 Soil Information (Estimated from Location)</span>
-              <span id="soilEstConfidenceBadge" style="display:none; font-size: 11px; background: rgba(16,185,129,0.2); color: var(--accent-emerald, #10b981); padding: 2px 8px; border-radius: 12px; font-weight: 600;"></span>
-            </div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary, #94a3b8); margin-bottom: 8px;">
-              <strong>Soil Type:</strong> <span id="soilEstTypeLabel" style="color:var(--text-primary, #f8fafc);">Select location to estimate</span> | 
-              <strong>Estimated pH:</strong> <span id="soilEstPhLabel" style="color:var(--text-primary, #f8fafc);">-</span>
-            </div>
-            <div style="font-size: 0.78rem; color: var(--text-muted, #64748b); line-height: 1.35; margin-bottom: 8px;">
-              ℹ️ <em>N/P/K soil-test values not available from location alone. Derived from ICAR-NBSS&LUP Regional Agro-Ecological Survey.</em>
-            </div>
-            <button type="button" id="btnToggleSoilTest" onclick="toggleSoilTestFields()" style="background: none; border: none; color: var(--accent-emerald, #10b981); text-decoration: underline; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 0;">
-              + [Enter Measured Soil Test Values (N, P, K, pH)]
-            </button>
-
-            <!-- Collapsible Lab Soil Values -->
-            <div id="labSoilFields" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(16,185,129,0.25);">
-              <div class="form-row-4">
-                <div class="form-group">
-                  <label style="font-size: 0.78rem;">Nitrogen (N kg/ha)</label>
-                  <input type="number" id="farmerSoilN" placeholder="e.g. 90">
-                </div>
-                <div class="form-group">
-                  <label style="font-size: 0.78rem;">Phosphorus (P kg/ha)</label>
-                  <input type="number" id="farmerSoilP" placeholder="e.g. 42">
-                </div>
-                <div class="form-group">
-                  <label style="font-size: 0.78rem;">Potassium (K kg/ha)</label>
-                  <input type="number" id="farmerSoilK" placeholder="e.g. 43">
-                </div>
-                <div class="form-group">
-                  <label style="font-size: 0.78rem;">Exact Lab pH</label>
-                  <input type="number" id="farmerSoilPh" step="0.1" placeholder="e.g. 6.5">
+              <!-- Collapsible Lab Soil Values -->
+              <div id="labSoilFields" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(16,185,129,0.25);">
+                <div class="form-row-4">
+                  <div class="form-group">
+                    <label style="font-size: 0.78rem;">Nitrogen (N kg/ha)</label>
+                    <input type="number" id="farmerSoilN" placeholder="e.g. 90">
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size: 0.78rem;">Phosphorus (P kg/ha)</label>
+                    <input type="number" id="farmerSoilP" placeholder="e.g. 42">
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size: 0.78rem;">Potassium (K kg/ha)</label>
+                    <input type="number" id="farmerSoilK" placeholder="e.g. 43">
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size: 0.78rem;">Exact Lab pH</label>
+                    <input type="number" id="farmerSoilPh" step="0.1" placeholder="e.g. 6.5">
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 7. OTP Code Input -->
-        <div class="form-group" style="margin-top: 12px;">
-          <label for="otpCodeInput" id="lblOtpCode">🔢 Enter 4-Digit Verification Code:</label>
-          <input type="text" inputmode="numeric" pattern="[0-9]*" id="otpCodeInput" placeholder="••••" maxlength="4" style="text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: 700;" autocomplete="one-time-code">
-        </div>
-
-        <div class="otp-action-row" style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button type="button" class="btn-auth-submit" id="btnVerifyOtp" onclick="handleVerifyOtp()" style="flex:2;">
-            <span>✅</span>
-            <span id="txtBtnVerify">Verify OTP & Enter Dashboard</span>
-          </button>
-          <button type="button" class="btn-resend-otp" id="btnResendOtp" onclick="handleResendOtp()" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border-subtle, #334155); color:var(--text-secondary, #94a3b8); border-radius:8px; padding:10px 12px; cursor:pointer; font-size:0.85rem; font-weight:600; transition: all 0.2s ease;">
-            <span id="txtBtnResend">🔄 Resend Code</span>
-          </button>
-          <button type="button" class="btn-back-otp" onclick="backToOtpStep1()" style="width:100%; margin-top:4px;">
-            <span>←</span> Change Mobile Number
+          <button type="button" class="btn-auth-submit" id="btnCompleteOnboarding" onclick="handleCompleteOnboarding()" style="margin-top:14px; width:100%;">
+            <span>🌾</span>
+            <span>Save Profile & Enter Dashboard</span>
           </button>
         </div>
       </div>
@@ -269,7 +291,9 @@
     </div>
   </div>
 
-  <!-- Farmer Profile Edit & Logout Modal -->
+  <!-- 3. Authenticated Application Layout Container -->
+  <div id="dashboardView" class="dashboard-page-container" style="display: none;">
+<!-- Farmer Profile Edit & Logout Modal -->
   <div id="profileModal" class="profile-modal-overlay" style="display: none;">
     <div class="profile-modal-backdrop" onclick="closeProfileModal()"></div>
     <div class="profile-modal-card">
@@ -806,6 +830,9 @@
       </div>
     </div>
   </div>
+
+  
+  </div> <!-- /#dashboardView -->
 
   <script src="/static/app.js?v=20260907_v3"></script>
 </body>

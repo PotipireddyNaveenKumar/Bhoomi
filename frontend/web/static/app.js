@@ -608,51 +608,302 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-// ==========================================
-// Authentication & Multi-Tenant Isolation
-// ==========================================
-async function initAuth() {
-  const savedUser = localStorage.getItem("bhoomi_current_user");
-  const savedToken = localStorage.getItem("bhoomi_auth_token");
-  
-  // Clean up any legacy manufactured fake tokens
-  if (savedToken && savedToken.startsWith("demo_")) {
-    localStorage.removeItem("bhoomi_auth_token");
-    authToken = null;
-  }
-  
-  if (savedToken && !savedToken.startsWith("demo_") && savedUser) {
-    try {
-      currentUser = JSON.parse(savedUser);
-      authToken = savedToken;
-      updateSidebarFarmerProfile(currentUser);
-      hideAuthModal();
-      loadUserScopedSessions();
-      return;
-    } catch (e) {
-      console.warn("Invalid user storage, prompting login:", e);
-    }
+// ====================================================================
+// BHOOMI APPLICATION STATE MACHINE & CLIENT ROUTER (PAGE GATING)
+// ====================================================================
+
+const AuthState = {
+  AUTH_CHECKING: "AUTH_CHECKING",
+  UNAUTHENTICATED: "UNAUTHENTICATED",
+  AUTHENTICATING: "AUTHENTICATING",
+  ONBOARDING_REQUIRED: "ONBOARDING_REQUIRED",
+  AUTHENTICATED: "AUTHENTICATED",
+  AUTH_ERROR: "AUTH_ERROR"
+};
+
+let currentAppState = AuthState.AUTH_CHECKING;
+
+function setAppState(newState, payload = {}) {
+  currentAppState = newState;
+  const splash = document.getElementById("authLoadingSplash");
+  const authView = document.getElementById("authView");
+  const dashboardView = document.getElementById("dashboardView");
+
+  if (newState === AuthState.AUTH_CHECKING) {
+    if (splash) splash.style.display = "flex";
+    if (authView) authView.style.display = "none";
+    if (dashboardView) dashboardView.style.display = "none";
+    return;
   }
 
-  // Not logged in -> Show Authentication Modal
-  const nameEl = document.getElementById("sidebarFarmerName");
-  const farmEl = document.getElementById("sidebarFarmerFarm");
-  if (nameEl) nameEl.textContent = "BHOOMI User";
-  if (farmEl) farmEl.textContent = "Farm profile not configured";
-  currentUser = null;
-  authToken = null;
-  showAuthModal();
+  // Hide splash screen after check
+  if (splash) splash.style.display = "none";
+
+  if (newState === AuthState.UNAUTHENTICATED || newState === AuthState.AUTH_ERROR || newState === AuthState.AUTHENTICATING) {
+    if (dashboardView) dashboardView.style.display = "none";
+    if (authView) authView.style.display = "flex";
+
+    const onboardStep = document.getElementById("onboardingStep");
+    if (onboardStep) onboardStep.style.display = "none";
+    return;
+  }
+
+  if (newState === AuthState.ONBOARDING_REQUIRED) {
+    if (dashboardView) dashboardView.style.display = "none";
+    if (authView) authView.style.display = "flex";
+
+    const otpContainer = document.getElementById("otpAuthContainer");
+    const reviewerForm = document.getElementById("reviewerLoginForm");
+    const step1 = document.getElementById("otpStep1");
+    const step2 = document.getElementById("otpStep2");
+    const onboardStep = document.getElementById("onboardingStep");
+
+    if (otpContainer) otpContainer.style.display = "block";
+    if (reviewerForm) reviewerForm.style.display = "none";
+    if (step1) step1.style.display = "none";
+    if (step2) step2.style.display = "none";
+    if (onboardStep) onboardStep.style.display = "block";
+    return;
+  }
+
+  if (newState === AuthState.AUTHENTICATED) {
+    if (authView) authView.style.display = "none";
+    if (dashboardView) dashboardView.style.display = "flex";
+    return;
+  }
+}
+
+function getCurrentRoute() {
+  const hash = window.location.hash ? window.location.hash.replace(/^#/, "") : "";
+  if (hash) {
+    return hash.startsWith("/") ? hash : "/" + hash;
+  }
+  const path = window.location.pathname || "/";
+  return path;
+}
+
+function navigateTo(route, replace = false) {
+  const current = getCurrentRoute();
+  if (current !== route) {
+    try {
+      if (replace) {
+        window.history.replaceState({ route }, "", route);
+      } else {
+        window.history.pushState({ route }, "", route);
+      }
+    } catch (e) {
+      window.location.hash = route;
+    }
+  }
+  applyRouteGuard(route);
+}
+
+function applyRouteGuard(route) {
+  const cleanRoute = (route || "/").split("?")[0].toLowerCase();
+
+  if (currentAppState === AuthState.AUTH_CHECKING) {
+    return;
+  }
+
+  if (currentAppState === AuthState.UNAUTHENTICATED || currentAppState === AuthState.AUTH_ERROR) {
+    const protectedRoutes = ["/home", "/finance", "/voice", "/onboarding", "/app"];
+    if (protectedRoutes.includes(cleanRoute) || cleanRoute === "/") {
+      navigateTo("/login", true);
+      return;
+    }
+
+    if (cleanRoute === "/signup") {
+      switchAuthMode("signup", false);
+    } else if (cleanRoute === "/reviewer-login") {
+      switchAuthMode("reviewer", false);
+    } else if (cleanRoute === "/verify-otp") {
+      showOtpVerifyView();
+    } else {
+      switchAuthMode("login", false);
+    }
+    return;
+  }
+
+  if (currentAppState === AuthState.ONBOARDING_REQUIRED) {
+    if (cleanRoute !== "/onboarding") {
+      navigateTo("/onboarding", true);
+      return;
+    }
+    setAppState(AuthState.ONBOARDING_REQUIRED);
+    return;
+  }
+
+  if (currentAppState === AuthState.AUTHENTICATED) {
+    const authOnlyRoutes = ["/login", "/signup", "/reviewer-login", "/verify-otp", "/"];
+    if (authOnlyRoutes.includes(cleanRoute)) {
+      navigateTo("/home", true);
+      return;
+    }
+
+    if (cleanRoute === "/finance") {
+      openFinanceModal();
+    } else if (cleanRoute === "/voice") {
+      openVoiceCallMode();
+    }
+  }
+}
+
+window.addEventListener("popstate", () => {
+  applyRouteGuard(getCurrentRoute());
+});
+
+window.addEventListener("hashchange", () => {
+  applyRouteGuard(getCurrentRoute());
+});
+
+async function initAuth() {
+  setAppState(AuthState.AUTH_CHECKING);
+
+  const initialRoute = getCurrentRoute();
+  const savedToken = localStorage.getItem("bhoomi_auth_token");
+
+  if (savedToken && savedToken.startsWith("demo_")) {
+    localStorage.removeItem("bhoomi_auth_token");
+    localStorage.removeItem("bhoomi_current_user");
+    authToken = null;
+    currentUser = null;
+  }
+
+  if (!savedToken || savedToken.startsWith("demo_")) {
+    currentUser = null;
+    authToken = null;
+    setAppState(AuthState.UNAUTHENTICATED);
+
+    if (initialRoute === "/signup") {
+      navigateTo("/signup", true);
+    } else if (initialRoute === "/reviewer-login") {
+      navigateTo("/reviewer-login", true);
+    } else {
+      navigateTo("/login", true);
+    }
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/v1/auth/me", {
+      headers: {
+        "Authorization": `Bearer ${savedToken}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      authToken = savedToken;
+      currentUser = {
+        id: data.id,
+        user_id: data.id,
+        farmer_id: data.farmer_profile?.id || data.id,
+        farm_id: data.farm?.id || null,
+        phone_number: data.phone_number,
+        full_name: data.farmer_profile?.name || "Farmer",
+        preferred_language: data.farmer_profile?.preferred_language || currentLanguage || "en",
+        state: data.farmer_profile?.state || null,
+        district: data.farmer_profile?.district || null,
+        village: data.farmer_profile?.village || null,
+        land_area_acres: data.farm?.total_area_acres ?? null,
+        current_crop: data.farm?.crop_name || null,
+        active_crop: data.farm?.crop_name || null,
+        soil_type: data.farm?.soil_type || null
+      };
+
+      localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
+      if (currentUser.preferred_language) {
+        currentLanguage = currentUser.preferred_language;
+        localStorage.setItem("bhoomi_lang", currentLanguage);
+        updateUILanguage(currentLanguage);
+      }
+
+      updateSidebarFarmerProfile(currentUser);
+
+      if (data.onboarding_required) {
+        setAppState(AuthState.ONBOARDING_REQUIRED);
+        navigateTo("/onboarding", true);
+      } else {
+        setAppState(AuthState.AUTHENTICATED);
+        loadUserScopedSessions();
+
+        const dest = (initialRoute === "/finance" || initialRoute === "/voice") ? initialRoute : "/home";
+        navigateTo(dest, true);
+      }
+    } else {
+      localStorage.removeItem("bhoomi_auth_token");
+      localStorage.removeItem("bhoomi_current_user");
+      authToken = null;
+      currentUser = null;
+      setAppState(AuthState.UNAUTHENTICATED);
+      navigateTo("/login", true);
+    }
+  } catch (err) {
+    console.warn("Session verification error:", err);
+    localStorage.removeItem("bhoomi_auth_token");
+    localStorage.removeItem("bhoomi_current_user");
+    authToken = null;
+    currentUser = null;
+    setAppState(AuthState.UNAUTHENTICATED);
+    navigateTo("/login", true);
+  }
 }
 
 function showAuthModal() {
-  const modal = document.getElementById("authModal");
-  if (modal) modal.style.display = "flex";
-  backToOtpStep1();
+  transitionToUnauthenticated("/login");
 }
 
 function hideAuthModal() {
-  const modal = document.getElementById("authModal");
-  if (modal) modal.style.display = "none";
+  if (currentUser && authToken) {
+    transitionToAuthenticated(currentUser, authToken, "/home");
+  } else {
+    setAppState(AuthState.AUTHENTICATED);
+    navigateTo("/home", true);
+  }
+}
+
+function transitionToUnauthenticated(route = "/login", reason = null) {
+  localStorage.removeItem("bhoomi_auth_token");
+  localStorage.removeItem("bhoomi_current_user");
+  authToken = null;
+  currentUser = null;
+  setAppState(AuthState.UNAUTHENTICATED);
+  navigateTo(route, true);
+  if (reason) {
+    const errorMsg = document.getElementById("authErrorMsg");
+    if (errorMsg) {
+      errorMsg.textContent = reason;
+      errorMsg.style.display = "block";
+    }
+  }
+}
+
+function transitionToAuthenticated(user, token, targetRoute = "/home") {
+  currentUser = user;
+  authToken = token;
+  localStorage.setItem("bhoomi_auth_token", token);
+  localStorage.setItem("bhoomi_current_user", JSON.stringify(user));
+  updateSidebarFarmerProfile(user);
+  setAppState(AuthState.AUTHENTICATED);
+  loadUserScopedSessions();
+  navigateTo(targetRoute, true);
+}
+
+function showOtpVerifyView() {
+  const step1 = document.getElementById("otpStep1");
+  const step2 = document.getElementById("otpStep2");
+  const onboardStep = document.getElementById("onboardingStep");
+  const reviewerForm = document.getElementById("reviewerLoginForm");
+  const otpContainer = document.getElementById("otpAuthContainer");
+
+  if (reviewerForm) reviewerForm.style.display = "none";
+  if (otpContainer) otpContainer.style.display = "block";
+  if (step1) step1.style.display = "none";
+  if (step2) step2.style.display = "block";
+  if (onboardStep) onboardStep.style.display = "none";
+  const otpInput = document.getElementById("otpCodeInput");
+  if (otpInput) otpInput.focus();
 }
 
 function onAuthLanguageChanged(lang) {
@@ -884,6 +1135,7 @@ async function handleSendOtp(isResend = false) {
     // Switch to Step 2
     document.getElementById("otpStep1").style.display = "none";
     document.getElementById("otpStep2").style.display = "block";
+    navigateTo("/verify-otp", false);
 
     const lblOtpCode = document.getElementById("lblOtpCode");
     const sentBanner = document.getElementById("txtOtpSentInfo");
@@ -1054,10 +1306,34 @@ async function handleVerifyOtp() {
       localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
       localStorage.setItem("bhoomi_lang", currentLanguage);
 
+      // Check authoritative GET /api/v1/auth/me for farm profile & onboarding_required
+      let onboardingReq = !data.farm_id && !currentUser.farm_id;
+      try {
+        const meRes = await fetch("/api/v1/auth/me", {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          onboardingReq = Boolean(meData.onboarding_required);
+          if (meData.farmer_profile?.name) currentUser.full_name = meData.farmer_profile.name;
+          if (meData.farm?.total_area_acres) currentUser.land_area_acres = meData.farm.total_area_acres;
+          if (meData.farm?.crop_name) currentUser.current_crop = meData.farm.crop_name;
+        }
+      } catch (e) {
+        console.debug("Authoritative check notice:", e);
+      }
+
+      localStorage.setItem("bhoomi_current_user", JSON.stringify(currentUser));
+      localStorage.setItem("bhoomi_lang", currentLanguage);
       updateSidebarFarmerProfile(currentUser);
-      hideAuthModal();
       updateUILanguage(currentLanguage);
-      loadUserScopedSessions();
+
+      if (onboardingReq) {
+        setAppState(AuthState.ONBOARDING_REQUIRED);
+        navigateTo("/onboarding", true);
+      } else {
+        transitionToAuthenticated(currentUser, authToken, "/home");
+      }
     } else {
       const err = await res.json().catch(() => ({}));
       let msg = "Invalid verification code. Please try again.";
@@ -1096,59 +1372,79 @@ async function handleVerifyOtp() {
 function backToOtpStep1() {
   const step1 = document.getElementById("otpStep1");
   const step2 = document.getElementById("otpStep2");
+  const onboardStep = document.getElementById("onboardingStep");
   const errorMsg = document.getElementById("authErrorMsg");
   if (step1) step1.style.display = "block";
   if (step2) step2.style.display = "none";
+  if (onboardStep) onboardStep.style.display = "none";
   if (errorMsg) errorMsg.style.display = "none";
-  if (resendOtpTimer) {
-    clearInterval(resendOtpTimer);
-    resendOtpTimer = null;
-  }
+  stopResendCooldown();
+  navigateTo("/login", false);
 }
 
 
-function switchAuthMode(mode) {
-  const tabOtp = document.getElementById("tabOtpMode");
+function switchAuthMode(mode, updateUrl = true) {
+  const tabLogin = document.getElementById("tabLoginMode");
+  const tabSignup = document.getElementById("tabSignupMode");
   const tabReviewer = document.getElementById("tabReviewerMode");
+  const tabOtp = document.getElementById("tabOtpMode");
   const otpContainer = document.getElementById("otpAuthContainer");
   const reviewerForm = document.getElementById("reviewerLoginForm");
   const errorMsg = document.getElementById("authErrorMsg");
+  const step1 = document.getElementById("otpStep1");
+  const step2 = document.getElementById("otpStep2");
+  const onboardStep = document.getElementById("onboardingStep");
+  const txtBtnSendOtp = document.getElementById("txtBtnSendOtp");
 
   if (errorMsg) errorMsg.style.display = "none";
+  if (onboardStep) onboardStep.style.display = "none";
+
+  const resetTab = (tab) => {
+    if (!tab) return;
+    tab.classList.remove("active");
+    tab.style.borderColor = "var(--border-subtle, #334155)";
+    tab.style.background = "var(--surface-card, #1e293b)";
+    tab.style.color = "var(--text-secondary, #94a3b8)";
+  };
+
+  const activateTab = (tab) => {
+    if (!tab) return;
+    tab.classList.add("active");
+    tab.style.borderColor = "var(--accent-emerald, #10b981)";
+    tab.style.background = "rgba(16,185,129,0.15)";
+    tab.style.color = "#ffffff";
+  };
+
+  [tabLogin, tabSignup, tabReviewer, tabOtp].forEach(resetTab);
 
   if (mode === "reviewer") {
-    if (tabReviewer) {
-      tabReviewer.classList.add("active");
-      tabReviewer.style.borderColor = "var(--accent-emerald, #10b981)";
-      tabReviewer.style.background = "rgba(16,185,129,0.15)";
-      tabReviewer.style.color = "#ffffff";
-    }
-    if (tabOtp) {
-      tabOtp.classList.remove("active");
-      tabOtp.style.borderColor = "var(--border-subtle, #334155)";
-      tabOtp.style.background = "var(--surface-card, #1e293b)";
-      tabOtp.style.color = "var(--text-secondary, #94a3b8)";
-    }
+    activateTab(tabReviewer);
     if (otpContainer) otpContainer.style.display = "none";
     if (reviewerForm) reviewerForm.style.display = "block";
     const phoneInput = document.getElementById("reviewerPhoneInput");
     if (phoneInput) phoneInput.focus();
-  } else {
-    // OTP mode
-    if (tabOtp) {
-      tabOtp.classList.add("active");
-      tabOtp.style.borderColor = "var(--accent-emerald, #10b981)";
-      tabOtp.style.background = "rgba(16,185,129,0.15)";
-      tabOtp.style.color = "#ffffff";
-    }
-    if (tabReviewer) {
-      tabReviewer.classList.remove("active");
-      tabReviewer.style.borderColor = "var(--border-subtle, #334155)";
-      tabReviewer.style.background = "var(--surface-card, #1e293b)";
-      tabReviewer.style.color = "var(--text-secondary, #94a3b8)";
-    }
+    if (updateUrl) navigateTo("/reviewer-login", false);
+  } else if (mode === "signup") {
+    activateTab(tabSignup);
+    if (tabOtp) activateTab(tabOtp);
     if (reviewerForm) reviewerForm.style.display = "none";
     if (otpContainer) otpContainer.style.display = "block";
+    if (step1) step1.style.display = "block";
+    if (step2) step2.style.display = "none";
+    if (txtBtnSendOtp) txtBtnSendOtp.textContent = "Send OTP to Register Farm";
+    const phoneInput = document.getElementById("otpMobileInput");
+    if (phoneInput) phoneInput.focus();
+    if (updateUrl) navigateTo("/signup", false);
+  } else {
+    activateTab(tabLogin || tabOtp);
+    if (reviewerForm) reviewerForm.style.display = "none";
+    if (otpContainer) otpContainer.style.display = "block";
+    if (step1) step1.style.display = "block";
+    if (step2) step2.style.display = "none";
+    if (txtBtnSendOtp) txtBtnSendOtp.textContent = "Send OTP Verification Code";
+    const phoneInput = document.getElementById("otpMobileInput");
+    if (phoneInput) phoneInput.focus();
+    if (updateUrl) navigateTo("/login", false);
   }
 }
 
@@ -1243,9 +1539,8 @@ async function handleReviewerLogin() {
       }
 
       updateSidebarFarmerProfile(currentUser);
-      hideAuthModal();
       updateUILanguage(currentLanguage);
-      loadUserScopedSessions();
+      transitionToAuthenticated(currentUser, authToken, "/home");
     } else {
       let msg = "Invalid phone number or password. Please try again.";
       try {
@@ -1280,21 +1575,33 @@ async function handleReviewerLogin() {
 }
 
 
-function handleLogout(skipConfirm = false) {
+async function handleLogout(skipConfirm = false) {
   if (skipConfirm || confirm("మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా? (Are you sure you want to log out?)")) {
+    const token = authToken || localStorage.getItem("bhoomi_auth_token");
+    if (token) {
+      try {
+        await fetch("/api/v1/auth/logout", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+      } catch (e) {
+        console.debug("Backend logout call notice:", e);
+      }
+    }
     localStorage.removeItem("bhoomi_auth_token");
     localStorage.removeItem("bhoomi_current_user");
     authToken = null;
     currentUser = null;
-    const nameEl = document.getElementById("sidebarFarmerName");
-    const farmEl = document.getElementById("sidebarFarmerFarm");
-    if (nameEl) nameEl.textContent = "BHOOMI User";
-    if (farmEl) farmEl.textContent = "Farm profile not configured";
-    closeProfileModal();
     sessionsList = [];
     renderSessionList();
     startNewChat();
-    showAuthModal();
+    closeProfileModal();
+    closeFinanceModal();
+    closeVoiceCallMode();
+    transitionToUnauthenticated("/login");
   }
 }
 
@@ -1559,6 +1866,10 @@ function updateFinanceModalLanguage(lang) {
 }
 
 function openFinanceModal() {
+  if (currentAppState !== AuthState.AUTHENTICATED) {
+    navigateTo("/login", true);
+    return;
+  }
   const modal = document.getElementById("financeModal");
   if (!modal) return;
   updateFinanceModalLanguage(currentLanguage);
@@ -1571,11 +1882,17 @@ function openFinanceModal() {
     }
   }
   modal.style.display = "flex";
+  if (getCurrentRoute() !== "/finance") {
+    navigateTo("/finance", false);
+  }
 }
 
 function closeFinanceModal() {
   const modal = document.getElementById("financeModal");
   if (modal) modal.style.display = "none";
+  if (getCurrentRoute() === "/finance") {
+    navigateTo("/home", false);
+  }
 }
 
 async function calculateFinance() {
@@ -3381,6 +3698,10 @@ function initVoiceCallRecognizer() {
 }
 
 function openVoiceCallMode() {
+  if (currentAppState !== AuthState.AUTHENTICATED) {
+    navigateTo("/login", true);
+    return;
+  }
   isVoiceCallOpen = true;
   isVoiceCallActiveMic = true;
   voiceCallTranscriptBuffer = "";
@@ -3399,8 +3720,11 @@ function openVoiceCallMode() {
   stopAllActiveAudio();
 
   updateVoiceModalLabels();
-  updateFinanceModalLanguage(lang);
+  updateFinanceModalLanguage(currentLanguage);
   startVoiceCallListening();
+  if (getCurrentRoute() !== "/voice") {
+    navigateTo("/voice", false);
+  }
 }
 
 function closeVoiceCallMode() {
@@ -3419,6 +3743,9 @@ function closeVoiceCallMode() {
     try { voiceCallRecognizer.stop(); } catch (e) {}
   }
   stopAllActiveAudio();
+  if (getCurrentRoute() === "/voice") {
+    navigateTo("/home", false);
+  }
 }
 
 let voiceCallMediaRecorder = null;
@@ -4297,3 +4624,120 @@ window.runWhatIfSimulation = runWhatIfSimulation;
 window.updateFinanceModalLanguage = updateFinanceModalLanguage;
 window.switchAuthMode = switchAuthMode;
 window.handleReviewerLogin = handleReviewerLogin;
+
+async function handleCompleteOnboarding() {
+  const nameInput = document.getElementById("farmerNameInput");
+  const stateInput = document.getElementById("farmerStateInput");
+  const districtInput = document.getElementById("farmerDistrictInput");
+  const villageInput = document.getElementById("farmerVillageInput");
+  const cropInput = document.getElementById("farmerCropInput");
+  const varietyInput = document.getElementById("farmerVarietyInput");
+  const acresInput = document.getElementById("farmerAcresInput");
+  const errorMsg = document.getElementById("authErrorMsg");
+  const btn = document.getElementById("btnCompleteOnboarding");
+
+  if (errorMsg) errorMsg.style.display = "none";
+
+  const name = nameInput ? nameInput.value.trim() : "";
+  const state = stateInput ? stateInput.value : "";
+  const district = districtInput ? districtInput.value.trim() : "";
+  const village = villageInput ? villageInput.value.trim() : "";
+  const crop = cropInput ? cropInput.value.trim() : "";
+  const variety = varietyInput ? varietyInput.value.trim() : "";
+  const acres = acresInput && acresInput.value ? parseFloat(acresInput.value) : null;
+
+  if (!state || !district) {
+    if (errorMsg) {
+      errorMsg.textContent = "Please select both State and District.";
+      errorMsg.style.display = "block";
+    }
+    return;
+  }
+
+  const labFields = document.getElementById("labSoilFields");
+  const isSoilManual = labFields && labFields.style.display !== "none";
+  const soilN = isSoilManual && document.getElementById("farmerSoilN")?.value ? parseFloat(document.getElementById("farmerSoilN").value) : null;
+  const soilP = isSoilManual && document.getElementById("farmerSoilP")?.value ? parseFloat(document.getElementById("farmerSoilP").value) : null;
+  const soilK = isSoilManual && document.getElementById("farmerSoilK")?.value ? parseFloat(document.getElementById("farmerSoilK").value) : null;
+  const soilPh = isSoilManual && document.getElementById("farmerSoilPh")?.value ? parseFloat(document.getElementById("farmerSoilPh").value) : null;
+  const soilSourceType = (soilN !== null || soilP !== null || soilK !== null) ? "farmer_entered" : "estimated";
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = "<span>⏳</span> Saving Farm Profile...";
+  }
+
+  try {
+    const token = authToken || localStorage.getItem("bhoomi_auth_token");
+    const res = await fetch("/api/v1/farmer/onboard", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: name || "Farmer",
+        preferred_language: currentLanguage,
+        state: state,
+        district: district,
+        village: village,
+        current_crop: crop,
+        crop_variety: variety,
+        land_area_acres: acres,
+        soil_type: currentSoilEstimate?.soil_type || "black",
+        soil_source_type: soilSourceType,
+        soil_n: soilN,
+        soil_p: soilP,
+        soil_k: soilK,
+        soil_ph: soilPh || currentSoilEstimate?.estimated_ph || 6.5,
+        latitude: detectedLat,
+        longitude: detectedLon
+      })
+    });
+
+    if (res.ok) {
+      await initAuth();
+    } else {
+      const farmRes = await fetch("/api/v1/farms", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          farmer_id: currentUser?.id || currentUser?.farmer_id,
+          farm_name: `${name || "My"} Farm`,
+          total_area_acres: acres || 1.0,
+          state: state,
+          district: district,
+          village: village,
+          soil_type: currentSoilEstimate?.soil_type || "black"
+        })
+      });
+      if (farmRes.ok) {
+        await initAuth();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        if (errorMsg) {
+          errorMsg.textContent = err.detail || err.message || "Failed to save profile. Please try again.";
+          errorMsg.style.display = "block";
+        }
+      }
+    }
+  } catch (err) {
+    if (errorMsg) {
+      errorMsg.textContent = "Network error saving profile: " + err.message;
+      errorMsg.style.display = "block";
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = "<span>🌾</span> <span>Save Profile & Enter Dashboard</span>";
+    }
+  }
+}
+
+window.handleCompleteOnboarding = handleCompleteOnboarding;
+window.navigateTo = navigateTo;
+window.AuthState = AuthState;
+window.setAppState = setAppState;

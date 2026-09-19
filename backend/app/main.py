@@ -254,6 +254,14 @@ if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/app", tags=["System"])
+@app.get("/login", tags=["System"])
+@app.get("/signup", tags=["System"])
+@app.get("/verify-otp", tags=["System"])
+@app.get("/onboarding", tags=["System"])
+@app.get("/home", tags=["System"])
+@app.get("/finance", tags=["System"])
+@app.get("/voice", tags=["System"])
+@app.get("/reviewer-login", tags=["System"])
 async def app_portal():
     index_path = os.path.join(WEB_DIR, "index.html")
     if os.path.exists(index_path):
