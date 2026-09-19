@@ -156,6 +156,26 @@ const I18N = {
       mitigationActionsTitle: "🛡️ Recommended Risk Mitigation Actions:",
       validationCostWarning: "Please enter cultivation costs before running simulation",
       validationYieldPriceWarning: "Please enter baseline Yield and Market Price for What-If Simulation"
+    },
+    voice: {
+      agentTitle: "BHOOMI Voice Assistant",
+      farmerRole: "👨‍🌾 Farmer:",
+      farmerInitialText: '"Speak your question or problem clearly..."',
+      farmerListening: "Listening... Speak your question clearly...",
+      aiRole: "🌾 BHOOMI (Voice Assistant):",
+      aiGreeting: '"Hello! Ask me directly about your crops, pests, diseases, weather, or market mandi prices."',
+      statusListening: "Listening carefully...",
+      statusThinking: "Gathering farm data and analyzing...",
+      statusSpeaking: "Speaking...",
+      statusIdle: "Tap to Speak",
+      micListening: "Listening...",
+      micThinking: "Thinking...",
+      micSpeaking: "Speaking...",
+      micTapToSpeak: "Tap to Speak",
+      endCall: "End Call",
+      micError: "⚠️ Microphone not accessible or blocked.",
+      tapForHelp: "Tap for Permission Help & Quick Prompts",
+      tapToListen: "🔊 Tap to Listen to Spoken Answer"
     }
   },
   te: {
@@ -233,6 +253,26 @@ const I18N = {
       mitigationActionsTitle: "🛡️ సిఫార్సు చేసిన నష్ట నివారణ చర్యలు:",
       validationCostWarning: "సిమ్యులేషన్ చేయడానికి ముందు సాగు ఖర్చులను నమోదు చేయండి",
       validationYieldPriceWarning: "సిమ్యులేషన్ కోసం ఆశించే దిగుబడి మరియు మార్కెట్ ధరను నమోదు చేయండి"
+    },
+    voice: {
+      agentTitle: "భూమి వాయిస్ అసిస్టెంట్ (BHOOMI Voice Assistant)",
+      farmerRole: "👨‍🌾 రైతు (Farmer):",
+      farmerInitialText: '"మీ సమస్య లేదా ప్రశ్నను మాట్లాడండి..."',
+      farmerListening: "వింటున్నాను... మీ సమస్యను పూర్తిగా మాట్లాడండి...",
+      aiRole: "🌾 BHOOMI (వాయిస్ అసిస్టెంట్):",
+      aiGreeting: '"నమస్కారం రైతు మిత్రమా! మీ పంట, చీడపీడలు, వాతావరణం లేదా మార్కెట్ ధరల గురించి నేరుగా అడగండి."',
+      statusListening: "పూర్తిగా మాట్లాడండి, వింటున్నాను...",
+      statusThinking: "సమగ్ర వ్యవసాయ విశ్లేషణ సిద్ధం చేస్తున్నాము...",
+      statusSpeaking: "సమాధానం ఇస్తున్నాను...",
+      statusIdle: "మాట్లాడటానికి నొక్కండి",
+      micListening: "వింటున్నాను...",
+      micThinking: "ఆలోచిస్తున్నాను...",
+      micSpeaking: "సమాధానం ఇస్తున్నాను...",
+      micTapToSpeak: "మాట్లాడండి (Tap to Speak)",
+      endCall: "ముగించు (End)",
+      micError: "⚠️ మైక్రోఫోన్ అనుమతి లభించలేదు లేదా బ్లాక్ చేయబడింది.",
+      tapForHelp: "అనుమతి సహాయం & నమూనా ప్రశ్నలు",
+      tapToListen: "🔊 సమాధానం వినడానికి నొక్కండి"
     }
   },
   hi: {
@@ -310,6 +350,26 @@ const I18N = {
       mitigationActionsTitle: "🛡️ अनुशंसित जोखिम न्यूनीकरण उपाय:",
       validationCostWarning: "सिमुलेशन चलाने से पहले कृपया खेती की लागत दर्ज करें",
       validationYieldPriceWarning: "सिमुलेशन के लिए कृपया पैदावार और बाजार भाव दर्ज करें"
+    },
+    voice: {
+      agentTitle: "भूमि वॉयस असिस्टेंट (BHOOMI Voice Assistant)",
+      farmerRole: "👨‍🌾 किसान (Farmer):",
+      farmerInitialText: '"अपनी समस्या या प्रश्न बोलें..."',
+      farmerListening: "सुन रहे हैं... अपनी बात स्पष्ट रूप से बोलें...",
+      aiRole: "🌾 BHOOMI (वॉयस असिस्टेंट):",
+      aiGreeting: '"नमस्ते किसान भाई! अपनी फसल, कीट-रोग, मौसम या मंडी भाव के बारे में सीधे पूछें।"',
+      statusListening: "पूरी बात बताएं, सुन रहे हैं...",
+      statusThinking: "विश्लेषण कर रहे हैं...",
+      statusSpeaking: "उत्तर दे रहे हैं...",
+      statusIdle: "बोलने के लिए टैप करें",
+      micListening: "सुन रहे हैं...",
+      micThinking: "सोच रहे हैं...",
+      micSpeaking: "बोल रहे हैं...",
+      micTapToSpeak: "बोलें (Tap to Speak)",
+      endCall: "समाप्त करें (End)",
+      micError: "⚠️ माइक्रोफ़ोन का उपयोग नहीं हो पा रहा है।",
+      tapForHelp: "अनुमति सहायता और त्वरित संकेत",
+      tapToListen: "🔊 बोलकर उत्तर सुनें"
     }
   },
   ta: {
@@ -329,7 +389,27 @@ const I18N = {
       { title: "💰 நெல் சாகுபடி லாபம்", sub: "நெல் சாகுபடியில் ஏக்கருக்கு நிகர லாபம் எவ்வளவு?", prompt: "நெல் சாகுபடியில் எவ்வளவு லாபம் கிடைக்கும்?" },
       { title: "🍃 இலை கருகல் நோய்", sub: "நெல் இலை கருகல் நோய் தடுப்பு முறைகள் என்ன?", prompt: "நெல் இலை கருகல் நோய்க்கு என்ன மருந்து தெளிக்க வேண்டும்?" },
       { title: "🌦️ வானிலை ஆலோசனை", sub: "அடுத்த 7 நாட்களுக்கு மழை பெய்யுமா? மருந்து தெளிக்கலாमा?", prompt: "நாளை மழை பெய்யுமா? மருந்து தெளிக்கலாমা?" }
-    ]
+    ],
+    voice: {
+      agentTitle: "பூமி குரல் உதவியாளர் (BHOOMI Voice Assistant)",
+      farmerRole: "👨‍🌾 விவசாயி (Farmer):",
+      farmerInitialText: '"உங்கள் பிரச்சனை அல்லது கேள்வியைப் பேசுங்கள்..."',
+      farmerListening: "கேட்கிறேன்... உங்கள் கேள்வியைத் தெளிவாகப் பேசுங்கள்...",
+      aiRole: "🌾 BHOOMI (குரல் உதவியாளர்):",
+      aiGreeting: '"வணக்கம் விவசாய நண்பரே! உங்கள் பயிர், பூச்சிகள், வானிலை அல்லது சந்தை விலைகள் குறித்து நேரடியாகக் கேளுங்கள்."',
+      statusListening: "முழுமையாகப் பேசுங்கள், கேட்கிறேன்...",
+      statusThinking: "விவசாயத் தகவல்களை ஆய்வு செய்கிறோம்...",
+      statusSpeaking: "பதிலளிக்கிறேன்...",
+      statusIdle: "பேச தட்டவும்",
+      micListening: "கேட்கிறேன்...",
+      micThinking: "சிந்திக்கிறேன்...",
+      micSpeaking: "பேசுகிறேன்...",
+      micTapToSpeak: "பேசுங்கள் (Tap to Speak)",
+      endCall: "முடிக்க (End)",
+      micError: "⚠️ மைக்ரோஃபோன் அணுகல் தடுக்கப்பட்டுள்ளது.",
+      tapForHelp: "அனுமதி உதவி & மாதிரி கேள்விகள்",
+      tapToListen: "🔊 பதிலை கேட்க தட்டவும்"
+    }
   },
   kn: {
     heroTitle: "ನಿಮ್ಮ ಕೃಷಿ ಪ್ರಶ್ನೆಗಳನ್ನು ಭೂಮಿಯನ್ನು ಕೇಳಿ",
@@ -406,6 +486,26 @@ const I18N = {
       mitigationActionsTitle: "🛡️ ಶಿಫಾರಸು ಮಾಡಿದ ಅಪಾಯ ನಿಯಂತ್ರಣ ಕ್ರಮಗಳು:",
       validationCostWarning: "ಸಿಮ್ಯುಲೇಶನ್ ಮೊದಲು ದಯವಿಟ್ಟು ಕೃಷಿ ವೆಚ್ಚಗಳನ್ನು ನಮೂದಿಸಿ",
       validationYieldPriceWarning: "ಸಿಮ್ಯುಲೇಶನ್‌ಗಾಗಿ ಇಳುವರಿ ಮತ್ತು ಮಾರುಕಟ್ಟೆ ದರ ನಮೂದಿಸಿ"
+    },
+    voice: {
+      agentTitle: "ಭೂಮಿ ಧ್ವನಿ ಸಹಾಯಕ (BHOOMI Voice Assistant)",
+      farmerRole: "👨‍🌾 ರೈತ (Farmer):",
+      farmerInitialText: '"ನಿಮ್ಮ ಸಮಸ್ಯೆ ಅಥವಾ ಪ್ರಶ್ನೆಯನ್ನು ಮಾತನಾಡಿ..."',
+      farmerListening: "ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತಿದ್ದೇನೆ... ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಮಾತನಾಡಿ...",
+      aiRole: "🌾 BHOOMI (ಧ್ವನಿ ಸಹಾಯಕ):",
+      aiGreeting: '"ನಮಸ್ಕಾರ ರೈತ ಮಿತ್ರರೇ! ನಿಮ್ಮ ಬೆಳೆ, ಕೀಟಗಳು, ಹವಾಮಾನ ಅಥವಾ ಮಾರುಕಟ್ಟೆ ದರಗಳ ಬಗ್ಗೆ ನೇರವಾಗಿ ಕೇಳಿ."',
+      statusListening: "ಸಂಪೂರ್ಣವಾಗಿ ಮಾತನಾಡಿ, ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತಿದ್ದೇನೆ...",
+      statusThinking: "ಕೃಷಿ ಮಾಹಿತಿಯನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
+      statusSpeaking: "ಉತ್ತರಿಸುತ್ತಿದ್ದೇನೆ...",
+      statusIdle: "ಮಾತನಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
+      micListening: "ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತಿದ್ದೇನೆ...",
+      micThinking: "ಯೋಚಿಸುತ್ತಿದ್ದೇನೆ...",
+      micSpeaking: "ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ...",
+      micTapToSpeak: "ಮಾತನಾಡಿ (Tap to Speak)",
+      endCall: "ಮುಗಿಸಿ (End)",
+      micError: "⚠️ ಮೈಕ್ರೊಫೋನ್ ಪ್ರವೇಶ ನಿರ್ಬಂಧಿಸಲಾಗಿದೆ.",
+      tapForHelp: "ಅನುಮತಿ ಸಹಾಯ ಮತ್ತು ಮಾದರಿ ಪ್ರಶ್ನೆಗಳು",
+      tapToListen: "🔊 ಉತ್ತರವನ್ನು ಕೇಳಲು ಟ್ಯಾಪ್ ಮಾಡಿ"
     }
   },
   mr: {
@@ -483,6 +583,26 @@ const I18N = {
       mitigationActionsTitle: "🛡️ शिफारस केलेले जोखीम निवारण उपाय:",
       validationCostWarning: "सिम्युलेशन चालवण्यापूर्वी कृपया शेती खर्च प्रविष्ट करा",
       validationYieldPriceWarning: "सिम्युलेशनसाठी कृपया उत्पादन आणि बाजार भाव प्रविष्ट करा"
+    },
+    voice: {
+      agentTitle: "भूमी व्हॉइस असिस्टंट (BHOOMI Voice Assistant)",
+      farmerRole: "👨‍🌾 शेतकरी (Farmer):",
+      farmerInitialText: '"आपली समस्या किंवा प्रश्न बोला..."',
+      farmerListening: "ऐकत आहे... आपली समस्या स्पष्टपणे बोला...",
+      aiRole: "🌾 BHOOMI (व्हॉइस असिस्टंट):",
+      aiGreeting: '"नमस्कार शेतकरी मित्रा! आपल्या पिकाबद्दल, किडी-रोगाबद्दल, हवामान किंवा बाजारभावाबद्दल थेट विचारा."',
+      statusListening: "संपूर्ण बोला, आम्ही ऐकत आहोत...",
+      statusThinking: "शेतीविषयक माहितीचे विश्लेषण करत आहोत...",
+      statusSpeaking: "उत्तर देत आहे...",
+      statusIdle: "बोलण्यासाठी टॅप करा",
+      micListening: "ऐकत आहे...",
+      micThinking: "विचार करत आहे...",
+      micSpeaking: "बोलत आहे...",
+      micTapToSpeak: "बोला (Tap to Speak)",
+      endCall: "कॉल समाप्त करा (End)",
+      micError: "⚠️ मायक्रोफोन परवानगी उपलब्ध नाही.",
+      tapForHelp: "परवानगी मदत आणि नमुना प्रश्न",
+      tapToListen: "🔊 उत्तर ऐकण्यासाठी टॅप करा"
     }
   },
   ml: {
@@ -560,6 +680,26 @@ const I18N = {
       mitigationActionsTitle: "🛡️ നിർദ്ദേശിച്ച അപകടസാധ്യത കുറയ്ക്കൽ നടപടികൾ:",
       validationCostWarning: "സിമുലേഷന് മുൻപ് കൃഷി ചെലവുകൾ നൽകുക",
       validationYieldPriceWarning: "സിമുലേഷനായി വിളവും വിപണി വിലയും നൽകുക"
+    },
+    voice: {
+      agentTitle: "ഭൂമി വോയ്‌സ് അസിസ്റ്റന്റ് (BHOOMI Voice Assistant)",
+      farmerRole: "👨‍🌾 കർഷകൻ (Farmer):",
+      farmerInitialText: '"നിങ്ങളുടെ പ്രശ്നമോ ചോദ്യമോ സംസാരിക്കൂ..."',
+      farmerListening: "കേൾക്കുന്നു... നിങ്ങളുടെ ചോദ്യം വ്യക്തമായി പറയൂ...",
+      aiRole: "🌾 BHOOMI (വോയ്‌സ് അസിസ്റ്റന്റ്):",
+      aiGreeting: '"നമസ്കാരം കർഷക സുഹൃത്തേ! വിളകൾ, കീടങ്ങൾ, കാലാവസ്ഥ, വിപണി വിലകൾ എന്നിവയെക്കുറിച്ച് നേരിട്ട് ചോദിക്കൂ."',
+      statusListening: "വ്യക്തമായി സംസാരിക്കൂ, കേൾക്കുന്നുണ്ട്...",
+      statusThinking: "വിവരങ്ങൾ വിശകലനം ചെയ്യുന്നു...",
+      statusSpeaking: "മറുപടി നൽകുന്നു...",
+      statusIdle: "സംസാരിക്കാൻ ടാപ്പ് ചെയ്യുക",
+      micListening: "കേൾക്കുന്നു...",
+      micThinking: "ചിന്തിക്കുന്നു...",
+      micSpeaking: "സംസാരിക്കുന്നു...",
+      micTapToSpeak: "സംസാരിക്കൂ (Tap to Speak)",
+      endCall: "കോൾ അവസാനിപ്പിക്കുക (End)",
+      micError: "⚠️ മൈക്രോഫോൺ അനുമതി ലഭ്യമല്ല.",
+      tapForHelp: "അനുമതി സഹായവും മാതൃകാ ചോദ്യങ്ങളും",
+      tapToListen: "🔊 മറുപടി കേൾക്കാൻ ടാപ്പ് ചെയ്യുക"
     }
   }
 };
@@ -1975,8 +2115,28 @@ async function handleProfileUpdate(event) {
 // ==========================================
 
 // ==========================================
-// Farm Finance Localization Helper & State
+// BHOOMI Voice & Finance Localization Helpers
 // ==========================================
+function getVoiceDict(lang) {
+  const current = (lang && I18N[lang] && I18N[lang].voice) ? I18N[lang].voice : null;
+  const english = (I18N.en && I18N.en.voice) ? I18N.en.voice : {};
+  if (!current) return english;
+  return Object.assign({}, english, current);
+}
+
+function getLocaleForLang(lang) {
+  const map = {
+    en: "en-IN",
+    te: "te-IN",
+    hi: "hi-IN",
+    ta: "ta-IN",
+    kn: "kn-IN",
+    mr: "mr-IN",
+    ml: "ml-IN"
+  };
+  return map[lang] || "en-IN";
+}
+
 function getFinanceDict(lang) {
   const current = (lang && I18N[lang] && I18N[lang].finance) ? I18N[lang].finance : null;
   const english = (I18N.en && I18N.en.finance) ? I18N.en.finance : {};
@@ -3599,6 +3759,7 @@ function initSpeechRecognition() {
     speechRecognizer = new SpeechRec();
     speechRecognizer.continuous = false;
     speechRecognizer.interimResults = false;
+    speechRecognizer.lang = getLocaleForLang(currentLanguage);
 
     speechRecognizer.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
@@ -3861,7 +4022,9 @@ window.testVoiceAudioUpload = uploadAndProcessVoiceAudio;
 // ==========================================
 let isVoiceCallActiveMic = false;
 let voiceCallAudio = null;
-
+let currentVoiceOrbState = "idle";
+let lastVoiceUserSpoken = false;
+let lastVoiceAiReplied = false;
 
 function initVoiceCallRecognizer() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -3869,12 +4032,14 @@ function initVoiceCallRecognizer() {
     voiceCallRecognizer = new SpeechRec();
     voiceCallRecognizer.continuous = true;
     voiceCallRecognizer.interimResults = true;
+    voiceCallRecognizer.lang = getLocaleForLang(currentLanguage);
 
     voiceCallRecognizer.onstart = () => {
       setVoiceOrbState("listening");
+      const v = getVoiceDict(currentLanguage);
       const farmerSubtitle = document.getElementById("voiceFarmerText");
       if (farmerSubtitle) {
-        farmerSubtitle.textContent = currentLanguage === "te" ? "వింటున్నాను... మీ సమస్యను పూర్తిగా మాట్లాడండి..." : (currentLanguage === "hi" ? "सुन रहे हैं... अपनी पूरी समस्या बताएं..." : "Listening carefully... Explain your full problem...");
+        farmerSubtitle.textContent = v.farmerListening;
       }
     };
 
@@ -3914,9 +4079,10 @@ function initVoiceCallRecognizer() {
       console.warn("Voice Call STT notice:", e);
       if (e && (e.error === "not-allowed" || e.error === "service-not-allowed")) {
         setVoiceOrbState("idle");
+        const v = getVoiceDict(currentLanguage);
         const farmerSubtitle = document.getElementById("voiceFarmerText");
         if (farmerSubtitle) {
-          farmerSubtitle.innerHTML = `<span style="color:var(--accent-rose);">⚠️ Microphone blocked. <a href="javascript:void(0)" onclick="openMicPermissionModal()" style="color:var(--accent-emerald); text-decoration:underline; font-weight:600;">Click to Enable Permission</a></span>`;
+          farmerSubtitle.innerHTML = `<span style="color:var(--accent-rose);">${v.micError} <a href="javascript:void(0)" onclick="openMicPermissionModal()" style="color:var(--accent-emerald); text-decoration:underline; font-weight:600;">${v.tapForHelp}</a></span>`;
         }
       }
     };
@@ -3937,6 +4103,8 @@ function openVoiceCallMode() {
   }
   isVoiceCallOpen = true;
   isVoiceCallActiveMic = true;
+  lastVoiceUserSpoken = false;
+  lastVoiceAiReplied = false;
   voiceCallTranscriptBuffer = "";
   if (voiceCallSilenceTimer) {
     clearTimeout(voiceCallSilenceTimer);
@@ -3952,7 +4120,7 @@ function openVoiceCallMode() {
   // Stop any other playing audio immediately
   stopAllActiveAudio();
 
-  updateVoiceModalLabels();
+  updateVoiceModalLabels(currentLanguage);
   updateFinanceModalLanguage(currentLanguage);
   startVoiceCallListening();
   if (getCurrentRoute() !== "/voice") {
@@ -4028,17 +4196,19 @@ async function startVoiceCallRecording() {
 
     voiceCallMediaRecorder.start(250);
     setVoiceOrbState("listening");
+    const v = getVoiceDict(currentLanguage);
     const farmerSubtitle = document.getElementById("voiceFarmerText");
     if (farmerSubtitle) {
-      farmerSubtitle.textContent = currentLanguage === "te" ? "వింటున్నాను... మీ ప్రశ్నను మాట్లాడండి..." : "Listening... Speak your question clearly...";
+      farmerSubtitle.textContent = v.farmerListening;
     }
   } catch (err) {
     console.error("[VOICE_CALL] Mic access error:", err);
     isVoiceCallActiveMic = false;
     setVoiceOrbState("idle");
+    const v = getVoiceDict(currentLanguage);
     const farmerSubtitle = document.getElementById("voiceFarmerText");
     if (farmerSubtitle) {
-      farmerSubtitle.innerHTML = `<span style="color:var(--accent-rose,#ef4444); font-size:0.92rem;">⚠️ Microphone not accessible (${err.name || 'Notice'}). <a href="javascript:void(0)" onclick="openMicPermissionModal()" style="color:var(--accent-emerald,#10b981); text-decoration:underline; font-weight:600; margin-left:6px;">Tap for Permission Help & Quick Prompts</a></span>`;
+      farmerSubtitle.innerHTML = `<span style="color:var(--accent-rose,#ef4444); font-size:0.92rem;">${v.micError} (${err.name || 'Notice'}). <a href="javascript:void(0)" onclick="openMicPermissionModal()" style="color:var(--accent-emerald,#10b981); text-decoration:underline; font-weight:600; margin-left:6px;">${v.tapForHelp}</a></span>`;
     }
   }
 }
@@ -4058,10 +4228,12 @@ function startVoiceCallListening() {
 async function processVoiceCallInput(userText) {
   if (!userText || !userText.trim()) return;
   setVoiceOrbState("thinking");
+  const v = getVoiceDict(currentLanguage);
   const aiSubtitle = document.getElementById("voiceAiText");
   if (aiSubtitle) {
-    aiSubtitle.textContent = currentLanguage === "te" ? "సమగ్ర వ్యవసాయ విశ్లేషణ సిద్ధం చేస్తున్నాము..." : (currentLanguage === "hi" ? "विश्लेषण कर रहे हैं..." : "Gathering farm data and analyzing...");
+    aiSubtitle.textContent = v.statusThinking;
   }
+  lastVoiceUserSpoken = true;
 
   try {
     const headers = { "Content-Type": "application/json" };
@@ -4104,6 +4276,9 @@ async function processVoiceCallInput(userText) {
     }
     if (aiSubtitle) {
       aiSubtitle.textContent = replyText;
+    }
+    if (replyText) {
+      lastVoiceAiReplied = true;
     }
 
     // Save to chat history and active session
@@ -4166,9 +4341,10 @@ async function processVoiceCallInput(userText) {
 
 async function processVoiceCallAudio(audioBlob) {
   setVoiceOrbState("thinking");
+  const v = getVoiceDict(currentLanguage);
   const aiSubtitle = document.getElementById("voiceAiText");
   if (aiSubtitle) {
-    aiSubtitle.textContent = currentLanguage === "te" ? "సమగ్ర వ్యవసాయ విశ్లేషణ సిద్ధం చేస్తున్నాము..." : "Gathering farm data and analyzing...";
+    aiSubtitle.textContent = v.statusThinking;
   }
 
   try {
@@ -4216,9 +4392,11 @@ async function processVoiceCallAudio(audioBlob) {
     const farmerSubtitle = document.getElementById("voiceFarmerText");
     if (farmerSubtitle && userTranscript) {
       farmerSubtitle.textContent = `"${userTranscript}"`;
+      lastVoiceUserSpoken = true;
     }
     if (aiSubtitle) {
       aiSubtitle.textContent = replyText;
+      if (replyText) lastVoiceAiReplied = true;
     }
 
     // Save to chat history and active session
@@ -4290,7 +4468,8 @@ async function playVoiceCallAssistantResponse(audioBase64, replyText) {
     setVoiceOrbState("idle");
     const aiSubtitle = document.getElementById("voiceAiText");
     if (aiSubtitle) {
-      aiSubtitle.innerHTML = `${replyText}<br><button onclick="playVoiceCallAssistantResponse('${audioBase64}', '')" style="margin-top:10px;padding:8px 16px;border-radius:20px;background:var(--accent,#2e7d32);color:#fff;border:none;cursor:pointer;font-weight:600;">🔊 Tap to Listen to Spoken Answer</button>`;
+      const v = getVoiceDict(currentLanguage);
+      aiSubtitle.innerHTML = `${replyText}<br><button onclick="playVoiceCallAssistantResponse('${audioBase64}', '')" style="margin-top:10px;padding:8px 16px;border-radius:20px;background:var(--accent,#2e7d32);color:#fff;border:none;cursor:pointer;font-weight:600;">${v.tapToListen}</button>`;
     }
   }
 }
@@ -4305,8 +4484,7 @@ function fallbackVoiceCallSpeech(text) {
 
   const cleanText = text.replace(/[\*\#\_`~>•]/g, ' ').trim();
   const utterance = new SpeechSynthesisUtterance(cleanText);
-  const langCodes = { te: "te-IN", hi: "hi-IN", en: "en-IN", ta: "ta-IN", kn: "kn-IN", mr: "mr-IN" };
-  utterance.lang = langCodes[currentLanguage] || "te-IN";
+  utterance.lang = getLocaleForLang(currentLanguage);
   utterance.rate = 0.90;  // Soothing natural pacing
   utterance.pitch = 1.10; // Pleasant female pitch
 
@@ -4328,6 +4506,8 @@ function fallbackVoiceCallSpeech(text) {
 }
 
 function setVoiceOrbState(state) {
+  currentVoiceOrbState = state;
+  const v = getVoiceDict(currentLanguage);
   const orb = document.getElementById("voiceOrb");
   const badge = document.getElementById("voiceStatusBadge");
   const micBtn = document.getElementById("btnVoiceCallMic");
@@ -4339,45 +4519,74 @@ function setVoiceOrbState(state) {
 
   if (state === "listening") {
     if (orbIcon) orbIcon.textContent = "🎙️";
-    if (badge) badge.textContent = currentLanguage === "te" ? "పూర్తిగా మాట్లాడండి, వింటున్నాను... (Listening...)" : (currentLanguage === "hi" ? "पूरी बात बताएं, सुन रहे हैं..." : "Listening carefully...");
+    if (badge) badge.textContent = v.statusListening;
     if (micBtn) micBtn.className = "btn-voice-action mic recording";
-    if (micLabel) micLabel.textContent = currentLanguage === "te" ? "వింటున్నాను..." : (currentLanguage === "hi" ? "सुन रहे हैं..." : "Listening...");
+    if (micLabel) micLabel.textContent = v.micListening;
   } else if (state === "thinking") {
     if (orbIcon) orbIcon.textContent = "🧠";
-    if (badge) badge.textContent = currentLanguage === "te" ? "విశ్లేషిస్తున్నాను... (Analyzing...)" : (currentLanguage === "hi" ? "विश्लेषण कर रहे हैं..." : "Analyzing...");
+    if (badge) badge.textContent = v.statusThinking;
     if (micBtn) micBtn.className = "btn-voice-action mic";
-    if (micLabel) micLabel.textContent = currentLanguage === "te" ? "ఆలోచిస్తున్నాను..." : "Thinking...";
+    if (micLabel) micLabel.textContent = v.micThinking;
   } else if (state === "speaking") {
     if (orbIcon) orbIcon.textContent = "🗣️";
-    if (badge) badge.textContent = currentLanguage === "te" ? "సమాధానం ఇస్తున్నాను... (Speaking...)" : (currentLanguage === "hi" ? "उत्तर दे रहे हैं..." : "Speaking...");
+    if (badge) badge.textContent = v.statusSpeaking;
     if (micBtn) micBtn.className = "btn-voice-action mic";
-    if (micLabel) micLabel.textContent = currentLanguage === "te" ? "సమాధానం ఇస్తున్నాను..." : "Speaking...";
+    if (micLabel) micLabel.textContent = v.micSpeaking;
   } else {
     if (orbIcon) orbIcon.textContent = "🎙️";
-    if (badge) badge.textContent = currentLanguage === "te" ? "మాట్లాడటానికి నొక్కండి (Tap to Speak)" : "Tap to Speak";
+    if (badge) badge.textContent = v.statusIdle;
     if (micBtn) micBtn.className = "btn-voice-action mic";
-    if (micLabel) micLabel.textContent = currentLanguage === "te" ? "మాట్లాడండి (Speak)" : "Speak";
+    if (micLabel) micLabel.textContent = v.micTapToSpeak;
   }
 }
 
-function updateVoiceModalLabels() {
+function updateVoiceModalLabels(lang = currentLanguage) {
+  const v = getVoiceDict(lang);
   const title = document.getElementById("voiceCallAgentTitle");
+  const farmerRole = document.getElementById("voiceFarmerRole");
+  const aiRole = document.getElementById("voiceAiRole");
   const endCall = document.getElementById("txtEndCall");
   const btnHeader = document.getElementById("txtVoiceCallBtn");
-  const aiRole = document.getElementById("voiceAiRole");
+  const farmerSubtitle = document.getElementById("voiceFarmerText");
+  const aiSubtitle = document.getElementById("voiceAiText");
 
-  if (title) title.textContent = "BHOOMI Voice Assistant";
-  if (aiRole) aiRole.textContent = "🌾 BHOOMI (Voice Assistant):";
+  if (title && v.agentTitle) title.textContent = v.agentTitle;
+  if (farmerRole && v.farmerRole) farmerRole.textContent = v.farmerRole;
+  if (aiRole && v.aiRole) aiRole.textContent = v.aiRole;
+  if (endCall && v.endCall) endCall.textContent = v.endCall;
+  if (btnHeader) {
+    const dict = I18N[lang] || I18N.en;
+    if (dict.voiceCallBtn) btnHeader.textContent = dict.voiceCallBtn;
+  }
 
-  if (currentLanguage === "te") {
-    if (endCall) endCall.textContent = "ముగించు (End)";
-    if (btnHeader) btnHeader.textContent = "Live Voice Call";
-  } else if (currentLanguage === "hi") {
-    if (endCall) endCall.textContent = "समाप्त करें (End)";
-    if (btnHeader) btnHeader.textContent = "Live Voice Call";
-  } else {
-    if (endCall) endCall.textContent = "End Call";
-    if (btnHeader) btnHeader.textContent = "Live Voice Call";
+  // Update farmer dialogue prompt if not currently displaying live recognized speech
+  if (farmerSubtitle) {
+    const isInitialOrListening = !lastVoiceUserSpoken ||
+      Object.values(I18N).some(d => d.voice && (farmerSubtitle.textContent === d.voice.farmerInitialText || farmerSubtitle.textContent === d.voice.farmerListening));
+    if (isInitialOrListening) {
+      farmerSubtitle.textContent = isVoiceCallActiveMic ? v.farmerListening : v.farmerInitialText;
+    }
+  }
+
+  // Update AI dialogue greeting if not currently displaying an active response
+  if (aiSubtitle) {
+    const isInitialGreeting = !lastVoiceAiReplied ||
+      Object.values(I18N).some(d => d.voice && (aiSubtitle.textContent === d.voice.aiGreeting || aiSubtitle.textContent === d.voice.statusThinking));
+    if (isInitialGreeting) {
+      aiSubtitle.textContent = v.aiGreeting;
+    }
+  }
+
+  // Synchronize status badge and mic button labels with active state in new language
+  setVoiceOrbState(currentVoiceOrbState || "idle");
+
+  // Keep speech recognizers synchronized with selected locale
+  const localeTag = getLocaleForLang(lang);
+  if (voiceCallRecognizer) {
+    voiceCallRecognizer.lang = localeTag;
+  }
+  if (speechRecognizer) {
+    speechRecognizer.lang = localeTag;
   }
 }
 
@@ -4855,6 +5064,9 @@ window.closeFinanceModal = closeFinanceModal;
 window.calculateFinance = calculateFinance;
 window.runWhatIfSimulation = runWhatIfSimulation;
 window.updateFinanceModalLanguage = updateFinanceModalLanguage;
+window.updateVoiceModalLabels = updateVoiceModalLabels;
+window.getVoiceDict = getVoiceDict;
+window.getLocaleForLang = getLocaleForLang;
 window.switchAuthMode = switchAuthMode;
 window.handleReviewerDemoLogin = handleReviewerDemoLogin;
 window.handleReviewerLogin = handleReviewerLogin;
