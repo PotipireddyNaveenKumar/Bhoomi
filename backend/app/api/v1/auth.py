@@ -392,7 +392,7 @@ async def verify_otp(req: VerifyOtpRequest, db: AsyncSession = Depends(get_db)):
         village=user.farmer_profile.village,
         farm_id=farm.id if farm else None,
         crop_name=active_crop_name,
-        area_acres=float(farm.total_area_acres) if farm and farm.total_area_acres else (req.land_area_acres or 3.0),
+        area_acres=float(farm.total_area_acres) if farm and farm.total_area_acres is not None else (float(req.land_area_acres) if req.land_area_acres is not None else None),
         soil_type=farm.soil_type if farm else resolved_soil_type,
         is_new_user=not bool(existing_farms)
     )
@@ -425,7 +425,15 @@ async def register(req: UserRegisterRequest, db: AsyncSession = Depends(get_db))
         user_id=user.id,
         farmer_id=user.farmer_profile.id,
         name=user.farmer_profile.name,
-        preferred_language=user.farmer_profile.preferred_language
+        preferred_language=user.farmer_profile.preferred_language,
+        state=user.farmer_profile.state,
+        district=user.farmer_profile.district,
+        village=user.farmer_profile.village,
+        farm_id=None,
+        crop_name=None,
+        area_acres=None,
+        soil_type=None,
+        is_new_user=True
     )
 
 @router.post("/login", response_model=TokenResponse)
