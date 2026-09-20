@@ -13,16 +13,32 @@ router = APIRouter(prefix="/ml", tags=["Machine Learning Intelligence"])
 
 @router.get("/diagnostic")
 async def diagnostic():
-    import sklearn, joblib
+    import sklearn, joblib, os
     try:
         import shap
         shap_v = getattr(shap, "__version__", "unknown")
     except ImportError:
         shap_v = "not_installed"
+
+    file_info = {}
+    for p in [
+        "/app/models/crop_recommendation/crop_recommendation_model.joblib",
+        "/app/models/crop_recommendation/crop_scaler.joblib",
+        "/app/models/crop_recommendation/crop_label_encoder.joblib",
+        "/app/models/yield_prediction/yield_prediction_pipeline.joblib"
+    ]:
+        if os.path.exists(p):
+            with open(p, "rb") as f:
+                header = f.read(60)
+            file_info[p] = {"size": os.path.getsize(p), "header": str(header)}
+        else:
+            file_info[p] = "NOT_FOUND"
+
     return {
         "sklearn": getattr(sklearn, "__version__", None),
         "joblib": getattr(joblib, "__version__", None),
         "shap": shap_v,
+        "files": file_info
     }
 
 @router.post("/crop-recommendation", response_model=CropRecommendationOutput)
