@@ -16,6 +16,7 @@ class DocumentChunk(BaseModel):
 class SearchResult(BaseModel):
     chunk: DocumentChunk
     similarity_score: float
+    retrieval_method: str = "vector"
 
 class VectorStore(ABC):
     @abstractmethod

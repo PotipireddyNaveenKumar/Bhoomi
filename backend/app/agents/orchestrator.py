@@ -25,6 +25,8 @@ from app.services.weather.weather_service import WeatherService
 from app.services.market.market_service import MarketService
 from app.services.conversation.dialogue_manager import FarmerDialogueManager
 from app.services.rag.rag_service import AgriculturalRAGService, RAGQueryInput
+from app.services.rag.evidence_model import EvidenceStatus, CanonicalEvidenceItem, CanonicalSourceCitation
+from app.services.rag.verification_service import EvidenceSufficiencyGate
 from app.services.crop.recommendation_service import CropRecommendationService, CropRecommendationInput
 from app.services.crop.lifecycle_service import CropLifecycleService
 
@@ -1803,9 +1805,33 @@ class BhoomiAgentOrchestrator:
             crop = (intent.target_crop or (context.active_crops[0]["crop_name"] if context and context.active_crops else "Chilli")).strip().title()
 
             # Retrieve verified ICAR/ANGRAU RAG evidence
-            rag_output = AgriculturalRAGService.search(RAGQueryInput(query=user_text, crop=crop.lower(), top_k=2))
+            rag_output = AgriculturalRAGService.search(RAGQueryInput(
+                query=user_text,
+                crop=crop.lower(),
+                top_k=2,
+                farm_context={
+                    "crop": crop,
+                    "state": getattr(context, "state", None),
+                    "district": getattr(context, "district", None),
+                    "soil_type": getattr(context, "soil_type", None)
+                }
+            ))
+            if not rag_output.evidence_found or rag_output.evidence_status in [EvidenceStatus.INSUFFICIENT, EvidenceStatus.UNAVAILABLE]:
+                unverified_msg = rag_output.grounded_summary or EvidenceSufficiencyGate.get_insufficient_message(active_lang, rag_output.missing_context_elements)
+                FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, unverified_msg, intent="PEST_QUERY")
+                return OrchestrationResult(
+                    response_text=unverified_msg,
+                    visual_cards=[],
+                    voice_state="RESPONDING",
+                    trace_id=intent.trace_id,
+                    provider_mode="DETERMINISTIC_LOCAL"
+                )
+
             citation_str = ""
-            if rag_output.citations:
+            if rag_output.canonical_citations:
+                c = rag_output.canonical_citations[0]
+                citation_str = f"\n\n[ఆధారం: {c.authority} - {c.document_title}]" if active_lang == "te" else (f"\n\n[स्रोत: {c.authority} - {c.document_title}]" if active_lang == "hi" else f"\n\n[Source: {c.authority} - {c.document_title}]")
+            elif rag_output.citations:
                 c = rag_output.citations[0]
                 citation_str = f"\n\n[ఆధారం: {c.authority} - {c.document_title}]" if active_lang == "te" else f"\n\n[Source: {c.authority} - {c.document_title}]"
 
@@ -1912,8 +1938,17 @@ class BhoomiAgentOrchestrator:
                 "पहली सिंचाई", "सिंचाई कब", "cri अवस्था", "cri", "నీటి తడులు", "తడుల విరామం", "నీటిపారుదల", "सरसों"
             ]
         ):
-            rag_output = AgriculturalRAGService.search(RAGQueryInput(query=user_text, top_k=2))
-            if rag_output.evidence_found and rag_output.evidence_passages:
+            rag_output = AgriculturalRAGService.search(RAGQueryInput(
+                query=user_text,
+                top_k=2,
+                farm_context={
+                    "state": getattr(context, "state", None),
+                    "district": getattr(context, "district", None),
+                    "active_crops": getattr(context, "active_crops", None),
+                    "soil_type": getattr(context, "soil_type", None)
+                }
+            ))
+            if rag_output.evidence_found and rag_output.evidence_status == EvidenceStatus.SUFFICIENT and rag_output.evidence_passages:
                 evidence_text = rag_output.grounded_summary
                 citation_str = ""
                 if rag_output.citations:
@@ -2083,6 +2118,40 @@ class BhoomiAgentOrchestrator:
                 )
                 if synthesis_response.content:
                     llm_response = synthesis_response
+        else:
+            # When no tools were called, check if query is agronomic and requires verified evidence
+            is_agri_knowledge_query = any(k in text_lower for k in [
+                "disease", "pest", "fertilizer", "spray", "fungicide", "insecticide", "chemical", "dosage",
+                "leaf curl", "blight", "wilt", "rot", "caterpillar", "borer", "thrips", "whitefly",
+                "పంట", "రోగం", "చీడ", "ఎరువు", "పురుగు", "మందు", "పిచికారీ",
+                "फसल", "रोग", "कीट", "उर्वरक", "खाद", "छिड़काव", "कीटनाशक"
+            ])
+            if is_agri_knowledge_query:
+                rag_output = AgriculturalRAGService.search(RAGQueryInput(
+                    query=user_text,
+                    language=active_lang,
+                    farm_context={
+                        "state": getattr(context, "state", None),
+                        "district": getattr(context, "district", None),
+                        "active_crops": getattr(context, "active_crops", None),
+                        "soil_type": getattr(context, "soil_type", None)
+                    }
+                ))
+                if not rag_output.evidence_found or rag_output.evidence_status in [EvidenceStatus.INSUFFICIENT, EvidenceStatus.UNAVAILABLE]:
+                    unverified_msg = rag_output.grounded_summary or EvidenceSufficiencyGate.get_insufficient_message(active_lang, rag_output.missing_context_elements)
+                    FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, unverified_msg, intent="AGRONOMIC_QUERY")
+                    return OrchestrationResult(
+                        response_text=unverified_msg,
+                        visual_cards=[],
+                        voice_state="RESPONDING",
+                        trace_id=intent.trace_id,
+                        provider_mode="DETERMINISTIC_LOCAL"
+                    )
+                elif rag_output.evidence_status == EvidenceStatus.SUFFICIENT and rag_output.canonical_citations:
+                    c = rag_output.canonical_citations[0]
+                    citation_suffix = f"\n\n[{'ఆధారం' if active_lang == 'te' else ('स्रोत' if active_lang == 'hi' else 'Source')}: {c.authority} - {c.document_title}]"
+                    if citation_suffix not in (llm_response.content or ""):
+                        llm_response.content = (llm_response.content or "") + citation_suffix
 
         # -------------------------------------------------------------
         # 12. SAFETY ENGINE VERIFICATION

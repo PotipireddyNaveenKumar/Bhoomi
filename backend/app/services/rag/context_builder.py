@@ -1,10 +1,10 @@
 """
-LLM Context Builder & Prompt Construction Service for BHOOMI Agricultural RAG.
+LLM Context Builder & Prompt Construction Service for BHOOMI Agricultural RAG 2.0.
 Constructs a strictly partitioned context object distinguishing:
 - User Question & Intent
 - Retrieved RAG Evidence (with authority & confidence)
 - Live Tool Results (Weather forecasts, Mandi prices)
-- Farm Evidence (Digital Twin sensors, Soil moisture, Tension)
+- Farm Evidence (Digital Twin sensors, Soil moisture, Crop stage, Location)
 - ML / Vision Predictions
 - Secondary Task Context (Strictly secondary contextual notes, never primary answer)
 - Deterministic Safety Constraints
@@ -17,6 +17,7 @@ from app.services.rag.query_understanding import QueryUnderstandingResult
 
 class GroundedEvidenceItem(BaseModel):
     chunk_id: str
+    document_id: str = "doc_0"
     document_title: str
     authority: str
     authority_tier: str
@@ -24,6 +25,7 @@ class GroundedEvidenceItem(BaseModel):
     score: float
     source_url: Optional[str] = None
     section: Optional[str] = None
+    retrieval_method: str = "hybrid"
 
 
 class StructuredContextObject(BaseModel):
@@ -61,29 +63,49 @@ class ContextBuilder:
     ) -> StructuredContextObject:
         evidence_items: List[GroundedEvidenceItem] = []
         for rc in reranked_chunks:
-            meta = rc.metadata
+            meta = rc.metadata or {}
+            doc_id = meta.get("id") or meta.get("chunk_id") or rc.chunk_id
+            doc_title = meta.get("document_title") or meta.get("document") or f"Agricultural Advisory ({doc_id})"
             evidence_items.append(GroundedEvidenceItem(
                 chunk_id=rc.chunk_id,
-                document_title=meta.get("document_title", meta.get("document", "ICAR Extension Advisory")),
-                authority=meta.get("authority", meta.get("source", "ICAR")),
+                document_id=str(doc_id),
+                document_title=doc_title,
+                authority=meta.get("authority", meta.get("source", "Agricultural Extension")),
                 authority_tier=meta.get("source_authority", "tier_1"),
                 content=rc.content,
                 score=rc.rerank_score,
                 source_url=meta.get("source_url", meta.get("url_or_ref")),
-                section=meta.get("section", "Agronomic Practices")
+                section=meta.get("section", "Agronomic Practices"),
+                retrieval_method=getattr(rc, "retrieval_method", "hybrid")
             ))
 
-        # Build farm context
+        # Build farm context from FarmState or DigitalTwinContext
         farm_ctx = {}
         if farm_state:
             if hasattr(farm_state, "soil_moisture_awc_pct") and farm_state.soil_moisture_awc_pct is not None:
                 farm_ctx["soil_moisture_awc_pct"] = round(farm_state.soil_moisture_awc_pct, 1)
+            elif hasattr(farm_state, "soil_moisture_percentage") and farm_state.soil_moisture_percentage is not None:
+                farm_ctx["soil_moisture_pct"] = round(farm_state.soil_moisture_percentage, 1)
+
             if hasattr(farm_state, "soil_tension_kpa") and farm_state.soil_tension_kpa is not None:
                 farm_ctx["soil_tension_kpa"] = round(farm_state.soil_tension_kpa, 1)
-            elif farm_ctx.get("soil_moisture_awc_pct") is not None and farm_ctx["soil_moisture_awc_pct"] <= 40:
-                farm_ctx["soil_tension_kpa"] = -45.0
-            if hasattr(farm_state, "active_crops") and farm_state.active_crops:
+
+            if hasattr(farm_state, "active_crop") and farm_state.active_crop:
+                farm_ctx["active_crop"] = farm_state.active_crop
+            elif hasattr(farm_state, "active_crops") and farm_state.active_crops:
                 farm_ctx["active_crops"] = farm_state.active_crops
+
+            if hasattr(farm_state, "crop_stage") and farm_state.crop_stage:
+                farm_ctx["crop_stage"] = farm_state.crop_stage
+
+            if hasattr(farm_state, "soil_type") and farm_state.soil_type:
+                farm_ctx["soil_type"] = farm_state.soil_type
+
+            if hasattr(farm_state, "state") and farm_state.state:
+                farm_ctx["state"] = farm_state.state
+            if hasattr(farm_state, "district") and farm_state.district:
+                farm_ctx["district"] = farm_state.district
+
             if hasattr(farm_state, "location") and farm_state.location:
                 farm_ctx["location"] = farm_state.location
 
@@ -110,7 +132,8 @@ class ContextBuilder:
         constraints.extend([
             "Never recommend banned organophosphate pesticides during active bloom.",
             "Mandate personal protective equipment (PPE - mask, gloves) for all chemical applications.",
-            "Do not prescribe chemical doses without knowing exact crop and growth stage."
+            "Do not prescribe chemical doses without knowing exact crop and growth stage.",
+            "Do not fabricate live weather or market prices; use only official tool outputs."
         ])
 
         return StructuredContextObject(
@@ -149,11 +172,11 @@ class ContextBuilder:
             for idx, ev in enumerate(context.retrieved_evidence, 1):
                 sections.append(
                     f"[{idx}] Source: {ev.authority} ({ev.document_title}, Section: {ev.section})\n"
-                    f"    Confidence: {ev.score:.2f} | Tier: {ev.authority_tier}\n"
+                    f"    Confidence: {ev.score:.2f} | Tier: {ev.authority_tier} | Method: {ev.retrieval_method}\n"
                     f"    Content: {ev.content}"
                 )
         else:
-            sections.append("NO VERIFIED RAG EVIDENCE FOUND. State uncertainty clearly. Do NOT hallucinate.")
+            sections.append("NO VERIFIED RAG EVIDENCE FOUND. Factual agronomic and chemical claims are STRICTLY PROHIBITED. Acknowledge uncertainty clearly or request needed farmer details. Do NOT hallucinate.")
 
         # Live Tool Data Section
         if context.live_tool_results:
@@ -163,11 +186,11 @@ class ContextBuilder:
 
         # Farm Sensors / Digital Twin Evidence
         if context.farm_context:
-            sections.append("\n--- FARM DIGITAL TWIN SENSOR EVIDENCE ---")
+            sections.append("\n--- FARM DIGITAL TWIN SENSOR & PROFILE EVIDENCE ---")
             for k, v in context.farm_context.items():
                 sections.append(f"• {k}: {v}")
 
-        # Secondary Task Reminders (Step 16: Never replace the question!)
+        # Secondary Task Reminders
         if context.task_context:
             sections.append("\n--- PENDING FARM TASKS (SECONDARY CONTEXT ONLY) ---")
             sections.append("NOTE: These tasks are background context. NEVER make a task status the direct answer to the farmer's question.")
