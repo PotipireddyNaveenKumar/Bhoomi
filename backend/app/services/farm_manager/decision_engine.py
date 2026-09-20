@@ -86,6 +86,7 @@ class FarmDecisionEngine:
         trace_id = f"trace_{uuid.uuid4().hex[:12]}"
         suffix = f"_{uuid.uuid4().hex[:6]}"
         decisions: List[FarmDecision] = []
+        target_farm_id = state.farm_id or "farm_1"
 
         freshness_map = {
             k: getattr(v, "freshness_status", "CURRENT")
@@ -101,7 +102,7 @@ class FarmDecisionEngine:
             weather_decision = FarmDecision(
                 decision_id=f"dec_weather_unavail{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.WEATHER_RESPONSE,
                 priority=DecisionPriority.MEDIUM,
                 status=DecisionStatus.PROPOSED,
@@ -125,7 +126,7 @@ class FarmDecisionEngine:
             weather_decision = FarmDecision(
                 decision_id=f"dec_weather_storm_guard{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.WEATHER_RESPONSE,
                 priority=DecisionPriority.HIGH,
                 status=DecisionStatus.PROPOSED,
@@ -149,7 +150,7 @@ class FarmDecisionEngine:
             weather_decision = FarmDecision(
                 decision_id=f"dec_weather_favorable{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.WEATHER_RESPONSE,
                 priority=DecisionPriority.LOW,
                 status=DecisionStatus.PROPOSED,
@@ -174,7 +175,7 @@ class FarmDecisionEngine:
             irrigation_decision = FarmDecision(
                 decision_id=f"dec_irr_rain_delay{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.IRRIGATION,
                 priority=DecisionPriority.HIGH,
                 status=DecisionStatus.PROPOSED,
@@ -199,7 +200,7 @@ class FarmDecisionEngine:
             irrigation_decision = FarmDecision(
                 decision_id=f"dec_irr_urgent{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.IRRIGATION,
                 priority=DecisionPriority.HIGH,
                 status=DecisionStatus.PROPOSED,
@@ -223,7 +224,7 @@ class FarmDecisionEngine:
             irrigation_decision = FarmDecision(
                 decision_id=f"dec_irr_routine{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.IRRIGATION,
                 priority=DecisionPriority.MEDIUM,
                 status=DecisionStatus.PROPOSED,
@@ -251,7 +252,7 @@ class FarmDecisionEngine:
             health_decision = FarmDecision(
                 decision_id=f"dec_health_disease_ipm{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.CROP_HEALTH,
                 priority=DecisionPriority.CRITICAL,
                 status=DecisionStatus.PROPOSED,
@@ -278,7 +279,7 @@ class FarmDecisionEngine:
             health_decision = FarmDecision(
                 decision_id=f"dec_health_flowering_spray{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.FERTILIZATION,
                 priority=DecisionPriority.HIGH,
                 status=DecisionStatus.PROPOSED,
@@ -302,7 +303,7 @@ class FarmDecisionEngine:
             health_decision = FarmDecision(
                 decision_id=f"dec_health_scouting{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.CROP_HEALTH,
                 priority=DecisionPriority.MEDIUM,
                 status=DecisionStatus.PROPOSED,
@@ -330,7 +331,7 @@ class FarmDecisionEngine:
             market_decision = FarmDecision(
                 decision_id=f"dec_market_unavail{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.MARKET_WAIT,
                 priority=DecisionPriority.LOW,
                 status=DecisionStatus.PROPOSED,
@@ -354,7 +355,7 @@ class FarmDecisionEngine:
             market_decision = FarmDecision(
                 decision_id=f"dec_market_favorable{suffix}",
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 decision_type=DecisionType.MARKET_SELL,
                 priority=DecisionPriority.HIGH,
                 status=DecisionStatus.PROPOSED,
@@ -393,7 +394,7 @@ class FarmDecisionEngine:
             rec = RecommendationRecord(
                 recommendation_id=d.decision_id,
                 farmer_id=state.farmer_id,
-                farm_id="farm_1",
+                farm_id=target_farm_id,
                 intent=d.decision_type.value,
                 decision_type=d.decision_type.value,
                 input_context={

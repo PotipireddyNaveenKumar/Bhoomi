@@ -151,10 +151,41 @@ class RecommendationTraceStore:
             )
             return _trace_to_record(trace)
 
+        res_record = None
         if db is not None:
-            return await _execute(db)
-        async with AsyncSessionLocal() as session:
-            return await _execute(session)
+            res_record = await _execute(db)
+        else:
+            async with AsyncSessionLocal() as session:
+                res_record = await _execute(session)
+
+        # Emit compact contextual reference to FarmMemoryV2
+        try:
+            from app.services.memory.farm_memory_v2 import FarmMemoryV2, ProvenanceType
+            crop = (record.input_context or {}).get("crop", "Crop")
+            stage = (record.input_context or {}).get("stage", "general")
+            ts_str = record.timestamp.isoformat() if hasattr(record.timestamp, "isoformat") else str(record.timestamp)
+            FarmMemoryV2.add_memory(
+                farmer_id=record.farmer_id,
+                category="DECISION",
+                key=record.recommendation_id,
+                value={
+                    "decision_id": record.recommendation_id,
+                    "crop": crop,
+                    "stage": stage,
+                    "recommendation": record.recommendation_text,
+                    "decision_type": record.decision_type or record.intent,
+                    "action": record.farmer_action,
+                    "outcome": record.outcome,
+                    "timestamp": ts_str
+                },
+                confidence=record.confidence or 1.0,
+                source="decision_intelligence",
+                provenance=ProvenanceType.SYSTEM_RECOMMENDATION
+            )
+        except Exception as e:
+            logger.debug(f"FarmMemoryV2 contextual logging skipped: {e}")
+
+        return res_record
 
     @classmethod
     def record_trace(cls, record: RecommendationRecord) -> RecommendationRecord:
@@ -217,10 +248,35 @@ class RecommendationTraceStore:
             )
             return _trace_to_record(trace) if trace else None
 
+        res_record = None
         if db is not None:
-            return await _execute(db)
-        async with AsyncSessionLocal() as session:
-            return await _execute(session)
+            res_record = await _execute(db)
+        else:
+            async with AsyncSessionLocal() as session:
+                res_record = await _execute(session)
+
+        if res_record:
+            try:
+                from app.services.memory.farm_memory_v2 import FarmMemoryV2, ProvenanceType
+                FarmMemoryV2.add_memory(
+                    farmer_id=res_record.farmer_id,
+                    category="FEEDBACK",
+                    key=f"feedback_{recommendation_id}",
+                    value={
+                        "decision_id": recommendation_id,
+                        "action": farmer_action,
+                        "rating": feedback_rating,
+                        "notes": feedback_notes,
+                        "timestamp": datetime.now(timezone.utc).isoformat()
+                    },
+                    confidence=1.0,
+                    source="farmer_feedback",
+                    provenance=ProvenanceType.FARMER_ACTION
+                )
+            except Exception as e:
+                logger.debug(f"FarmMemoryV2 feedback logging skipped: {e}")
+
+        return res_record
 
     @classmethod
     def update_feedback(

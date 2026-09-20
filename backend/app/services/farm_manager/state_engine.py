@@ -354,7 +354,14 @@ class FarmStateEngine:
             overall_risk_level=risk_res.overall_risk_level,
             overall_risk_score=risk_res.overall_risk_score,
             pending_tasks=tasks,
-            recent_events=["Crop entered flowering stage", "Weather advisory received: Light rain possible"],
+            recent_events=(
+                ["Crop entered flowering stage", "Weather advisory received: Light rain possible"] +
+                [
+                    f"Previous {m.value.get('decision_type', 'Decision')}: {m.value.get('recommendation', '')[:50]} (Action: {m.value.get('action', 'PENDING')})"
+                    for m in getattr(__import__("app.services.memory.farm_memory_v2", fromlist=["FarmMemoryV2"]).FarmMemoryV2, "get_memories_by_category")(farmer_id, "DECISION")[-3:]
+                ] if farmer_id else ["Crop entered flowering stage", "Weather advisory received: Light rain possible"]
+            ),
+            farm_id=dt.farm_id or "farm_1",
             confidence_score=0.92,
             data_freshness=freshness,
             last_updated=now_utc

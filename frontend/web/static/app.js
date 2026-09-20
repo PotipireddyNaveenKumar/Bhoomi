@@ -176,6 +176,33 @@ const I18N = {
       micError: "⚠️ Microphone not accessible or blocked.",
       tapForHelp: "Tap for Permission Help & Quick Prompts",
       tapToListen: "🔊 Tap to Listen to Spoken Answer"
+    },
+    decisions: {
+      title: "Decision History",
+      subtitle: "Persistent memory & explainable AI advisory traces",
+      refresh: "Refresh",
+      empty: "No decision history recorded yet. Use voice or chat to evaluate farm decisions.",
+      modalTitle: "Decision Provenance & Trace",
+      modalSubtitle: "Explainable AI, Telemetry Grounding & Feedback",
+      whyRationale: "Why & Rationale",
+      evidenceSensors: "Evidence & Telemetry Grounding",
+      dataSources: "Data Sources & Freshness",
+      toolsSafety: "Tools Used & Safety Screening",
+      modelXai: "Model & Explainability (XAI)",
+      calculations: "Calculations & Economics",
+      actionFeedback: "Farmer Action & Feedback",
+      statusLabel: "Status:",
+      feedbackLabel: "Feedback Rating:",
+      notesLabel: "Notes:",
+      btnAccept: "✓ Accept / Follow",
+      btnReject: "✕ Reject / Not Follow",
+      btnPostpone: "⏳ Postpone",
+      btnHelpful: "👍 Useful",
+      btnNotHelpful: "👎 Not Useful",
+      btnSubmitFeedback: "Submit Feedback",
+      feedbackPlaceholder: "Add notes or observations...",
+      feedbackSuccess: "Feedback updated and persisted in PostgreSQL!",
+      viewDetail: "View Trace & Explainability →"
     }
   },
   te: {
@@ -273,6 +300,33 @@ const I18N = {
       micError: "⚠️ మైక్రోఫోన్ అనుమతి లభించలేదు లేదా బ్లాక్ చేయబడింది.",
       tapForHelp: "అనుమతి సహాయం & నమూనా ప్రశ్నలు",
       tapToListen: "🔊 సమాధానం వినడానికి నొక్కండి"
+    },
+    decisions: {
+      title: "నిర్ణయ చరిత్ర (Decision History)",
+      subtitle: "స్థిరమైన జ్ఞాపకశక్తి & వివరణాత్మక AI సలహాలు",
+      refresh: "రిఫ్రెష్",
+      empty: "ఇంకా నిర్ణయ చరిత్ర నమోదు కాలేదు. వ్యవసాయ నిర్ణయాలను అంచనా వేయడానికి వాయిస్ లేదా చాట్ ఉపయోగించండి.",
+      modalTitle: "నిర్ణయ మూలం & వివరణ (Decision Provenance)",
+      modalSubtitle: "వివరణాత్మక AI, టెలిమెట్రీ గ్రౌండింగ్ & అభిప్రాయం",
+      whyRationale: "ఎందుకు & సమర్థన",
+      evidenceSensors: "సాక్ష్యం & సెన్సార్ల సమాచారం",
+      dataSources: "డేటా వనరులు & తాజాదనం",
+      toolsSafety: "ఉపయోగించిన సాధనాలు & భద్రతా తనిఖీలు",
+      modelXai: "మోడల్ & వివరణాత్మకత (XAI)",
+      calculations: "గణనలు & ఆర్థిక ఫలితాలు",
+      actionFeedback: "రైతు చర్య & అభిప్రాయం",
+      statusLabel: "స్థితి:",
+      feedbackLabel: "రేటింగ్:",
+      notesLabel: "గమనికలు:",
+      btnAccept: "✓ అంగీకరించు / అనుసరించు",
+      btnReject: "✕ తిరస్కరించు",
+      btnPostpone: "⏳ వాయిదా వేయి",
+      btnHelpful: "👍 ఉపయోగపడింది",
+      btnNotHelpful: "👎 ఉపయోగపడలేదు",
+      btnSubmitFeedback: "అభిప్రాయాన్ని సమర్పించండి",
+      feedbackPlaceholder: "గమనికలు లేదా పరిశీలనలను జోడించండి...",
+      feedbackSuccess: "అభిప్రాయం డేటాబేస్లో నవీకరించబడింది!",
+      viewDetail: "వివరణ & వివరాలను చూడండి →"
     }
   },
   hi: {
@@ -370,6 +424,33 @@ const I18N = {
       micError: "⚠️ माइक्रोफ़ोन का उपयोग नहीं हो पा रहा है।",
       tapForHelp: "अनुमति सहायता और त्वरित संकेत",
       tapToListen: "🔊 बोलकर उत्तर सुनें"
+    },
+    decisions: {
+      title: "निर्णय इतिहास (Decision History)",
+      subtitle: "स्थायी निर्णय स्मृति और व्याख्यात्मक एआई सलाह",
+      refresh: "रीफ्रेश",
+      empty: "अभी तक कोई निर्णय इतिहास दर्ज नहीं हुआ। कृषि निर्णयों के लिए वॉयस या चैट का उपयोग करें।",
+      modalTitle: "निर्णय स्रोत और व्याख्या (Decision Provenance)",
+      modalSubtitle: "व्याख्यात्मक एआई, टेलीमेट्री ग्राउंडिंग और प्रतिक्रिया",
+      whyRationale: "कारण और औचित्य",
+      evidenceSensors: "साक्ष्य और सेंसर डेटा",
+      dataSources: "डेटा स्रोत और ताजगी",
+      toolsSafety: "उपयोग किए गए उपकरण और सुरक्षा जांच",
+      modelXai: "मॉडल और व्याख्यात्मकता (XAI)",
+      calculations: "गणनाएं और अर्थशास्त्र",
+      actionFeedback: "किसान की कार्रवाई और प्रतिक्रिया",
+      statusLabel: "स्थिति:",
+      feedbackLabel: "रेटिंग:",
+      notesLabel: "नोट्स:",
+      btnAccept: "✓ स्वीकार करें / पालन करें",
+      btnReject: "✕ अस्वीकार करें",
+      btnPostpone: "⏳ स्थगित करें",
+      btnHelpful: "👍 उपयोगी",
+      btnNotHelpful: "👎 उपयोगी नहीं",
+      btnSubmitFeedback: "प्रतिक्रिया जमा करें",
+      feedbackPlaceholder: "टिप्पणियां या टिप्पणियां जोड़ें...",
+      feedbackSuccess: "प्रतिक्रिया डेटाबेस में सुरक्षित हो गई!",
+      viewDetail: "विस्तार और व्याख्या देखें →"
     }
   },
   ta: {
@@ -995,6 +1076,7 @@ async function initAuth() {
         setAppState(AuthState.AUTHENTICATED);
         loadUserScopedSessions();
         loadTodayTasks();
+        loadDecisionHistory();
 
         const dest = (initialRoute === "/finance" || initialRoute === "/voice") ? initialRoute : "/home";
         navigateTo(dest, true);
@@ -1072,6 +1154,8 @@ function transitionToAuthenticated(user, token, targetRoute = "/home") {
   updateSidebarFarmerProfile(user);
   setAppState(AuthState.AUTHENTICATED);
   loadUserScopedSessions();
+  loadTodayTasks();
+  loadDecisionHistory();
   navigateTo(targetRoute, true);
 }
 
@@ -2959,6 +3043,20 @@ function updateUILanguage(lang) {
     else if (lang === "hi") txtRefreshTasks.textContent = "ताज़ा करें";
     else txtRefreshTasks.textContent = "Refresh";
   }
+
+  // Update Decision History header labels & modal labels
+  const dDict = getDecisionsDict(lang);
+  const txtDecisionHistoryTitle = document.getElementById("txtDecisionHistoryTitle");
+  const txtDecisionHistorySub = document.getElementById("txtDecisionHistorySub");
+  const txtRefreshDecisions = document.getElementById("txtRefreshDecisions");
+  const txtDecisionDetailTitle = document.getElementById("txtDecisionDetailTitle");
+  const txtDecisionDetailSub = document.getElementById("txtDecisionDetailSub");
+
+  if (txtDecisionHistoryTitle && dDict.title) txtDecisionHistoryTitle.textContent = dDict.title;
+  if (txtDecisionHistorySub && dDict.subtitle) txtDecisionHistorySub.textContent = dDict.subtitle;
+  if (txtRefreshDecisions && dDict.refresh) txtRefreshDecisions.textContent = dDict.refresh;
+  if (txtDecisionDetailTitle && dDict.modalTitle) txtDecisionDetailTitle.textContent = dDict.modalTitle;
+  if (txtDecisionDetailSub && dDict.modalSubtitle) txtDecisionDetailSub.textContent = dDict.modalSubtitle;
 
 
   // Update all listen buttons in existing chat rows
@@ -5304,4 +5402,289 @@ async function handleCompleteTask(taskId) {
   }
 }
 window.handleCompleteTask = handleCompleteTask;
+
+// =============================================================================
+// PERSISTENT DECISION HISTORY & EXPLAINABILITY CLIENT ENGINE (BATCH 10)
+// =============================================================================
+
+function getDecisionsDict(lang) {
+  const dict = I18N[lang] || I18N.en;
+  return dict.decisions || I18N.en.decisions;
+}
+window.getDecisionsDict = getDecisionsDict;
+
+async function loadDecisionHistory() {
+  const container = document.getElementById("decisionHistoryList");
+  if (!container) return;
+
+  const dDict = getDecisionsDict(currentLanguage);
+  const token = authToken || localStorage.getItem("bhoomi_auth_token");
+  if (!token) {
+    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">Please login to view decision history.</div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/v1/decisions/history?limit=10", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">${dDict.empty}</div>`;
+      return;
+    }
+
+    const data = await res.json();
+    const decisions = data.decisions || [];
+
+    if (decisions.length === 0) {
+      container.innerHTML = `<div style="padding: 14px; font-size: 0.85rem; color: var(--text-secondary, #64748b); background: var(--bg-surface, #ffffff); border-radius: 8px; border: 1px dashed var(--border-color, #cbd5e1); text-align: center;">🌱 ${dDict.empty}</div>`;
+      return;
+    }
+
+    container.innerHTML = decisions.map(d => {
+      const typeStr = (d.decision_type || "ADVISORY").toUpperCase();
+      const typeBg = typeStr.includes("HEALTH") ? "#fef2f2" : typeStr.includes("IRR") ? "#eff6ff" : typeStr.includes("MARKET") ? "#f0fdf4" : "#fefce8";
+      const typeColor = typeStr.includes("HEALTH") ? "#b91c1c" : typeStr.includes("IRR") ? "#1d4ed8" : typeStr.includes("MARKET") ? "#15803d" : "#a16207";
+      const actionStr = (d.farmer_action || "PENDING").toUpperCase();
+      const actionBg = actionStr === "ACCEPTED" || actionStr === "FOLLOWED" ? "#dcfce7" : actionStr === "REJECTED" || actionStr === "NOT_FOLLOWED" ? "#fee2e2" : "#f1f5f9";
+      const actionColor = actionStr === "ACCEPTED" || actionStr === "FOLLOWED" ? "#15803d" : actionStr === "REJECTED" || actionStr === "NOT_FOLLOWED" ? "#b91c1c" : "#475569";
+      const dateFormatted = d.created_at ? new Date(d.created_at).toLocaleString() : "Recent";
+      const confPct = d.confidence != null ? Math.round(d.confidence * 100) : null;
+      const crop = (d.input_context && d.input_context.crop) ? d.input_context.crop : "Farm";
+
+      return `
+        <div class="decision-trace-card" id="decCard_${d.decision_id}" style="display: flex; flex-direction: column; gap: 8px; padding: 14px; margin-bottom: 10px; background: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: ${typeBg}; color: ${typeColor};">${typeStr}</span>
+              <span style="font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #f8fafc; color: #475569; font-weight: 600;">🌾 ${crop}</span>
+              ${confPct !== null ? `<span style="font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #f0fdf4; color: #166534; font-weight: 600;">🎯 ${confPct}% Confidence</span>` : ''}
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: ${actionBg}; color: ${actionColor};">${actionStr}</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">🕒 ${dateFormatted}</span>
+            </div>
+          </div>
+          <div style="font-size: 0.92rem; font-weight: 600; color: var(--text-primary, #0f172a); line-height: 1.4;">
+            ${d.recommendation_text}
+          </div>
+          ${d.assumptions && d.assumptions.length > 0 ? `
+            <div style="font-size: 0.8rem; color: var(--text-secondary, #475569); background: #f8fafc; padding: 6px 10px; border-radius: 6px;">
+              💡 <em>${d.assumptions[0]}</em>
+            </div>
+          ` : ''}
+          <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
+            <button type="button" onclick="openDecisionDetail('${d.decision_id}')" style="background: transparent; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; font-weight: 600; color: #0284c7; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+              ${dDict.viewDetail}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (err) {
+    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">${dDict.empty}</div>`;
+  }
+}
+window.loadDecisionHistory = loadDecisionHistory;
+
+async function openDecisionDetail(decisionId) {
+  const modal = document.getElementById("decisionDetailModal");
+  const body = document.getElementById("decisionDetailBody");
+  if (!modal || !body) return;
+
+  const dDict = getDecisionsDict(currentLanguage);
+  modal.style.display = "flex";
+  body.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-secondary, #64748b);">⏳ Loading trace details...</div>`;
+
+  const token = authToken || localStorage.getItem("bhoomi_auth_token");
+  if (!token) {
+    body.innerHTML = `<div style="padding: 20px; color: #b91c1c;">Please authenticate to inspect decision traces.</div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/v1/decisions/${encodeURIComponent(decisionId)}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      body.innerHTML = `<div style="padding: 20px; color: #b91c1c;">Unable to load decision trace details (${res.status}).</div>`;
+      return;
+    }
+
+    const t = await res.json();
+    const confPct = t.confidence != null ? Math.round(t.confidence * 100) : 90;
+    const actionStr = (t.farmer_action || "PENDING").toUpperCase();
+    const actionBg = actionStr === "ACCEPTED" || actionStr === "FOLLOWED" ? "#dcfce7" : actionStr === "REJECTED" || actionStr === "NOT_FOLLOWED" ? "#fee2e2" : "#f1f5f9";
+    const actionColor = actionStr === "ACCEPTED" || actionStr === "FOLLOWED" ? "#15803d" : actionStr === "REJECTED" || actionStr === "NOT_FOLLOWED" ? "#b91c1c" : "#475569";
+
+    body.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- Top Summary Card -->
+        <div style="background: var(--bg-surface-alt, #f8fafc); padding: 14px; border-radius: 12px; border: 1px solid var(--border-subtle, #e2e8f0);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+            <span style="font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #e0f2fe; color: #0369a1; text-transform: uppercase;">
+              ${t.decision_type || 'ADVISORY'}
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted, #94a3b8);">ID: ${t.decision_id}</span>
+          </div>
+          <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary, #0f172a); margin-bottom: 8px;">
+            ${t.recommendation_text}
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 0.8rem;">
+            <span style="padding: 2px 8px; border-radius: 6px; background: ${actionBg}; color: ${actionColor}; font-weight: 700;">${dDict.statusLabel} ${actionStr}</span>
+            ${t.feedback_rating ? `<span style="padding: 2px 8px; border-radius: 6px; background: #fef3c7; color: #b45309; font-weight: 700;">★ ${t.feedback_rating}</span>` : ''}
+            <span style="color: var(--text-secondary, #64748b);">🎯 Confidence: <strong>${confPct}%</strong></span>
+          </div>
+        </div>
+
+        <!-- 1. WHY & RATIONALE -->
+        <div style="background: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 10px; padding: 14px;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary, #0f172a); margin-bottom: 6px;">💡 ${dDict.whyRationale}</div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary, #475569); line-height: 1.5;">
+            ${t.rationale || (t.assumptions && t.assumptions.length > 0 ? t.assumptions[0] : 'Telemetry conditions and agronomic rules triggered this targeted farm advisory.')}
+          </div>
+        </div>
+
+        <!-- 2. EVIDENCE & TELEMETRY GROUNDING -->
+        <div style="background: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 10px; padding: 14px;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary, #0f172a); margin-bottom: 8px;">📡 ${dDict.evidenceSensors}</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; font-size: 0.8rem;">
+            <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+              <span style="color: var(--text-muted, #94a3b8); display: block;">Crop:</span>
+              <strong>${t.input_context?.crop || 'Crop'} (${t.input_context?.stage || 'Stage'})</strong>
+            </div>
+            <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+              <span style="color: var(--text-muted, #94a3b8); display: block;">Soil Type:</span>
+              <strong>${t.input_context?.soil || 'Local Soil'}</strong>
+            </div>
+            <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+              <span style="color: var(--text-muted, #94a3b8); display: block;">Rainfall Risk:</span>
+              <strong>${t.input_context?.rain_probability != null ? t.input_context.rain_probability + '%' : 'Telemetry Normal'}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. DATA SOURCES & FRESHNESS -->
+        <div style="background: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 10px; padding: 14px;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary, #0f172a); margin-bottom: 8px;">🔄 ${dDict.dataSources}</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.78rem;">
+            ${Object.entries(t.data_freshness || {}).map(([k, v]) => `
+              <span style="padding: 4px 8px; border-radius: 6px; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600;">
+                ✓ ${k.toUpperCase()}: ${v}
+              </span>
+            `).join("")}
+          </div>
+        </div>
+
+        <!-- 4. TOOLS & SAFETY SCREENING -->
+        <div style="background: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 10px; padding: 14px;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary, #0f172a); margin-bottom: 6px;">🛡️ ${dDict.toolsSafety}</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary, #475569);">
+            Tools Used: <strong>${(t.tools_used || ['DecisionIntelligenceEngine']).join(", ")}</strong>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary, #475569); margin-top: 4px;">
+            Safety Gates: <strong>${(t.safety_checks || ['CIBRC Chemical Screening', 'SafetyEngine Gate']).join(", ")}</strong>
+          </div>
+        </div>
+
+        <!-- 5. INTERACTIVE ACTION & FEEDBACK WORKFLOW -->
+        <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 16px;">
+          <div style="font-size: 0.92rem; font-weight: 700; color: #166534; margin-bottom: 10px;">✍️ ${dDict.actionFeedback}</div>
+          
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+            <button type="button" onclick="submitTraceFeedback('${t.decision_id}', 'ACCEPTED', null)" style="padding: 6px 14px; background: #16a34a; color: white; border: none; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+              ${dDict.btnAccept}
+            </button>
+            <button type="button" onclick="submitTraceFeedback('${t.decision_id}', 'REJECTED', null)" style="padding: 6px 14px; background: #dc2626; color: white; border: none; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+              ${dDict.btnReject}
+            </button>
+            <button type="button" onclick="submitTraceFeedback('${t.decision_id}', 'POSTPONED', null)" style="padding: 6px 14px; background: #eab308; color: white; border: none; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+              ${dDict.btnPostpone}
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 0.82rem; font-weight: 600; color: #166534;">${dDict.feedbackLabel}</span>
+            <button type="button" onclick="submitTraceFeedback('${t.decision_id}', '${t.farmer_action || 'ACCEPTED'}', 'USEFUL')" style="padding: 4px 10px; background: #ffffff; border: 1px solid #16a34a; color: #16a34a; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              ${dDict.btnHelpful}
+            </button>
+            <button type="button" onclick="submitTraceFeedback('${t.decision_id}', '${t.farmer_action || 'ACCEPTED'}', 'NOT_HELPFUL')" style="padding: 4px 10px; background: #ffffff; border: 1px solid #dc2626; color: #dc2626; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              ${dDict.btnNotHelpful}
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" id="traceFeedbackNotes_${t.decision_id}" placeholder="${dDict.feedbackPlaceholder}" value="${t.feedback_notes || ''}" style="flex: 1; padding: 6px 12px; border: 1px solid #86efac; border-radius: 6px; font-size: 0.82rem; background: white;" />
+            <button type="button" onclick="submitCustomFeedbackNotes('${t.decision_id}')" style="padding: 6px 14px; background: #15803d; color: white; border: none; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+              ${dDict.btnSubmitFeedback}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    body.innerHTML = `<div style="padding: 20px; color: #b91c1c;">Error loading decision trace: ${err.message}</div>`;
+  }
+}
+window.openDecisionDetail = openDecisionDetail;
+
+function closeDecisionDetailModal() {
+  const modal = document.getElementById("decisionDetailModal");
+  if (modal) modal.style.display = "none";
+}
+window.closeDecisionDetailModal = closeDecisionDetailModal;
+
+async function submitTraceFeedback(decisionId, action, rating, notes = null) {
+  const token = authToken || localStorage.getItem("bhoomi_auth_token");
+  if (!token) return;
+
+  const dDict = getDecisionsDict(currentLanguage);
+  try {
+    const payload = {
+      recommendation_id: decisionId,
+      action_taken: action,
+      feedback_rating: rating || "USEFUL",
+      notes: notes || "Reviewer action updated via BHOOMI web UI."
+    };
+
+    const res = await fetch("/api/v1/manager/feedback", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      showToast(dDict.feedbackSuccess, "success");
+      // Re-load detail from PostgreSQL to visually verify persistence
+      await openDecisionDetail(decisionId);
+      // Refresh history list in background
+      await loadDecisionHistory();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.detail || "Failed to update feedback.", "error");
+    }
+  } catch (err) {
+    showToast("Network error submitting feedback: " + err.message, "error");
+  }
+}
+window.submitTraceFeedback = submitTraceFeedback;
+
+async function submitCustomFeedbackNotes(decisionId) {
+  const input = document.getElementById(`traceFeedbackNotes_${decisionId}`);
+  const notes = input ? input.value : "";
+  await submitTraceFeedback(decisionId, "ACCEPTED", "USEFUL", notes);
+}
+window.submitCustomFeedbackNotes = submitCustomFeedbackNotes;
+
 

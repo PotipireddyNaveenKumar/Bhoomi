@@ -1,3 +1,4 @@
+import os
 import pytest
 import uuid
 from decimal import Decimal
@@ -35,8 +36,13 @@ USER_B_ID = "user_b10_bob"
 PROF_B_ID = "prof_b10_bob"
 FARM_B_ID = "farm_b10_bob"
 
+USER_C_ID = "user_b10_charlie"
+PROF_C_ID = "prof_b10_charlie"
+FARM_C_ID = "farm_b10_charlie"
+
 token_a = ""
 token_b = ""
+token_c = ""
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -44,16 +50,16 @@ def setup_batch10_environment():
     """
     Sets up isolated test users, profiles, and farms for Batch 10 persistent trace verification.
     """
-    global token_a, token_b
+    global token_a, token_b, token_c
 
     async def _setup():
         async with AsyncSessionLocal() as db:
             # Clean up old test data
-            await db.execute(delete(RecommendationTrace).where(RecommendationTrace.farmer_id.in_([PROF_A_ID, PROF_B_ID])))
-            await db.execute(delete(FarmCrop).where(FarmCrop.farm_id.in_([FARM_A_ID, FARM_B_ID])))
-            await db.execute(delete(Farm).where(Farm.id.in_([FARM_A_ID, FARM_B_ID])))
-            await db.execute(delete(FarmerProfile).where(FarmerProfile.id.in_([PROF_A_ID, PROF_B_ID])))
-            await db.execute(delete(User).where(User.id.in_([USER_A_ID, USER_B_ID])))
+            await db.execute(delete(RecommendationTrace).where(RecommendationTrace.farmer_id.in_([PROF_A_ID, PROF_B_ID, PROF_C_ID])))
+            await db.execute(delete(FarmCrop).where(FarmCrop.farm_id.in_([FARM_A_ID, FARM_B_ID, FARM_C_ID])))
+            await db.execute(delete(Farm).where(Farm.id.in_([FARM_A_ID, FARM_B_ID, FARM_C_ID])))
+            await db.execute(delete(FarmerProfile).where(FarmerProfile.id.in_([PROF_A_ID, PROF_B_ID, PROF_C_ID])))
+            await db.execute(delete(User).where(User.id.in_([USER_A_ID, USER_B_ID, USER_C_ID])))
             await db.commit()
 
             # 1. Tenant Alice
@@ -122,6 +128,40 @@ def setup_batch10_environment():
                 irrigation_source="canal"
             )
             db.add(farm_b)
+            await db.flush()
+
+            # 3. Tenant Charlie (Clean slate, zero traces for honest empty state test)
+            user_c = User(
+                id=USER_C_ID,
+                phone_number="+919999900003",
+                phone_number_verified=True,
+                hashed_password=get_password_hash("pass123"),
+                is_active=True
+            )
+            db.add(user_c)
+            await db.flush()
+
+            prof_c = FarmerProfile(
+                id=PROF_C_ID,
+                user_id=user_c.id,
+                name="Charlie Test",
+                preferred_language="hi",
+                state="Maharashtra",
+                district="Nagpur",
+                village="Katol"
+            )
+            db.add(prof_c)
+            await db.flush()
+
+            farm_c = Farm(
+                id=FARM_C_ID,
+                farmer_id=prof_c.id,
+                farm_name="Charlie Orange Farm",
+                total_area_acres=Decimal("3.0"),
+                soil_type="black",
+                irrigation_source="drip"
+            )
+            db.add(farm_c)
             await db.commit()
 
     import asyncio
@@ -129,6 +169,7 @@ def setup_batch10_environment():
 
     token_a = create_access_token(USER_A_ID)
     token_b = create_access_token(USER_B_ID)
+    token_c = create_access_token(USER_C_ID)
     yield
 
 
@@ -482,3 +523,190 @@ class TestRecommendationTraceStoreBatch10:
         assert updated_trace.farmer_action == "ACCEPTED"
         assert updated_trace.feedback_rating == "USEFUL"
         assert "moisture optimal" in updated_trace.feedback_notes
+
+    def test_20_evaluate_unauthenticated_returns_401(self):
+        """20. Unauthenticated requests to /api/v1/decisions/evaluate return 401."""
+        res = client.post("/api/v1/decisions/evaluate", json={"intent": "IRRIGATION"})
+        assert res.status_code == 401
+
+    def test_21_evaluate_uses_jwt_farmer_identity_and_prevents_impersonation(self):
+        """21. POST /api/v1/decisions/evaluate enforces JWT identity even if body contains spoofed farmer_id."""
+        headers = {"Authorization": f"Bearer {token_a}"}
+        payload = {
+            "farmer_id": PROF_B_ID,  # Alice attempts to evaluate on behalf of Bob
+            "intent": "IRRIGATION"
+        }
+        res = client.post("/api/v1/decisions/evaluate", headers=headers, json=payload)
+        assert res.status_code == 200
+        data = res.json()
+        assert data["success"] is True
+        # Decisions generated must be owned by Alice (PROF_A_ID)
+        assert data["plan"]["farmer_id"] == PROF_A_ID
+
+    def test_22_evaluate_foreign_farm_rejected_403(self):
+        """22. Evaluating with farm_id not belonging to authenticated farmer returns 403 Forbidden."""
+        headers = {"Authorization": f"Bearer {token_a}"}
+        payload = {
+            "farm_id": FARM_B_ID,  # Alice tries to evaluate Bob's farm
+            "intent": "IRRIGATION"
+        }
+        res = client.post("/api/v1/decisions/evaluate", headers=headers, json=payload)
+        assert res.status_code == 403
+        assert "Specified farm does not belong" in res.json()["detail"]
+
+    def test_23_history_empty_state_no_synthetic_data(self):
+        """23. Farmer with no history returns honest empty list (no synthetic/mocked traces)."""
+        headers = {"Authorization": f"Bearer {token_c}"}
+        res = client.get("/api/v1/decisions/history", headers=headers)
+        assert res.status_code == 200
+        data = res.json()
+        assert data["success"] is True
+        assert data["total"] == 0
+        assert data["decisions"] == []
+
+    def test_24_history_filtering_by_decision_type(self):
+        """24. History can be filtered by decision_type."""
+        headers = {"Authorization": f"Bearer {token_a}"}
+        res = client.get("/api/v1/decisions/history?decision_type=IRRIGATION", headers=headers)
+        assert res.status_code == 200
+        data = res.json()
+        assert len(data["decisions"]) >= 1
+        for dec in data["decisions"]:
+            assert dec["decision_type"] == "IRRIGATION"
+
+        # Filtering by nonexistent type returns empty list
+        res_none = client.get("/api/v1/decisions/history?decision_type=NONEXISTENT_TYPE", headers=headers)
+        assert res_none.status_code == 200
+        assert len(res_none.json()["decisions"]) == 0
+
+    def test_25_history_api_pagination(self):
+        """25. History API respects limit and offset."""
+        headers = {"Authorization": f"Bearer {token_a}"}
+        res_p1 = client.get("/api/v1/decisions/history?limit=1&offset=0", headers=headers)
+        res_p2 = client.get("/api/v1/decisions/history?limit=1&offset=1", headers=headers)
+        assert res_p1.status_code == 200
+        assert res_p2.status_code == 200
+        d1 = res_p1.json()["decisions"]
+        d2 = res_p2.json()["decisions"]
+        assert len(d1) == 1
+        assert len(d2) == 1
+        assert d1[0]["decision_id"] != d2[0]["decision_id"]
+
+    def test_26_decision_detail_complete_contract(self):
+        """26. Decision detail returns all required contract fields with honest nulls."""
+        headers = {"Authorization": f"Bearer {token_a}"}
+        res = client.get("/api/v1/decisions/dec_structured_01", headers=headers)
+        assert res.status_code == 200
+        d = res.json()
+        # Verify required contract keys are present
+        required_keys = [
+            "decision_id", "decision_type", "created_at", "farm_id", "input_context",
+            "recommendation_text", "confidence", "rationale", "evidence", "rag_sources",
+            "tools_used", "model_versions", "xai_info", "data_freshness",
+            "calculations", "safety_checks", "assumptions", "farmer_action",
+            "feedback_rating", "outcome", "locale", "metadata_json"
+        ]
+        for key in required_keys:
+            assert key in d, f"Missing key {key} in decision detail response"
+        # Verify honest null for unprovided outcome
+        assert d["outcome"] is None
+        # Verify structured evidence and calculations
+        assert d["calculations"]["k_deficit_kg"] == 18.5
+        assert d["xai_info"]["shap_top_feature"] == "soil_k"
+
+    @pytest.mark.asyncio
+    async def test_27_farm_memory_v2_receives_decision_and_enriches_farm_state(self):
+        """27. Decision evaluation logs compact DECISION event in FarmMemoryV2, available in subsequent FarmState."""
+        from app.services.memory.farm_memory_v2 import FarmMemoryV2
+        from app.services.farm_manager.state_engine import FarmStateEngine
+
+        # Check FarmMemoryV2 has DECISION entries for Alice
+        dec_memories = FarmMemoryV2.get_memories_by_category(PROF_A_ID, "DECISION")
+        assert len(dec_memories) > 0
+
+        # Query FarmState for Alice and verify recent_events references past decision
+        async with AsyncSessionLocal() as db:
+            state = await FarmStateEngine.get_current_state(farmer_id=PROF_A_ID, db=db)
+            assert state.recent_events is not None
+            has_decision_ref = any("Previous" in ev for ev in state.recent_events)
+            assert has_decision_ref, f"recent_events does not contain past decision reference: {state.recent_events}"
+
+    def test_28_reviewer_ui_elements_in_html(self):
+        """28. Reviewer Web UI contains Decision History section and Detail Modal in index.html."""
+        index_path = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "web", "index.html")
+        assert os.path.exists(index_path)
+        with open(index_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        assert 'id="decisionHistorySection"' in content
+        assert 'id="decisionHistoryList"' in content
+        assert 'id="decisionDetailModal"' in content
+        assert 'id="decisionDetailBody"' in content
+        assert 'onclick="closeDecisionDetailModal()"' in content
+
+    def test_29_reviewer_ui_functions_and_localization_in_js(self):
+        """29. Reviewer Web UI implements decision functions and localized strings for en, te, hi in app.js."""
+        app_js_path = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "web", "static", "app.js")
+        assert os.path.exists(app_js_path)
+        with open(app_js_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Check function definitions
+        assert "loadDecisionHistory" in content
+        assert "openDecisionDetail" in content
+        assert "closeDecisionDetailModal" in content
+        assert "submitTraceFeedback" in content
+
+        # Check localization strings exist for en, te, hi
+        for lang in ["en", "te", "hi"]:
+            assert f"{lang}: {{" in content or f'"{lang}":' in content or f"'{lang}':" in content
+        assert "whyRationale" in content
+        assert "evidenceSensors" in content
+        assert "actionFeedback" in content
+
+    @pytest.mark.asyncio
+    async def test_30_feedback_persistence_across_fresh_session(self):
+        """30. Reviewer feedback updates PostgreSQL trace and persists across session disposal."""
+        headers = {"Authorization": f"Bearer {token_a}"}
+        # Update feedback via API
+        res = client.post("/api/v1/manager/feedback", headers=headers, json={
+            "recommendation_id": "dec_structured_01",
+            "action_taken": "ACCEPTED",
+            "feedback_rating": "USEFUL",
+            "notes": "Verified in fresh session test - excellent advice."
+        })
+        assert res.status_code == 200
+
+        # Read back in a completely fresh session
+        async with AsyncSessionLocal() as fresh_db:
+            repo = RecommendationRepository(fresh_db)
+            trace = await repo.get_by_decision_id("dec_structured_01")
+            assert trace is not None
+            assert trace.farmer_action == "ACCEPTED"
+            assert trace.feedback_rating == "USEFUL"
+            assert "fresh session test" in trace.feedback_notes
+
+        # Read back via API with fresh request
+        res2 = client.get("/api/v1/decisions/dec_structured_01", headers=headers)
+        assert res2.status_code == 200
+        d = res2.json()
+        assert d["farmer_action"] == "ACCEPTED"
+        assert d["feedback_rating"] == "USEFUL"
+        assert "fresh session test" in d["feedback_notes"]
+
+    def test_31_migration_chain_integrity(self):
+        """31. Verifies Alembic migration chain has exactly one head and valid revision."""
+        import subprocess, sys
+        backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        res = subprocess.run(
+            [sys.executable, "-m", "alembic", "heads"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True
+        )
+        assert res.returncode == 0
+        heads_output = res.stdout.strip()
+        assert "001_rec_traces" in heads_output
+        # Verify exactly one single head line
+        assert len(heads_output.splitlines()) == 1
+

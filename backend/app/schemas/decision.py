@@ -121,8 +121,8 @@ class DecisionPlan(BaseModel):
 
 
 class DecisionEvaluationRequest(BaseModel):
-    farmer_id: str = "farmer_demo_1"
-    farm_id: str = "farm_1"
+    farmer_id: Optional[str] = None
+    farm_id: Optional[str] = None
     intent: Optional[str] = None
     user_question: Optional[str] = None
 

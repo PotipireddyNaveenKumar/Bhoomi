@@ -60,15 +60,38 @@ def _format_trace_response(trace) -> DecisionTraceResponse:
 @router.post("/evaluate", response_model=DecisionEvaluationResponse)
 async def evaluate_farm_decisions(
     request: DecisionEvaluationRequest,
+    farmer: FarmerProfile = Depends(get_current_farmer_profile),
     db: AsyncSession = Depends(get_db)
 ):
     """
     Canonical Decision Intelligence Evaluation Endpoint.
     Evaluates FarmState, assesses operational risks, resolves conflicts deterministically,
     and returns a fully traceable DecisionPlan.
+    Enforces JWT authentication, farmer ownership, and farm authorization.
     """
+    # 1. Tenant & Identity Enforcement: Client-supplied farmer_id cannot impersonate another farmer
+    effective_farmer_id = farmer.id
+
+    # 2. Farm Ownership Enforcement
+    farm_repo = FarmRepository(db)
+    farmer_farms = await farm_repo.get_farms_by_farmer(farmer.id)
+    authorized_farm_ids = {f.id for f in farmer_farms} if farmer_farms else set()
+
+    effective_farm_id = request.farm_id
+    if effective_farm_id and effective_farm_id != "farm_1":
+        if authorized_farm_ids and effective_farm_id not in authorized_farm_ids:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access forbidden: Specified farm does not belong to the authenticated farmer."
+            )
+    else:
+        effective_farm_id = farmer_farms[0].id if farmer_farms else (request.farm_id or "farm_1")
+
     try:
-        state = await FarmStateEngine.get_current_state(farmer_id=request.farmer_id, db=db)
+        state = await FarmStateEngine.get_current_state(farmer_id=effective_farmer_id, db=db)
+        if effective_farm_id:
+            state.farm_id = effective_farm_id
+
         plan = await FarmDecisionEngine.generate_plan_async(state, db=db)
         risks = FarmRiskAggregator.evaluate_risks(state)
         missing_info = MissingInformationDetector.detect_missing(state=state, intent=request.intent)
@@ -80,6 +103,8 @@ async def evaluate_farm_decisions(
             conflicts_resolved=[],
             active_risks=[r.model_dump() for r in risks]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
