@@ -69,7 +69,8 @@ async def test_mock_provider():
     assert res.recommended_mandi == "Guntur Mandi (Benchmark)"
     assert res.best_net_realization == Decimal("12100.00")
     assert res.is_live is False
-    assert res.freshness == "CURRENT"
+    assert res.freshness == MarketFreshnessStatus.DEMO.value
+    assert res.is_synthetic is True
 
 
 # 3. Real Provider Configuration

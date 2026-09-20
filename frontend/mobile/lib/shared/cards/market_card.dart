@@ -8,10 +8,14 @@ class MarketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final commodity = data['commodity'] ?? 'Chilli';
-    final recommended = data['recommended_mandi'] ?? 'Guntur Mandi';
-    final bestNet = data['best_net_realization']?.toString() ?? '12120.00';
-    final reason = data['recommendation_reason'] ?? '';
+    final commodity = data['commodity'] ?? 'Crop';
+    final freshness = data['freshness'] ?? 'CURRENT';
+    final isUnavailable = freshness == 'UNAVAILABLE' || data['best_net_realization'] == null;
+    final isDemo = data['is_synthetic'] == true || freshness == 'DEMO';
+    final recommended = data['recommended_mandi'] ?? (isUnavailable ? 'Regional Mandi' : 'APMC Mandi');
+    final rawNet = data['best_net_realization'];
+    final bestNet = rawNet != null ? rawNet.toString() : null;
+    final reason = data['recommendation_reason'] ?? (isUnavailable ? 'Official mandi arrivals and spot quotes not reported for today.' : '');
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -19,7 +23,7 @@ class MarketCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(color: AppColors.accentGold.withOpacity(0.5)),
+        border: Border.all(color: isUnavailable ? Colors.amber.shade300 : AppColors.accentGold.withOpacity(0.5)),
         boxShadow: [
           BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
         ],
@@ -37,22 +41,37 @@ class MarketCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.lightGreen,
+                  color: isUnavailable ? Colors.amber.shade50 : (isDemo ? Colors.blue.shade50 : AppColors.lightGreen),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text("Best Net Value", style: TextStyle(color: AppColors.primaryGreen, fontWeight: FontWeight.bold, fontSize: 12)),
+                child: Text(
+                  isUnavailable ? "Data Unavailable" : (isDemo ? "Demo Data" : "Best Net Value"),
+                  style: TextStyle(
+                    color: isUnavailable ? Colors.amber.shade900 : (isDemo ? Colors.blue.shade800 : AppColors.primaryGreen),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             recommended,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.deepGreen),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isUnavailable ? Colors.grey.shade700 : AppColors.deepGreen
+            ),
           ),
           const SizedBox(height: 4),
           Text(
-            "₹$bestNet / quintal (Net Realization)",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppColors.primaryGreen),
+            isUnavailable ? "Live Rates Unavailable" : "₹$bestNet / quintal (Net Realization)",
+            style: TextStyle(
+              fontSize: isUnavailable ? 16 : 20,
+              fontWeight: FontWeight.w900,
+              color: isUnavailable ? Colors.grey.shade600 : AppColors.primaryGreen
+            ),
           ),
           if (reason.isNotEmpty) ...[
             const SizedBox(height: 10),

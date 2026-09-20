@@ -1193,11 +1193,38 @@ class BhoomiAgentOrchestrator:
             if "tomorrow" in text_lower or "రేపు" in text_lower or "कल" in text_lower or "நாளை" in text_lower or "ನಾಳೆ" in text_lower or "നാളെ" in text_lower:
                 target_f = fcasts[1] if len(fcasts) > 1 else (fcasts[0] if fcasts else {})
 
-            rain_prob = target_f.get("rain_probability") if target_f.get("rain_probability") is not None else (cur.get("rain_probability_percent") or 20)
+            if w_dict.get("freshness") == "UNAVAILABLE" or (cur.get("temperature_c") is None and not fcasts):
+                if active_lang == "te":
+                    spray_resp = (
+                        f"{loc} ప్రాంతానికి సంబంధించి తాజా వాతావరణ సమాచారం ప్రస్తుతం అందుబాటులో లేదు. "
+                        f"వర్షం మరియు గాలి వేగం సమాచారం లేకుండా పిచికారీ చేయడం సురక్షితం కాదు. "
+                        f"దయచేసి పిచికారీ చేయడానికి ముందు మీ స్థానిక వాతావరణ పరిస్థితులను పరిశీలించండి."
+                    )
+                elif active_lang == "hi":
+                    spray_resp = (
+                        f"{loc} के लिए लाइव मौसम डेटा अभी उपलब्ध नहीं है। "
+                        f"बारिश और हवा की गति की पुष्टि के बिना छिड़काव की सलाह देना सुरक्षित नहीं है। "
+                        f"कृपया खेत में मौसम की स्थिति देखकर ही निर्णय लें।"
+                    )
+                else:
+                    spray_resp = (
+                        f"Live weather data for {loc} is currently unavailable. "
+                        f"Cannot determine pesticide spray safety without verified wind and rain telemetry. "
+                        f"Please inspect local field weather conditions directly before spraying."
+                    )
+                return OrchestrationResult(
+                    response_text=spray_resp,
+                    visual_cards=[weather_card],
+                    voice_state="RESPONDING",
+                    trace_id=intent.trace_id,
+                    provider_mode="UNAVAILABLE"
+                )
+
+            rain_prob = target_f.get("rain_probability") if target_f.get("rain_probability") is not None else (cur.get("rain_probability_percent") or 0)
             cond = target_f.get("condition") or cur.get("weather_condition") or "Partly Cloudy"
-            temp = target_f.get("temp_max") or cur.get("temperature_c") or 31.0
-            wind_spd = cur.get("wind_speed_kmh") or 10.0
-            rainfall = target_f.get("rainfall_mm") or 0.0
+            temp = target_f.get("temp_max") if target_f.get("temp_max") is not None else (cur.get("temperature_c") if cur.get("temperature_c") is not None else 30.0)
+            wind_spd = cur.get("wind_speed_kmh") if cur.get("wind_speed_kmh") is not None else 8.0
+            rainfall = target_f.get("rainfall_mm") if target_f.get("rainfall_mm") is not None else 0.0
             target_date = target_f.get("date", "Tomorrow")
 
             # Deterministic Agronomic Safety Assessment
@@ -1301,6 +1328,30 @@ class BhoomiAgentOrchestrator:
             weather_card = await ToolRegistry.execute_tool("get_current_weather", {"location": loc})
             w_dict = weather_card.get("data", {})
             cur = w_dict.get("current", {})
+            if w_dict.get("freshness") == "UNAVAILABLE" or (cur.get("temperature_c") is None and not w_dict.get("forecast_3_days")):
+                if active_lang == "te":
+                    weather_resp = f"{loc} ప్రాంతానికి సంబంధించి తాజా వాతావరణ సమాచారం ప్రస్తుతం అందుబాటులో లేదు. దయచేసి కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి."
+                elif active_lang == "hi":
+                    weather_resp = f"{loc} के लिए लाइव मौसम जानकारी अभी उपलब्ध नहीं है। कृपया थोड़ी देर बाद पुनः प्रयास करें।"
+                else:
+                    weather_resp = f"Live weather data for {loc} is currently unavailable. Please verify local sky conditions directly."
+                RecommendationTraceStore.record_trace(RecommendationRecord(
+                    farmer_id=farmer_id,
+                    farm_id=farm_id,
+                    intent="WEATHER_QUERY",
+                    tools_used=["get_current_weather"],
+                    recommendation_text=weather_resp,
+                    confidence=0.95
+                ))
+                FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, weather_resp, intent="WEATHER_QUERY")
+                return OrchestrationResult(
+                    response_text=weather_resp,
+                    visual_cards=[weather_card],
+                    voice_state="RESPONDING",
+                    trace_id=intent.trace_id,
+                    provider_mode="UNAVAILABLE"
+                )
+
             temp = cur.get("temperature_c") if cur.get("temperature_c") is not None else cur.get("temperature_celsius", 31.5)
             cond = cur.get("weather_condition") or cur.get("condition", "Partly Cloudy")
             rain_p = cur.get("rain_probability_percent") if cur.get("rain_probability_percent") is not None else cur.get("precipitation_probability", 40)
@@ -1338,6 +1389,21 @@ class BhoomiAgentOrchestrator:
             weather_card = await ToolRegistry.execute_tool("get_current_weather", {"location": loc})
             w_dict = weather_card.get("data", {})
             cur = w_dict.get("current", {})
+            if w_dict.get("freshness") == "UNAVAILABLE" or (cur.get("rain_probability_percent") is None and cur.get("precipitation_probability") is None):
+                if active_lang == "te":
+                    irr_resp = f"{loc}లో వాతావరణ సమాచారం ప్రస్తుతం అందుబాటులో లేదు. నీరు పెట్టే ముందు నేలలోని తేమను ప్రత్యక్షంగా పరిశీలించి నిర్ణయం తీసుకోండి."
+                elif active_lang == "hi":
+                    irr_resp = f"{loc} के लिए मौसम डेटा अभी उपलब्ध नहीं है। सिंचाई करने से पहले खेत में मिट्टी की नमी की जांच अवश्य करें।"
+                else:
+                    irr_resp = f"Weather telemetry for {loc} is currently unavailable. Please check soil moisture directly at root depth before irrigating {crop_name}."
+                return OrchestrationResult(
+                    response_text=irr_resp,
+                    visual_cards=[weather_card],
+                    voice_state="RESPONDING",
+                    trace_id=intent.trace_id,
+                    provider_mode="UNAVAILABLE"
+                )
+
             rain_p = cur.get("rain_probability_percent") if cur.get("rain_probability_percent") is not None else cur.get("precipitation_probability", 20)
             soil_type = getattr(context, "soil_type", None) or "field"
             irr_resp = cls._get_localized_msg(
@@ -1448,6 +1514,7 @@ class BhoomiAgentOrchestrator:
                 "state": st
             })
             m_data = market_card.get("data", {})
+            m_freshness = m_data.get("freshness", "CURRENT")
             rec_mandi = m_data.get("recommended_mandi", f"{dist} Mandi")
             mandi_opts = m_data.get("mandi_options", [])
             modal_p = None
@@ -1455,18 +1522,46 @@ class BhoomiAgentOrchestrator:
                 first_opt = mandi_opts[0]
                 if isinstance(first_opt, dict):
                     modal_p = first_opt.get("modal_price_per_quintal")
-            if not modal_p:
-                crop_bm = cls.CROP_ECONOMIC_BENCHMARKS.get(crop.lower(), cls.CROP_ECONOMIC_BENCHMARKS["chilli"])
-                modal_p = m_data.get("best_net_realization") or m_data.get("benchmark_modal_price") or crop_bm["benchmark_price_qtl"]
+            if not modal_p and m_data.get("best_net_realization"):
+                modal_p = m_data.get("best_net_realization")
+
+            # Fail-safe: When market data is UNAVAILABLE or no modal price exists, NEVER fabricate benchmark prices
+            if m_freshness == "UNAVAILABLE" or modal_p is None:
+                if active_lang == "te":
+                    market_resp = f"{dist} మార్కెట్‌లో {crop} తాజా మండి ధరలు ప్రస్తుతం అధికారిక అగ్‌మార్క్‌నెట్ ఫీడ్ ద్వారా అందుబాటులో లేవు. వ్యాపారులకు విక్రయించే ముందు దయచేసి స్థానిక APMC మార్కెట్ యార్డ్‌ను సంప్రదించండి."
+                elif active_lang == "hi":
+                    market_resp = f"{dist} मंडी में {crop} के ताज़ा भाव आधिकारिक एगमार्कनेट फ़ीड पर अभी उपलब्ध नहीं हैं। कृपया स्थानीय APMC मंडी समिति से वर्तमान भाव की पुष्टि करें।"
+                else:
+                    market_resp = f"Live mandi rates for {crop} are currently unavailable from official Agmarknet price feeds in {dist}. Please verify spot quotes directly with your local APMC market committee."
+
+                RecommendationTraceStore.record_trace(RecommendationRecord(
+                    farmer_id=farmer_id,
+                    farm_id=farm_id,
+                    intent="MARKET_QUERY",
+                    tools_used=["get_mandi_prices"],
+                    recommendation_text=market_resp,
+                    confidence=0.96
+                ))
+                FarmerDialogueManager.record_turn(session_id, farmer_id, user_text, market_resp, intent="MARKET_QUERY")
+                return OrchestrationResult(
+                    response_text=market_resp,
+                    visual_cards=[market_card],
+                    voice_state="RESPONDING",
+                    trace_id=intent.trace_id,
+                    provider_mode="UNAVAILABLE"
+                )
+
             best_net = m_data.get("best_net_realization") or modal_p
             src_mkt = m_data.get("source", "AGMARKNET / data.gov.in")
-            
+            is_synth = m_data.get("is_synthetic", False) or m_freshness == "DEMO"
+            src_suffix = f" [DEMO / SYNTHETIC DATA]" if is_synth else ""
+
             if active_lang == "te":
-                market_resp = f"{rec_mandi}లో {crop} ప్రస్తుత మోడల్ ధర క్వింటాలుకు ₹{Decimal(str(modal_p)):,.2f}. రవాణా ఖర్చులు తీసివేస్తే మీ నికర రాబడి ₹{Decimal(str(best_net)):,.2f}/క్వింటాల్ అవుతుంది.\n\n[ఆధారం: {src_mkt}]"
+                market_resp = f"{rec_mandi}లో {crop} ప్రస్తుత మోడల్ ధర క్వింటాలుకు ₹{Decimal(str(modal_p)):,.2f}. రవాణా ఖర్చులు తీసివేస్తే మీ నికర రాబడి ₹{Decimal(str(best_net)):,.2f}/క్వింటాల్ అవుతుంది.\n\n[ఆధారం: {src_mkt}{src_suffix}]"
             elif active_lang == "hi":
-                market_resp = f"{rec_mandi} में {crop} का वर्तमान मॉडल भाव ₹{Decimal(str(modal_p)):,.2f}/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹{Decimal(str(best_net)):,.2f}/क्विंटल रहेगी।\n\n[स्रोत: {src_mkt}]"
+                market_resp = f"{rec_mandi} में {crop} का वर्तमान मॉडल भाव ₹{Decimal(str(modal_p)):,.2f}/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹{Decimal(str(best_net)):,.2f}/क्विंटल रहेगी।\n\n[स्रोत: {src_mkt}{src_suffix}]"
             else:
-                market_resp = f"Current {rec_mandi} modal price for {crop} is ₹{Decimal(str(modal_p)):,.2f}/quintal. Considering transport deductions, your Net Realization is ₹{Decimal(str(best_net)):,.2f}/quintal.\n\n[Source: {src_mkt}]"
+                market_resp = f"Current {rec_mandi} modal price for {crop} is ₹{Decimal(str(modal_p)):,.2f}/quintal. Considering transport deductions, your Net Realization is ₹{Decimal(str(best_net)):,.2f}/quintal.\n\n[Source: {src_mkt}{src_suffix}]"
 
             RecommendationTraceStore.record_trace(RecommendationRecord(
                 farmer_id=farmer_id,

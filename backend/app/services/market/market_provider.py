@@ -23,7 +23,8 @@ class MarketDataProvider(ABC):
 class MockMarketDataProvider(MarketDataProvider):
     """
     Deterministic mock market data provider.
-    Used for automated unit testing, CI/CD, and offline demonstration.
+    Used exclusively for automated unit testing, CI/CD, and explicit offline demonstration.
+    All outputs are strictly labeled as DEMO / SYNTHETIC.
     """
     async def fetch_prices(
         self,
@@ -51,10 +52,11 @@ class MockMarketDataProvider(MarketDataProvider):
                 net_realization_per_quintal=Decimal("12100.00"),
                 arrival_date=today.strftime("%d/%m/%Y"),
                 price_date=today,
-                source="Mock Agricultural Market System",
+                source="Demo / Synthetic Benchmark (Offline Demonstration)",
                 retrieved_at=now_utc,
-                freshness=MarketFreshnessStatus.CURRENT.value,
+                freshness=MarketFreshnessStatus.DEMO.value,
                 is_live=False,
+                is_synthetic=True,
             ),
             MandiPrice(
                 mandi_name="Khammam Mandi",
@@ -71,10 +73,11 @@ class MockMarketDataProvider(MarketDataProvider):
                 net_realization_per_quintal=Decimal("11990.00"),
                 arrival_date=today.strftime("%d/%m/%Y"),
                 price_date=today,
-                source="Mock Agricultural Market System",
+                source="Demo / Synthetic Benchmark (Offline Demonstration)",
                 retrieved_at=now_utc,
-                freshness=MarketFreshnessStatus.CURRENT.value,
+                freshness=MarketFreshnessStatus.DEMO.value,
                 is_live=False,
+                is_synthetic=True,
             ),
             MandiPrice(
                 mandi_name="Warangal Mandi",
@@ -91,15 +94,17 @@ class MockMarketDataProvider(MarketDataProvider):
                 net_realization_per_quintal=Decimal("11340.00"),
                 arrival_date=today.strftime("%d/%m/%Y"),
                 price_date=today,
-                source="Mock Agricultural Market System",
+                source="Demo / Synthetic Benchmark (Offline Demonstration)",
                 retrieved_at=now_utc,
-                freshness=MarketFreshnessStatus.CURRENT.value,
+                freshness=MarketFreshnessStatus.DEMO.value,
                 is_live=False,
+                is_synthetic=True,
             ),
         ]
 
         best_option = max(options, key=lambda x: x.net_realization_per_quintal)
         reason = (
+            f"[DEMO MODE] Synthetic benchmark data for demonstration only. "
             f"Even though Khammam Mandi displays a slightly higher nominal modal price (₹12,400), "
             f"{best_option.mandi_name} yields the highest Net Realization of ₹{best_option.net_realization_per_quintal:,.2f}/quintal "
             f"after accounting for transport costs (₹{best_option.transport_cost_per_quintal}/q vs ₹380/q)."
@@ -113,34 +118,43 @@ class MockMarketDataProvider(MarketDataProvider):
             best_net_realization=best_option.net_realization_per_quintal,
             mandi_options=options,
             recommendation_reason=reason,
-            source="Mock Agricultural Market System",
-            freshness=MarketFreshnessStatus.CURRENT.value,
+            source="Demo / Synthetic Benchmark (Offline Demonstration)",
+            freshness=MarketFreshnessStatus.DEMO.value,
             retrieved_at=now_utc,
             is_live=False,
+            is_synthetic=True,
+            provider_status="DEMO",
         )
 
 class MarketProviderFactory:
     """
-    Factory resolving active MarketDataProvider based on MARKET_PROVIDER env variable.
-    Preserves MockMarketDataProvider as safe fallback for offline tests and CI/CD.
+    Factory resolving active MarketDataProvider.
+    Strictly forbids mock market data in production (DEMO_MODE=False).
+    Preserves MockMarketDataProvider only for explicit demo mode and isolated tests.
     """
     @classmethod
     def get_provider(cls, provider_name: Optional[str] = None) -> MarketDataProvider:
         from app.services.market.real_provider import RealMarketDataProvider
 
+        is_prod = settings.APP_ENV in ["production", "staging"] or getattr(settings, "is_production", False)
+        
         target_name = (
             provider_name or
             os.environ.get("MARKET_PROVIDER") or
             settings.MARKET_PROVIDER or
-            "mock"
+            ("data_gov" if is_prod else "mock")
         ).lower().strip()
 
-        if target_name in ("data_gov", "real", "agmarknet") or settings.APP_ENV in ["production", "staging"]:
-            if "DATA_GOV_API_KEY" in os.environ:
-                api_key = os.environ["DATA_GOV_API_KEY"]
-            else:
-                api_key = settings.DATA_GOV_API_KEY
+        # In production or staging, NEVER use MockMarketDataProvider
+        if is_prod:
+            if target_name == "mock":
+                logger.warning("MockMarketDataProvider strictly forbidden in %s; activating RealMarketDataProvider.", settings.APP_ENV)
+            api_key = os.environ.get("DATA_GOV_API_KEY") or settings.DATA_GOV_API_KEY
+            return RealMarketDataProvider(api_key=api_key)
 
+        # In non-production, return RealMarketDataProvider when requested
+        if target_name in ("data_gov", "real", "agmarknet"):
+            api_key = os.environ.get("DATA_GOV_API_KEY") or settings.DATA_GOV_API_KEY
             return RealMarketDataProvider(api_key=api_key)
 
         return MockMarketDataProvider()

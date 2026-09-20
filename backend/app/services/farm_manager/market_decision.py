@@ -36,7 +36,7 @@ class MarketDecisionEngine:
         freshness: str = "CURRENT"
     ) -> MarketDecisionOutput:
         # Handle UNAVAILABLE market data
-        if freshness == "UNAVAILABLE" or current_modal_price is None:
+        if freshness in ("UNAVAILABLE", "insufficient_data") or (current_modal_price is None and (not mandi_options)):
             return MarketDecisionOutput(
                 crop_name=crop_name,
                 decision="INSUFFICIENT_DATA",

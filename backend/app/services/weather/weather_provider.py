@@ -115,13 +115,16 @@ class MockWeatherProvider(WeatherProvider):
             longitude=lon or 80.4365,
             current=current,
             forecast_3_days=forecast,
-            source="IMD Agro-Meteorological Advisory (Certified Offline Cache)",
+            source="Demo / Synthetic Weather Advisory (Offline Demonstration)",
             target_date=tomorrow_iso,
             target_date_range=f"{today_iso} to {day3_iso}",
             timezone="Asia/Kolkata",
             provider_type="MOCK",
-            freshness=FreshnessStatus.CURRENT.value,
+            freshness=FreshnessStatus.DEMO.value,
             retrieved_at=now_utc.isoformat(),
+            provider_status="DEMO",
+            requires_api_key=False,
+            configured=True,
             spray_window_evaluation=spray_eval,
             irrigation_evaluation=irr_eval
         )

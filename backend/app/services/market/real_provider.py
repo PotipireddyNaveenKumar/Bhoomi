@@ -231,7 +231,9 @@ class RealMarketDataProvider(MarketDataProvider):
                 source="AGMARKNET / data.gov.in Official Price Feed",
                 freshness=MarketFreshnessStatus.CURRENT.value,
                 retrieved_at=now_utc.isoformat(),
-                is_live=True
+                is_live=True,
+                is_synthetic=False,
+                provider_status="ACTIVE"
             )
 
             # Store in cache
@@ -295,5 +297,7 @@ class RealMarketDataProvider(MarketDataProvider):
             source="Unavailable",
             freshness=MarketFreshnessStatus.UNAVAILABLE.value,
             retrieved_at=now_utc.isoformat(),
-            is_live=False
+            is_live=False,
+            is_synthetic=False,
+            provider_status="UNAVAILABLE"
         )

@@ -11,6 +11,8 @@ class MarketFreshnessStatus(str, Enum):
     UNAVAILABLE = "UNAVAILABLE"
     HISTORICAL = "HISTORICAL"
     INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+    DEMO = "DEMO"
+    SYNTHETIC = "SYNTHETIC"
 
 class MandiPrice(BaseModel):
     mandi_name: str
@@ -34,6 +36,7 @@ class MandiPrice(BaseModel):
     retrieved_at: Optional[str] = None
     freshness: str = MarketFreshnessStatus.CURRENT.value
     is_live: bool = False
+    is_synthetic: bool = False
     status: str = "VALID"  # VALID or INSUFFICIENT_DATA
 
     @property
@@ -84,5 +87,7 @@ class MarketComparisonResponse(BaseModel):
     freshness: str = MarketFreshnessStatus.CURRENT.value
     retrieved_at: Optional[str] = None
     is_live: bool = False
+    is_synthetic: bool = False
+    provider_status: Optional[str] = None
     market_decision: Optional[str] = "COMPARE MARKETS"
     decision_rationale: Optional[str] = None

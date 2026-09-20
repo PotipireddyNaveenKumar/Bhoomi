@@ -256,6 +256,9 @@ class RealWeatherProvider(WeatherProvider):
             provider_type="OPENWEATHERMAP",
             freshness=FreshnessStatus.CURRENT.value,
             retrieved_at=now_utc.isoformat(),
+            provider_status="ACTIVE",
+            requires_api_key=True,
+            configured=True,
             spray_window_evaluation=spray_eval,
             irrigation_evaluation=irr_eval
         )
@@ -393,6 +396,9 @@ class RealWeatherProvider(WeatherProvider):
             provider_type="OPEN_METEO",
             freshness=FreshnessStatus.CURRENT.value,
             retrieved_at=now_utc.isoformat(),
+            provider_status="ACTIVE",
+            requires_api_key=False,
+            configured=True,
             spray_window_evaluation=spray_eval,
             irrigation_evaluation=irr_eval
         )
@@ -490,6 +496,18 @@ class RealWeatherProvider(WeatherProvider):
             "Farmer must physically verify root-zone moisture at 15 cm depth before valve operation."
         ]
 
+        # If all rain telemetry is missing/null, cannot make an automated irrigation recommendation
+        if today_rain_prob is None and tomorrow_rain_prob is None and today_rainfall_mm is None and tomorrow_rainfall_mm is None:
+            return {
+                "decision": "INSUFFICIENT_DATA",
+                "should_irrigate": None,
+                "recommendation_type": "INSUFFICIENT_DATA",
+                "today_rain_probability": None,
+                "tomorrow_rain_probability": None,
+                "assumptions": assumptions,
+                "explanation": "Meteorological indicators unavailable. Inspect root-zone soil moisture directly before operating irrigation valves."
+            }
+
         # Tomorrow rain check: if tomorrow has >=40% rain or >=5mm precipitation, defer today
         if (tomorrow_rain_prob is not None and tomorrow_rain_prob >= 40) or (tomorrow_rainfall_mm is not None and tomorrow_rainfall_mm >= 5.0):
             should_irrigate = False
@@ -586,6 +604,9 @@ class RealWeatherProvider(WeatherProvider):
             provider_type="UNAVAILABLE",
             freshness=FreshnessStatus.UNAVAILABLE.value,
             retrieved_at=now_utc.isoformat(),
+            provider_status="UNAVAILABLE",
+            requires_api_key=False,
+            configured=True,
             spray_window_evaluation=spray_eval,
             irrigation_evaluation=irr_eval
         )

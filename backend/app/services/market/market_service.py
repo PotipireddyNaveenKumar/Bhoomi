@@ -38,10 +38,20 @@ class MarketService:
     @classmethod
     def get_provider_status(cls) -> dict:
         from app.core.config import settings
-        primary = (settings.MARKET_PROVIDER or "data_gov").lower()
-        fallback = "mock"
+        is_prod = settings.APP_ENV in ["production", "staging"] or getattr(settings, "is_production", False) or not settings.DEMO_MODE
+        primary = (settings.MARKET_PROVIDER or ("data_gov" if is_prod else "mock")).lower()
+        if is_prod and primary == "mock":
+            primary = "data_gov"
+        fallback = "none" if is_prod else "mock"
         configured = bool(settings.DATA_GOV_API_KEY and not settings.DATA_GOV_API_KEY.startswith("your_"))
-        live_status = "ACTIVE" if (configured or primary == "mock") else "DEGRADED"
+        
+        if configured:
+            live_status = "ACTIVE"
+        elif not is_prod and primary == "mock":
+            live_status = "DEMO"
+        else:
+            live_status = "UNAVAILABLE"
+
         return {
             "primary_market_provider": primary,
             "fallback_market_provider": fallback,

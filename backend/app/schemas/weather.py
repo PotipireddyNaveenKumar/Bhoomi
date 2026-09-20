@@ -8,6 +8,8 @@ class FreshnessStatus(str, Enum):
     CACHED = "CACHED"
     STALE = "STALE"
     UNAVAILABLE = "UNAVAILABLE"
+    DEMO = "DEMO"
+    SYNTHETIC = "SYNTHETIC"
 
 class WeatherCurrent(BaseModel):
     temperature_c: Optional[float] = None
@@ -53,6 +55,9 @@ class WeatherResponse(BaseModel):
     provider_type: Optional[str] = None
     freshness: str = FreshnessStatus.CURRENT.value
     retrieved_at: Optional[str] = None
+    provider_status: Optional[str] = None
+    requires_api_key: bool = False
+    configured: bool = True
     spray_window_evaluation: Optional[Dict[str, Any]] = None
     irrigation_evaluation: Optional[Dict[str, Any]] = None
 

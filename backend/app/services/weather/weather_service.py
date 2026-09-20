@@ -32,13 +32,42 @@ class WeatherService:
     @classmethod
     def get_provider_status(cls) -> dict:
         from app.core.config import settings
-        primary = (settings.WEATHER_PROVIDER or "openweathermap").lower()
-        fallback = "openmeteo"
-        configured = bool(settings.WEATHER_API_KEY and not settings.WEATHER_API_KEY.startswith("your_"))
-        live_status = "ACTIVE" if (configured or primary in ("openmeteo", "mock")) else "DEGRADED"
+        primary = (settings.WEATHER_PROVIDER or "openmeteo").lower()
+        is_prod = settings.APP_ENV in ["production", "staging"] or getattr(settings, "is_production", False) or not settings.DEMO_MODE
+        
+        if is_prod and primary == "mock":
+            primary = "openmeteo"
+
+        if primary == "openmeteo":
+            provider_type = "public"
+            requires_key = False
+            configured = True
+            fallback = "none" if is_prod else "mock"
+            live_status = "ACTIVE"
+        elif primary in ("openweathermap", "real"):
+            provider_type = "commercial"
+            requires_key = True
+            configured = bool(settings.WEATHER_API_KEY and not settings.WEATHER_API_KEY.startswith("your_"))
+            fallback = "openmeteo"
+            live_status = "ACTIVE" if configured else "DEGRADED"
+        elif primary == "mock":
+            provider_type = "mock"
+            requires_key = False
+            configured = True
+            fallback = "none"
+            live_status = "DEMO"
+        else:
+            provider_type = "custom"
+            requires_key = False
+            configured = True
+            fallback = "openmeteo"
+            live_status = "ACTIVE"
+
         return {
             "primary_weather_provider": primary,
             "fallback_weather_provider": fallback,
+            "weather_provider_type": provider_type,
+            "weather_requires_api_key": requires_key,
             "weather_live_status": live_status,
             "weather_latest_provider_used": cls.latest_provider_used,
             "weather_configured": configured
