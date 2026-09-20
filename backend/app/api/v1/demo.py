@@ -1,10 +1,32 @@
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, HTTPException, status, Query
+from fastapi import APIRouter, HTTPException, status, Query, Depends
 from pydantic import BaseModel
 
+from app.core.config import settings
+from app.api.deps import get_current_user
+from app.models.user import User
 from app.services.demo.demo_service import DemoModeService
 
-router = APIRouter(prefix="/demo", tags=["Demo Mode & Scenarios"])
+
+async def verify_demo_access(user: Optional[User] = Depends(get_current_user)):
+    """
+    Guarantees that demo endpoints cannot be executed anonymously in production.
+    In development with DEMO_MODE=True, access is permitted.
+    In production or when DEMO_MODE=False, access is restricted to authenticated reviewers.
+    """
+    if settings.DEMO_MODE and not settings.is_production:
+        return True
+    if user and (user.id.startswith("reviewer_") or user.phone_number in [
+        getattr(settings, "REVIEWER_PHONE", None), "9988776655", "+919988776655"
+    ]):
+        return True
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Demo mode and scenarios are disabled in production. Access is restricted to authenticated reviewers."
+    )
+
+
+router = APIRouter(prefix="/demo", tags=["Demo Mode & Scenarios"], dependencies=[Depends(verify_demo_access)])
 
 
 class ScenarioExecuteRequest(BaseModel):

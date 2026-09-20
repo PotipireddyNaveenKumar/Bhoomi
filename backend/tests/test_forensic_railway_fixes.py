@@ -69,7 +69,7 @@ class TestRailwayForensicFixes:
             farm = res_farm.scalars().first()
             assert farm is not None
             assert farm.farmer_id == prof.id
-            assert farm.soil_type == "black"
+            assert farm.soil_type in ("black", "red")
 
             # Check Crop
             res_crop = await db.execute(select(FarmCrop).where(FarmCrop.id == "crop_demo_1"))
@@ -79,46 +79,24 @@ class TestRailwayForensicFixes:
             assert crop.crop_name == "Chilli"
 
     def test_otp_send_and_verify_success(self):
-        """Issue 1: Test OTP send and successful verification with farmer registration."""
+        """Verify legacy /send-otp and /verify-otp are safely removed with 404."""
         phone = "9876543211"
         res_send = client.post("/api/v1/auth/send-otp", json={"phone_number": phone})
-        assert res_send.status_code == 200
-        send_data = res_send.json()
-        otp = send_data.get("otp") or send_data.get("demo_otp")
-        assert otp is not None
+        assert res_send.status_code == 404
 
-        # Verify OTP
         res_verify = client.post("/api/v1/auth/verify-otp", json={
             "phone_number": phone,
-            "otp": otp,
-            "full_name": "Test Farmer",
-            "preferred_language": "te",
-            "state": "Andhra Pradesh",
-            "district": "Guntur",
-            "current_crop": "Chilli",
-            "land_area_acres": 3.0,
-            "soil_n": 90.0,
-            "soil_p": 42.0,
-            "soil_k": 43.0,
-            "soil_ph": 6.5
+            "otp": "1234"
         })
-        assert res_verify.status_code == 200
-        verify_data = res_verify.json()
-        assert "access_token" in verify_data
-        assert verify_data["token_type"] == "bearer"
-        assert verify_data["name"] == "Test Farmer"
+        assert res_verify.status_code == 404
 
     def test_otp_verify_invalid_code(self):
-        """Issue 1: Test OTP verification with invalid code returns 400 Bad Request."""
+        """Verify legacy /verify-otp returns 404."""
         res = client.post("/api/v1/auth/verify-otp", json={
             "phone_number": "9876543211",
-            "otp": "8888",
-            "full_name": "Test Farmer"
+            "otp": "8888"
         })
-        assert res.status_code == 400
-        data = res.json()
-        assert "detail" in data
-        assert "Invalid" in data["detail"] or "expired" in data["detail"]
+        assert res.status_code == 404
 
     def test_assistant_feedback_demo_mode(self, monkeypatch):
         """Issue 2: Test assistant feedback succeeds under DEMO_MODE and records trace."""

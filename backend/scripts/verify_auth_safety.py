@@ -21,7 +21,8 @@ if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
 from app.core.config import Settings
-from app.api.v1.auth import SendOtpRequest, VerifyOtpRequest, send_otp, verify_otp, _OTP_STORE
+from app.api.v1.auth import signup_request_otp, login_request_otp
+from app.schemas.auth import PhoneOtpRequest
 
 async def run_auth_verification():
     print("=" * 80)
@@ -39,43 +40,32 @@ async def run_auth_verification():
     # 2. Test Production SECRET_KEY & DATABASE_URL enforcement
     print("\n2. Production Security Validation:")
     try:
-        # In production without strong SECRET_KEY or DATABASE_URL, Settings must raise ValueError
         Settings(ENVIRONMENT="production", SECRET_KEY="short", DATABASE_URL="sqlite:///./test.db")
         print("   ERROR: Production settings allowed weak secret or SQLite!")
     except ValueError as ve:
         print(f"   Enforcement Confirmed: Production correctly rejected insecure config -> {ve}")
 
-    # 3. Test Development/Staging OTP Leakage vs Production OTP Suppression
+    # 3. Test Production OTP Leakage Suppression
     print("\n3. OTP API Response Leakage Test:")
     from app.core.config import settings
+    from unittest.mock import MagicMock
+    from starlette.requests import Request
     from app.db.session import AsyncSessionLocal
     orig_env = settings.ENVIRONMENT
     orig_app_env = settings.APP_ENV
 
     async with AsyncSessionLocal() as session:
-        # Non-production test
-        os.environ["ENVIRONMENT"] = "development"
-        os.environ["APP_ENV"] = "development"
-        dev_otp_res = await send_otp(SendOtpRequest(phone_number="9876543210"), db=session)
-        print(f"   Dev Mode send_otp response keys: {list(dev_otp_res.keys())}")
-        print(f"   Dev Mode returned otp: {dev_otp_res.get('otp')}")
+        mock_req = MagicMock(spec=Request)
+        mock_req.client.host = "127.0.0.1"
 
-        # Production test (mock production state)
+        # Production test
         os.environ["ENVIRONMENT"] = "production"
         os.environ["APP_ENV"] = "production"
-        prod_otp_res = await send_otp(SendOtpRequest(phone_number="9876543211"), db=session)
-        print(f"   Prod Mode send_otp response keys: {list(prod_otp_res.keys())}")
-        has_otp_in_prod = any(k in prod_otp_res for k in ("otp", "otp_code", "demo_otp"))
+        prod_otp_res = await signup_request_otp(PhoneOtpRequest(phone_number="+919876543211"), request=mock_req, db=session)
+        print(f"   Prod Mode signup_request_otp response: {prod_otp_res}")
+        has_otp_in_prod = hasattr(prod_otp_res, "otp") or hasattr(prod_otp_res, "code")
         print(f"   Prod Mode leaked OTP code: {has_otp_in_prod} (Must be False)")
         assert not has_otp_in_prod, "Production mode must NOT leak OTP in API response!"
-
-        # 4. Evaluator OTP Code Rejection in Production
-        print("\n4. Evaluator OTP Rejection Test:")
-        try:
-            await verify_otp(VerifyOtpRequest(phone_number="9876543211", otp="1234"), db=session)
-            print("   ERROR: Production verify_otp accepted evaluator code 1234!")
-        except HTTPException as he:
-            print(f"   Production rejection confirmed: Evaluator code 1234 rejected with HTTP {he.status_code}: {he.detail}")
 
     # Restore environment
     if orig_env:

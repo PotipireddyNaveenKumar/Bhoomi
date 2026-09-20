@@ -496,18 +496,23 @@ class TestProductionAuthSystem:
                 assert settings.DEMO_MODE is False
 
     # -------------------------------------------------------------------------
-    # 23. Production Evaluator OTP Disabled Behavior
+    # 23. Legacy send-otp removed and canonical request-otp safe
     # -------------------------------------------------------------------------
     def test_23_production_evaluator_otp_disabled(self):
-        with patch.object(settings, "ENVIRONMENT", "production"):
-            with patch.object(settings, "ALLOW_EVALUATOR_OTP", False):
-                res = client.post("/api/v1/auth/send-otp", json={"phone_number": self._gen_phone()})
-                assert res.status_code == 200
-                data = res.json()
-                assert "otp" not in data
-                assert "otp_code" not in data
-                assert "demo_otp" not in data
-                assert data["auth_mode"] == "production"
+        with patch.object(settings, "ENVIRONMENT", "production"), \
+             patch.object(settings, "ALLOW_EVALUATOR_OTP", False):
+            # Legacy send-otp is completely removed
+            res_legacy = client.post("/api/v1/auth/send-otp", json={"phone_number": self._gen_phone()})
+            assert res_legacy.status_code == 404
+
+            # In production, canonical request-otp never returns OTP codes
+            phone = self._gen_phone()
+            res = client.post("/api/v1/auth/signup/request-otp", json={"phone_number": phone})
+            data = res.json()
+            assert "otp" not in data
+            assert "otp_code" not in data
+            assert "code" not in data
+            assert "demo_otp" not in data
 
     # -------------------------------------------------------------------------
     # 24. OTP Never Appears in API Response

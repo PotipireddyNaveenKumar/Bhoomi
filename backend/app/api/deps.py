@@ -52,10 +52,15 @@ async def get_current_farmer_profile(
     user: Optional[User] = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> FarmerProfile:
-    if user and user.farmer_profile:
-        return user.farmer_profile
+    if user:
+        if user.farmer_profile:
+            return user.farmer_profile
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Farmer profile not found. Please complete profile setup.",
+        )
 
-    if settings.effective_env in ["production", "staging"] and not settings.DEMO_MODE:
+    if settings.effective_env in ["production", "staging"] or not settings.DEMO_MODE:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication required. Please log in to access your farm digital twin.",
@@ -80,7 +85,7 @@ async def get_current_farmer_profile_optional(
     if user and user.farmer_profile:
         return user.farmer_profile
 
-    if settings.DEMO_MODE:
+    if settings.DEMO_MODE and not settings.is_production:
         farmer_repo = FarmerRepository(db)
         demo_user = await farmer_repo.get_by_id("demo_user_1")
         if demo_user and demo_user.farmer_profile:

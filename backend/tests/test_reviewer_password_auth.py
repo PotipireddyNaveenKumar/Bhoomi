@@ -180,40 +180,47 @@ class TestReviewerPasswordAuthentication:
 
         asyncio.run(_check_db())
 
-    # 12. Production still rejects 1234
+    # 12. Legacy routes removed and canonical auth rejects 1234
     def test_12_production_rejects_1234(self):
         with patch.object(settings, "ENVIRONMENT", "production"), \
              patch.object(settings, "ALLOW_EVALUATOR_OTP", False):
-            # Test A: without prior session
-            res_no_session = client.post("/api/v1/auth/verify-otp", json={
+            # Test A: legacy verify-otp is permanently removed (404)
+            res_legacy_verify = client.post("/api/v1/auth/verify-otp", json={
                 "phone_number": TEST_REVIEWER_PHONE,
                 "otp": "1234"
             })
-            assert res_no_session.status_code == 400
+            assert res_legacy_verify.status_code == 404
 
-            # Test B: with active session, attempt 1234 bypass
-            client.post("/api/v1/auth/send-otp", json={"phone_number": TEST_REVIEWER_PHONE})
-            res = client.post("/api/v1/auth/verify-otp", json={
+            # Test B: legacy send-otp is permanently removed (404)
+            res_legacy_send = client.post("/api/v1/auth/send-otp", json={"phone_number": TEST_REVIEWER_PHONE})
+            assert res_legacy_send.status_code == 404
+
+            # Test C: canonical login verify rejects 1234 (must be 6 digits and validated)
+            res_canonical = client.post("/api/v1/auth/login/verify-otp", json={
                 "phone_number": TEST_REVIEWER_PHONE,
                 "otp": "1234"
             })
-            assert res.status_code == 400
-            assert "Invalid verification code" in res.json()["detail"]
+            assert res_canonical.status_code in (400, 422)
 
-    # 13. Evaluator OTP remains disabled in production
+    # 13. Evaluator OTP remains disabled and legacy route removed
     def test_13_evaluator_otp_disabled_in_production(self):
-        prod_phone = "9988776650"
+        prod_phone = "+919988776650"
         with patch.object(settings, "ENVIRONMENT", "production"), \
              patch.object(settings, "ALLOW_EVALUATOR_OTP", False):
+            # Legacy route returns 404
             res_send = client.post("/api/v1/auth/send-otp", json={
                 "phone_number": prod_phone
             })
-            assert res_send.status_code == 200
-            data_send = res_send.json()
-            assert data_send["auth_mode"] == "production"
-            assert data_send["delivery_channel"] == "none"
-            assert "otp" not in data_send
-            assert "otp_code" not in data_send
+            assert res_send.status_code == 404
+
+            # Canonical request-otp works safely without leaking code
+            res_canon = client.post("/api/v1/auth/signup/request-otp", json={
+                "phone_number": prod_phone
+            })
+            data_canon = res_canon.json()
+            assert "otp" not in data_canon
+            assert "code" not in data_canon
+            assert "demo_otp" not in data_canon
 
     # 14. Reviewer account provisioning is idempotent
     def test_14_provisioning_is_idempotent(self):

@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     SECRET_KEY: Optional[str] = None
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
-    ALLOW_EVALUATOR_OTP: bool = True  # Can be disabled in production via ALLOW_EVALUATOR_OTP=false
+    ALLOW_EVALUATOR_OTP: bool = False  # Strictly False by default and in production
     REVIEWER_PHONE: Optional[str] = None
     REVIEWER_PASSWORD: Optional[str] = None
     
@@ -137,6 +137,17 @@ class Settings(BaseSettings):
         # Resolve DEBUG: if not explicitly configured, default to False in production, True in dev
         if self.DEBUG is None:
             self.DEBUG = False if self.is_production else True
+
+        # Production Isolation: Force DEMO_MODE=False and ALLOW_EVALUATOR_OTP=False in production
+        if self.is_production:
+            if self.DEMO_MODE:
+                import logging
+                logging.getLogger("uvicorn").warning(
+                    "Production safety notice: DEMO_MODE was configured as True in the environment, "
+                    "but production mode is active. Overriding DEMO_MODE=False for production safety."
+                )
+                self.DEMO_MODE = False
+            self.ALLOW_EVALUATOR_OTP = False
 
         # Database URL resolution
         if not self.DATABASE_URL:

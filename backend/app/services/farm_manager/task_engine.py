@@ -551,13 +551,7 @@ class TaskIntelligenceEngine:
         tasks = cls.get_tasks_for_farm(farm_id)
         target = next((t for t in tasks if t.task_id == task_id), None)
         if not target:
-            for f_tasks in cls._tasks_by_farm.values():
-                target = next((t for t in f_tasks if t.task_id == task_id), None)
-                if target:
-                    tasks = f_tasks
-                    break
-        if not target:
-            raise ValueError(f"Task with ID {task_id} not found.")
+            raise ValueError(f"Task with ID {task_id} not found on farm {farm_id}.")
 
         if target.status in [TaskStatus.CANCELLED, TaskStatus.EXPIRED]:
             raise ValueError(f"Cannot complete task {task_id} with status {target.status.value}.")
@@ -605,13 +599,7 @@ class TaskIntelligenceEngine:
         tasks = cls.get_tasks_for_farm(farm_id)
         target = next((t for t in tasks if t.task_id == task_id), None)
         if not target:
-            for f_tasks in cls._tasks_by_farm.values():
-                target = next((t for t in f_tasks if t.task_id == task_id), None)
-                if target:
-                    tasks = f_tasks
-                    break
-        if not target:
-            raise ValueError(f"Task with ID {task_id} not found.")
+            raise ValueError(f"Task with ID {task_id} not found on farm {farm_id}.")
 
         if target.status in [TaskStatus.COMPLETED, TaskStatus.CANCELLED]:
             raise ValueError(f"Cannot postpone task {task_id} with status {target.status.value}.")
@@ -683,13 +671,7 @@ class TaskIntelligenceEngine:
         tasks = cls.get_tasks_for_farm(farm_id)
         target = next((t for t in tasks if t.task_id == task_id), None)
         if not target:
-            for f_tasks in cls._tasks_by_farm.values():
-                target = next((t for t in f_tasks if t.task_id == task_id), None)
-                if target:
-                    tasks = f_tasks
-                    break
-        if not target:
-            raise ValueError(f"Task with ID {task_id} not found.")
+            raise ValueError(f"Task with ID {task_id} not found on farm {farm_id}.")
 
         if target.status in [TaskStatus.COMPLETED, TaskStatus.CANCELLED]:
             raise ValueError(f"Cannot skip task {task_id} with status {target.status.value}.")

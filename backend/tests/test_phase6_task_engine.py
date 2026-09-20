@@ -482,11 +482,15 @@ async def test_voice_and_typing_same_path_and_api():
     assert res_pending.response_text != ""
     assert "tasks_status_card" in [c["card_type"] for c in res_pending.visual_cards]
 
-    # API endpoints testing
-    resp_today = client.get("/api/v1/tasks/today?farmer_id=farmer_test_today")
+    # API endpoints testing (Requires authenticated session per Task 2 Security Model)
+    res_login = client.post("/api/v1/auth/login", json={"is_demo": True})
+    assert res_login.status_code == 200
+    headers = {"Authorization": f"Bearer {res_login.json()['access_token']}"}
+
+    resp_today = client.get("/api/v1/tasks/today", headers=headers)
     assert resp_today.status_code == 200
     assert isinstance(resp_today.json(), list)
 
-    resp_week = client.get("/api/v1/tasks/week?farmer_id=farmer_test_week")
+    resp_week = client.get("/api/v1/tasks/week", headers=headers)
     assert resp_week.status_code == 200
     assert isinstance(resp_week.json(), list)

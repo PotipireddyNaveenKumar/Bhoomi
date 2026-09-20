@@ -10,6 +10,11 @@ class TaskRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def get_task_by_id(self, task_id: str) -> Optional[FarmTask]:
+        query = select(FarmTask).where(FarmTask.id == task_id)
+        result = await self.db.execute(query)
+        return result.scalars().first()
+
     async def get_tasks_by_farmer(self, farmer_id: str, status: Optional[str] = None) -> List[FarmTask]:
         query = select(FarmTask).where(FarmTask.farmer_id == farmer_id)
         if status:
