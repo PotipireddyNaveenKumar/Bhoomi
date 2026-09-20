@@ -15,6 +15,16 @@ class BhoomiApp extends StatefulWidget {
   final Locale initialLocale;
   const BhoomiApp({Key? key, required this.initialLocale}) : super(key: key);
 
+  static void setLocale(BuildContext context, Locale newLocale) {
+    final _BhoomiAppState? state = context.findAncestorStateOfType<_BhoomiAppState>();
+    state?._setLocale(newLocale);
+  }
+
+  static Locale getLocale(BuildContext context) {
+    final _BhoomiAppState? state = context.findAncestorStateOfType<_BhoomiAppState>();
+    return state?._locale ?? const Locale('en');
+  }
+
   @override
   State<BhoomiApp> createState() => _BhoomiAppState();
 }
@@ -32,6 +42,7 @@ class _BhoomiAppState extends State<BhoomiApp> {
     setState(() {
       _locale = locale;
     });
+    LocalStorageService.setLanguage(locale.languageCode);
   }
 
   @override

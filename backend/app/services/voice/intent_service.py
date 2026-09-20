@@ -79,7 +79,10 @@ class IntentNormalizationService:
                 return "kn"
             if 0x0D00 <= cp <= 0x0D7F:
                 return "ml"
-        # If Latin letters are present, detect as English
+        # If an explicit language hint was passed, respect the user's active session language
+        if hint and hint.lower() in ("te", "hi", "ta", "kn", "ml", "en"):
+            return hint.lower()
+        # If Latin letters are present and no hint was provided, detect as English
         if any(c.isascii() and c.isalpha() for c in text):
             return "en"
         return hint or "en"

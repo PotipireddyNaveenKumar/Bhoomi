@@ -58,6 +58,12 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
           {"label": "ಮಳೆ ಬರುತ್ತದೆಯೇ?", "query": "ಇಂದು ಮಳೆ ಬರುತ್ತದೆಯೇ?", "lang": "kn"},
           {"label": "ನೀರಾವರಿ ಮಾಡಬೇಕೆ?", "query": "ಇಂದು ನೀರಾವರಿ ಮಾಡಬೇಕೆ?", "lang": "kn"},
         ];
+      case "ml":
+        return const [
+          {"label": "ഇന്ന് എന്ത് ചെയ്യണം?", "query": "ഇന്ന് ഞാൻ എന്റെ തോട്ടത്തിൽ എന്ത് ചെയ്യണം?", "lang": "ml"},
+          {"label": "മഴ പെയ്യുമോ?", "query": "ഇന്ന് മഴ പെയ്യാൻ സാധ്യതയുണ്ടോ?", "lang": "ml"},
+          {"label": "നനയ്ക്കണമോ?", "query": "ഇന്ന് വിളകൾക്ക് നനയ്ക്കണോ?", "lang": "ml"},
+        ];
       default:
         return const [
           {"label": "What should I do today?", "query": "What should I do today?", "lang": "en"},
@@ -76,6 +82,15 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final localeLang = Localizations.localeOf(context).languageCode;
+    if (localeLang != _activeLanguage) {
+      setState(() => _activeLanguage = localeLang);
+    }
+  }
+
+  @override
   void dispose() {
     stopAudio();
     super.dispose();
@@ -84,6 +99,28 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   Future<void> _loadLanguage() async {
     final lang = await LocalStorageService.getLanguage();
     setState(() => _activeLanguage = lang);
+  }
+
+  String _getAudioButtonLabel(bool autoplayBlocked) {
+    if (autoplayBlocked) {
+      switch (_activeLanguage) {
+        case "te": return "వినడానికి తాకండి (Play Audio)";
+        case "hi": return "सुनने के लिए स्पर्श करें (Play Audio)";
+        case "ta": return "கேட்க தட்டவும் (Play Audio)";
+        case "kn": return "ಕೇಳಲು ಸ್ಪರ್ಶಿಸಿ (Play Audio)";
+        case "ml": return "കേൾക്കാൻ തൊടുക (Play Audio)";
+        default: return "Tap to Listen";
+      }
+    } else {
+      switch (_activeLanguage) {
+        case "te": return "మళ్ళీ వినండి";
+        case "hi": return "दोबारा सुनें";
+        case "ta": return "மீண்டும் கேட்க";
+        case "kn": return "ಮತ್ತೆ ಕೇಳಿ";
+        case "ml": return "വീണ്ടും കേൾക്കുക";
+        default: return "Replay Audio";
+      }
+    }
   }
 
   Future<void> _processVoiceQuery(String queryText, [String? langCode]) async {
@@ -115,6 +152,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       final payload = {
         "text": queryText,
         "language": targetLang,
+        "language_code": targetLang,
         "conversation_id": "session_voice_${DateTime.now().millisecondsSinceEpoch}",
       };
       if (farmerId != null && farmerId.isNotEmpty) {
@@ -484,9 +522,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                                   );
                                 },
                                 icon: const Icon(Icons.play_arrow_rounded, size: 16),
-                                label: Text(_autoplayBlocked
-                                    ? (_activeLanguage == "te" ? "వినడానికి తాకండి (Play Audio)" : "Tap to Listen")
-                                    : (_activeLanguage == "te" ? "మళ్ళీ వినండి" : "Replay Audio")),
+                                label: Text(_getAudioButtonLabel(_autoplayBlocked)),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryGreen,
                                   foregroundColor: Colors.white,

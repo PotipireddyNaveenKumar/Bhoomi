@@ -12,6 +12,7 @@ import '../../shared/cards/profit_card.dart';
 import '../../shared/cards/simulation_card.dart';
 import '../../shared/cards/risk_card.dart';
 import '../../shared/cards/crop_recommendation_card.dart';
+import '../../main.dart';
 
 class ChatMessageModel {
   final String sender; // user, assistant
@@ -138,8 +139,28 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final localeLang = Localizations.localeOf(context).languageCode;
+    if (localeLang != _currentLanguage) {
+      setState(() {
+        _currentLanguage = localeLang;
+        if (_messages.length <= 1) {
+          _messages.clear();
+          _messages.add(ChatMessageModel(
+            sender: "assistant",
+            content: _initialGreetings[localeLang] ?? _initialGreetings["en"]!,
+            timestamp: DateTime.now(),
+          ));
+        }
+      });
+    }
+  }
+
   Future<void> _changeLanguage(String newLang) async {
     await LocalStorageService.setLanguage(newLang);
+    BhoomiApp.setLocale(context, Locale(newLang));
     setState(() {
       _currentLanguage = newLang;
       _messages.add(ChatMessageModel(

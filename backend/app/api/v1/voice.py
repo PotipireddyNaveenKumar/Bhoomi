@@ -356,12 +356,12 @@ async def web_tts(
 @router.post("/stt")
 async def web_stt(
     file: UploadFile = File(...),
-    language_code: Optional[str] = Form(default="te"),
+    language_code: Optional[str] = Form(default=None),
     farmer: FarmerProfile = Depends(get_current_farmer_profile)
 ):
     audio_bytes = await read_audio_payload(file)
     provider = get_voice_provider()
-    lang = language_code or farmer.preferred_language or "te"
+    lang = language_code or getattr(farmer, "preferred_language", None) or "en"
     try:
         res = await provider.transcribe(audio_bytes=audio_bytes, language_code=lang)
         return {

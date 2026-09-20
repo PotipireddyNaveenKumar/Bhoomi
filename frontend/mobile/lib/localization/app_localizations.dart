@@ -13,9 +13,17 @@ class AppLocalizations {
   static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   late Map<String, String> _localizedStrings;
+  Map<String, String> _fallbackStrings = {};
 
   Future<bool> load() async {
     try {
+      if (locale.languageCode != 'en') {
+        try {
+          String enString = await rootBundle.loadString('lib/localization/en.json');
+          Map<String, dynamic> enMap = json.decode(enString);
+          _fallbackStrings = enMap.map((key, value) => MapEntry(key, value.toString()));
+        } catch (_) {}
+      }
       String jsonString = await rootBundle.loadString('lib/localization/${locale.languageCode}.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
       _localizedStrings = jsonMap.map((key, value) => MapEntry(key, value.toString()));
@@ -30,7 +38,7 @@ class AppLocalizations {
   }
 
   String translate(String key) {
-    return _localizedStrings[key] ?? key;
+    return _localizedStrings[key] ?? _fallbackStrings[key] ?? key;
   }
 }
 

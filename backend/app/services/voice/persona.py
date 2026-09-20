@@ -105,6 +105,24 @@ class BhoomiPersonaEngine:
         "नमस्ते भाई!"
     ]
 
+    _GREETING_VARIATIONS_TA = [
+        "வணக்கம் நண்பரே!",
+        "வணக்கம்! நலமாக இருக்கிறீர்களா?",
+        "வணக்கம் அண்ணா!"
+    ]
+
+    _GREETING_VARIATIONS_KN = [
+        "ನಮಸ್ಕಾರ ಮಿತ್ರರೇ!",
+        "ನಮಸ್ಕಾರ! ಚೆನ್ನಾಗಿದ್ದೀರಾ?",
+        "ನಮಸ್ಕಾರ ಅಣ್ಣ!"
+    ]
+
+    _GREETING_VARIATIONS_ML = [
+        "നമസ്കാരം സുഹൃത്തേ!",
+        "നമസ്കാരം! സുഖമാണോ?",
+        "നമസ്കാരം സഹോദരാ!"
+    ]
+
     _turn_counter: int = 0
 
     _CROP_NAMES_TE = {
@@ -127,6 +145,36 @@ class BhoomiPersonaEngine:
         "crop": "फसल"
     }
 
+    _CROP_NAMES_TA = {
+        "chilli": "மிளகாய்",
+        "chili": "மிளகாய்",
+        "rice": "நெல்",
+        "paddy": "நெல்",
+        "cotton": "பருத்தி",
+        "tomato": "தக்காளி",
+        "crop": "பயிர்"
+    }
+
+    _CROP_NAMES_KN = {
+        "chilli": "ಮೆಣಸಿನಕಾಯಿ",
+        "chili": "ಮೆಣಸಿನಕಾಯಿ",
+        "rice": "ಭತ್ತ",
+        "paddy": "ಭತ್ತ",
+        "cotton": "ಹತ್ತಿ",
+        "tomato": "ಟೊಮೆಟೊ",
+        "crop": "ಬೆಳೆ"
+    }
+
+    _CROP_NAMES_ML = {
+        "chilli": "മുളക്",
+        "chili": "മുളക്",
+        "rice": "നെല്ല്",
+        "paddy": "നെല്ല്",
+        "cotton": "പരുത്തി",
+        "tomato": "തക്കാളി",
+        "crop": "വിള"
+    }
+
     _DISEASE_NAMES_TE = {
         "leaf curl": "ఆకు ముడత",
         "leaf spot": "ఆకు మచ్చ తెగులు",
@@ -147,22 +195,66 @@ class BhoomiPersonaEngine:
         "blight": "झुलसा रोग",
     }
 
+    _DISEASE_NAMES_TA = {
+        "leaf curl": "இலை சுருள் நோய்",
+        "leaf spot": "இலைப்புள்ளி நோய்",
+        "anthracnose": "ஆந்த்ராக்னோஸ் அழுகல்",
+        "whitefly insects": "வெள்ளை ஈ",
+        "whitefly": "வெள்ளை ஈ",
+        "yellowing": "மஞ்சள் நோய்",
+        "blight": "கருகல் நோய்",
+    }
+
+    _DISEASE_NAMES_KN = {
+        "leaf curl": "ಎಲೆ ಮುದುರು ರೋಗ",
+        "leaf spot": "ಎಲೆ ಚುಕ್ಕೆ ರೋಗ",
+        "anthracnose": "ಆಂಥ್ರಾಕ್ನೋಸ್",
+        "whitefly insects": "ಬಿಳಿ ನೊಣ",
+        "whitefly": "ಬಿಳಿ ನೊಣ",
+        "yellowing": "ಹಳದಿ ರೋಗ",
+        "blight": "ಅಂಗಮಾರಿ ರೋಗ",
+    }
+
+    _DISEASE_NAMES_ML = {
+        "leaf curl": "ഇലച്ചുരുൾ രോഗം",
+        "leaf spot": "ഇലപ്പുള്ളി രോഗം",
+        "anthracnose": "അന്ത്രാക്നോസ്",
+        "whitefly insects": "വെള്ളീച്ച",
+        "whitefly": "വെള്ളീച്ച",
+        "yellowing": "മഞ്ഞളിപ്പ്",
+        "blight": "മുരടിപ്പ് രോഗം",
+    }
+
     @classmethod
     def _localize_crop(cls, crop: str, lang: str) -> str:
         c_low = (crop or "crop").lower().strip()
-        if lang == "te":
-            return cls._CROP_NAMES_TE.get(c_low, crop)
-        elif lang == "hi":
-            return cls._CROP_NAMES_HI.get(c_low, crop)
+        crop_dicts = {
+            "te": cls._CROP_NAMES_TE,
+            "hi": cls._CROP_NAMES_HI,
+            "ta": cls._CROP_NAMES_TA,
+            "kn": cls._CROP_NAMES_KN,
+            "ml": cls._CROP_NAMES_ML,
+        }
+        target = crop_dicts.get(lang)
+        if target:
+            return target.get(c_low, crop)
         return crop
 
     @classmethod
     def _localize_disease(cls, disease: str, lang: str) -> str:
         d_low = disease.lower().strip()
-        target_dict = cls._DISEASE_NAMES_TE if lang == "te" else cls._DISEASE_NAMES_HI
-        for k, v in target_dict.items():
-            if k in d_low:
-                return v
+        disease_dicts = {
+            "te": cls._DISEASE_NAMES_TE,
+            "hi": cls._DISEASE_NAMES_HI,
+            "ta": cls._DISEASE_NAMES_TA,
+            "kn": cls._DISEASE_NAMES_KN,
+            "ml": cls._DISEASE_NAMES_ML,
+        }
+        target_dict = disease_dicts.get(lang)
+        if target_dict:
+            for k, v in target_dict.items():
+                if k in d_low:
+                    return v
         return disease
 
     @classmethod
@@ -175,6 +267,12 @@ class BhoomiPersonaEngine:
             pool = cls._GREETING_VARIATIONS_TE
         elif lang == "hi":
             pool = cls._GREETING_VARIATIONS_HI
+        elif lang == "ta":
+            pool = cls._GREETING_VARIATIONS_TA
+        elif lang == "kn":
+            pool = cls._GREETING_VARIATIONS_KN
+        elif lang == "ml":
+            pool = cls._GREETING_VARIATIONS_ML
         else:
             pool = cls._GREETING_VARIATIONS_EN
 
@@ -186,6 +284,12 @@ class BhoomiPersonaEngine:
                 chosen = f"నమస్కారం {farmer_name} గారు!"
             elif lang == "hi":
                 chosen = f"नमस्ते {farmer_name} जी!"
+            elif lang == "ta":
+                chosen = f"வணக்கம் {farmer_name} அவர்களே!"
+            elif lang == "kn":
+                chosen = f"ನಮಸ್ಕಾರ {farmer_name} ಅವರೇ!"
+            elif lang == "ml":
+                chosen = f"നമസ്കാരം {farmer_name}!"
         return chosen
 
     @classmethod
@@ -244,6 +348,30 @@ class BhoomiPersonaEngine:
                     f"इसे फैलने से रोकने के लिए आज ही सुझाई गई दवा का छिड़काव करें। "
                     f"छिड़काव करते समय चेहरे पर मास्क और दस्ताने जरूर पहनें। "
                     f"हम मिलकर फसल को सुरक्षित कर लेंगे।"
+                )
+            elif lang == "ta":
+                return (
+                    f"{greeting} கவலைப்பட வேண்டாம், ஆனால் இன்று உங்கள் {crop_display} பயிரில் கொஞ்சம் கவனம் செலுத்த வேண்டும். "
+                    f"சில இலைகளில் {disease_display} அறிகுறிகள் தென்படுகின்றன. "
+                    f"மற்ற பயிர்களுக்கு பரவாமல் தடுக்க இன்றே பரிந்துரைக்கப்பட்ட மருந்தை தெளிக்கவும். "
+                    f"மருந்து தெளிக்கும் போது முகக்கவசம் மற்றும் கையுறைகள் அணிவது அவசியம். "
+                    f"நாம் இணைந்து உங்கள் பயிரை பாதுகாப்போம்."
+                )
+            elif lang == "kn":
+                return (
+                    f"{greeting} ಆತಂಕಪಡಬೇಡಿ, ಆದರೆ ಇಂದು ನಿಮ್ಮ {crop_display} ಬೆಳೆಗೆ ಸ್ವಲ್ಪ ಗಮನ ಕೊಡಬೇಕಾಗಿದೆ. "
+                    f"ಕೆಲವು ಎಲೆಗಳಲ್ಲಿ {disease_display} ಲಕ್ಷಣಗಳು ಕಾಣಿಸುತ್ತಿವೆ. "
+                    f"ಇದು ಇತರ ಸಾಲುಗಳಿಗೆ ಹರಡದಂತೆ ತಡೆಯಲು ಇಂದೇ ಶಿಫಾರಸು ಮಾಡಿದ ಔಷಧ ಸಿಂಪಡಿಸಿ. "
+                    f"ಔಷಧ ಸಿಂಪಡಿಸುವಾಗ ಮುಖಗವಸು ಮತ್ತು ಕೈಗವಸುಗಳನ್ನು ಧರಿಸಲು ಮರೆಯದಿರಿ. "
+                    f"ನಾವು ಒಟ್ಟಾಗಿ ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ರಕ್ಷಿಸೋಣ."
+                )
+            elif lang == "ml":
+                return (
+                    f"{greeting} വിഷമിക്കേണ്ടതില്ല, എങ്കിലും ഇന്ന് നിങ്ങളുടെ {crop_display} തോട്ടത്തിൽ അല്പം ശ്രദ്ധ നൽകേണ്ടതുണ്ട്. "
+                    f"ചില ചെടികളിൽ {disease_display} ലക്ഷണങ്ങൾ കാണുന്നുണ്ട്. "
+                    f"മറ്റു നിരകളിലേക്ക് പടരാതിരിക്കാൻ ഇന്ന് തന്നെ നിർദ്ദേശിച്ച മരുന്ന് തളിക്കുക. "
+                    f"മരുന്ന് തളിക്കുമ്പോൾ മാസ്കും കയ്യുറകളും ധരിക്കാൻ മറക്കരുത്. "
+                    f"നമുക്ക് ഒന്നിച്ച് നിങ്ങളുടെ വിളവിനെ സംരക്ഷിക്കാം."
                 )
             else:
                 variations = [
@@ -321,6 +449,36 @@ class BhoomiPersonaEngine:
                     )
                 ]
                 return variations[cls._turn_counter % len(variations)]
+            elif lang == "ta":
+                variations = [
+                    (
+                        f"{greeting} உங்கள் {crop_display} பயிர் இப்போது நன்றாக வளர்கிறது. "
+                        f"நல்ல செய்தி, அடுத்த இரண்டு நாட்களில் மழை பெய்ய வாய்ப்புள்ளது. "
+                        f"எனவே இன்று தண்ணீர் பாய்ச்ச தேவையில்லை. "
+                        f"அடுத்த முறை நீர் பாய்ச்சும் நேரத்தை நான் உங்களுக்கு நினைவூட்டுகிறேன்."
+                    )
+                ]
+                return variations[cls._turn_counter % len(variations)]
+            elif lang == "kn":
+                variations = [
+                    (
+                        f"{greeting} ನಿಮ್ಮ {crop_display} ಬೆಳೆ ಈಗ ಉತ್ತಮವಾಗಿ ಬೆಳೆಯುತ್ತಿದೆ. "
+                        f"ಒಳ್ಳೆಯ ಸುದ್ದಿ, ಮುಂದಿನ ಎರಡು ದಿನಗಳಲ್ಲಿ ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ. "
+                        f"ಆದ್ದರಿಂದ ಇಂದು ನೀರುಣಿಸುವ ಅಗತ್ಯವಿಲ್ಲ. "
+                        f"ಮತ್ತೆ ನೀರು ಹಾಯಿಸುವ ಸಮಯ ಬಂದಾಗ ನಾನು ನಿಮಗೆ ತಿಳಿಸುತ್ತೇನೆ."
+                    )
+                ]
+                return variations[cls._turn_counter % len(variations)]
+            elif lang == "ml":
+                variations = [
+                    (
+                        f"{greeting} നിങ്ങളുടെ {crop_display} കൃഷി ഇപ്പോൾ നന്നായി വളരുന്നുണ്ട്. "
+                        f"നല്ല വാർത്ത, അടുത്ത രണ്ടു ദിവസങ്ങളിൽ മഴ പെയ്യാൻ സാധ്യതയുണ്ട്. "
+                        f"അതുകൊണ്ട് ഇന്ന് നനയ്ക്കേണ്ട ആവശ്യമില്ല. "
+                        f"വീണ്ടും നനയ്ക്കേണ്ട സമയം ഞാൻ ഓർമ്മിപ്പിക്കാം."
+                    )
+                ]
+                return variations[cls._turn_counter % len(variations)]
             else:
                 # Dynamic phrasing variations across runs so it never sounds like a tape recording
                 variations = [
@@ -365,6 +523,27 @@ class BhoomiPersonaEngine:
                 f"आज का मुख्य काम: {clean_action}। "
                 f"{clean_reason}। "
                 f"कोई भी बात हो तो मुझसे कभी भी पूछ सकते हैं।"
+            )
+        elif lang == "ta":
+            return (
+                f"{greeting} உங்கள் {crop_display} பயிர் {days} நாட்களில் சிறப்பாக உள்ளது. "
+                f"இன்றைய முக்கிய பணி: {clean_action}. "
+                f"{clean_reason}. "
+                f"ஏதேனும் சந்தேகம் இருந்தால் என்னிடம் எப்போது வேண்டுமானாலும் கேளுங்கள்."
+            )
+        elif lang == "kn":
+            return (
+                f"{greeting} ನಿಮ್ಮ {crop_display} ಬೆಳೆ {days} ದಿನಗಳಲ್ಲಿ ಉತ್ತಮವಾಗಿದೆ. "
+                f"ಇಂದಿನ ಮುಖ್ಯ ಕೆಲಸ: {clean_action}. "
+                f"{clean_reason}. "
+                f"ಯಾವುದೇ ಸಂದೇಹವಿದ್ದರೂ ನನ್ನನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ಕೇಳಬಹುದು."
+            )
+        elif lang == "ml":
+            return (
+                f"{greeting} നിങ്ങളുടെ {crop_display} തോട്ടം {days} ദിവസങ്ങളിൽ നല്ല നിലയിലാണ്. "
+                f"ഇന്നത്തെ പ്രധാന ജോലി: {clean_action}. "
+                f"{clean_reason}. "
+                f"എന്തെങ്കിലും സംശയമുണ്ടെങ്കിൽ എന്നോട് എപ്പോഴും ചോദിക്കാം."
             )
         else:
             return (
@@ -508,6 +687,33 @@ class BhoomiPersonaEngine:
                 f"इसे फैलने से रोकने के लिए आज ही सुझाई गई जैविक दवा का छिड़काव करें। "
                 f"छिड़काव करते समय चेहरे पर मास्क और हाथों में दस्ताने जरूर पहनें। "
                 f"हम मिलकर फसल को ठीक कर लेंगे।"
+            )
+        elif lang == "ta":
+            clean_name_ta = cls._localize_disease(clean_name, "ta")
+            return (
+                f"{greeting} கவலைப்பட வேண்டாம், ஆனால் இன்று உங்கள் {crop_display} பயிரில் கொஞ்சம் கவனம் செலுத்த வேண்டும். "
+                f"இலைகளில் {clean_name_ta} அறிகுறிகள் தென்படுகின்றன. "
+                f"மற்ற பயிர்களுக்கு பரவாமல் தடுக்க இன்றே பரிந்துரைக்கப்பட்ட மருந்தை தெளிக்கவும். "
+                f"மருந்து தெளிக்கும் போது முகக்கவசம் மற்றும் கையுறைகள் அணிவது அவசியம். "
+                f"நாம் இணைந்து உங்கள் பயிரை பாதுகாப்போம்."
+            )
+        elif lang == "kn":
+            clean_name_kn = cls._localize_disease(clean_name, "kn")
+            return (
+                f"{greeting} ಆತಂಕಪಡಬೇಡಿ, ಆದರೆ ಇಂದು ನಿಮ್ಮ {crop_display} ಬೆಳೆಗೆ ಸ್ವಲ್ಪ ಗಮನ ಕೊಡಬೇಕಾಗಿದೆ. "
+                f"ಎಲೆಗಳಲ್ಲಿ {clean_name_kn} ಲಕ್ಷಣಗಳು ಕಾಣಿಸುತ್ತಿವೆ. "
+                f"ಇದು ಇತರ ಸಾಲುಗಳಿಗೆ ಹರಡದಂತೆ ತಡೆಯಲು ಇಂದೇ ಶಿಫಾರಸು ಮಾಡಿದ ಔಷಧ ಸಿಂಪಡಿಸಿ. "
+                f"ಔಷಧ ಸಿಂಪಡಿಸುವಾಗ ಮುಖಗವಸು ಮತ್ತು ಕೈಗವಸುಗಳನ್ನು ಧರಿಸಲು ಮರೆಯದಿರಿ. "
+                f"ನಾವು ಒಟ್ಟಾಗಿ ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ರಕ್ಷಿಸೋಣ."
+            )
+        elif lang == "ml":
+            clean_name_ml = cls._localize_disease(clean_name, "ml")
+            return (
+                f"{greeting} വിഷമിക്കേണ്ടതില്ല, എങ്കിലും ഇന്ന് നിങ്ങളുടെ {crop_display} തോട്ടത്തിൽ അല്പം ശ്രദ്ധ നൽകേണ്ടതുണ്ട്. "
+                f"ഇലകളിൽ {clean_name_ml} ലക്ഷണങ്ങൾ കാണുന്നുണ്ട്. "
+                f"മറ്റു നിരകളിലേക്ക് പടരാതിരിക്കാൻ ഇന്ന് തന്നെ നിർദ്ദേശിച്ച മരുന്ന് തളിക്കുക. "
+                f"മരുന്ന് തളിക്കുമ്പോൾ മാസ്കും കയ്യുറകളും ധരിക്കാൻ മറക്കരുത്. "
+                f"നമുക്ക് ഒന്നിച്ച് നിങ്ങളുടെ വിളവിനെ സംരക്ഷിക്കാം."
             )
         else:
             variations = [

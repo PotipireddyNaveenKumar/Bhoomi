@@ -38,7 +38,8 @@ async def send_message(
     db: AsyncSession = Depends(get_db)
 ):
     repo = ChatRepository(db)
-    session = await repo.get_or_create_session(farmer.id, msg_in.session_id, language=msg_in.language or farmer.preferred_language)
+    target_lang = msg_in.language_code or msg_in.language or getattr(farmer, "preferred_language", None) or "en"
+    session = await repo.get_or_create_session(farmer.id, msg_in.session_id, language=target_lang)
 
     # 1. Save user message
     user_msg = await repo.save_message(
@@ -57,7 +58,7 @@ async def send_message(
         session_id=session.id,
         user_text=msg_in.content,
         input_mode=msg_in.input_mode,
-        language=msg_in.language or farmer.preferred_language
+        language=target_lang
     )
 
     # 3. Save Assistant Message with Visual Cards

@@ -270,6 +270,36 @@ class BhoomiAgentOrchestrator:
             return template
 
     @classmethod
+    def _get_weather_fail_safe_msg(cls, lang: str = "en", loc: str = "Guntur") -> str:
+        if lang == "te":
+            return f"{loc} ప్రాంతానికి సంబంధించి తాజా వాతావరణ సమాచారం ప్రస్తుతం అందుబాటులో లేదు. దయచేసి కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి."
+        elif lang == "hi":
+            return f"{loc} के लिए लाइव मौसम जानकारी अभी उपलब्ध नहीं है। कृपया थोड़ी देर बाद पुनः प्रयास करें।"
+        elif lang == "ta":
+            return f"{loc} பகுதிக்கான நேரலை வானிலை தகவல் தற்போது கிடைக்கவில்லை. தயவுசெய்து சிறிது நேரம் கழித்து முயற்சிக்கவும்."
+        elif lang == "kn":
+            return f"{loc} ಪ್ರದೇಶದ ಲೈವ್ ಹವಾಮಾನ ಮಾಹಿತಿ ಪ್ರಸ್ತುತ ಲಭ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+        elif lang == "ml":
+            return f"{loc} പ്രദേശത്തെ തത്സമയ കാലാവസ്ഥാ വിവരങ്ങൾ ഇപ്പോൾ ലഭ്യമല്ല. ദയവായി അല്പം കഴിഞ്ഞ് വീണ്ടും ശ്രമിക്കുക."
+        else:
+            return f"Live weather data for {loc} is currently unavailable. Please verify local sky conditions directly."
+
+    @classmethod
+    def _get_market_fail_safe_msg(cls, lang: str = "en", crop: str = "Chilli", dist: str = "Guntur") -> str:
+        if lang == "te":
+            return f"{dist} మార్కెట్‌లో {crop} తాజా మండి ధరలు ప్రస్తుతం అధికారిక అగ్‌మార్క్‌నెట్ ఫీడ్ ద్వారా అందుబాటులో లేవు. వ్యాపారులకు విక్రయించే ముందు దయచేసి స్థానిక APMC మార్కెట్ యార్డ్‌ను సంప్రదించండి."
+        elif lang == "hi":
+            return f"{dist} मंडी में {crop} के ताज़ा भाव आधिकारिक एगमार्कनेट फ़ीड पर अभी उपलब्ध नहीं हैं। कृपया स्थानीय APMC मंडी समिति से वर्तमान भाव की पुष्टि करें।"
+        elif lang == "ta":
+            return f"{dist} சந்தையில் {crop} நேரலை மண்டி விலைகள் தற்போது அதிகாரப்பூர்வ அக்மார்க்நெட் மூலம் கிடைக்கவில்லை. விற்பனைக்கு முன் உள்ளூர் APMC சந்தையைத் தொடர்பு கொள்ளவும்."
+        elif lang == "kn":
+            return f"{dist} ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ {crop} ಇತ್ತೀಚಿನ ಮಂಡಿ ದರಗಳು ಅಧಿಕೃತ ಅಗ್ಮಾರ್ಕ್‌ನೆಟ್ ಮೂಲಕ ಪ್ರಸ್ತುತ ಲಭ್ಯವಿಲ್ಲ. ಮಾರಾಟ ಮಾಡುವ ಮುನ್ನ ಸ್ಥಳೀಯ APMC ಮಾರುಕಟ್ಟೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+        elif lang == "ml":
+            return f"{dist} വിപണിയിൽ {crop} തത്സമയ മാർക്കറ്റ് വിലകൾ ഔദ്യോഗിക അഗ്മാർക്ക്നെറ്റ് വഴി ഇപ്പോൾ ലഭ്യമല്ല. വിൽക്കുന്നതിന് മുൻപ് പ്രാദേശിക APMC മാർക്കറ്റുമായി ബന്ധപ്പെടുക."
+        else:
+            return f"Live mandi rates for {crop} are currently unavailable from official Agmarknet price feeds in {dist}. Please verify spot quotes directly with your local APMC market committee."
+
+    @classmethod
     async def orchestrate(
         cls,
         user_text: str = "",
@@ -1329,12 +1359,7 @@ class BhoomiAgentOrchestrator:
             w_dict = weather_card.get("data", {})
             cur = w_dict.get("current", {})
             if w_dict.get("freshness") == "UNAVAILABLE" or (cur.get("temperature_c") is None and not w_dict.get("forecast_3_days")):
-                if active_lang == "te":
-                    weather_resp = f"{loc} ప్రాంతానికి సంబంధించి తాజా వాతావరణ సమాచారం ప్రస్తుతం అందుబాటులో లేదు. దయచేసి కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి."
-                elif active_lang == "hi":
-                    weather_resp = f"{loc} के लिए लाइव मौसम जानकारी अभी उपलब्ध नहीं है। कृपया थोड़ी देर बाद पुनः प्रयास करें।"
-                else:
-                    weather_resp = f"Live weather data for {loc} is currently unavailable. Please verify local sky conditions directly."
+                weather_resp = cls._get_weather_fail_safe_msg(active_lang, loc)
                 RecommendationTraceStore.record_trace(RecommendationRecord(
                     farmer_id=farmer_id,
                     farm_id=farm_id,
@@ -1394,6 +1419,12 @@ class BhoomiAgentOrchestrator:
                     irr_resp = f"{loc}లో వాతావరణ సమాచారం ప్రస్తుతం అందుబాటులో లేదు. నీరు పెట్టే ముందు నేలలోని తేమను ప్రత్యక్షంగా పరిశీలించి నిర్ణయం తీసుకోండి."
                 elif active_lang == "hi":
                     irr_resp = f"{loc} के लिए मौसम डेटा अभी उपलब्ध नहीं है। सिंचाई करने से पहले खेत में मिट्टी की नमी की जांच अवश्य करें।"
+                elif active_lang == "ta":
+                    irr_resp = f"{loc}க்கான வானிலை தகவல் தற்போது கிடைக்கவில்லை. பாசனம் செய்வதற்கு முன் மண் ஈரப்பதத்தை நேரடியாக ஆய்வு செய்யுங்கள்."
+                elif active_lang == "kn":
+                    irr_resp = f"{loc} ಹವಾಮಾನ ಮಾಹಿತಿ ಪ್ರಸ್ತುತ ಲಭ್ಯವಿಲ್ಲ. ನೀರಾವರಿ ಮಾಡುವ ಮೊದಲು ಮಣ್ಣಿನ ತೇವಾಂಶವನ್ನು ನೇರವಾಗಿ ಪರಿಶೀಲಿಸಿ."
+                elif active_lang == "ml":
+                    irr_resp = f"{loc} കാലാവസ്ഥാ വിവരങ്ങൾ ഇപ്പോൾ ലഭ്യമല്ല. നനയ്ക്കുന്നതിന് മുൻപ് മണ്ണിലെ ഈർപ്പം നേരിട്ട് പരിശോധിക്കുക."
                 else:
                     irr_resp = f"Weather telemetry for {loc} is currently unavailable. Please check soil moisture directly at root depth before irrigating {crop_name}."
                 return OrchestrationResult(
@@ -1527,12 +1558,7 @@ class BhoomiAgentOrchestrator:
 
             # Fail-safe: When market data is UNAVAILABLE or no modal price exists, NEVER fabricate benchmark prices
             if m_freshness == "UNAVAILABLE" or modal_p is None:
-                if active_lang == "te":
-                    market_resp = f"{dist} మార్కెట్‌లో {crop} తాజా మండి ధరలు ప్రస్తుతం అధికారిక అగ్‌మార్క్‌నెట్ ఫీడ్ ద్వారా అందుబాటులో లేవు. వ్యాపారులకు విక్రయించే ముందు దయచేసి స్థానిక APMC మార్కెట్ యార్డ్‌ను సంప్రదించండి."
-                elif active_lang == "hi":
-                    market_resp = f"{dist} मंडी में {crop} के ताज़ा भाव आधिकारिक एगमार्कनेट फ़ीड पर अभी उपलब्ध नहीं हैं। कृपया स्थानीय APMC मंडी समिति से वर्तमान भाव की पुष्टि करें।"
-                else:
-                    market_resp = f"Live mandi rates for {crop} are currently unavailable from official Agmarknet price feeds in {dist}. Please verify spot quotes directly with your local APMC market committee."
+                market_resp = cls._get_market_fail_safe_msg(active_lang, crop, dist)
 
                 RecommendationTraceStore.record_trace(RecommendationRecord(
                     farmer_id=farmer_id,
@@ -1560,6 +1586,12 @@ class BhoomiAgentOrchestrator:
                 market_resp = f"{rec_mandi}లో {crop} ప్రస్తుత మోడల్ ధర క్వింటాలుకు ₹{Decimal(str(modal_p)):,.2f}. రవాణా ఖర్చులు తీసివేస్తే మీ నికర రాబడి ₹{Decimal(str(best_net)):,.2f}/క్వింటాల్ అవుతుంది.\n\n[ఆధారం: {src_mkt}{src_suffix}]"
             elif active_lang == "hi":
                 market_resp = f"{rec_mandi} में {crop} का वर्तमान मॉडल भाव ₹{Decimal(str(modal_p)):,.2f}/क्विंटल है। परिवहन खर्च घटाकर आपकी शुद्ध प्राप्ति ₹{Decimal(str(best_net)):,.2f}/क्विंटल रहेगी।\n\n[स्रोत: {src_mkt}{src_suffix}]"
+            elif active_lang == "ta":
+                market_resp = f"{rec_mandi}ல் {crop} தற்போதைய மாதிரி விலை குவிண்டாலுக்கு ₹{Decimal(str(modal_p)):,.2f}. போக்குவரத்து செலவு போக உங்கள் நிகர வருவாய் ₹{Decimal(str(best_net)):,.2f}/குவிண்டால் ஆகும்.\n\n[ஆதாரம்: {src_mkt}{src_suffix}]"
+            elif active_lang == "kn":
+                market_resp = f"{rec_mandi}ನಲ್ಲಿ {crop} ಪ್ರಸ್ತುತ ಮಾದರಿ ದರ ಕ್ವಿಂಟಾಲ್‌ಗೆ ₹{Decimal(str(modal_p)):,.2f}. ಸಾರಿಗೆ ವೆಚ್ಚ ಕಳೆದು ನಿಮ್ಮ ನಿವ್ವಳ ಲಾಭ ₹{Decimal(str(best_net)):,.2f}/ಕ್ವಿಂಟಾಲ್ ಆಗಿರುತ್ತದೆ.\n\n[ಮೂಲ: {src_mkt}{src_suffix}]"
+            elif active_lang == "ml":
+                market_resp = f"{rec_mandi}ൽ {crop} നിലവിലെ മോഡൽ വില ക്വിന്റലിന് ₹{Decimal(str(modal_p)):,.2f}. ഗതാഗത ചെലവ് കഴിഞ്ഞ് നിങ്ങളുടെ അറ്റാദായം ₹{Decimal(str(best_net)):,.2f}/ക്വിന്റൽ ആയിരിക്കും.\n\n[ഉറവിടം: {src_mkt}{src_suffix}]"
             else:
                 market_resp = f"Current {rec_mandi} modal price for {crop} is ₹{Decimal(str(modal_p)):,.2f}/quintal. Considering transport deductions, your Net Realization is ₹{Decimal(str(best_net)):,.2f}/quintal.\n\n[Source: {src_mkt}{src_suffix}]"
 
@@ -2038,6 +2070,7 @@ class BhoomiAgentOrchestrator:
                         "Official Deterministic Tool Results:\n"
                         + "\n".join(tool_results_summary)
                         + "\n\nINSTRUCTIONS: You are BHOOMI, talking to the farmer as a caring older brother or knowledgeable neighbor. "
+                        f"Respond strictly in the farmer's preferred language ({active_lang}). "
                         "Using ONLY the verified facts and exact figures from the tool results above, give a warm, plain-spoken, short-sentenced response. "
                         "Never use corporate or technical jargon. Do not recalculate or modify any numbers."
                     )
