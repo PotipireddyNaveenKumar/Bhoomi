@@ -1355,7 +1355,8 @@ class BhoomiAgentOrchestrator:
             )
 
         # B. Weather Query
-        if intent.intent_type == VoiceIntentType.WEATHER_QUERY or any(w in text_lower for w in ["weather", "rain", "temperature", "forecast", "వాతావరణ", "వర్ష", "मौसम", "बारिश", "வானிலை", "हवामान", "കാലാവസ്ഥ"]):
+        is_disease_pest_mention = any(w in text_lower for w in ["disease", "canker", "blight", "wilt", "pest", "rot", "treat", "treatment", "curl", "curling", "thrip", "thrips"])
+        if not is_disease_pest_mention and (intent.intent_type == VoiceIntentType.WEATHER_QUERY or any(w in text_lower for w in ["weather", "rain", "temperature", "forecast", "వాతావరణ", "వర్ష", "मौसम", "बारिश", "வானிலை", "हवामान", "കാലാവസ്ഥ"])):
             loc = context.district or "Guntur"
             weather_card = await ToolRegistry.execute_tool("get_current_weather", {"location": loc})
             w_dict = weather_card.get("data", {})
@@ -1800,9 +1801,14 @@ class BhoomiAgentOrchestrator:
 
         # K. Pest & Disease Diagnostic Consultation (Grounding & Farm Evidence)
         if intent.intent_type in [VoiceIntentType.PEST_QUERY, VoiceIntentType.DISEASE_QUERY] or any(
-            w in text_lower for w in ["curl", "curling", "leaf curl", "blight", "pests", "insects", "ముడుచు", "ముడత", "నల్లి", "తామర పురుగు", "మరోడియా", "కీటకాలు", "రోగం"]
+            w in text_lower for w in ["curl", "curling", "leaf curl", "blight", "pests", "insects", "canker", "wilt", "rot", "disease", "pest", "thrip", "thrips", "ముడుచు", "ముడత", "నల్లి", "తామర పురుగు", "మరోడియా", "కీటకాలు", "రోగం"]
         ):
-            crop = (intent.target_crop or (context.active_crops[0]["crop_name"] if context and context.active_crops else "Chilli")).strip().title()
+            mentioned_crop = None
+            for c_cand in ["dragon fruit", "dragon_fruit", "chilli", "tomato", "cotton", "rice", "paddy", "maize", "corn", "banana", "potato", "onion"]:
+                if c_cand in text_lower:
+                    mentioned_crop = c_cand
+                    break
+            crop = (mentioned_crop or intent.target_crop or (context.active_crops[0]["crop_name"] if context and context.active_crops else "Chilli")).strip().title()
 
             # Retrieve verified ICAR/ANGRAU RAG evidence
             rag_output = AgriculturalRAGService.search(RAGQueryInput(
@@ -1912,7 +1918,7 @@ class BhoomiAgentOrchestrator:
                         "condition": "Foliar Leaf Curl Analysis",
                         "causes": ["Thrips", "Mites", "Leaf Curl Begomovirus", "Water Stress"],
                         "confidence": 0.96,
-                        "citations": [c.model_dump() for c in rag_output.citations] if rag_output.citations else []
+                        "citations": [c.model_dump() for c in rag_output.canonical_citations] if rag_output.canonical_citations else ([c.model_dump() for c in rag_output.citations] if rag_output.citations else [])
                     }
                 }],
                 voice_state="RESPONDING",
@@ -2036,7 +2042,7 @@ class BhoomiAgentOrchestrator:
                         "data": {
                             "topic": "Agronomic Intelligence",
                             "confidence": rag_output.confidence,
-                            "citations": [c.model_dump() for c in rag_output.citations]
+                            "citations": [c.model_dump() for c in rag_output.canonical_citations] if rag_output.canonical_citations else ([c.model_dump() for c in rag_output.citations] if rag_output.citations else [])
                         }
                     }],
                     voice_state="RESPONDING",
