@@ -35,6 +35,8 @@ class EvidenceSufficiencyGate:
     """
 
     MIN_CONFIDENCE_THRESHOLD: float = 0.50
+    RAG_SUFFICIENCY_THRESHOLD: float = 0.50
+    XAI_EVIDENCE_DISPLAY_THRESHOLD: float = 0.50
 
     INSUFFICIENT_MESSAGES: Dict[str, str] = {
         "en": "No verified agricultural research documentation found matching this specific query with sufficient relevance. Please consult your local Agricultural Extension Officer or KVK scientist.",

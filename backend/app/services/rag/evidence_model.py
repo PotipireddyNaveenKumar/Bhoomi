@@ -2,6 +2,9 @@ from enum import Enum
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 
+RAG_SUFFICIENCY_THRESHOLD: float = 0.50
+XAI_EVIDENCE_DISPLAY_THRESHOLD: float = 0.50
+
 
 class AuthorityTier(str, Enum):
     TIER_1_GOVT_ICAR = "TIER_1_GOVT_ICAR"           # ICAR, DPPQS, MoA&FW, IMD, AGMARKNET, CIBRC

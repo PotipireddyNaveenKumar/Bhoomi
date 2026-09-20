@@ -40,6 +40,9 @@ class ModelExplanation(BaseModel):
     confidence: Optional[float] = None
     explanation_summary: str
     xai_status: str = XAICapabilityStatus.AVAILABLE.value
+    native_unit: Optional[str] = None
+    display_unit: Optional[str] = None
+    conversion_factor: Optional[float] = None
 
 
 class VisionHeatmapExplanation(BaseModel):

@@ -84,37 +84,59 @@ class XAIService:
     ) -> LiveDataExplanation:
         """
         Builds live data provenance explanation preserving Batch 4 fail-safe semantics:
-        CURRENT, STALE, UNAVAILABLE, DEMO, SYNTHETIC.
+        - CURRENT: Live provider successfully queried, data fresh, is_synthetic=False
+        - STALE: Provider cached data older than fresh window, is_synthetic=False
+        - UNAVAILABLE: Provider failed or unconfigured, data fields null/absent, is_synthetic=False
+        - DEMO / SYNTHETIC: Explicit demo or test mode only, is_synthetic=True
         """
-        weather_dict = None
         if weather_res:
             w_fresh = getattr(weather_res, "freshness", None) or getattr(getattr(weather_res, "current", None), "freshness", "UNAVAILABLE")
-            w_src = getattr(weather_res, "source", None) or getattr(getattr(weather_res, "current", None), "source", "IMD / OpenWeatherMap")
-            w_live = bool(getattr(weather_res, "configured", False) and getattr(getattr(weather_res, "current", None), "is_live", False))
-            is_syn = (w_fresh in [FreshnessStatus.DEMO.value, FreshnessStatus.SYNTHETIC.value]) or (not w_live)
+            w_src = getattr(weather_res, "source", None) or getattr(getattr(weather_res, "current", None), "source", "Open-Meteo / IMD")
+            # Strictly determine synthetic: true ONLY for explicit DEMO or SYNTHETIC mock modes
+            is_syn = getattr(weather_res, "is_synthetic", False) or (
+                str(w_fresh).upper() in [FreshnessStatus.DEMO.value, FreshnessStatus.SYNTHETIC.value, "DEMO", "SYNTHETIC"]
+            )
             weather_dict = {
-                "provider": w_src,
+                "provider": str(w_src),
                 "freshness": str(w_fresh),
                 "is_synthetic": is_syn,
                 "observed_at": getattr(getattr(weather_res, "current", None), "observed_at", None),
-                "contribution_status": "CURRENT" if w_fresh == FreshnessStatus.CURRENT.value else str(w_fresh)
+                "contribution_status": "CURRENT" if str(w_fresh).upper() in [FreshnessStatus.CURRENT.value, "CURRENT", "ACTIVE"] else str(w_fresh)
+            }
+        else:
+            weather_dict = {
+                "provider": "None",
+                "freshness": "UNAVAILABLE",
+                "is_synthetic": False,
+                "observed_at": None,
+                "contribution_status": "UNAVAILABLE"
             }
 
-        market_dict = None
         if market_res:
-            m_fresh = getattr(market_res, "freshness", None)
-            m_source = getattr(market_res, "source", "AGMARKNET / data.gov.in")
-            is_syn = getattr(market_res, "is_synthetic", False) or (m_fresh in [MarketFreshnessStatus.DEMO.value, MarketFreshnessStatus.SYNTHETIC.value])
+            m_fresh = getattr(market_res, "freshness", None) or "UNAVAILABLE"
+            m_source = getattr(market_res, "source", None) or "AGMARKNET / data.gov.in"
+            # Strictly determine synthetic: true ONLY for explicit DEMO or SYNTHETIC mock modes
+            is_syn = getattr(market_res, "is_synthetic", False) or (
+                str(m_fresh).upper() in [MarketFreshnessStatus.DEMO.value, MarketFreshnessStatus.SYNTHETIC.value, "DEMO", "SYNTHETIC"]
+            )
             market_dict = {
-                "provider": m_source,
-                "freshness": str(m_fresh or MarketFreshnessStatus.CURRENT.value),
+                "provider": str(m_source),
+                "freshness": str(m_fresh),
                 "is_synthetic": is_syn,
                 "observed_at": getattr(market_res, "retrieved_at", None),
-                "contribution_status": "CURRENT" if m_fresh == MarketFreshnessStatus.CURRENT.value else str(m_fresh or "UNAVAILABLE")
+                "contribution_status": "CURRENT" if str(m_fresh).upper() in [MarketFreshnessStatus.CURRENT.value, "CURRENT", "ACTIVE"] else str(m_fresh)
+            }
+        else:
+            market_dict = {
+                "provider": "None",
+                "freshness": "UNAVAILABLE",
+                "is_synthetic": False,
+                "observed_at": None,
+                "contribution_status": "UNAVAILABLE"
             }
 
-        w_status = weather_dict["contribution_status"] if weather_dict else "UNAVAILABLE"
-        m_status = market_dict["contribution_status"] if market_dict else "UNAVAILABLE"
+        w_status = weather_dict["contribution_status"]
+        m_status = market_dict["contribution_status"]
 
         summary = f"Weather: {w_status} | Market: {m_status}"
         return LiveDataExplanation(
@@ -208,9 +230,11 @@ class XAIService:
         rag_exp = cls.create_rag_explanation(evidence_status, evidence_items, citations, lang=lang)
         live_exp = cls.create_live_data_explanation(weather_res, market_res, lang=lang)
 
+        CONVERSION_T_HA_TO_Q_ACRE = 4.04686
         why_bullets = []
         for f in model_exp.top_positive_factors[:2]:
-            why_bullets.append(f"{f.display_name or f.feature} ({f.value}) positively drove the yield estimate.")
+            s_conv = abs(f.shap_value * CONVERSION_T_HA_TO_Q_ACRE)
+            why_bullets.append(f"{f.display_name or f.feature} ({f.value}) positively drove yield (+{abs(f.shap_value):.2f} t/ha / +{s_conv:.2f} quintals/acre).")
 
         ev_bullets = []
         if rag_exp.is_sufficient and rag_exp.citations:
@@ -226,10 +250,11 @@ class XAIService:
         if w_str in ["STALE", "UNAVAILABLE"]:
             limitations.append("Rainfall assumptions rely on historical baseline without verified live weather.")
 
+        native_t_ha = getattr(prediction_output, "predicted_yield_tons_per_hectare", round(prediction_output.predicted_yield_quintals_per_acre / CONVERSION_T_HA_TO_Q_ACRE, 2))
         return ExplanationResult(
             decision_id=f"dec_yield_{uuid.uuid4().hex[:8]}",
             decision_type="yield_prediction",
-            prediction=f"{prediction_output.predicted_yield_quintals_per_acre} quintals/acre",
+            prediction=f"{prediction_output.predicted_yield_quintals_per_acre} quintals/acre ({native_t_ha} t/ha)",
             model_name=model_exp.model_name,
             model_version=model_exp.model_version,
             xai_status=model_exp.xai_status,
@@ -299,3 +324,6 @@ class XAIService:
             locale=lang,
             generated_at=datetime.now(timezone.utc).isoformat()
         )
+
+
+BhoomiXAIService = XAIService

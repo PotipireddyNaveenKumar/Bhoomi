@@ -30,6 +30,17 @@ class WeatherService:
         return res
 
     @classmethod
+    async def get_current_weather(
+        cls,
+        location: Optional[str] = None,
+        lat: Optional[float] = None,
+        lon: Optional[float] = None,
+        provider_override: Optional[str] = None
+    ) -> WeatherResponse:
+        """Alias for get_weather for cross-service compatibility."""
+        return await cls.get_weather(location=location, lat=lat, lon=lon, provider_override=provider_override)
+
+    @classmethod
     def get_provider_status(cls) -> dict:
         from app.core.config import settings
         primary = (settings.WEATHER_PROVIDER or "openmeteo").lower()

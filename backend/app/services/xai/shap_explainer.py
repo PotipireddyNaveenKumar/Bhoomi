@@ -276,9 +276,11 @@ class TabularSHAPExplainer:
                 "pesticide": f"{input_data.pesticide_applied_kg} kg"
             }
 
+            CONVERSION_T_HA_TO_Q_ACRE = 4.04686
             contributions: List[FeatureContribution] = []
             for f_key, sv in feature_shap_map.items():
                 s_float = float(round(sv, 4))
+                s_conv = float(round(s_float * CONVERSION_T_HA_TO_Q_ACRE, 4))
                 direction = "positive" if s_float > 0 else "negative" if s_float < 0 else "neutral"
                 contributions.append(FeatureContribution(
                     feature=f_key,
@@ -286,33 +288,39 @@ class TabularSHAPExplainer:
                     shap_value=s_float,
                     impact_direction=direction,
                     display_name=f_key.replace("_", " ").title(),
-                    display_text=f"{f_key.replace('_', ' ').title()} ({user_values[f_key]}) {'increased' if s_float > 0 else 'decreased'} forecast by {abs(s_float):.2f} t/ha"
+                    display_text=f"{f_key.replace('_', ' ').title()} ({user_values[f_key]}) {'increased' if s_float > 0 else 'decreased'} forecast by {abs(s_float):.2f} t/ha ({abs(s_conv):.2f} quintals/acre)"
                 ))
 
             pos_factors = sorted([c for c in contributions if c.shap_value > 0], key=lambda x: x.shap_value, reverse=True)[:top_k_factors]
             neg_factors = sorted([c for c in contributions if c.shap_value < 0], key=lambda x: x.shap_value)[:top_k_factors]
 
             pos_names = ", ".join([f"{f.feature} ({f.value})" for f in pos_factors]) or "baseline trends"
+            native_pred_t_ha = float(getattr(prediction_output, "predicted_yield_tons_per_hectare", 0.0))
+            disp_pred_q_acre = float(getattr(prediction_output, "predicted_yield_quintals_per_acre", round(native_pred_t_ha * CONVERSION_T_HA_TO_Q_ACRE, 2)))
+
             summary = (
-                f"XGBoost yield forecast of {prediction_output.predicted_yield_quintals_per_acre} q/acre "
-                f"was positively influenced by {pos_names}."
+                f"XGBoost yield forecast of {native_pred_t_ha:.2f} t/ha ({disp_pred_q_acre:.2f} quintals/acre) "
+                f"was positively influenced by {pos_names}. (Native model space: tonnes/hectare; Display conversion: 1 t/ha = {CONVERSION_T_HA_TO_Q_ACRE} quintals/acre)."
             )
 
-            base_val = float(explainer.expected_value) if hasattr(explainer, "expected_value") else None
+            base_val = float(round(explainer.expected_value, 4)) if hasattr(explainer, "expected_value") else None
 
             # Do NOT invent a fake confidence score. The model output provides an empirical 90% confidence interval.
             return ModelExplanation(
                 model_name="XGBoost Regressor",
                 model_version=prediction_output.model_version,
-                prediction=f"{prediction_output.predicted_yield_quintals_per_acre} quintals/acre",
+                prediction=f"{disp_pred_q_acre} quintals/acre ({native_pred_t_ha} t/ha)",
                 input_features_used=user_values,
                 top_positive_factors=pos_factors,
                 top_negative_factors=neg_factors,
                 all_contributions=contributions,
                 base_value=base_val,
-                confidence=None,  # Not fabricated; confidence interval in prediction_output
+                confidence=None,  # Not fabricated; empirical confidence interval in prediction_output
                 explanation_summary=summary,
-                xai_status=XAICapabilityStatus.AVAILABLE.value
+                xai_status=XAICapabilityStatus.AVAILABLE.value,
+                native_unit="tonnes/hectare",
+                display_unit="quintals/acre",
+                conversion_factor=CONVERSION_T_HA_TO_Q_ACRE
             )
         except Exception as e:
             logger.error(f"[SHAP_YIELD] Yield SHAP attribution failed: {e}")

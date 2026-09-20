@@ -34,6 +34,16 @@ class MarketService:
         cls.latest_provider_used = res.source or type(provider).__name__
         return res
 
+    @classmethod
+    async def get_prices(
+        cls,
+        commodity: str,
+        state: Optional[str] = None,
+        district: Optional[str] = None,
+        market_name: Optional[str] = None
+    ) -> MarketComparisonResponse:
+        """Alias for get_mandi_prices for cross-service compatibility."""
+        return await cls.get_mandi_prices(commodity=commodity, state=state, district=district, market_name=market_name)
 
     @classmethod
     def get_provider_status(cls) -> dict:
