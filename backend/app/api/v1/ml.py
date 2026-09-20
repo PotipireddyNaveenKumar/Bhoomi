@@ -11,6 +11,20 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/ml", tags=["Machine Learning Intelligence"])
 
+@router.get("/diagnostic")
+async def diagnostic():
+    import sklearn, joblib
+    try:
+        import shap
+        shap_v = getattr(shap, "__version__", "unknown")
+    except ImportError:
+        shap_v = "not_installed"
+    return {
+        "sklearn": getattr(sklearn, "__version__", None),
+        "joblib": getattr(joblib, "__version__", None),
+        "shap": shap_v,
+    }
+
 @router.post("/crop-recommendation", response_model=CropRecommendationOutput)
 async def recommend_crop(input_data: CropRecommendationInput):
     """
@@ -20,7 +34,10 @@ async def recommend_crop(input_data: CropRecommendationInput):
     try:
         return CropRecommendationService.predict(input_data)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Error in recommend_crop: {tb}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{type(e).__name__}: {str(e)} | {tb[-400:]}")
 
 @router.post("/crop-recommendation/explain", response_model=ExplanationResult)
 async def explain_crop_recommendation(
@@ -34,7 +51,10 @@ async def explain_crop_recommendation(
         pred = CropRecommendationService.predict(input_data)
         return XAIService.explain_crop_recommendation(input_data, pred, lang=language)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Error in explain_crop_recommendation: {tb}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{type(e).__name__}: {str(e)} | {tb[-400:]}")
 
 @router.post("/yield-prediction", response_model=YieldPredictionOutput)
 async def predict_yield(input_data: YieldPredictionInput):
@@ -45,7 +65,10 @@ async def predict_yield(input_data: YieldPredictionInput):
     try:
         return YieldPredictionService.predict(input_data)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Error in predict_yield: {tb}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{type(e).__name__}: {str(e)} | {tb[-400:]}")
 
 @router.post("/yield-prediction/explain", response_model=ExplanationResult)
 async def explain_yield_prediction(
@@ -59,7 +82,10 @@ async def explain_yield_prediction(
         pred = YieldPredictionService.predict(input_data)
         return XAIService.explain_yield_prediction(input_data, pred, lang=language)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Error in explain_yield_prediction: {tb}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{type(e).__name__}: {str(e)} | {tb[-400:]}")
 
 @router.post("/fertilizer-recommendation", response_model=FertilizerRecommendationOutput)
 async def recommend_fertilizer(input_data: FertilizerInput):
