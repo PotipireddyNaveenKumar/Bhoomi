@@ -5,8 +5,31 @@ import os
 import io
 from PIL import Image, ImageFilter
 from app.services.vision.vision_service import VisionService, VisionAnalysisOutput
+from app.services.xai.explanation_model import ExplanationResult
+from app.services.xai.xai_service import XAIService
 
 router = APIRouter(prefix="/vision", tags=["Computer Vision Pathology"])
+
+@router.post("/explain", response_model=ExplanationResult)
+async def explain_crop_image(
+    file: UploadFile = File(...),
+    crop_hint: Optional[str] = Form(None),
+    language: Optional[str] = Form("en")
+):
+    """
+    Explainable AI (Grad-CAM) Visual Pathology Explanation.
+    Computes authentic gradient activations on convolutional layers without decorative masks.
+    """
+    try:
+        image_bytes = await file.read()
+        return XAIService.explain_vision_diagnosis(
+            image_bytes=image_bytes,
+            crop_hint=crop_hint or "tomato",
+            lang=language or "en"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
 
 @router.post("/analyze", response_model=VisionAnalysisOutput)
 async def analyze_crop_image(

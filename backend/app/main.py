@@ -43,6 +43,7 @@ from app.api.v1.farm_manager_routes import router as farm_manager_router
 from app.api.v1.decision_routes import router as decision_router
 from app.api.v1.pilot import router as pilot_router
 from app.api.v1.demo import router as demo_router
+from app.api.v1.xai_routes import router as xai_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -247,6 +248,7 @@ app.include_router(farm_manager_router, prefix=api_v1)
 app.include_router(decision_router, prefix=api_v1)
 app.include_router(pilot_router, prefix=api_v1)
 app.include_router(demo_router, prefix=api_v1)
+app.include_router(xai_router, prefix=api_v1)
 
 # Web Frontend Mounting
 WEB_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "web"))
