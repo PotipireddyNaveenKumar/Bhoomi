@@ -246,9 +246,10 @@ class FarmStateEngine:
             total_yield = round(yield_per_acre * dt.total_acres, 1)
 
         # 5. Financial Calculation (Deterministic Decimal)
+        calc_acres = Decimal(str(dt.total_acres)) if (dt and dt.total_acres and float(dt.total_acres) > 0) else Decimal("1.0")
         fin_req = ProfitCalculationRequest(
             crop_name=crop_name or "General",
-            area_acres=Decimal(str(dt.total_acres)),
+            area_acres=calc_acres,
             expected_yield_quintals_per_acre=Decimal(str(yield_per_acre)),
             expected_market_price_per_quintal=Decimal(str(best_net)),
             cultivation_cost_total=Decimal("70000.00") if crop_name else Decimal("0.00")
@@ -265,7 +266,7 @@ class FarmStateEngine:
             location=dt.district or dt.location or "General",
             rainfall_forecast_status="moderate",
             irrigation_available=True,
-            area_acres=dt.total_acres
+            area_acres=float(calc_acres)
         )
         risk_res = RiskAssessmentService.assess_risk(risk_req)
 

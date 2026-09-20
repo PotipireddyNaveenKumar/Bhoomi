@@ -1,7 +1,8 @@
 import uuid
 from decimal import Decimal
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime, timezone
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.decision import (
     FarmDecision,
@@ -81,7 +82,7 @@ class FarmDecisionEngine:
             return ConfidenceLevel.LOW, base_score, "HIGH"
 
     @classmethod
-    def generate_plan(cls, state: FarmState) -> DecisionPlan:
+    def _build_plan_and_records(cls, state: FarmState) -> Tuple[DecisionPlan, List[RecommendationRecord]]:
         trace_id = f"trace_{uuid.uuid4().hex[:12]}"
         suffix = f"_{uuid.uuid4().hex[:6]}"
         decisions: List[FarmDecision] = []
@@ -387,6 +388,7 @@ class FarmDecisionEngine:
         )
 
         # 6. Trace Provenance to Store
+        records: List[RecommendationRecord] = []
         for d in resolved_decisions:
             rec = RecommendationRecord(
                 recommendation_id=d.decision_id,
@@ -411,9 +413,9 @@ class FarmDecisionEngine:
                 confidence=d.confidence_score,
                 assumptions=[d.reason]
             )
-            RecommendationTraceStore.record_trace(rec)
+            records.append(rec)
 
-        return DecisionPlan(
+        plan = DecisionPlan(
             farmer_id=state.farmer_id,
             farm_summary=f"{state.active_crop} ({state.total_acres} acres) in {state.location}",
             current_crop=state.active_crop or "Crop",
@@ -427,3 +429,29 @@ class FarmDecisionEngine:
             generated_at=datetime.now(timezone.utc).isoformat(),
             trace_id=trace_id
         )
+        return plan, records
+
+    @classmethod
+    def generate_plan(cls, state: FarmState) -> DecisionPlan:
+        """
+        Synchronous entrypoint for legacy callers and unit tests.
+        """
+        plan, records = cls._build_plan_and_records(state)
+        for rec in records:
+            RecommendationTraceStore.record_trace(rec)
+        return plan
+
+    @classmethod
+    async def generate_plan_async(
+        cls,
+        state: FarmState,
+        db: Optional[AsyncSession] = None
+    ) -> DecisionPlan:
+        """
+        Asynchronous entrypoint for FastAPI endpoints.
+        Directly persists traces into the active asyncpg database session.
+        """
+        plan, records = cls._build_plan_and_records(state)
+        for rec in records:
+            await RecommendationTraceStore.record_trace_async(rec, db=db)
+        return plan

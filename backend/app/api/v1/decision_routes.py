@@ -69,7 +69,7 @@ async def evaluate_farm_decisions(
     """
     try:
         state = await FarmStateEngine.get_current_state(farmer_id=request.farmer_id, db=db)
-        plan = FarmDecisionEngine.generate_plan(state)
+        plan = await FarmDecisionEngine.generate_plan_async(state, db=db)
         risks = FarmRiskAggregator.evaluate_risks(state)
         missing_info = MissingInformationDetector.detect_missing(state=state, intent=request.intent)
 

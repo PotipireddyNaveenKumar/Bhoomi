@@ -158,8 +158,22 @@ class RecommendationTraceStore:
 
     @classmethod
     def record_trace(cls, record: RecommendationRecord) -> RecommendationRecord:
-        """Synchronous wrapper for legacy callers."""
-        return _run_coroutine_sync(cls.record_trace_async(record))
+        """
+        Synchronous wrapper for legacy callers.
+        If an active event loop is running (e.g. within an async FastAPI handler),
+        schedules the persistence on that running loop as a background task to maintain
+        asyncpg loop affinity and avoid blocking. Otherwise executes via asyncio.run().
+        """
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        if loop and loop.is_running():
+            loop.create_task(cls.record_trace_async(record))
+            return record
+        else:
+            return asyncio.run(cls.record_trace_async(record))
 
     @classmethod
     async def get_trace_async(
