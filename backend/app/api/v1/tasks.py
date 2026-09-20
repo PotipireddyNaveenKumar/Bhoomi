@@ -12,8 +12,10 @@ from app.schemas.task import (
     FarmTaskUpdate,
     FarmTaskResponse,
     FarmTask,
-    TaskStatus
+    TaskStatus,
+    TaskType
 )
+from app.schemas.decision import DecisionPriority
 from app.services.tasks.smart_reminder_engine import SmartReminderEngine
 from app.services.weather.weather_service import WeatherService
 from app.services.farm_manager.state_engine import FarmStateEngine
@@ -98,6 +100,7 @@ async def get_today_tasks(
     """
     Answers: "What should I do today?"
     Returns prioritized canonical FarmTasks due today strictly for the authenticated farmer.
+    SQL farm_tasks table is the authoritative persistent state.
     """
     from app.repositories.farm_repo import FarmRepository
     farm_repo = FarmRepository(db)
@@ -115,9 +118,58 @@ async def get_today_tasks(
 
     state = await FarmStateEngine.get_current_state(farmer_id=farmer.id, db=db)
     state.farm_id = target_farm_id
-    tasks = TaskIntelligenceEngine.generate_tasks_for_farm(state)
-    today_str = datetime.now(timezone.utc).date().isoformat()
-    return [t for t in tasks if t.due_at[:10] == today_str or t.status in [TaskStatus.DUE, TaskStatus.POSTPONED]]
+    ai_tasks = TaskIntelligenceEngine.generate_tasks_for_farm(state)
+    today_date = datetime.now(timezone.utc).date()
+    today_str = today_date.isoformat()
+
+    # Query persistent tasks from SQL database
+    repo = TaskRepository(db)
+    db_tasks = await repo.get_tasks_by_farmer(farmer.id)
+    db_status_map = {t.id: t.status for t in db_tasks}
+    db_title_map = {t.title.lower(): t.status for t in db_tasks}
+
+    filtered_tasks: List[FarmTask] = []
+    seen_task_ids = set()
+
+    # 1. Include AI generated tasks, applying DB completion status if completed
+    for t in ai_tasks:
+        if t.due_at[:10] == today_str or t.status in [TaskStatus.DUE, TaskStatus.POSTPONED, TaskStatus.COMPLETED]:
+            if db_status_map.get(t.task_id) == "completed" or db_title_map.get(t.title.lower()) == "completed":
+                t.status = TaskStatus.COMPLETED
+                t.completion_status = "SUCCESS"
+            filtered_tasks.append(t)
+            seen_task_ids.add(t.task_id)
+            seen_task_ids.add(t.title.lower())
+
+    # 2. Include SQL DB tasks due today or pending/completed today
+    for dbt in db_tasks:
+        if dbt.id in seen_task_ids or dbt.title.lower() in seen_task_ids:
+            continue
+        dbt_farm_id = dbt.farm_id or target_farm_id
+        if dbt_farm_id != target_farm_id:
+            continue
+        due_str = str(dbt.due_date) if dbt.due_date else today_str
+        is_today = (due_str == today_str) or (dbt.due_date and dbt.due_date <= today_date and dbt.status in ["pending", "in_progress", "due", "completed"])
+        if is_today:
+            status_enum = TaskStatus.COMPLETED if dbt.status == "completed" else TaskStatus.DUE
+            ft = FarmTask(
+                task_id=dbt.id,
+                farm_id=dbt_farm_id,
+                crop=getattr(dbt, "crop", None) or state.active_crop or "General",
+                task_type=TaskType.IRRIGATION if "irrig" in (dbt.task_type or "").lower() else TaskType.GENERAL_FARM_TASK,
+                title=dbt.title,
+                description=dbt.description,
+                priority=DecisionPriority.HIGH if (dbt.priority or "").lower() == "high" else DecisionPriority.MEDIUM,
+                status=status_enum,
+                due_at=due_str,
+                trigger="farm_schedule",
+                reason=dbt.reason or "Scheduled task from farm plan",
+                completion_status="SUCCESS" if dbt.status == "completed" else None
+            )
+            filtered_tasks.append(ft)
+            seen_task_ids.add(dbt.id)
+
+    return filtered_tasks
 
 
 @router.get("/week", response_model=List[FarmTask])
@@ -159,6 +211,7 @@ async def complete_farm_task(
     """
     Marks a task as COMPLETED, records timestamps and logs to FarmMemoryV2 and DB.
     Enforces strict authenticated farmer tenant ownership.
+    Authoritative persistence is the SQL farm_tasks table.
     """
     req = payload or TaskActionRequest()
     target_farm_id = await _resolve_and_verify_task_ownership(
@@ -167,21 +220,103 @@ async def complete_farm_task(
         farmer=farmer,
         db=db
     )
-    try:
+    now_str = datetime.now(timezone.utc).isoformat()
+    repo = TaskRepository(db)
+    db_task = await repo.get_task_by_id(task_id)
+
+    from app.services.memory.farm_memory_v2 import FarmMemoryV2
+
+    # 1. If task exists in SQL DB:
+    if db_task:
+        await repo.update_task(task_id, farmer.id, FarmTaskUpdate(status="completed"))
+        FarmMemoryV2.add_memory(
+            farmer_id=farmer.id,
+            category="EVENT",
+            key=f"task_completed_{task_id}",
+            value={
+                "task_id": task_id,
+                "title": db_task.title,
+                "farm_id": target_farm_id,
+                "completed_at": now_str,
+                "completion_source": req.completion_source or "api"
+            },
+            source=req.completion_source or "api"
+        )
+        # Update TaskIntelligenceEngine in-memory if present
+        for t in TaskIntelligenceEngine.get_tasks_for_farm(target_farm_id):
+            if t.task_id == task_id or t.title.lower() == db_task.title.lower():
+                t.status = TaskStatus.COMPLETED
+                t.completion_status = "SUCCESS"
+                t.completed_at = now_str
+                t.completion_source = req.completion_source or "api"
+                return t
+
+        return FarmTask(
+            task_id=db_task.id,
+            farm_id=target_farm_id,
+            crop="General",
+            task_type=TaskType.IRRIGATION if "irrig" in (db_task.task_type or "").lower() else TaskType.GENERAL_FARM_TASK,
+            title=db_task.title,
+            description=db_task.description,
+            priority=DecisionPriority.MEDIUM,
+            status=TaskStatus.COMPLETED,
+            due_at=str(db_task.due_date),
+            trigger="user_schedule",
+            reason=db_task.reason or "Scheduled task completed by farmer",
+            completion_status="SUCCESS",
+            completed_at=now_str,
+            completion_source=req.completion_source or "api"
+        )
+
+    # 2. If task exists in TaskIntelligenceEngine in-memory:
+    in_memory_task = None
+    for t in TaskIntelligenceEngine.get_tasks_for_farm(target_farm_id):
+        if t.task_id == task_id:
+            in_memory_task = t
+            break
+
+    if in_memory_task:
+        if in_memory_task.status == TaskStatus.COMPLETED:
+            return in_memory_task
+
         t = TaskIntelligenceEngine.complete_task(
             task_id=task_id,
             farmer_id=farmer.id,
             farm_id=target_farm_id,
             completion_source=req.completion_source or "api"
         )
+        # Persist to SQL farm_tasks as authoritative record
         try:
-            repo = TaskRepository(db)
-            await repo.update_task(task_id, farmer.id, FarmTaskUpdate(status="completed"))
+            from datetime import date
+            due_d = date.today()
+            if t.due_at:
+                try:
+                    due_d = date.fromisoformat(t.due_at[:10])
+                except Exception:
+                    pass
+            new_db_task = await repo.create_task(
+                farmer_id=farmer.id,
+                task_in=FarmTaskCreate(
+                    farm_id=target_farm_id,
+                    title=t.title,
+                    description=t.description,
+                    task_type=t.task_type.value if hasattr(t.task_type, "value") else str(t.task_type),
+                    due_date=due_d,
+                    reason=t.reason
+                ),
+                source=req.completion_source or "ai_agent"
+            )
+            await repo.update_task(new_db_task.id, farmer.id, FarmTaskUpdate(status="completed"))
         except Exception:
             pass
+
         return t
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Task with ID {task_id} not found."
+    )
+
 
 
 @router.post("/{task_id}/postpone", response_model=FarmTask)

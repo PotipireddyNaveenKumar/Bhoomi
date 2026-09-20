@@ -36,8 +36,56 @@ class FarmRepository:
         )
         self.db.add(farm)
         await self.db.commit()
-        await self.db.refresh(farm)
-        return farm
+        # Eager load crops to eliminate SQLAlchemy MissingGreenlet lazy-loading error on FarmResponse serialization
+        res = await self.db.execute(
+            select(Farm).options(selectinload(Farm.crops)).where(Farm.id == farm.id)
+        )
+        return res.scalars().first()
+
+    async def atomic_onboard_farm_and_crop(
+        self,
+        farmer_id: str,
+        farm_name: str,
+        total_area_acres: Decimal,
+        soil_type: Optional[str],
+        irrigation_source: Optional[str],
+        soil_health_data: Optional[dict],
+        latitude: Optional[float],
+        longitude: Optional[float],
+        crop_name: str,
+        crop_variety: Optional[str] = None
+    ) -> Farm:
+        farm = Farm(
+            farmer_id=farmer_id,
+            farm_name=farm_name,
+            total_area_acres=total_area_acres,
+            latitude=latitude,
+            longitude=longitude,
+            soil_type=soil_type or "black",
+            irrigation_source=irrigation_source or "borewell",
+            soil_health_data=soil_health_data,
+        )
+        self.db.add(farm)
+        await self.db.flush()
+
+        crop = FarmCrop(
+            farm_id=farm.id,
+            crop_name=crop_name,
+            variety=crop_variety,
+            area_acres=total_area_acres,
+            current_stage="vegetative",
+            status="active",
+            cultivation_cost_spent=Decimal("0.0"),
+        )
+        self.db.add(crop)
+        await self.db.commit()
+
+        # Eager load crops so serializer receives pre-loaded relationship
+        res = await self.db.execute(
+            select(Farm).options(selectinload(Farm.crops)).where(Farm.id == farm.id)
+        )
+        return res.scalars().first()
+
 
     async def add_crop_to_farm(self, farm_id: str, crop_in: CropCreate) -> FarmCrop:
         crop = FarmCrop(

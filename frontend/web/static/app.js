@@ -994,10 +994,12 @@ async function initAuth() {
       } else {
         setAppState(AuthState.AUTHENTICATED);
         loadUserScopedSessions();
+        loadTodayTasks();
 
         const dest = (initialRoute === "/finance" || initialRoute === "/voice") ? initialRoute : "/home";
         navigateTo(dest, true);
       }
+
     } else {
       localStorage.removeItem("bhoomi_auth_token");
       localStorage.removeItem("bhoomi_current_user");
@@ -2934,6 +2936,30 @@ function updateUILanguage(lang) {
 
   updateVoiceModalLabels();
   updateFinanceModalLanguage(lang);
+
+  // Update Today's Farm Tasks header labels
+  const txtTodayTasksTitle = document.getElementById("txtTodayTasksTitle");
+  const txtTodayTasksSub = document.getElementById("txtTodayTasksSub");
+  const txtRefreshTasks = document.getElementById("txtRefreshTasks");
+  if (txtTodayTasksTitle) {
+    if (lang === "te") txtTodayTasksTitle.textContent = "నేటి వ్యవసాయ పనులు (Today's Tasks)";
+    else if (lang === "hi") txtTodayTasksTitle.textContent = "आज के कृषि कार्य (Today's Tasks)";
+    else if (lang === "ta") txtTodayTasksTitle.textContent = "இன்றைய விவசாய பணிகள்";
+    else if (lang === "kn") txtTodayTasksTitle.textContent = "ಇಂದಿನ ಕೃಷಿ ಕಾರ್ಯಗಳು";
+    else if (lang === "mr") txtTodayTasksTitle.textContent = "आजची शेती कामे";
+    else txtTodayTasksTitle.textContent = "Today's Farm Tasks";
+  }
+  if (txtTodayTasksSub) {
+    if (lang === "te") txtTodayTasksSub.textContent = "వాతావరణం మరియు డిజిటల్ ట్విన్ ఆధారిత పనులు";
+    else if (lang === "hi") txtTodayTasksSub.textContent = "मौसम और डिजिटल ट्विन आधारित कार्य";
+    else txtTodayTasksSub.textContent = "Scheduled actions from your digital twin & weather intelligence";
+  }
+  if (txtRefreshTasks) {
+    if (lang === "te") txtRefreshTasks.textContent = "రిఫ్రెష్";
+    else if (lang === "hi") txtRefreshTasks.textContent = "ताज़ा करें";
+    else txtRefreshTasks.textContent = "Refresh";
+  }
+
 
   // Update all listen buttons in existing chat rows
   document.querySelectorAll(".btn-speak-audio").forEach(btn => {
@@ -5142,33 +5168,15 @@ async function handleCompleteOnboarding() {
     });
 
     if (res.ok) {
+      showToast("Farm and profile created successfully!", "success");
       await initAuth();
     } else {
-      const farmRes = await fetch("/api/v1/farms", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          farmer_id: currentUser?.id || currentUser?.farmer_id,
-          farm_name: `${name || "My"} Farm`,
-          total_area_acres: acres || 1.0,
-          state: state,
-          district: district,
-          village: village,
-          soil_type: currentSoilEstimate?.soil_type || "black"
-        })
-      });
-      if (farmRes.ok) {
-        await initAuth();
-      } else {
-        const err = await res.json().catch(() => ({}));
-        if (errorMsg) {
-          errorMsg.textContent = err.detail || err.message || "Failed to save profile. Please try again.";
-          errorMsg.style.display = "block";
-        }
+      const err = await res.json().catch(() => ({}));
+      if (errorMsg) {
+        errorMsg.textContent = err.detail || err.message || "Failed to complete onboarding. Please check your inputs.";
+        errorMsg.style.display = "block";
       }
+      showToast(err.detail || "Onboarding failed. Please check your inputs.", "error");
     }
   } catch (err) {
     if (errorMsg) {
@@ -5193,3 +5201,107 @@ window.getOtpCode = getOtpCode;
 window.clearOtpBoxes = clearOtpBoxes;
 window.distributeOtpDigits = distributeOtpDigits;
 window.focusFirstOtpBox = focusFirstOtpBox;
+
+// =============================================================================
+// TODAY'S FARM TASKS CLIENT ENGINE (CANONICAL TASK LIFECYCLE)
+// =============================================================================
+
+async function loadTodayTasks() {
+  const container = document.getElementById("todayTasksList");
+  if (!container) return;
+
+  const token = authToken || localStorage.getItem("bhoomi_auth_token");
+  if (!token) {
+    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">Please login to view tasks.</div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/v1/tasks/today", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">No tasks scheduled for today.</div>`;
+      return;
+    }
+
+    const tasks = await res.json();
+    if (!tasks || tasks.length === 0) {
+      container.innerHTML = `<div style="padding: 14px; font-size: 0.85rem; color: #16a34a; background: var(--bg-surface, #ffffff); border-radius: 8px; border: 1px dashed #86efac; text-align: center;">✅ No pending tasks for today. Your farm is up to date!</div>`;
+      return;
+    }
+
+    container.innerHTML = tasks.map(t => {
+      const isCompleted = (t.status || "").toUpperCase() === "COMPLETED";
+      const priorityVal = (t.priority || "").toUpperCase();
+      const priorityBg = priorityVal === "HIGH" || priorityVal === "CRITICAL" ? "#fee2e2" : "#e0f2fe";
+      const priorityColor = priorityVal === "HIGH" || priorityVal === "CRITICAL" ? "#b91c1c" : "#0369a1";
+
+      return `
+        <div class="today-task-card ${isCompleted ? 'task-completed' : ''}" id="taskCard_${t.task_id}" style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 14px; margin-bottom: 8px; background: var(--bg-surface, #ffffff); border: 1px solid ${isCompleted ? '#86efac' : 'var(--border-color, #e2e8f0)'}; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
+              <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; background: ${priorityBg}; color: ${priorityColor};">${priorityVal || 'MEDIUM'}</span>
+              <span style="font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: #475569; font-weight: 600;">🌾 ${t.crop || 'Crop'}</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">📅 ${t.due_at ? t.due_at.slice(0,10) : 'Today'}</span>
+            </div>
+            <div class="task-title" style="font-size: 0.92rem; font-weight: 600; color: var(--text-primary, #0f172a); ${isCompleted ? 'text-decoration: line-through; opacity: 0.75;' : ''}">${t.title}</div>
+            ${t.reason ? `<div style="font-size: 0.8rem; color: var(--text-secondary, #475569); margin-top: 4px;">💡 <em>${t.reason}</em></div>` : ''}
+            ${t.postponement_reason ? `<div style="font-size: 0.78rem; color: #b45309; margin-top: 3px;">🌦️ ${t.postponement_reason}</div>` : ''}
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            ${isCompleted ? `
+              <span style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; background: #dcfce7; color: #15803d; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
+                ✓ COMPLETED
+              </span>
+            ` : `
+              <button type="button" class="btn-complete-task" onclick="handleCompleteTask('${t.task_id}')" style="padding: 6px 12px; background: #16a34a; color: white; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 4px rgba(22,163,74,0.3);">
+                ✓ Complete
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (err) {
+    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">Unable to load tasks at this time.</div>`;
+  }
+}
+window.loadTodayTasks = loadTodayTasks;
+
+async function handleCompleteTask(taskId) {
+  const token = authToken || localStorage.getItem("bhoomi_auth_token");
+  if (!token) return;
+
+  const card = document.getElementById(`taskCard_${taskId}`);
+  if (card) card.style.opacity = "0.5";
+
+  try {
+    const res = await fetch(`/api/v1/tasks/${encodeURIComponent(taskId)}/complete`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ completion_source: "web_ui" })
+    });
+
+    if (res.ok) {
+      showToast("Task marked as COMPLETED!", "success");
+      await loadTodayTasks();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.detail || "Failed to complete task.", "error");
+      if (card) card.style.opacity = "1";
+    }
+  } catch (err) {
+    showToast("Network error completing task: " + err.message, "error");
+    if (card) card.style.opacity = "1";
+  }
+}
+window.handleCompleteTask = handleCompleteTask;
+

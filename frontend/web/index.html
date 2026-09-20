@@ -697,7 +697,27 @@
             <div class="starter-chips-grid" id="starterChipsGrid">
               <!-- Rendered dynamically by onLanguageChanged -->
             </div>
+
+            <!-- TODAY'S FARM TASKS SECTION -->
+            <div id="todayTasksSection" class="today-tasks-section" style="margin-top: 28px; text-align: left; background: var(--bg-surface-alt, rgba(255, 255, 255, 0.7)); backdrop-filter: blur(8px); border: 1px solid var(--border-color, #e2e8f0); border-radius: 16px; padding: 18px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);">
+              <div class="today-tasks-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.3rem;">📋</span>
+                  <div>
+                    <h3 id="txtTodayTasksTitle" style="font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--text-primary, #0f172a);">Today's Farm Tasks</h3>
+                    <span id="txtTodayTasksSub" style="font-size: 0.75rem; color: var(--text-muted, #94a3b8);">Scheduled actions from your digital twin & weather intelligence</span>
+                  </div>
+                </div>
+                <button type="button" id="btnRefreshTasks" class="btn-refresh-tasks" onclick="loadTodayTasks()" style="background: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--text-primary, #1e293b); display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                  🔄 <span id="txtRefreshTasks">Refresh</span>
+                </button>
+              </div>
+              <div id="todayTasksList" class="today-tasks-list">
+                <div style="padding: 16px; text-align: center; color: var(--text-secondary, #64748b); font-size: 0.85rem;">⏳ Loading today's scheduled tasks...</div>
+              </div>
+            </div>
           </div>
+
 
           <!-- Message Thread List -->
           <div id="messagesList" class="messages-list" style="display: none;"></div>
