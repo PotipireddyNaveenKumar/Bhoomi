@@ -83,6 +83,7 @@ class FarmDecisionEngine:
     @classmethod
     def generate_plan(cls, state: FarmState) -> DecisionPlan:
         trace_id = f"trace_{uuid.uuid4().hex[:12]}"
+        suffix = f"_{uuid.uuid4().hex[:6]}"
         decisions: List[FarmDecision] = []
 
         freshness_map = {
@@ -97,7 +98,7 @@ class FarmDecisionEngine:
 
         if weather_freshness in ["UNAVAILABLE", "STALE"]:
             weather_decision = FarmDecision(
-                decision_id="dec_weather_unavail",
+                decision_id=f"dec_weather_unavail{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.WEATHER_RESPONSE,
@@ -121,7 +122,7 @@ class FarmDecisionEngine:
             )
         elif rain_prob >= 50 or rain_mm >= 15.0:
             weather_decision = FarmDecision(
-                decision_id="dec_weather_storm_guard",
+                decision_id=f"dec_weather_storm_guard{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.WEATHER_RESPONSE,
@@ -145,7 +146,7 @@ class FarmDecisionEngine:
             )
         else:
             weather_decision = FarmDecision(
-                decision_id="dec_weather_favorable",
+                decision_id=f"dec_weather_favorable{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.WEATHER_RESPONSE,
@@ -170,7 +171,7 @@ class FarmDecisionEngine:
         # 2. Irrigation Decision
         if weather_freshness != "UNAVAILABLE" and (rain_prob >= 40 or rain_mm >= 10.0):
             irrigation_decision = FarmDecision(
-                decision_id="dec_irr_rain_delay",
+                decision_id=f"dec_irr_rain_delay{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.IRRIGATION,
@@ -195,7 +196,7 @@ class FarmDecisionEngine:
             )
         elif state.soil_moisture_percentage and state.soil_moisture_percentage < 35.0:
             irrigation_decision = FarmDecision(
-                decision_id="dec_irr_urgent",
+                decision_id=f"dec_irr_urgent{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.IRRIGATION,
@@ -219,7 +220,7 @@ class FarmDecisionEngine:
             )
         else:
             irrigation_decision = FarmDecision(
-                decision_id="dec_irr_routine",
+                decision_id=f"dec_irr_routine{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.IRRIGATION,
@@ -247,7 +248,7 @@ class FarmDecisionEngine:
             safe_rec = f"Targeted IPM Application for {state.recent_disease_detection} using approved bio-fungicide"
             safety_eval = SafetyEngine.evaluate(safe_rec, crop=state.active_crop, stage=state.crop_stage)
             health_decision = FarmDecision(
-                decision_id="dec_health_disease_ipm",
+                decision_id=f"dec_health_disease_ipm{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.CROP_HEALTH,
@@ -274,7 +275,7 @@ class FarmDecisionEngine:
             spray_txt = "Foliar Spray: 19:19:19 + Boron (Evening Hours Only after 5:30 PM)"
             safety_eval = SafetyEngine.evaluate(spray_txt, crop=state.active_crop, stage=state.crop_stage)
             health_decision = FarmDecision(
-                decision_id="dec_health_flowering_spray",
+                decision_id=f"dec_health_flowering_spray{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.FERTILIZATION,
@@ -298,7 +299,7 @@ class FarmDecisionEngine:
             )
         else:
             health_decision = FarmDecision(
-                decision_id="dec_health_scouting",
+                decision_id=f"dec_health_scouting{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.CROP_HEALTH,
@@ -326,7 +327,7 @@ class FarmDecisionEngine:
 
         if market_freshness == "UNAVAILABLE" or state.net_realization_per_quintal is None:
             market_decision = FarmDecision(
-                decision_id="dec_market_unavail",
+                decision_id=f"dec_market_unavail{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.MARKET_WAIT,
@@ -350,7 +351,7 @@ class FarmDecisionEngine:
             )
         elif state.market_modal_price_per_quintal >= 12000.0:
             market_decision = FarmDecision(
-                decision_id="dec_market_favorable",
+                decision_id=f"dec_market_favorable{suffix}",
                 farmer_id=state.farmer_id,
                 farm_id="farm_1",
                 decision_type=DecisionType.MARKET_SELL,

@@ -293,14 +293,15 @@ async def submit_assistant_feedback(
     # 4. RecommendationTraceStore: Update latest decision trace for this farmer
     trace_updated = False
     try:
-        farmer_traces = RecommendationTraceStore.list_for_farmer(farmer.id)
+        farmer_traces = await RecommendationTraceStore.list_for_farmer_async(farmer.id, db=db)
         if farmer_traces:
-            latest_trace = farmer_traces[-1]
-            RecommendationTraceStore.update_feedback(
+            latest_trace = farmer_traces[0]
+            await RecommendationTraceStore.update_feedback_async(
                 recommendation_id=latest_trace.recommendation_id,
                 farmer_action=FeedbackStatus.FOLLOWED if rating_norm == "helpful" else FeedbackStatus.NOT_FOLLOWED,
                 feedback_rating=FeedbackStatus.HELPFUL if rating_norm == "helpful" else FeedbackStatus.NOT_HELPFUL,
-                feedback_notes=f"Farmer chat feedback: {rating_norm}"
+                feedback_notes=f"Farmer chat feedback: {rating_norm}",
+                db=db
             )
             trace_updated = True
     except Exception as e:

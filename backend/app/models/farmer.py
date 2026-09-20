@@ -24,3 +24,4 @@ class FarmerProfile(Base):
     chat_sessions = relationship("ChatSession", back_populates="farmer", cascade="all, delete-orphan")
     memories = relationship("FarmerMemory", back_populates="farmer", cascade="all, delete-orphan")
     tasks = relationship("FarmTask", back_populates="farmer", cascade="all, delete-orphan")
+    recommendation_traces = relationship("RecommendationTrace", back_populates="farmer", cascade="all, delete-orphan")

@@ -133,3 +133,47 @@ class DecisionEvaluationResponse(BaseModel):
     missing_information: List[str] = Field(default_factory=list)
     conflicts_resolved: List[Dict[str, Any]] = Field(default_factory=list)
     active_risks: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+class DecisionTraceResponse(BaseModel):
+    id: str
+    decision_id: str
+    recommendation_id: str
+    farmer_id: str
+    farm_id: Optional[str] = None
+    decision_type: Optional[str] = None
+    intent: Optional[str] = None
+    created_at: str
+    updated_at: str
+    input_context: Dict[str, Any] = Field(default_factory=dict)
+    data_freshness: Dict[str, str] = Field(default_factory=dict)
+    tools_used: List[str] = Field(default_factory=list)
+    model_versions: Dict[str, str] = Field(default_factory=dict)
+    rag_sources: List[str] = Field(default_factory=list)
+    weather_source: Optional[str] = None
+    market_source: Optional[str] = None
+    calculations: Dict[str, Any] = Field(default_factory=dict)
+    safety_checks: List[str] = Field(default_factory=list)
+    recommendation_text: str
+    confidence: float = 1.0
+    assumptions: List[str] = Field(default_factory=list)
+    rationale: Optional[str] = None
+    evidence: Dict[str, Any] = Field(default_factory=dict)
+    xai_info: Dict[str, Any] = Field(default_factory=dict)
+    farmer_action: str = "PENDING"
+    outcome: Optional[str] = None
+    feedback_rating: Optional[str] = None
+    feedback_notes: Optional[str] = None
+    locale: str = "en"
+    metadata_json: Dict[str, Any] = Field(default_factory=dict)
+
+    class Config:
+        from_attributes = True
+
+
+class DecisionHistoryResponse(BaseModel):
+    success: bool = True
+    total: int
+    limit: int
+    offset: int
+    decisions: List[DecisionTraceResponse]

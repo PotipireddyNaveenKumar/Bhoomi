@@ -131,17 +131,19 @@ class FeedbackRequest(BaseModel):
 @router.post("/feedback")
 async def submit_recommendation_feedback(
     feedback: FeedbackRequest,
-    farmer: FarmerProfile = Depends(get_current_farmer_profile)
+    farmer: FarmerProfile = Depends(get_current_farmer_profile),
+    db: AsyncSession = Depends(get_db)
 ):
     """
     Submits farmer feedback on AI recommendation to close the evaluation loop.
     Strictly requires authenticated farmer session.
     """
-    updated = RecommendationTraceStore.update_feedback(
+    updated = await RecommendationTraceStore.update_feedback_async(
         recommendation_id=feedback.recommendation_id,
         farmer_action=feedback.action_taken,
         feedback_rating=feedback.feedback_rating,
-        feedback_notes=feedback.notes
+        feedback_notes=feedback.notes,
+        db=db
     )
     return {"status": "success", "updated_record": updated.model_dump() if updated else None}
 

@@ -9,6 +9,7 @@ from app.models.task import FarmTask
 from app.models.prediction import PredictionHistory
 from app.models.otp_challenge import OTPChallenge
 from app.models.auth_session import AuthSession
+from app.models.recommendation_trace import RecommendationTrace
 
 __all__ = [
     "Base",
@@ -23,4 +24,5 @@ __all__ = [
     "PredictionHistory",
     "OTPChallenge",
     "AuthSession",
+    "RecommendationTrace",
 ]
