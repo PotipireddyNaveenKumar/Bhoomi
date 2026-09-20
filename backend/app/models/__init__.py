@@ -9,6 +9,7 @@ from app.models.prediction import PredictionHistory
 from app.models.otp_challenge import OTPChallenge
 from app.models.auth_session import AuthSession
 from app.models.recommendation_trace import RecommendationTrace
+from app.models.task_event import FarmTaskEvent, TaskEventType, TaskEventStatus
 
 __all__ = [
     "User",
@@ -18,6 +19,9 @@ __all__ = [
     "CropStage",
     "CropStatus",
     "FarmTask",
+    "FarmTaskEvent",
+    "TaskEventType",
+    "TaskEventStatus",
     "ChatSession",
     "ChatMessage",
     "FarmerMemory",
@@ -26,3 +30,4 @@ __all__ = [
     "AuthSession",
     "RecommendationTrace",
 ]
+

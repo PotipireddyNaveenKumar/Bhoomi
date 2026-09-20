@@ -1,8 +1,9 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Header
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.config import settings
 from app.db.session import get_db
 from app.api.deps import get_current_farmer_profile
 from app.models.farmer import FarmerProfile
@@ -103,6 +104,33 @@ async def run_task_lifecycle(
     Transitions tasks across PENDING/SCHEDULED -> DUE -> OVERDUE -> EXPIRED.
     """
     return await TaskLifecycleService.reap_and_transition_tasks(db=db, farmer_id=farmer.id)
+
+
+@router.post("/lifecycle/global-run", response_model=Dict[str, Any])
+async def run_global_task_lifecycle(
+    x_internal_scheduler_secret: Optional[str] = Header(None, alias="X-Internal-Scheduler-Secret"),
+    authorization: Optional[str] = Header(None),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Internal protected scheduler execution endpoint.
+    Strictly authenticated via internal scheduler secret; processes eligible tasks globally
+    without impersonating individual farmers. Rejects unauthenticated calls.
+    """
+    valid_secret = settings.INTERNAL_SCHEDULER_SECRET or settings.SECRET_KEY
+    auth_token = None
+    if authorization and authorization.startswith("Bearer "):
+        auth_token = authorization.split("Bearer ")[1].strip()
+
+    secret_provided = x_internal_scheduler_secret or auth_token
+    if not secret_provided or not valid_secret or secret_provided != valid_secret:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access denied: Invalid or missing internal scheduler secret."
+        )
+
+    return await TaskLifecycleService.run_global_lifecycle(db=db)
+
 
 
 # --- Canonical Phase 6 Step 2 Task Endpoints (Strictly Authenticated) ---

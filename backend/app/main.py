@@ -74,7 +74,23 @@ async def lifespan(app: FastAPI):
                 pass
             await conn.execute(text("ALTER TABLE farm_tasks ADD COLUMN IF NOT EXISTS due_at TIMESTAMPTZ;"))
             await conn.execute(text("ALTER TABLE farm_tasks ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;"))
-            logger.info("Applied migration: Ensured PostgreSQL users and farm_tasks table columns.")
+            await conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS farm_task_events (
+                    id VARCHAR(36) PRIMARY KEY,
+                    task_id VARCHAR(36) NOT NULL REFERENCES farm_tasks(id) ON DELETE CASCADE,
+                    farmer_id VARCHAR(36) NOT NULL REFERENCES farmer_profiles(id) ON DELETE CASCADE,
+                    farm_id VARCHAR(36) NOT NULL REFERENCES farms(id) ON DELETE CASCADE,
+                    event_type VARCHAR(50) NOT NULL,
+                    event_key VARCHAR(120) NOT NULL UNIQUE,
+                    created_at TIMESTAMP NOT NULL,
+                    scheduled_for TIMESTAMPTZ,
+                    delivered_at TIMESTAMPTZ,
+                    acknowledged_at TIMESTAMPTZ,
+                    payload JSON,
+                    status VARCHAR(30) NOT NULL DEFAULT 'PENDING'
+                );
+            """))
+            logger.info("Applied migration: Ensured PostgreSQL users, farm_tasks, and farm_task_events tables.")
     logger.info("Database schema initialized.")
     from app.services.reviewer_provisioning import ensure_reviewer_account
     from app.db.session import AsyncSessionLocal

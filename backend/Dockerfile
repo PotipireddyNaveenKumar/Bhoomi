@@ -38,6 +38,7 @@ COPY frontend/web/ /app/frontend/web/
 # Ensure proper directory permissions for non-root user runtime operations
 RUN mkdir -p /app/uploads /app/data/chroma && \
     ln -sfn /app/frontend /frontend && \
+    chmod +x /app/start.sh && \
     chown -R bhoomi:bhoomi /app /frontend
 
 # Switch to non-root user
@@ -46,5 +47,6 @@ USER bhoomi
 # Expose default HTTP port
 EXPOSE 8000
 
-# Production startup: binds to 0.0.0.0, dynamic $PORT, strictly NO --reload
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
+# Production startup: launches background scheduler worker and uvicorn web server
+CMD ["/bin/bash", "/app/start.sh"]
+
