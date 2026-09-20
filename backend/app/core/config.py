@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     REVIEWER_PHONE: Optional[str] = None
     REVIEWER_PASSWORD: Optional[str] = None
     INTERNAL_SCHEDULER_SECRET: Optional[str] = None
-    TASK_SCHEDULER_INTERVAL_SECONDS: int = 30
+    TASK_SCHEDULER_INTERVAL_SECONDS: int = 900
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
