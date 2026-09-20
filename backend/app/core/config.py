@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     ALLOW_EVALUATOR_OTP: bool = False  # Strictly False by default and in production
     REVIEWER_PHONE: Optional[str] = None
     REVIEWER_PASSWORD: Optional[str] = None
-    INTERNAL_SCHEDULER_SECRET: Optional[str] = None
+    INTERNAL_SCHEDULER_SECRET: str = "bhoomi_internal_scheduler_secret_key_2026"
     TASK_SCHEDULER_INTERVAL_SECONDS: int = 900
     
     # CORS
