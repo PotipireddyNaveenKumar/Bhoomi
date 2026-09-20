@@ -717,3 +717,95 @@ async def test_24_scheduler_runner_cli_once():
     assert stats["success"] is True
     assert stats["duration_ms"] >= 0
     assert isinstance(stats["tasks_scanned"], int)
+
+
+def test_25_secret_source_strict_production_security():
+    """25. In production mode, default or hardcoded secrets fail closed with ValueError."""
+    from app.core.config import Settings
+    import pytest
+
+    # Dev secret in production must raise ValueError
+    with pytest.raises(ValueError, match="Default or development INTERNAL_SCHEDULER_SECRET is strictly forbidden"):
+        Settings(
+            APP_ENV="production",
+            DATABASE_URL="postgresql+asyncpg://u:p@localhost:5432/db",
+            SECRET_KEY="production_super_secret_key_1234567890",
+            INTERNAL_SCHEDULER_SECRET="bhoomi_dev_scheduler_secret_key_only_non_production_2026"
+        )
+
+    # Missing scheduler secret in production without valid SECRET_KEY fails closed
+    with pytest.raises(ValueError):
+        Settings(
+            APP_ENV="production",
+            DATABASE_URL="postgresql+asyncpg://u:p@localhost:5432/db",
+            SECRET_KEY=None,
+            INTERNAL_SCHEDULER_SECRET=None
+        )
+
+    # In dev mode, default fallback is provided
+    dev_settings = Settings(
+        APP_ENV="development",
+        DATABASE_URL="sqlite+aiosqlite:///./test.db"
+    )
+    assert dev_settings.INTERNAL_SCHEDULER_SECRET is not None
+    assert len(dev_settings.INTERNAL_SCHEDULER_SECRET) > 10
+
+
+@pytest.mark.asyncio
+async def test_26_task_scheduler_state_and_logs_recorded():
+    """26. Scheduler runner execution cycle records state, PID, ticks, and structured logs into DB."""
+    from app.models.task_event import TaskSchedulerState
+    runner = TaskSchedulerRunner(interval_seconds=900, run_once=True)
+    stats = await runner.execute_cycle()
+    assert stats["success"] is True
+
+    async with AsyncSessionLocal() as db:
+        state = await db.get(TaskSchedulerState, "global_scheduler")
+        assert state is not None
+        assert state.consecutive_ticks >= 1
+        assert state.interval_seconds == 900
+        assert state.process_pid is not None
+        assert state.last_lock_acquired is True
+        assert state.last_run_logs is not None
+        logs_str = " ".join(state.last_run_logs)
+        assert "TASK_SCHEDULER_START" in logs_str
+        assert "TASK_SCHEDULER_LOCK_ACQUIRED" in logs_str
+        assert "TASK_LIFECYCLE_RUN" in logs_str
+        assert "TASK_SCHEDULER_RESULT" in logs_str
+        assert "TASK_SCHEDULER_LOCK_RELEASED" in logs_str
+
+
+def test_27_scheduler_status_endpoint():
+    """27. GET /api/v1/tasks/lifecycle/scheduler-status returns DB-backed heartbeat and logs."""
+    res = client.get("/api/v1/tasks/lifecycle/scheduler-status")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["scheduler_initialized"] is True
+    assert data["consecutive_ticks"] >= 1
+    assert data["interval_seconds"] in (30, 900)
+    assert "pg_advisory_lock" in data["locking"]
+    assert "last_run_logs" in data
+    assert len(data["last_run_logs"]) >= 3
+
+
+@pytest.mark.asyncio
+async def test_28_get_task_events_endpoint_and_authorization():
+    """28. GET /api/v1/tasks/{task_id}/events provides DB-backed events and enforces tenant authorization."""
+    # Farmer A accesses own task
+    res_a = client.get(
+        "/api/v1/tasks/t2_event_due_task/events",
+        headers={"Authorization": f"Bearer {token_a}"}
+    )
+    assert res_a.status_code == 200
+    events_a = res_a.json()
+    assert len(events_a) >= 1
+    assert events_a[0]["event_type"] == "TASK_DUE"
+    assert events_a[0]["event_key"] == "task_due_t2_event_due_task"
+
+    # Farmer B attempts cross-tenant access to Farmer A's task events -> 403 Forbidden
+    res_b = client.get(
+        "/api/v1/tasks/t2_event_due_task/events",
+        headers={"Authorization": f"Bearer {token_b}"}
+    )
+    assert res_b.status_code == 403
+

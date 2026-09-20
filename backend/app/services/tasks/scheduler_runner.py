@@ -6,7 +6,7 @@ import asyncio
 import logging
 import argparse
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, List
 
 # Ensure repository root is on sys.path when executed directly
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,8 +15,10 @@ if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
 from app.db.session import AsyncSessionLocal, engine
-from app.core.advisory_lock import advisory_lock
+from app.core.advisory_lock import advisory_lock, BHOOMI_TASK_SCHEDULER_LOCK_ID
 from app.services.tasks.lifecycle_service import TaskLifecycleService
+from app.models.task_event import TaskSchedulerState
+from app.core.datetime_utils import utc_now_naive
 
 # Configure dedicated structured logger
 logging.basicConfig(
@@ -44,15 +46,14 @@ class TaskSchedulerRunner:
 
     async def execute_cycle(self) -> dict:
         """
-        Executes a single protected global lifecycle cycle.
+        Executes a single protected global lifecycle cycle and updates durable state.
         """
         cycle_start = time.perf_counter()
         now = datetime.now(timezone.utc)
-        logger.info(
-            "TASK_SCHEDULER_START timestamp=%s interval_seconds=%d",
-            now.isoformat(),
-            self.interval_seconds
-        )
+        start_msg = f"TASK_SCHEDULER_START timestamp={now.isoformat()} interval_seconds={self.interval_seconds}"
+        logger.info(start_msg)
+
+        captured_logs: List[str] = [start_msg]
 
         stats = {
             "success": False,
@@ -71,35 +72,80 @@ class TaskSchedulerRunner:
             async with advisory_lock(session) as acquired:
                 if not acquired:
                     stats["duration_ms"] = int((time.perf_counter() - cycle_start) * 1000)
-                    logger.warning(
-                        "TASK_SCHEDULER_LOCK_BUSY another scheduler instance currently holds the distributed lock. Skipping cycle."
-                    )
+                    busy_msg = f"TASK_SCHEDULER_LOCK_BUSY another scheduler instance currently holds distributed lock {BHOOMI_TASK_SCHEDULER_LOCK_ID}. Skipping cycle."
+                    logger.warning(busy_msg)
+                    captured_logs.append(busy_msg)
+                    await self._record_state(session, now, False, stats, captured_logs)
                     return stats
 
                 stats["lock_acquired"] = True
+                lock_acq_msg = f"TASK_SCHEDULER_LOCK_ACQUIRED lock_id={BHOOMI_TASK_SCHEDULER_LOCK_ID}"
+                logger.info(lock_acq_msg)
+                captured_logs.append(lock_acq_msg)
+
                 try:
                     res = await TaskLifecycleService.run_global_lifecycle(db=session, reference_now=now)
                     stats.update(res)
                     stats["success"] = True
+
+                    lifecycle_msg = (
+                        f"TASK_LIFECYCLE_RUN tasks_scanned={stats['tasks_scanned']} "
+                        f"tasks_transitioned={stats['tasks_transitioned']} due={stats['due']} "
+                        f"overdue={stats['overdue']} expired={stats['expired']} "
+                        f"reminders={stats['reminders_created']} failed={stats['failed']}"
+                    )
+                    captured_logs.append(lifecycle_msg)
                 except Exception as e:
                     stats["failed"] += 1
-                    logger.error(f"TASK_SCHEDULER_ERROR cycle execution failed: {e}", exc_info=True)
+                    err_msg = f"TASK_SCHEDULER_ERROR cycle execution failed: {e}"
+                    logger.error(err_msg, exc_info=True)
+                    captured_logs.append(err_msg)
                 finally:
                     stats["duration_ms"] = int((time.perf_counter() - cycle_start) * 1000)
-                    logger.info(
-                        "TASK_SCHEDULER_RESULT success=%s duration_ms=%d tasks_scanned=%d tasks_transitioned=%d due=%d overdue=%d expired=%d reminders=%d failed=%d",
-                        stats["success"],
-                        stats["duration_ms"],
-                        stats["tasks_scanned"],
-                        stats["tasks_transitioned"],
-                        stats["due"],
-                        stats["overdue"],
-                        stats["expired"],
-                        stats["reminders_created"],
-                        stats["failed"]
+                    result_msg = (
+                        f"TASK_SCHEDULER_RESULT success={stats['success']} duration_ms={stats['duration_ms']} "
+                        f"tasks_scanned={stats['tasks_scanned']} tasks_transitioned={stats['tasks_transitioned']} "
+                        f"due={stats['due']} overdue={stats['overdue']} expired={stats['expired']} "
+                        f"reminders={stats['reminders_created']} failed={stats['failed']}"
                     )
+                    logger.info(result_msg)
+                    captured_logs.append(result_msg)
+
+                    rel_msg = f"TASK_SCHEDULER_LOCK_RELEASED lock_id={BHOOMI_TASK_SCHEDULER_LOCK_ID} released=true"
+                    logger.info(rel_msg)
+                    captured_logs.append(rel_msg)
+
+                # Persist state & execution logs to database
+                await self._record_state(session, now, True, stats, captured_logs)
 
         return stats
+
+    async def _record_state(
+        self,
+        session,
+        now: datetime,
+        acquired: bool,
+        stats: dict,
+        logs: List[str]
+    ):
+        """Persists heartbeat & execution state to task_scheduler_state table."""
+        try:
+            state = await session.get(TaskSchedulerState, "global_scheduler")
+            if not state:
+                state = TaskSchedulerState(id="global_scheduler")
+                session.add(state)
+            state.last_run_at = now
+            state.consecutive_ticks = (state.consecutive_ticks or 0) + 1
+            state.interval_seconds = self.interval_seconds
+            state.process_pid = os.getpid()
+            state.last_lock_acquired = acquired
+            state.last_run_stats = stats
+            state.last_run_logs = logs
+            state.updated_at = utc_now_naive()
+            await session.commit()
+        except Exception as state_err:
+            logger.debug(f"Could not persist TaskSchedulerState: {state_err}")
+            await session.rollback()
 
     async def run(self):
         """

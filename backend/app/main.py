@@ -90,7 +90,20 @@ async def lifespan(app: FastAPI):
                     status VARCHAR(30) NOT NULL DEFAULT 'PENDING'
                 );
             """))
-            logger.info("Applied migration: Ensured PostgreSQL users, farm_tasks, and farm_task_events tables.")
+            await conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS task_scheduler_state (
+                    id VARCHAR(50) PRIMARY KEY,
+                    last_run_at TIMESTAMPTZ,
+                    consecutive_ticks INTEGER NOT NULL DEFAULT 0,
+                    interval_seconds INTEGER NOT NULL DEFAULT 900,
+                    process_pid INTEGER,
+                    last_lock_acquired BOOLEAN NOT NULL DEFAULT TRUE,
+                    last_run_stats JSON,
+                    last_run_logs JSON,
+                    updated_at TIMESTAMP NOT NULL
+                );
+            """))
+            logger.info("Applied migration: Ensured PostgreSQL users, farm_tasks, farm_task_events, and task_scheduler_state tables.")
     logger.info("Database schema initialized.")
     from app.services.reviewer_provisioning import ensure_reviewer_account
     from app.db.session import AsyncSessionLocal
@@ -181,7 +194,7 @@ async def security_and_rate_limit_middleware(request: Request, call_next):
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled Exception on {request.url.path}: {str(exc)}", exc_info=True)
     err_str = str(exc)
-    for secret in [settings.SECRET_KEY, settings.GEMINI_API_KEY, settings.SARVAM_API_KEY, settings.OPENAI_API_KEY, settings.GROQ_API_KEY, settings.DATA_GOV_API_KEY, settings.WEATHER_API_KEY]:
+    for secret in [settings.SECRET_KEY, settings.INTERNAL_SCHEDULER_SECRET, settings.GEMINI_API_KEY, settings.SARVAM_API_KEY, settings.OPENAI_API_KEY, settings.GROQ_API_KEY, settings.DATA_GOV_API_KEY, settings.WEATHER_API_KEY]:
         if secret and len(secret) > 6 and secret in err_str:
             err_str = err_str.replace(secret, "[REDACTED]")
     return JSONResponse(

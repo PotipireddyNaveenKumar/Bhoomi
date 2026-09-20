@@ -37,8 +37,8 @@ class Settings(BaseSettings):
     ALLOW_EVALUATOR_OTP: bool = False  # Strictly False by default and in production
     REVIEWER_PHONE: Optional[str] = None
     REVIEWER_PASSWORD: Optional[str] = None
-    INTERNAL_SCHEDULER_SECRET: str = "bhoomi_internal_scheduler_secret_key_2026"
-    TASK_SCHEDULER_INTERVAL_SECONDS: int = 900
+    INTERNAL_SCHEDULER_SECRET: Optional[str] = None
+    TASK_SCHEDULER_INTERVAL_SECONDS: int = 30
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
@@ -187,6 +187,29 @@ class Settings(BaseSettings):
         else:
             if not self.SECRET_KEY:
                 self.SECRET_KEY = dev_secret
+
+        # INTERNAL_SCHEDULER_SECRET resolution
+        dev_scheduler_secret = "bhoomi_dev_scheduler_secret_key_only_non_production_2026"
+        if self.is_production:
+            if self.INTERNAL_SCHEDULER_SECRET in (
+                dev_scheduler_secret,
+                "bhoomi_internal_scheduler_secret_key_2026",
+                "secret",
+                "changeme",
+            ):
+                raise ValueError(
+                    "Production security violation: Default or development INTERNAL_SCHEDULER_SECRET is strictly forbidden in production."
+                )
+            if not self.INTERNAL_SCHEDULER_SECRET:
+                if self.SECRET_KEY and len(self.SECRET_KEY) >= 16:
+                    self.INTERNAL_SCHEDULER_SECRET = self.SECRET_KEY
+                else:
+                    raise ValueError(
+                        "Production security violation: INTERNAL_SCHEDULER_SECRET must be provided from Railway environment/secrets in production."
+                    )
+        else:
+            if not self.INTERNAL_SCHEDULER_SECRET:
+                self.INTERNAL_SCHEDULER_SECRET = dev_scheduler_secret
 
         return self
 

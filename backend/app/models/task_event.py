@@ -1,7 +1,7 @@
 import uuid
 import enum
 from datetime import datetime
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey, JSON
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, JSON, Integer, Boolean
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.core.datetime_utils import NaiveUTCDateTime, utc_now_naive
@@ -41,3 +41,18 @@ class FarmTaskEvent(Base):
     task = relationship("FarmTask", backref="lifecycle_events")
     farmer = relationship("FarmerProfile")
     farm = relationship("Farm")
+
+
+class TaskSchedulerState(Base):
+    __tablename__ = "task_scheduler_state"
+
+    id = Column(String(50), primary_key=True, default="global_scheduler")
+    last_run_at = Column(DateTime(timezone=True), nullable=True)
+    consecutive_ticks = Column(Integer, default=0, nullable=False)
+    interval_seconds = Column(Integer, default=900, nullable=False)
+    process_pid = Column(Integer, nullable=True)
+    last_lock_acquired = Column(Boolean, default=True, nullable=False)
+    last_run_stats = Column(JSON, nullable=True)
+    last_run_logs = Column(JSON, nullable=True)
+    updated_at = Column(NaiveUTCDateTime, default=utc_now_naive, onupdate=utc_now_naive)
+

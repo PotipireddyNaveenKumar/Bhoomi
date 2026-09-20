@@ -706,7 +706,7 @@ class TestRecommendationTraceStoreBatch10:
         )
         assert res.returncode == 0
         heads_output = res.stdout.strip()
-        assert ("001_rec_traces" in heads_output or "002_task_lifecycle" in heads_output or "003_task_events" in heads_output)
+        assert ("001_rec_traces" in heads_output or "002_task_lifecycle" in heads_output or "003_task_events" in heads_output or "004_scheduler_state" in heads_output)
         # Verify exactly one single head line
         assert len(heads_output.splitlines()) == 1
 

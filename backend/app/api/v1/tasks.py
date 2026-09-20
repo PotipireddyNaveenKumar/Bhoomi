@@ -3,7 +3,9 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Header
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.core.config import settings
+from app.models.task_event import TaskSchedulerState, FarmTaskEvent
 from app.db.session import get_db
 from app.api.deps import get_current_farmer_profile
 from app.models.farmer import FarmerProfile
@@ -130,6 +132,75 @@ async def run_global_task_lifecycle(
         )
 
     return await TaskLifecycleService.run_global_lifecycle(db=db)
+
+
+@router.get("/lifecycle/scheduler-status", response_model=Dict[str, Any])
+async def get_scheduler_status(
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Observability endpoint for the proactive background scheduler.
+    Returns current heartbeat, ticks, process status, and recent structured logs from PostgreSQL.
+    """
+    state = await db.get(TaskSchedulerState, "global_scheduler")
+    if not state:
+        return {
+            "scheduler_initialized": False,
+            "consecutive_ticks": 0,
+            "interval_seconds": settings.TASK_SCHEDULER_INTERVAL_SECONDS,
+            "message": "Scheduler has not completed an initial cycle yet."
+        }
+    
+    return {
+        "scheduler_initialized": True,
+        "last_run_at": state.last_run_at.isoformat() if state.last_run_at else None,
+        "consecutive_ticks": state.consecutive_ticks,
+        "interval_seconds": state.interval_seconds,
+        "process_pid": state.process_pid,
+        "last_lock_acquired": state.last_lock_acquired,
+        "last_run_stats": state.last_run_stats,
+        "last_run_logs": state.last_run_logs,
+        "locking": "pg_advisory_lock(842011)"
+    }
+
+
+@router.get("/{task_id}/events", response_model=List[Dict[str, Any]])
+async def get_task_events(
+    task_id: str,
+    farmer: FarmerProfile = Depends(get_current_farmer_profile),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Returns durable database-backed lifecycle and reminder events for the specified task.
+    Strictly verifies tenant ownership; returns 403/404 if unauthorized.
+    """
+    await _resolve_and_verify_task_ownership(task_id, None, farmer, db)
+    
+    stmt = (
+        select(FarmTaskEvent)
+        .where(FarmTaskEvent.task_id == task_id)
+        .order_by(FarmTaskEvent.created_at.asc())
+    )
+    res = await db.execute(stmt)
+    events = list(res.scalars().all())
+    
+    return [
+        {
+            "id": e.id,
+            "task_id": e.task_id,
+            "farmer_id": e.farmer_id,
+            "farm_id": e.farm_id,
+            "event_type": e.event_type,
+            "event_key": e.event_key,
+            "created_at": e.created_at.isoformat() if e.created_at else None,
+            "scheduled_for": e.scheduled_for.isoformat() if e.scheduled_for else None,
+            "delivered_at": e.delivered_at.isoformat() if e.delivered_at else None,
+            "status": e.status,
+            "payload": e.payload
+        }
+        for e in events
+    ]
+
 
 
 
