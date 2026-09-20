@@ -6,7 +6,7 @@ from app.services.vision.vision_service import VisionService, VisionAnalysisOutp
 
 router = APIRouter(prefix="/image", tags=["Vision & Image Diagnostics"])
 
-@router.post("/analyze", response_model=VisionAnalysisOutput)
+@router.post("/analyze", response_model=VisionAnalysisOutput, deprecated=True)
 async def analyze_crop_image(
     file: UploadFile = File(...),
     crop_name: str = Form(default="Chilli"),

@@ -14,7 +14,7 @@ class ApiEndpoints {
   static const String farms = "$baseUrl/farms";
 
   // Chat & Voice
-  static const String chat = "$baseUrl/chat";
+  static const String chat = "$baseUrl/assistant/chat";
   static const String chatSessions = "$baseUrl/chat/sessions";
   static const String voiceTranscribe = "$baseUrl/voice/transcribe";
   static const String voiceSynthesize = "$baseUrl/voice/synthesize";
@@ -24,7 +24,8 @@ class ApiEndpoints {
   static const String weather = "$baseUrl/weather";
   static const String market = "$baseUrl/market";
   static const String profitCalculate = "$baseUrl/profit/calculate";
-  static const String simulationRun = "$baseUrl/simulation/run";
+  static const String simulationWhatIf = "$baseUrl/simulation/what-if";
+  static const String simulationRun = "$baseUrl/simulation/what-if"; // Canonical simulation endpoint alias
   static const String riskAssess = "$baseUrl/risk/assess";
   static const String tasks = "$baseUrl/tasks";
   static const String imageAnalyze = "$baseUrl/image/analyze";

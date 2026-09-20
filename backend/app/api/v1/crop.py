@@ -14,7 +14,7 @@ class CropRecommendationRequest(BaseModel):
     ph: float = 6.5
     rainfall_mm: float = 850.0
 
-@router.post("/recommend")
+@router.post("/recommend", deprecated=True)
 async def recommend_crop(req: CropRecommendationRequest):
     """
     ML Crop Recommendation Abstraction.

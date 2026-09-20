@@ -29,7 +29,7 @@ class _ProfitSimulatorScreenState extends State<ProfitSimulatorScreen> {
   Future<void> _runSimulation() async {
     setState(() => _isLoading = true);
     try {
-      final response = await ApiClient.post(ApiEndpoints.simulationRun, {
+      final response = await ApiClient.post(ApiEndpoints.simulationWhatIf, {
         "crop_name": "Chilli",
         "area_acres": 3.0,
         "baseline_yield_quintals_per_acre": 10.0,

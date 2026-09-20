@@ -11,7 +11,7 @@ class YieldPredictionRequest(BaseModel):
     district: str = "Guntur"
     state: str = "Andhra Pradesh"
 
-@router.post("/predict")
+@router.post("/predict", deprecated=True)
 async def predict_yield(req: YieldPredictionRequest):
     """
     ML Yield Prediction Abstraction.

@@ -1,0 +1,2580 @@
+{
+  "total_endpoints": 96,
+  "production_url": "https://bhoomi-production-0e92.up.railway.app",
+  "status_summary": {
+    "CANONICAL": 63,
+    "DUPLICATE": 4,
+    "LEGACY": 3,
+    "DEMO_ONLY": 15,
+    "INTERNAL": 4,
+    "UNUSED": 7,
+    "UNKNOWN": 0
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/",
+      "router_file": "backend/app/main.py",
+      "handler": "root",
+      "service": "HealthService",
+      "repository_provider_model": "System/Settings",
+      "frontend_web_callers": [
+        "frontend/web/index.html",
+        "frontend/web/static/app.js",
+        "frontend/web/static/style.css",
+        "frontend/web/sw.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/core/constants/app_colors.dart",
+        "frontend/mobile/lib/core/networking/api_client.dart",
+        "frontend/mobile/lib/core/storage/secure_storage.dart",
+        "frontend/mobile/lib/core/theme/app_theme.dart",
+        "frontend/mobile/lib/core/utils/audio_player_stub.dart",
+        "frontend/mobile/lib/core/utils/audio_player_web.dart",
+        "frontend/mobile/lib/core/utils/file_picker_stub.dart",
+        "frontend/mobile/lib/core/utils/file_picker_web.dart",
+        "frontend/mobile/lib/features/auth/auth_screen.dart",
+        "frontend/mobile/lib/features/chat/chat_screen.dart",
+        "frontend/mobile/lib/features/command_center/farm_command_center_screen.dart",
+        "frontend/mobile/lib/features/farm/farm_profile_screen.dart",
+        "frontend/mobile/lib/features/home/home_screen.dart",
+        "frontend/mobile/lib/features/language/language_selection_screen.dart",
+        "frontend/mobile/lib/features/market/market_intelligence_screen.dart",
+        "frontend/mobile/lib/features/onboarding/onboarding_screen.dart",
+        "frontend/mobile/lib/features/profit/profit_simulator_screen.dart",
+        "frontend/mobile/lib/features/splash/splash_screen.dart",
+        "frontend/mobile/lib/features/tasks/tasks_screen.dart",
+        "frontend/mobile/lib/features/vision/edge_vision_provider.dart",
+        "frontend/mobile/lib/features/vision/leaf_scanner_screen.dart",
+        "frontend/mobile/lib/features/voice/voice_assistant_screen.dart",
+        "frontend/mobile/lib/features/weather/weather_screen.dart",
+        "frontend/mobile/lib/localization/app_localizations.dart",
+        "frontend/mobile/lib/main.dart",
+        "frontend/mobile/lib/routing/app_router.dart",
+        "frontend/mobile/lib/shared/cards/crop_recommendation_card.dart",
+        "frontend/mobile/lib/shared/cards/leaf_diagnosis_card.dart",
+        "frontend/mobile/lib/shared/cards/market_card.dart",
+        "frontend/mobile/lib/shared/cards/profit_card.dart",
+        "frontend/mobile/lib/shared/cards/risk_card.dart",
+        "frontend/mobile/lib/shared/cards/simulation_card.dart",
+        "frontend/mobile/lib/shared/cards/task_card.dart",
+        "frontend/mobile/lib/shared/cards/weather_card.dart",
+        "frontend/mobile/lib/shared/cards/yield_prediction_card.dart",
+        "frontend/mobile/lib/shared/widgets/voice_orb.dart",
+        "frontend/mobile/test/api_endpoints_test.dart",
+        "frontend/mobile/test/widget_test.dart"
+      ],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_agent_and_api.py",
+        "backend/tests/test_anti_hardcoding_and_vision_routing.py",
+        "backend/tests/test_assistant_feedback.py",
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_browser_e2e_reviewer_journey.py",
+        "backend/tests/test_browser_weather_market_finance.py",
+        "backend/tests/test_datetime_timezone_regression.py",
+        "backend/tests/test_demo_scenarios.py",
+        "backend/tests/test_farm_finance_localization.py",
+        "backend/tests/test_financial_service.py",
+        "backend/tests/test_forensic_railway_fixes.py",
+        "backend/tests/test_phase29_final_verification.py",
+        "backend/tests/test_phase2_ml_and_intelligence.py",
+        "backend/tests/test_phase3_farm_manager.py",
+        "backend/tests/test_phase4_market.py",
+        "backend/tests/test_phase4_multi_crop_vision.py",
+        "backend/tests/test_phase4_real_llm.py",
+        "backend/tests/test_phase4_sarvam_voice.py",
+        "backend/tests/test_phase4_tomato_vision.py",
+        "backend/tests/test_phase4_weather.py",
+        "backend/tests/test_phase5_field_ingestion.py",
+        "backend/tests/test_phase5_field_pilot_readiness.py",
+        "backend/tests/test_phase5_field_validation.py",
+        "backend/tests/test_phase6_decision_intelligence.py",
+        "backend/tests/test_phase6_pilot_audit.py",
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_phase6_voice_interaction.py",
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_production_config_hardening.py",
+        "backend/tests/test_provider_fallback_safety.py",
+        "backend/tests/test_rag_production_upgrade.py",
+        "backend/tests/test_rag_redesign.py",
+        "backend/tests/test_real_sms_delivery.py",
+        "backend/tests/test_reviewer_password_auth.py",
+        "backend/tests/test_simulation_equivalence.py",
+        "backend/tests/test_simulation_service.py",
+        "backend/tests/test_task_authorization.py",
+        "backend/tests/test_voice_assistant_localization.py",
+        "backend/tests/test_voice_authentication_regression.py",
+        "backend/tests/test_weather_market_finance_correctness.py"
+      ],
+      "doc_references": [
+        "README.md",
+        "data/benchmarks/300_scenarios.json",
+        "data/benchmarks/benchmark_execution_evidence.json",
+        "data/evaluation/evaluation_results_300.json",
+        "data/evaluation/public_smoke_test_evidence.json",
+        "data/evaluation/reviewer_questions/chat_questions.json",
+        "data/evaluation/reviewer_questions/image_questions.json",
+        "data/field_validation/README.md",
+        "data/field_validation/reports/field_validation_report.md",
+        "data/field_validation/schema/field_validation_schema.json",
+        "data/metadata/crop_recommendation_v1.json",
+        "data/metadata/fertilizer_recommendation_v1.json",
+        "data/organized/vision/other_crop_diseases/d10/README.md",
+        "data/rag/verified_knowledge.json",
+        "docs/API_INVENTORY.md",
+        "docs/BHOOMI_V2_FINAL_DEMO_GUIDE.md",
+        "docs/BHOOMI_V2_FINAL_SUBMISSION_STATUS.md",
+        "docs/BHOOMI_V2_FINAL_SYSTEM_ARCHITECTURE.md",
+        "docs/DATA_LEAKAGE_REPORT.md",
+        "docs/FARM_PLANNER.md",
+        "docs/ML_MODEL_REPORT.md",
+        "docs/PHASE_2_ARCHITECTURE.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_2_VERIFICATION_REPORT.md",
+        "docs/PHASE_3_ARCHITECTURE.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/PHASE_3_VERIFICATION_REPORT.md",
+        "docs/PHASE_4_BASELINE.md",
+        "docs/PHASE_4_ML_VALIDATION_REPORT.md",
+        "docs/PHASE_4_MULTI_CROP_VISION.md",
+        "docs/PHASE_4_MULTI_CROP_VISION_DATA_AUDIT.md",
+        "docs/PHASE_4_REAL_LLM.md",
+        "docs/PHASE_4_REAL_MARKET.md",
+        "docs/PHASE_4_REAL_WEATHER.md",
+        "docs/PHASE_4_SARVAM_VOICE.md",
+        "docs/PHASE_4_TOMATO_VISION_DATA_AUDIT.md",
+        "docs/PHASE_4_TOMATO_VISION_MODEL.md",
+        "docs/PHASE_5_EDGE_AI_REPORT.md",
+        "docs/PHASE_5_FIELD_IMAGE_COLLECTION_GUIDE.md",
+        "docs/PHASE_5_FIELD_VALIDATION_PROTOCOL.md",
+        "docs/PHASE_5_FIELD_VALIDATION_REPORT.md",
+        "docs/PHASE_6_STEP_1_DECISION_INTELLIGENCE.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/PHASE_6_STEP_3_FARMER_VOICE_LONGITUDINAL_FEEDBACK.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/PROACTIVE_INTELLIGENCE.md",
+        "docs/RAG_ARCHITECTURE.md",
+        "docs/REVIEWER_READINESS_REPORT.md",
+        "docs/VISION_MODEL_REPORT.md",
+        "docs/api.md",
+        "docs/api_inventory.json",
+        "docs/architecture.md",
+        "docs/dataset_audit_report.md",
+        "docs/model_cards/crop_recommendation.md",
+        "docs/model_cards/yield_prediction.md",
+        "docs/roadmap.md",
+        "docs/safety.md",
+        "docs/voice.md"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/assistant/chat",
+      "router_file": "backend/app/api/v1/assistant.py",
+      "handler": "chat_with_assistant",
+      "service": "BhoomiAgentOrchestrator, VisionService, RecommendationTraceStore",
+      "repository_provider_model": "ChatRepository, FarmMemoryV2, ModelMonitoringService",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/test/api_endpoints_test.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_datetime_timezone_regression.py",
+        "backend/tests/test_forensic_railway_fixes.py",
+        "backend/tests/test_reviewer_password_auth.py",
+        "backend/tests/test_voice_authentication_regression.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/chat (Overlapping conversational agent orchestration)",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/assistant/chat-upload",
+      "router_file": "backend/app/api/v1/assistant.py",
+      "handler": "chat_with_image_upload",
+      "service": "BhoomiAgentOrchestrator, VisionService, RecommendationTraceStore",
+      "repository_provider_model": "ChatRepository, FarmMemoryV2, ModelMonitoringService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "UNUSED"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/assistant/feedback",
+      "router_file": "backend/app/api/v1/assistant.py",
+      "handler": "submit_assistant_feedback",
+      "service": "BhoomiAgentOrchestrator, VisionService, RecommendationTraceStore",
+      "repository_provider_model": "ChatRepository, FarmMemoryV2, ModelMonitoringService",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_assistant_feedback.py",
+        "backend/tests/test_datetime_timezone_regression.py",
+        "backend/tests/test_forensic_railway_fixes.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/REVIEWER_READINESS_REPORT.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/assistant/sessions",
+      "router_file": "backend/app/api/v1/assistant.py",
+      "handler": "list_chat_sessions",
+      "service": "BhoomiAgentOrchestrator, VisionService, RecommendationTraceStore",
+      "repository_provider_model": "ChatRepository, FarmMemoryV2, ModelMonitoringService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "GET /api/v1/chat/sessions (Both query ChatRepository farmer sessions)",
+      "status": "UNUSED"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/assistant/sessions/{session_id}",
+      "router_file": "backend/app/api/v1/assistant.py",
+      "handler": "get_session_history",
+      "service": "BhoomiAgentOrchestrator, VisionService, RecommendationTraceStore",
+      "repository_provider_model": "ChatRepository, FarmMemoryV2, ModelMonitoringService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "GET /api/v1/chat/sessions/{session_id} (Both query ChatRepository session by id)",
+      "status": "UNUSED"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "login",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [
+        "backend/app/api/deps.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_reviewer_password_auth.py",
+        "backend/tests/test_task_authorization.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/request-otp",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "login_request_otp",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_production_auth_system.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/verify-otp",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "login_verify_otp",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_reviewer_password_auth.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "logout",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_reviewer_password_auth.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "get_current_user_profile",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_reviewer_password_auth.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "refresh_access_token",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_reviewer_password_auth.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "register",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/signup/request-otp",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "signup_request_otp",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_real_sms_delivery.py",
+        "backend/tests/test_reviewer_password_auth.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/signup/verify-otp",
+      "router_file": "backend/app/api/v1/auth.py",
+      "handler": "signup_verify_otp",
+      "service": "AuthService, SMSTransport",
+      "repository_provider_model": "AuthSession, User, FarmerProfile, ReviewerAccount",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_production_auth_system.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat",
+      "router_file": "backend/app/api/v1/chat.py",
+      "handler": "send_message",
+      "service": "BhoomiAgentOrchestrator",
+      "repository_provider_model": "ChatRepository",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/routing/app_router.dart",
+        "frontend/mobile/test/api_endpoints_test.dart"
+      ],
+      "backend_callers": [
+        "backend/app/api/v1/assistant.py",
+        "backend/app/services/llm/gemini_provider.py",
+        "backend/app/services/llm/openai_provider.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_datetime_timezone_regression.py",
+        "backend/tests/test_forensic_railway_fixes.py",
+        "backend/tests/test_reviewer_password_auth.py",
+        "backend/tests/test_voice_authentication_regression.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_4_REAL_LLM.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/assistant/chat (Overlapping conversational agent orchestration; /assistant/chat has multimodal, session, & audio support)",
+      "status": "DUPLICATE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/sessions",
+      "router_file": "backend/app/api/v1/chat.py",
+      "handler": "list_sessions",
+      "service": "BhoomiAgentOrchestrator",
+      "repository_provider_model": "ChatRepository",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "GET /api/v1/assistant/sessions (Both query ChatRepository farmer sessions)",
+      "status": "DUPLICATE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/sessions/{session_id}",
+      "router_file": "backend/app/api/v1/chat.py",
+      "handler": "get_session",
+      "service": "BhoomiAgentOrchestrator",
+      "repository_provider_model": "ChatRepository",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "GET /api/v1/assistant/sessions/{session_id} (Both query ChatRepository session by id)",
+      "status": "DUPLICATE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/crop/lifecycle",
+      "router_file": "backend/app/api/v1/crop.py",
+      "handler": "get_lifecycle",
+      "service": "CropRecommendationService, CropLifecycleService",
+      "repository_provider_model": "AgronomicKnowledgeBase",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "UNUSED"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/crop/recommend",
+      "router_file": "backend/app/api/v1/crop.py",
+      "handler": "recommend_crop",
+      "service": "CropRecommendationService, CropLifecycleService",
+      "repository_provider_model": "AgronomicKnowledgeBase",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/ml/crop-recommendation (Legacy rule/heuristic crop recommender superseded by Phase 2 Random Forest ML model)",
+      "status": "LEGACY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/decisions/evaluate",
+      "router_file": "backend/app/api/v1/decision_routes.py",
+      "handler": "evaluate_farm_decisions",
+      "service": "DecisionTraceService, RecommendationTraceStore",
+      "repository_provider_model": "SHAPExplainerService, TraceStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_decision_intelligence.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_1_DECISION_INTELLIGENCE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/demo/profile",
+      "router_file": "backend/app/api/v1/demo.py",
+      "handler": "get_demo_profile",
+      "service": "DemoModeService",
+      "repository_provider_model": "CanonicalDemoStore, DemoTaskStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_demo_scenarios.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/demo/reset",
+      "router_file": "backend/app/api/v1/demo.py",
+      "handler": "reset_demo_state",
+      "service": "DemoModeService",
+      "repository_provider_model": "CanonicalDemoStore, DemoTaskStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_demo_scenarios.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/demo/scenarios",
+      "router_file": "backend/app/api/v1/demo.py",
+      "handler": "list_demo_scenarios",
+      "service": "DemoModeService",
+      "repository_provider_model": "CanonicalDemoStore, DemoTaskStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_demo_scenarios.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/demo/scenarios/{scenario_id}/execute",
+      "router_file": "backend/app/api/v1/demo.py",
+      "handler": "execute_demo_scenario",
+      "service": "DemoModeService",
+      "repository_provider_model": "CanonicalDemoStore, DemoTaskStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_demo_scenarios.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/farm/compare-crops",
+      "router_file": "backend/app/api/v1/farm_routes.py",
+      "handler": "compare_crops",
+      "service": "DigitalTwinService, CropComparisonService",
+      "repository_provider_model": "FarmRepository, Farm, Crop",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/farm/crops",
+      "router_file": "backend/app/api/v1/farm_routes.py",
+      "handler": "get_farm_crops",
+      "service": "DigitalTwinService, CropComparisonService",
+      "repository_provider_model": "FarmRepository, Farm, Crop",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "GET /api/v1/farms (Overlaps farm digital twin crop retrieval in /farms)",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/farm/summary",
+      "router_file": "backend/app/api/v1/farm_routes.py",
+      "handler": "get_farm_summary",
+      "service": "DigitalTwinService, CropComparisonService",
+      "repository_provider_model": "FarmRepository, Farm, Crop",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "GET /api/v1/farms/{farm_id} & /api/v1/manager/state (Digital twin aggregation overlaps manager state)",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/farm/tasks",
+      "router_file": "backend/app/api/v1/farm_routes.py",
+      "handler": "get_farm_tasks",
+      "service": "DigitalTwinService, CropComparisonService",
+      "repository_provider_model": "FarmRepository, Farm, Crop",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "GET /api/v1/tasks/today & /api/v1/tasks/week (Overlaps canonical task endpoints)",
+      "status": "UNUSED"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/farmer",
+      "router_file": "backend/app/api/v1/farmer.py",
+      "handler": "get_profile",
+      "service": "FarmerProfileService",
+      "repository_provider_model": "FarmerProfile",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/farmer",
+      "router_file": "backend/app/api/v1/farmer.py",
+      "handler": "update_profile",
+      "service": "FarmerProfileService",
+      "repository_provider_model": "FarmerProfile",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/farms",
+      "router_file": "backend/app/api/v1/farms.py",
+      "handler": "list_farms",
+      "service": "FarmDigitalTwinService, SoilEstimateService",
+      "repository_provider_model": "FarmRepository, Farm, Crop, SoilService (ICAR-NBSS&LUP)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [
+        "backend/app/services/vision/field_validation/acceptance_gate.py"
+      ],
+      "test_callers": [],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/farms",
+      "router_file": "backend/app/api/v1/farms.py",
+      "handler": "create_farm",
+      "service": "FarmDigitalTwinService, SoilEstimateService",
+      "repository_provider_model": "FarmRepository, Farm, Crop, SoilService (ICAR-NBSS&LUP)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [
+        "backend/app/services/vision/field_validation/acceptance_gate.py"
+      ],
+      "test_callers": [],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/farms/soil-estimate",
+      "router_file": "backend/app/api/v1/farms.py",
+      "handler": "get_location_soil_estimate",
+      "service": "FarmDigitalTwinService, SoilEstimateService",
+      "repository_provider_model": "FarmRepository, Farm, Crop, SoilService (ICAR-NBSS&LUP)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/farms/{farm_id}",
+      "router_file": "backend/app/api/v1/farms.py",
+      "handler": "get_farm",
+      "service": "FarmDigitalTwinService, SoilEstimateService",
+      "repository_provider_model": "FarmRepository, Farm, Crop, SoilService (ICAR-NBSS&LUP)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/farms/{farm_id}/crops",
+      "router_file": "backend/app/api/v1/farms.py",
+      "handler": "add_crop_to_farm",
+      "service": "FarmDigitalTwinService, SoilEstimateService",
+      "repository_provider_model": "FarmRepository, Farm, Crop, SoilService (ICAR-NBSS&LUP)",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "UNUSED"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/image/analyze",
+      "router_file": "backend/app/api/v1/image.py",
+      "handler": "analyze_crop_image",
+      "service": "VisionService",
+      "repository_provider_model": "PlantPathologyCNN, TorchVision",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/vision/analyze (Legacy single-endpoint image analysis superseded by canonical modular vision pipeline /vision/analyze)",
+      "status": "LEGACY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/manager/alerts",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "get_proactive_alerts",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/manager/briefing/today",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "get_today_briefing",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/manager/briefing/week",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "get_week_briefing",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/manager/changes",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "get_farm_changes",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/manager/events",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "record_farm_event",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/manager/feedback",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "submit_recommendation_feedback",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_assistant_feedback.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/manager/plan",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "get_current_farm_plan",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/manager/state",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "get_farm_state",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/manager/timeline",
+      "router_file": "backend/app/api/v1/farm_manager_routes.py",
+      "handler": "get_crop_health_timeline",
+      "service": "FarmStateEngine, DailyFarmBriefingService, FarmChangeDetectionService",
+      "repository_provider_model": "ProactiveAlertEngine, FarmTimelineService, SeasonalPlannerService",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/market",
+      "router_file": "backend/app/api/v1/market.py",
+      "handler": "get_market_analysis",
+      "service": "MarketService",
+      "repository_provider_model": "AgmarknetProvider, DataGovInProvider",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/features/chat/chat_screen.dart",
+        "frontend/mobile/lib/features/home/home_screen.dart",
+        "frontend/mobile/lib/features/voice/voice_assistant_screen.dart",
+        "frontend/mobile/lib/routing/app_router.dart",
+        "frontend/mobile/test/widget_test.dart"
+      ],
+      "backend_callers": [
+        "backend/app/services/conversation/dialogue_manager.py"
+      ],
+      "test_callers": [
+        "scratch_test_endpoints.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_4_REAL_MARKET.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ml/crop-recommendation",
+      "router_file": "backend/app/api/v1/ml.py",
+      "handler": "recommend_crop",
+      "service": "MLInferenceService",
+      "repository_provider_model": "RandomForestCropModel (Macro-F1: 0.9955), XGBoostYieldModel (R2: 0.9574), CIBRC SafetyEngine",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/crop/recommend (Canonical Phase 2 ML model supersedes legacy /crop/recommend)",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ml/fertilizer-recommendation",
+      "router_file": "backend/app/api/v1/ml.py",
+      "handler": "recommend_fertilizer",
+      "service": "MLInferenceService",
+      "repository_provider_model": "RandomForestCropModel (Macro-F1: 0.9955), XGBoostYieldModel (R2: 0.9574), CIBRC SafetyEngine",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ml/yield-prediction",
+      "router_file": "backend/app/api/v1/ml.py",
+      "handler": "predict_yield",
+      "service": "MLInferenceService",
+      "repository_provider_model": "RandomForestCropModel (Macro-F1: 0.9955), XGBoostYieldModel (R2: 0.9574), CIBRC SafetyEngine",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/yield/predict (Canonical Phase 2 ML model supersedes legacy /yield/predict)",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/acceptance",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "get_pilot_acceptance_gate",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_pilot_audit.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/crops/{crop}",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "get_crop_pilot_status",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_pilot_audit.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/drift",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "get_pilot_drift_report",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/import",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "import_pilot_record",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/metrics",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "get_pilot_vision_metrics",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/status",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "get_pilot_status",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_pilot_audit.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/task-metrics",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "get_pilot_task_metrics",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/voice-metrics",
+      "router_file": "backend/app/api/v1/pilot.py",
+      "handler": "get_pilot_voice_metrics",
+      "service": "PilotTelemetryService",
+      "repository_provider_model": "FieldValidationStore, TelemetryStore",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/profit/calculate",
+      "router_file": "backend/app/api/v1/profit.py",
+      "handler": "calculate_profit",
+      "service": "ProfitService",
+      "repository_provider_model": "DeterministicArithmetic (Decimal)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag/debug",
+      "router_file": "backend/app/api/v1/rag_routes.py",
+      "handler": "debug_agricultural_evidence",
+      "service": "AgriculturalRAGService",
+      "repository_provider_model": "VectorStore, TF-IDF/BM25 Retriever, ICAR & SAU Documents",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "INTERNAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag/search",
+      "router_file": "backend/app/api/v1/rag_routes.py",
+      "handler": "search_agricultural_evidence",
+      "service": "AgriculturalRAGService",
+      "repository_provider_model": "VectorStore, TF-IDF/BM25 Retriever, ICAR & SAU Documents",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/risk/assess",
+      "router_file": "backend/app/api/v1/risk.py",
+      "handler": "assess_risk",
+      "service": "RiskAssessmentService",
+      "repository_provider_model": "MultidimensionalRiskEngine",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulation/run",
+      "router_file": "backend/app/api/v1/simulation.py",
+      "handler": "run_simulation",
+      "service": "SimulationService",
+      "repository_provider_model": "MultiLeverSimulationEngine, Decimal",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_simulation_equivalence.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/simulation/what-if (Exact duplicate handler & schema)",
+      "status": "DUPLICATE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulation/what-if",
+      "router_file": "backend/app/api/v1/simulation.py",
+      "handler": "run_simulation",
+      "service": "SimulationService",
+      "repository_provider_model": "MultiLeverSimulationEngine, Decimal",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/test/api_endpoints_test.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_simulation_equivalence.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/simulation/run (Exact duplicate handler & schema)",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tasks",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "get_tasks",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/routing/app_router.dart",
+        "frontend/mobile/test/widget_test.dart"
+      ],
+      "backend_callers": [
+        "backend/app/api/v1/farm_routes.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_task_authorization.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "create_task",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/routing/app_router.dart",
+        "frontend/mobile/test/widget_test.dart"
+      ],
+      "backend_callers": [
+        "backend/app/api/v1/farm_routes.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_task_authorization.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tasks/today",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "get_today_tasks",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_task_authorization.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tasks/week",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "get_week_tasks",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_task_authorization.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/tasks/{task_id}",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "update_task",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/routing/app_router.dart",
+        "frontend/mobile/test/widget_test.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_task_authorization.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/{task_id}/complete",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "complete_farm_task",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_task_authorization.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/{task_id}/evaluate-condition",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "evaluate_smart_reminder",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "INTERNAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/{task_id}/postpone",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "postpone_farm_task",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_task_authorization.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/{task_id}/skip",
+      "router_file": "backend/app/api/v1/tasks.py",
+      "handler": "skip_farm_task",
+      "service": "TaskIntelligenceEngine",
+      "repository_provider_model": "TaskRepository, FarmTask, FarmMemoryV2",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_task_authorization.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/vision/analyze",
+      "router_file": "backend/app/api/v1/vision_routes.py",
+      "handler": "analyze_crop_image",
+      "service": "VisionService, BhoomiPersonaEngine",
+      "repository_provider_model": "PlantPathologyCNN (ResNet/MobileNet), GradCAMService, Sarvam Bulbul TTS",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/features/vision/edge_vision_provider.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [
+        "scratch_test_endpoints.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/image/analyze (Canonical modular vision pipeline with Grad-CAM, OOD rejection, & audio)",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/vision/samples",
+      "router_file": "backend/app/api/v1/vision_routes.py",
+      "handler": "get_sample_leaves",
+      "service": "VisionService, BhoomiPersonaEngine",
+      "repository_provider_model": "PlantPathologyCNN (ResNet/MobileNet), GradCAMService, Sarvam Bulbul TTS",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/voice/interact",
+      "router_file": "backend/app/api/v1/voice.py",
+      "handler": "voice_interact",
+      "service": "VoiceService, SarvamVoiceService, BhoomiAgentOrchestrator",
+      "repository_provider_model": "IntentNormalizationService, ConfirmationStateMachine, TaskIntelligenceEngine",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_datetime_timezone_regression.py",
+        "backend/tests/test_forensic_railway_fixes.py",
+        "backend/tests/test_voice_authentication_regression.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_4_SARVAM_VOICE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/voice/stt",
+      "router_file": "backend/app/api/v1/voice.py",
+      "handler": "web_stt",
+      "service": "VoiceService, SarvamVoiceService, BhoomiAgentOrchestrator",
+      "repository_provider_model": "IntentNormalizationService, ConfirmationStateMachine, TaskIntelligenceEngine",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "INTERNAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/voice/synthesize",
+      "router_file": "backend/app/api/v1/voice.py",
+      "handler": "synthesize_speech",
+      "service": "VoiceService, SarvamVoiceService, BhoomiAgentOrchestrator",
+      "repository_provider_model": "IntentNormalizationService, ConfirmationStateMachine, TaskIntelligenceEngine",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/features/voice/voice_assistant_screen.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/voice/task-action",
+      "router_file": "backend/app/api/v1/voice.py",
+      "handler": "voice_task_action",
+      "service": "VoiceService, SarvamVoiceService, BhoomiAgentOrchestrator",
+      "repository_provider_model": "IntentNormalizationService, ConfirmationStateMachine, TaskIntelligenceEngine",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/features/voice/voice_assistant_screen.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_phase6_voice_interaction.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_6_STEP_3_FARMER_VOICE_LONGITUDINAL_FEEDBACK.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/voice/transcribe",
+      "router_file": "backend/app/api/v1/voice.py",
+      "handler": "transcribe_audio",
+      "service": "VoiceService, SarvamVoiceService, BhoomiAgentOrchestrator",
+      "repository_provider_model": "IntentNormalizationService, ConfirmationStateMachine, TaskIntelligenceEngine",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/voice/tts",
+      "router_file": "backend/app/api/v1/voice.py",
+      "handler": "web_tts",
+      "service": "VoiceService, SarvamVoiceService, BhoomiAgentOrchestrator",
+      "repository_provider_model": "IntentNormalizationService, ConfirmationStateMachine, TaskIntelligenceEngine",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [
+        "backend/tests/test_voice_authentication_regression.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "INTERNAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/weather",
+      "router_file": "backend/app/api/v1/weather.py",
+      "handler": "get_weather",
+      "service": "WeatherService",
+      "repository_provider_model": "OpenWeatherMapProvider, IMDProvider",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/features/chat/chat_screen.dart",
+        "frontend/mobile/lib/features/home/home_screen.dart",
+        "frontend/mobile/lib/features/voice/voice_assistant_screen.dart",
+        "frontend/mobile/lib/routing/app_router.dart"
+      ],
+      "backend_callers": [
+        "backend/app/services/conversation/dialogue_manager.py",
+        "backend/app/services/weather/real_provider.py"
+      ],
+      "test_callers": [
+        "scratch_test_endpoints.py",
+        "scratch_test_providers.py",
+        "test_live_http_api.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_4_REAL_WEATHER.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/weather/forecast",
+      "router_file": "backend/app/api/v1/weather.py",
+      "handler": "get_weather_forecast",
+      "service": "WeatherService",
+      "repository_provider_model": "OpenWeatherMapProvider, IMDProvider",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "UNUSED"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/yield/predict",
+      "router_file": "backend/app/api/v1/yield_routes.py",
+      "handler": "predict_yield",
+      "service": "YieldPredictionService",
+      "repository_provider_model": "AgronomicYieldModel",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "POST /api/v1/ml/yield-prediction (Legacy yield predict endpoint superseded by Phase 2 XGBoost ML model)",
+      "status": "LEGACY"
+    },
+    {
+      "method": "GET",
+      "path": "/app",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/index.html",
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/theme/app_theme.dart",
+        "frontend/mobile/lib/features/auth/auth_screen.dart",
+        "frontend/mobile/lib/features/chat/chat_screen.dart",
+        "frontend/mobile/lib/features/farm/farm_profile_screen.dart",
+        "frontend/mobile/lib/features/home/home_screen.dart",
+        "frontend/mobile/lib/features/language/language_selection_screen.dart",
+        "frontend/mobile/lib/features/market/market_intelligence_screen.dart",
+        "frontend/mobile/lib/features/onboarding/onboarding_screen.dart",
+        "frontend/mobile/lib/features/profit/profit_simulator_screen.dart",
+        "frontend/mobile/lib/features/splash/splash_screen.dart",
+        "frontend/mobile/lib/features/tasks/tasks_screen.dart",
+        "frontend/mobile/lib/features/vision/leaf_scanner_screen.dart",
+        "frontend/mobile/lib/features/voice/voice_assistant_screen.dart",
+        "frontend/mobile/lib/features/weather/weather_screen.dart",
+        "frontend/mobile/lib/main.dart",
+        "frontend/mobile/lib/shared/cards/crop_recommendation_card.dart",
+        "frontend/mobile/lib/shared/cards/leaf_diagnosis_card.dart",
+        "frontend/mobile/lib/shared/cards/market_card.dart",
+        "frontend/mobile/lib/shared/cards/profit_card.dart",
+        "frontend/mobile/lib/shared/cards/risk_card.dart",
+        "frontend/mobile/lib/shared/cards/simulation_card.dart",
+        "frontend/mobile/lib/shared/cards/task_card.dart",
+        "frontend/mobile/lib/shared/cards/weather_card.dart",
+        "frontend/mobile/lib/shared/cards/yield_prediction_card.dart",
+        "frontend/mobile/lib/shared/widgets/voice_orb.dart"
+      ],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [],
+      "doc_references": [
+        "README.md",
+        "data/benchmarks/300_scenarios.json",
+        "data/evaluation/reviewer_questions/image_questions.json",
+        "data/rag/verified_knowledge.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_2_VERIFICATION_REPORT.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/PHASE_4_BASELINE.md",
+        "docs/PHASE_4_REAL_LLM.md",
+        "docs/PHASE_4_REAL_MARKET.md",
+        "docs/PHASE_4_REAL_WEATHER.md",
+        "docs/PHASE_4_SARVAM_VOICE.md",
+        "docs/PHASE_6_STEP_1_DECISION_INTELLIGENCE.md",
+        "docs/PHASE_6_STEP_2_CROP_LIFECYCLE_TASK_ENGINE.md",
+        "docs/PHASE_6_STEP_3_FARMER_VOICE_LONGITUDINAL_FEEDBACK.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/finance",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_browser_weather_market_finance.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_3_BASELINE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "router_file": "backend/app/main.py",
+      "handler": "health",
+      "service": "WeatherService, MarketService",
+      "repository_provider_model": "System/Providers",
+      "frontend_web_callers": [],
+      "frontend_mobile_callers": [],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [],
+      "doc_references": [
+        "data/benchmarks/300_scenarios.json",
+        "data/evaluation/reviewer_questions/image_questions.json",
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/home",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/routing/app_router.dart"
+      ],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/BHOOMI_V2_FINAL_DEMO_GUIDE.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/login",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart"
+      ],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_phase6_task_engine.py",
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_reviewer_password_auth.py",
+        "backend/tests/test_task_authorization.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/manifest.json",
+      "router_file": "backend/app/main.py",
+      "handler": "manifest",
+      "service": "StaticFiles",
+      "repository_provider_model": "PWA Web App Manifest",
+      "frontend_web_callers": [
+        "frontend/web/index.html"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/onboarding",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/routing/app_router.dart"
+      ],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/reviewer-login",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": true,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "DEMO_ONLY"
+    },
+    {
+      "method": "GET",
+      "path": "/signup",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_real_sms_delivery.py",
+        "backend/tests/test_reviewer_password_auth.py"
+      ],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/sw.js",
+      "router_file": "backend/app/main.py",
+      "handler": "service_worker",
+      "service": "StaticFiles",
+      "repository_provider_model": "Service Worker script",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [],
+      "doc_references": [
+        "docs/API_INVENTORY.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/verify-otp",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_forensic_railway_fixes.py",
+        "backend/tests/test_production_auth_system.py",
+        "backend/tests/test_reviewer_password_auth.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/REVIEWER_READINESS_REPORT.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    },
+    {
+      "method": "GET",
+      "path": "/voice",
+      "router_file": "backend/app/main.py",
+      "handler": "app_portal",
+      "service": "StaticFiles",
+      "repository_provider_model": "Web Frontend (index.html)",
+      "frontend_web_callers": [
+        "frontend/web/static/app.js"
+      ],
+      "frontend_mobile_callers": [
+        "frontend/mobile/lib/core/constants/api_endpoints.dart",
+        "frontend/mobile/lib/features/chat/chat_screen.dart",
+        "frontend/mobile/lib/features/home/home_screen.dart",
+        "frontend/mobile/lib/features/voice/voice_assistant_screen.dart",
+        "frontend/mobile/lib/routing/app_router.dart",
+        "frontend/mobile/test/widget_test.dart"
+      ],
+      "backend_callers": [
+        "backend/app/main.py"
+      ],
+      "test_callers": [
+        "backend/tests/test_auth_page_gating.py",
+        "backend/tests/test_datetime_timezone_regression.py",
+        "backend/tests/test_forensic_railway_fixes.py",
+        "backend/tests/test_phase6_voice_interaction.py",
+        "backend/tests/test_voice_authentication_regression.py"
+      ],
+      "doc_references": [
+        "data/evaluation/public_smoke_test_evidence.json",
+        "docs/API_INVENTORY.md",
+        "docs/PHASE_2_BASELINE.md",
+        "docs/PHASE_4_SARVAM_VOICE.md",
+        "docs/PHASE_6_STEP_3_FARMER_VOICE_LONGITUDINAL_FEEDBACK.md",
+        "docs/PHASE_6_STEP_4_FIELD_PILOT_AUDIT_PIPELINE.md",
+        "docs/api.md",
+        "docs/api_inventory.json"
+      ],
+      "demo_reviewer_usage": false,
+      "live_production_verified": true,
+      "behavior_overlap": "None",
+      "status": "CANONICAL"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ from app.schemas.simulation import SimulationRequest, SimulationResponse
 
 router = APIRouter(prefix="/simulation", tags=["What-If Farm Simulator"])
 
-@router.post("/run", response_model=SimulationResponse)
+@router.post("/run", response_model=SimulationResponse, deprecated=True)
 @router.post("/what-if", response_model=SimulationResponse)
 async def run_simulation(req: SimulationRequest):
     return SimulationService.run_simulation(req)

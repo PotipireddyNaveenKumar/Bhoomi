@@ -168,14 +168,17 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final response = await ApiClient.post(ApiEndpoints.chat, {
+        "message": text,
         "content": text,
         "input_mode": "text",
         "language": _currentLanguage,
+        "language_code": _currentLanguage,
+        "session_id": "mobile_session",
       });
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final content = data['content'] ?? "";
+        final content = data['reply_text'] ?? data['content'] ?? "";
         final cards = data['visual_cards'] ?? [];
 
         setState(() {

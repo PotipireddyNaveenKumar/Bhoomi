@@ -138,13 +138,16 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         // Fallback to chat endpoint if task-action returned non-200
         final chatRes = await ApiClient.post(ApiEndpoints.chat, {
           "message": queryText,
+          "content": queryText,
           "language": targetLang,
+          "language_code": targetLang,
+          "session_id": "mobile_voice_session",
           "input_mode": "voice"
         });
 
         if (chatRes.statusCode == 200) {
           final data = jsonDecode(chatRes.body);
-          final responseText = data['response'] ?? "";
+          final responseText = data['reply_text'] ?? data['response'] ?? data['content'] ?? "";
           setState(() {
             _assistantResponse = responseText;
             _visualCards = data['visual_cards'] ?? [];
