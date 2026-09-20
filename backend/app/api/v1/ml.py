@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, HTTPException, status, Query
 from app.services.crop.recommendation_service import CropRecommendationService, CropRecommendationInput, CropRecommendationOutput
 from app.services.yield_prediction.yield_service import YieldPredictionService, YieldPredictionInput, YieldPredictionOutput
@@ -5,6 +6,8 @@ from app.services.crop.fertilizer_service import FertilizerRecommendationService
 from app.services.xai.explanation_model import ExplanationResult
 from app.services.xai.xai_service import XAIService
 from app.services.xai.shap_explainer import TabularSHAPExplainer
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/ml", tags=["Machine Learning Intelligence"])
 
