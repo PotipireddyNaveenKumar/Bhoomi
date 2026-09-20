@@ -68,6 +68,7 @@ class TaskSchedulerRunner:
             "duration_ms": 0
         }
 
+        lock_was_acquired = False
         async with AsyncSessionLocal() as session:
             async with advisory_lock(session) as acquired:
                 if not acquired:
@@ -75,9 +76,10 @@ class TaskSchedulerRunner:
                     busy_msg = f"TASK_SCHEDULER_LOCK_BUSY another scheduler instance currently holds distributed lock {BHOOMI_TASK_SCHEDULER_LOCK_ID}. Skipping cycle."
                     logger.warning(busy_msg)
                     captured_logs.append(busy_msg)
-                    await self._record_state(session, now, False, stats, captured_logs)
+                    await self._record_state(now, False, stats, captured_logs)
                     return stats
 
+                lock_was_acquired = True
                 stats["lock_acquired"] = True
                 lock_acq_msg = f"TASK_SCHEDULER_LOCK_ACQUIRED lock_id={BHOOMI_TASK_SCHEDULER_LOCK_ID}"
                 logger.info(lock_acq_msg)
@@ -115,37 +117,35 @@ class TaskSchedulerRunner:
                     logger.info(rel_msg)
                     captured_logs.append(rel_msg)
 
-                # Persist state & execution logs to database
-                await self._record_state(session, now, True, stats, captured_logs)
-
+        # Persist state & execution logs to database in an isolated session
+        await self._record_state(now, lock_was_acquired, stats, captured_logs)
         return stats
 
     async def _record_state(
         self,
-        session,
         now: datetime,
         acquired: bool,
         stats: dict,
         logs: List[str]
     ):
-        """Persists heartbeat & execution state to task_scheduler_state table."""
+        """Persists heartbeat & execution state to task_scheduler_state table in isolated session."""
         try:
-            state = await session.get(TaskSchedulerState, "global_scheduler")
-            if not state:
-                state = TaskSchedulerState(id="global_scheduler")
-                session.add(state)
-            state.last_run_at = now
-            state.consecutive_ticks = (state.consecutive_ticks or 0) + 1
-            state.interval_seconds = self.interval_seconds
-            state.process_pid = os.getpid()
-            state.last_lock_acquired = acquired
-            state.last_run_stats = stats
-            state.last_run_logs = logs
-            state.updated_at = utc_now_naive()
-            await session.commit()
+            async with AsyncSessionLocal() as state_session:
+                state = await state_session.get(TaskSchedulerState, "global_scheduler")
+                if not state:
+                    state = TaskSchedulerState(id="global_scheduler")
+                    state_session.add(state)
+                state.last_run_at = now
+                state.consecutive_ticks = (state.consecutive_ticks or 0) + 1
+                state.interval_seconds = self.interval_seconds
+                state.process_pid = os.getpid()
+                state.last_lock_acquired = acquired
+                state.last_run_stats = stats
+                state.last_run_logs = logs
+                state.updated_at = utc_now_naive()
+                await state_session.commit()
         except Exception as state_err:
-            logger.debug(f"Could not persist TaskSchedulerState: {state_err}")
-            await session.rollback()
+            logger.error(f"Could not persist TaskSchedulerState: {state_err}", exc_info=True)
 
     async def run(self):
         """
@@ -157,8 +157,12 @@ class TaskSchedulerRunner:
             self.run_once
         )
 
-        # Initial run on startup
-        await self.execute_cycle()
+        # Wait 2 seconds for app boot and DB initialization before first cycle
+        try:
+            await asyncio.sleep(2)
+            await self.execute_cycle()
+        except Exception as e:
+            logger.error(f"TASK_SCHEDULER_STARTUP_CYCLE_ERROR: {e}", exc_info=True)
 
         if self.run_once:
             logger.info("TASK_SCHEDULER_EXIT run_once completed.")
@@ -166,7 +170,6 @@ class TaskSchedulerRunner:
 
         while self._running:
             try:
-                # Sleep in short increments to allow responsive shutdown
                 for _ in range(self.interval_seconds):
                     if not self._running:
                         break
@@ -178,18 +181,20 @@ class TaskSchedulerRunner:
                 break
             except Exception as e:
                 logger.error(f"TASK_SCHEDULER_UNEXPECTED_ERROR in loop: {e}", exc_info=True)
-                await asyncio.sleep(10)
+                await asyncio.sleep(5)
 
         logger.info("TASK_SCHEDULER_SHUTDOWN completed cleanly.")
 
 
 def main():
+    from app.core.config import settings
+
     parser = argparse.ArgumentParser(description="BHOOMI Proactive Task Lifecycle Scheduler")
     parser.add_argument(
         "--interval",
         type=int,
-        default=int(os.environ.get("TASK_SCHEDULER_INTERVAL_SECONDS", "900")),
-        help="Cadence interval in seconds (default: 900 / 15 minutes)"
+        default=None,
+        help="Cadence interval in seconds (default from settings)"
     )
     parser.add_argument(
         "--once",
@@ -199,7 +204,8 @@ def main():
     )
     args = parser.parse_args()
 
-    runner = TaskSchedulerRunner(interval_seconds=args.interval, run_once=args.once)
+    interval = args.interval if args.interval is not None else settings.TASK_SCHEDULER_INTERVAL_SECONDS
+    runner = TaskSchedulerRunner(interval_seconds=interval, run_once=args.once)
 
     # Register OS signals for graceful shutdown
     loop = asyncio.new_event_loop()

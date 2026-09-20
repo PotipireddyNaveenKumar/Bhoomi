@@ -20,12 +20,13 @@ def _is_postgres_session(db: AsyncSession) -> bool:
         if bind and hasattr(bind, "dialect"):
             return "postgres" in bind.dialect.name.lower()
         if hasattr(db, "connection"):
-            # Assume postgres if async connection has no sqlite indicator
             bind_str = str(getattr(db, "bind", ""))
             return "sqlite" not in bind_str.lower()
     except Exception:
         pass
-    return False
+    from app.core.config import settings
+    return "postgres" in settings.DATABASE_URL.lower()
+
 
 
 async def try_advisory_lock(db: AsyncSession, lock_id: int = BHOOMI_TASK_SCHEDULER_LOCK_ID) -> bool:
