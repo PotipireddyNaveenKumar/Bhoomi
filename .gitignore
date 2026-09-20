@@ -46,6 +46,7 @@ tmp/
 uploads/
 cache/
 tmp_chrome_verify_*/
+tmp_chrome_diag/
 *.onnx.data
 
 # Chroma Vector Store & Generated Embeddings Cache

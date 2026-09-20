@@ -1001,7 +1001,7 @@ async function initAuth() {
         await fetch("/api/v1/auth/logout", {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${savedToken}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ refresh_token: refreshToken || null })
@@ -1077,6 +1077,8 @@ async function initAuth() {
         loadUserScopedSessions();
         loadTodayTasks();
         loadDecisionHistory();
+        loadWeatherIntelligence();
+        loadMarketIntelligence();
 
         const dest = (initialRoute === "/finance" || initialRoute === "/voice") ? initialRoute : "/home";
         navigateTo(dest, true);
@@ -1098,7 +1100,7 @@ async function initAuth() {
         await fetch("/api/v1/auth/logout", {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${savedToken}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ refresh_token: refreshToken || null })
@@ -1156,6 +1158,8 @@ function transitionToAuthenticated(user, token, targetRoute = "/home") {
   loadUserScopedSessions();
   loadTodayTasks();
   loadDecisionHistory();
+  loadWeatherIntelligence();
+  loadMarketIntelligence();
   navigateTo(targetRoute, true);
 }
 
@@ -5781,5 +5785,144 @@ async function submitCustomFeedbackNotes(decisionId) {
   await submitTraceFeedback(decisionId, "ACCEPTED", "USEFUL", notes);
 }
 window.submitCustomFeedbackNotes = submitCustomFeedbackNotes;
+
+// =============================================================================
+// AGRO-INTELLIGENCE LOADERS (WEATHER & MARKET MANDI DASHBOARD WIDGETS)
+// =============================================================================
+
+async function loadWeatherIntelligence() {
+  const container = document.getElementById("weatherContent");
+  if (!container) return;
+
+  const token = authToken || localStorage.getItem("bhoomi_auth_token");
+  let user = currentUser;
+  if (!user) {
+    try {
+      user = JSON.parse(localStorage.getItem("bhoomi_current_user") || "{}");
+    } catch (_) {
+      user = {};
+    }
+  }
+  const location = (user && (user.district || user.village || user.state)) ? (user.district || user.state) : "Warangal";
+
+  container.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-secondary, #64748b); font-size: 0.85rem;">⏳ Loading weather intelligence...</div>`;
+
+  try {
+    const headers = { "Accept": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(`/api/v1/weather?location=${encodeURIComponent(location)}`, { headers });
+    if (!res.ok) {
+      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: #b45309; background: #fffbeb; border-radius: 8px; border: 1px dashed #fde68a; text-align: center;">🌦️ Weather temporarily unavailable.</div>`;
+      return;
+    }
+
+    const data = await res.json();
+    const curr = data && data.current;
+    if (!curr) {
+      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: #b45309; background: #fffbeb; border-radius: 8px; border: 1px dashed #fde68a; text-align: center;">🌦️ Weather temporarily unavailable.</div>`;
+      return;
+    }
+
+    const temp = curr.temperature_c != null ? `${curr.temperature_c}°C` : "--";
+    const cond = curr.weather_condition || "Clear";
+    const humidity = curr.humidity_percent != null ? `${curr.humidity_percent}%` : "--";
+    const rainProb = curr.rain_probability_percent != null ? `${curr.rain_probability_percent}%` : null;
+    const advisory = curr.advisory || null;
+    const locDisplay = location || "Farm Location";
+
+    container.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.8rem;">🌦️</span>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary, #0f172a);">${temp}</div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary, #64748b);">${cond} • ${locDisplay}</div>
+          </div>
+        </div>
+        <div style="text-align: right; font-size: 0.75rem; color: var(--text-muted, #94a3b8);">
+          <div>💧 Humidity: ${humidity}</div>
+          ${rainProb !== null ? `<div>🌧️ Rain Prob: ${rainProb}</div>` : ''}
+        </div>
+      </div>
+      ${advisory ? `
+        <div style="font-size: 0.8rem; color: #0369a1; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 8px 10px; margin-top: 8px; line-height: 1.4;">
+          💡 <strong>Advisory:</strong> ${advisory}
+        </div>
+      ` : ''}
+    `;
+  } catch (err) {
+    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: #b45309; background: #fffbeb; border-radius: 8px; border: 1px dashed #fde68a; text-align: center;">🌦️ Weather temporarily unavailable.</div>`;
+  }
+}
+window.loadWeatherIntelligence = loadWeatherIntelligence;
+
+async function loadMarketIntelligence() {
+  const container = document.getElementById("marketContent");
+  if (!container) return;
+
+  const token = authToken || localStorage.getItem("bhoomi_auth_token");
+  let user = currentUser;
+  if (!user) {
+    try {
+      user = JSON.parse(localStorage.getItem("bhoomi_current_user") || "{}");
+    } catch (_) {
+      user = {};
+    }
+  }
+  const commodity = (user && (user.current_crop || user.crop_name || user.active_crop)) || "Potato";
+  const district = (user && (user.district || user.village)) || "Warangal";
+
+  container.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-secondary, #64748b); font-size: 0.85rem;">⏳ Loading market rates...</div>`;
+
+  try {
+    const headers = { "Accept": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(`/api/v1/market?commodity=${encodeURIComponent(commodity)}&district=${encodeURIComponent(district)}`, { headers });
+    if (!res.ok) {
+      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: #b45309; background: #fffbeb; border-radius: 8px; border: 1px dashed #fde68a; text-align: center;">📈 Market data unavailable.</div>`;
+      return;
+    }
+
+    const data = await res.json();
+    if (!data) {
+      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: #b45309; background: #fffbeb; border-radius: 8px; border: 1px dashed #fde68a; text-align: center;">📈 Market data unavailable.</div>`;
+      return;
+    }
+
+    const decision = (data.market_decision || "WAIT").toUpperCase();
+    const rationale = data.decision_rationale || "Verify quotes with local APMC market committee.";
+    const bestMandi = data.best_mandi || `${district} Mandi`;
+    const netRealization = data.best_net_realization != null ? `₹${data.best_net_realization}/Qtl` : null;
+
+    const decBg = decision === "SELL" ? "#dcfce7" : decision === "HOLD" || decision === "WAIT" ? "#fef3c7" : "#f1f5f9";
+    const decColor = decision === "SELL" ? "#15803d" : decision === "HOLD" || decision === "WAIT" ? "#b45309" : "#475569";
+    const decBorder = decision === "SELL" ? "#86efac" : decision === "HOLD" || decision === "WAIT" ? "#fcd34d" : "#cbd5e1";
+
+    container.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.8rem;">📈</span>
+          <div>
+            <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary, #0f172a);">🌾 ${commodity}</div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary, #64748b);">${bestMandi}</div>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <span style="font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: ${decBg}; color: ${decColor}; border: 1px solid ${decBorder};">${decision}</span>
+          ${netRealization ? `<div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary, #0f172a); margin-top: 2px;">${netRealization}</div>` : ''}
+        </div>
+      </div>
+      <div style="font-size: 0.78rem; color: var(--text-secondary, #475569); line-height: 1.4; margin-top: 6px;">
+        💡 <strong>Guidance:</strong> ${rationale}
+      </div>
+    `;
+  } catch (err) {
+    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: #b45309; background: #fffbeb; border-radius: 8px; border: 1px dashed #fde68a; text-align: center;">📈 Market data unavailable.</div>`;
+  }
+}
+window.loadMarketIntelligence = loadMarketIntelligence;
+
 
 
