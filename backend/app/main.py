@@ -60,13 +60,21 @@ async def lifespan(app: FastAPI):
             if "phone_number_verified" not in cols:
                 await conn.execute(text("ALTER TABLE users ADD COLUMN phone_number_verified BOOLEAN DEFAULT 0"))
                 logger.info("Applied migration: Added phone_number_verified to SQLite users table.")
+            res_tasks = await conn.execute(text("PRAGMA table_info(farm_tasks)"))
+            task_cols = [row[1] for row in res_tasks.fetchall()]
+            if "due_at" not in task_cols:
+                await conn.execute(text("ALTER TABLE farm_tasks ADD COLUMN due_at DATETIME"))
+            if "expires_at" not in task_cols:
+                await conn.execute(text("ALTER TABLE farm_tasks ADD COLUMN expires_at DATETIME"))
         else:
             await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone_number_verified BOOLEAN DEFAULT FALSE;"))
             try:
                 await conn.execute(text("ALTER TABLE users ALTER COLUMN hashed_password DROP NOT NULL;"))
             except Exception:
                 pass
-            logger.info("Applied migration: Ensured PostgreSQL users table columns.")
+            await conn.execute(text("ALTER TABLE farm_tasks ADD COLUMN IF NOT EXISTS due_at TIMESTAMPTZ;"))
+            await conn.execute(text("ALTER TABLE farm_tasks ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;"))
+            logger.info("Applied migration: Ensured PostgreSQL users and farm_tasks table columns.")
     logger.info("Database schema initialized.")
     from app.services.reviewer_provisioning import ensure_reviewer_account
     from app.db.session import AsyncSessionLocal

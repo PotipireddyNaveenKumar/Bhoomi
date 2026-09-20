@@ -3043,6 +3043,7 @@ function updateUILanguage(lang) {
     else if (lang === "hi") txtRefreshTasks.textContent = "ताज़ा करें";
     else txtRefreshTasks.textContent = "Refresh";
   }
+  loadTodayTasks();
 
   // Update Decision History header labels & modal labels
   const dDict = getDecisionsDict(lang);
@@ -5304,6 +5305,51 @@ window.focusFirstOtpBox = focusFirstOtpBox;
 // TODAY'S FARM TASKS CLIENT ENGINE (CANONICAL TASK LIFECYCLE)
 // =============================================================================
 
+const TASK_LIFECYCLE_I18N = {
+  en: {
+    DUE: "⚡ DUE",
+    OVERDUE: "⚠️ OVERDUE",
+    COMPLETED: "✓ COMPLETED",
+    POSTPONED: "⏳ POSTPONED",
+    EXPIRED: "⛔ EXPIRED",
+    UPCOMING: "🗓️ UPCOMING",
+    SCHEDULED: "🗓️ UPCOMING",
+    completeBtn: "✓ Complete",
+    whyLabel: "Why",
+    emptyMsg: "✅ No pending tasks for today. Your farm is up to date!",
+    noTasks: "No tasks scheduled for today.",
+    errorMsg: "Unable to load tasks at this time."
+  },
+  te: {
+    DUE: "⚡ చేయవలసినది",
+    OVERDUE: "⚠️ గడువు ముగిసింది",
+    COMPLETED: "✓ పూర్తయింది",
+    POSTPONED: "⏳ వాయిదా పడింది",
+    EXPIRED: "⛔ సమయం దాటింది",
+    UPCOMING: "🗓️ రాబోయే పని",
+    SCHEDULED: "🗓️ రాబోయే పని",
+    completeBtn: "✓ పూర్తి చేయండి",
+    whyLabel: "కారణం",
+    emptyMsg: "✅ నేటికి పెండింగ్ పనులు లేవు. మీ పొలం స్థితి తాజాగా ఉంది!",
+    noTasks: "నేటికి పనులేవీ షెడ్యూల్ కాలేదు.",
+    errorMsg: "పనులను లోడ్ చేయడం సాధ్యం కాలేదు."
+  },
+  hi: {
+    DUE: "⚡ देय कार्य",
+    OVERDUE: "⚠️ अतिदेय",
+    COMPLETED: "✓ पूर्ण हुआ",
+    POSTPONED: "⏳ स्थगित",
+    EXPIRED: "⛔ समय समाप्त",
+    UPCOMING: "🗓️ आगामी",
+    SCHEDULED: "🗓️ आगामी",
+    completeBtn: "✓ पूर्ण करें",
+    whyLabel: "कारण",
+    emptyMsg: "✅ आज के लिए कोई लंबित कार्य नहीं हैं। आपका खेत अद्यतित है!",
+    noTasks: "आज के लिए कोई कार्य निर्धारित नहीं है।",
+    errorMsg: "इस समय कार्य लोड करने में असमर्थ।"
+  }
+};
+
 async function loadTodayTasks() {
   const container = document.getElementById("todayTasksList");
   if (!container) return;
@@ -5314,6 +5360,9 @@ async function loadTodayTasks() {
     return;
   }
 
+  const lang = localStorage.getItem("bhoomi_lang") || "en";
+  const dict = TASK_LIFECYCLE_I18N[lang] || TASK_LIFECYCLE_I18N.en;
+
   try {
     const res = await fetch("/api/v1/tasks/today", {
       headers: {
@@ -5323,50 +5372,96 @@ async function loadTodayTasks() {
     });
 
     if (!res.ok) {
-      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">No tasks scheduled for today.</div>`;
+      container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">${dict.noTasks}</div>`;
       return;
     }
 
     const tasks = await res.json();
     if (!tasks || tasks.length === 0) {
-      container.innerHTML = `<div style="padding: 14px; font-size: 0.85rem; color: #16a34a; background: var(--bg-surface, #ffffff); border-radius: 8px; border: 1px dashed #86efac; text-align: center;">✅ No pending tasks for today. Your farm is up to date!</div>`;
+      container.innerHTML = `<div style="padding: 14px; font-size: 0.85rem; color: #16a34a; background: var(--bg-surface, #ffffff); border-radius: 8px; border: 1px dashed #86efac; text-align: center;">${dict.emptyMsg}</div>`;
       return;
     }
 
     container.innerHTML = tasks.map(t => {
-      const isCompleted = (t.status || "").toUpperCase() === "COMPLETED";
+      const statusRaw = (t.status || "DUE").toUpperCase();
+      const isCompleted = statusRaw === "COMPLETED";
+      const isOverdue = statusRaw === "OVERDUE";
+      const isExpired = statusRaw === "EXPIRED";
+      const isPostponed = statusRaw === "POSTPONED";
+      const isUpcoming = statusRaw === "SCHEDULED" || statusRaw === "UPCOMING" || statusRaw === "PENDING" || statusRaw === "PLANNED";
+
+      let statusBg = "#fef3c7";
+      let statusColor = "#b45309";
+      let statusBorder = "#fcd34d";
+      let statusLabel = dict.DUE;
+
+      if (isCompleted) {
+        statusBg = "#dcfce7";
+        statusColor = "#15803d";
+        statusBorder = "#86efac";
+        statusLabel = dict.COMPLETED;
+      } else if (isOverdue) {
+        statusBg = "#fee2e2";
+        statusColor = "#b91c1c";
+        statusBorder = "#fca5a5";
+        statusLabel = dict.OVERDUE;
+      } else if (isExpired) {
+        statusBg = "#f1f5f9";
+        statusColor = "#64748b";
+        statusBorder = "#cbd5e1";
+        statusLabel = dict.EXPIRED;
+      } else if (isPostponed) {
+        statusBg = "#ffedd5";
+        statusColor = "#c2410c";
+        statusBorder = "#fdba74";
+        statusLabel = dict.POSTPONED;
+      } else if (isUpcoming) {
+        statusBg = "#e0f2fe";
+        statusColor = "#0369a1";
+        statusBorder = "#bae6fd";
+        statusLabel = dict.UPCOMING;
+      }
+
       const priorityVal = (t.priority || "").toUpperCase();
       const priorityBg = priorityVal === "HIGH" || priorityVal === "CRITICAL" ? "#fee2e2" : "#e0f2fe";
       const priorityColor = priorityVal === "HIGH" || priorityVal === "CRITICAL" ? "#b91c1c" : "#0369a1";
 
+      const cardBorder = isCompleted ? "#86efac" : (isOverdue ? "#fca5a5" : "var(--border-color, #e2e8f0)");
+      const cardBg = isOverdue ? "rgba(254, 242, 242, 0.35)" : "var(--bg-surface, #ffffff)";
+
       return `
-        <div class="today-task-card ${isCompleted ? 'task-completed' : ''}" id="taskCard_${t.task_id}" style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 14px; margin-bottom: 8px; background: var(--bg-surface, #ffffff); border: 1px solid ${isCompleted ? '#86efac' : 'var(--border-color, #e2e8f0)'}; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <div class="today-task-card ${isCompleted ? 'task-completed' : ''} ${isOverdue ? 'task-overdue' : ''}" id="taskCard_${t.task_id}" style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 14px; margin-bottom: 8px; background: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
           <div style="flex: 1;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
+              <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; background: ${statusBg}; color: ${statusColor}; border: 1px solid ${statusBorder};">${statusLabel}</span>
               <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; background: ${priorityBg}; color: ${priorityColor};">${priorityVal || 'MEDIUM'}</span>
               <span style="font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: #475569; font-weight: 600;">🌾 ${t.crop || 'Crop'}</span>
               <span style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">📅 ${t.due_at ? t.due_at.slice(0,10) : 'Today'}</span>
             </div>
             <div class="task-title" style="font-size: 0.92rem; font-weight: 600; color: var(--text-primary, #0f172a); ${isCompleted ? 'text-decoration: line-through; opacity: 0.75;' : ''}">${t.title}</div>
-            ${t.reason ? `<div style="font-size: 0.8rem; color: var(--text-secondary, #475569); margin-top: 4px;">💡 <em>${t.reason}</em></div>` : ''}
+            ${t.reason ? `<div style="font-size: 0.8rem; color: var(--text-secondary, #475569); margin-top: 4px;">💡 <strong>${dict.whyLabel}:</strong> <em>${t.reason}</em></div>` : ''}
             ${t.postponement_reason ? `<div style="font-size: 0.78rem; color: #b45309; margin-top: 3px;">🌦️ ${t.postponement_reason}</div>` : ''}
           </div>
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
             ${isCompleted ? `
               <span style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; background: #dcfce7; color: #15803d; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
-                ✓ COMPLETED
+                ✓ ${dict.COMPLETED.replace('✓ ', '')}
+              </span>
+            ` : (isExpired ? `
+              <span style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; background: #f1f5f9; color: #64748b; border-radius: 6px; font-size: 0.78rem; font-weight: 600;">
+                ${dict.EXPIRED}
               </span>
             ` : `
               <button type="button" class="btn-complete-task" onclick="handleCompleteTask('${t.task_id}')" style="padding: 6px 12px; background: #16a34a; color: white; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 4px rgba(22,163,74,0.3);">
-                ✓ Complete
+                ${dict.completeBtn}
               </button>
-            `}
+            `)}
           </div>
         </div>
       `;
     }).join("");
   } catch (err) {
-    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">Unable to load tasks at this time.</div>`;
+    container.innerHTML = `<div style="padding: 12px; font-size: 0.85rem; color: var(--text-secondary, #64748b);">${dict.errorMsg}</div>`;
   }
 }
 window.loadTodayTasks = loadTodayTasks;

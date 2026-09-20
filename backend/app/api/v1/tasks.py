@@ -89,6 +89,22 @@ async def _resolve_and_verify_task_ownership(
     )
 
 
+from app.services.tasks.lifecycle_service import TaskLifecycleService, TaskLifecycleRunResult
+
+
+@router.post("/lifecycle/run", response_model=TaskLifecycleRunResult)
+async def run_task_lifecycle(
+    farmer: FarmerProfile = Depends(get_current_farmer_profile),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Protected proactive task lifecycle runner endpoint.
+    Strictly authenticated; operates only within the authenticated farmer tenant scope.
+    Transitions tasks across PENDING/SCHEDULED -> DUE -> OVERDUE -> EXPIRED.
+    """
+    return await TaskLifecycleService.reap_and_transition_tasks(db=db, farmer_id=farmer.id)
+
+
 # --- Canonical Phase 6 Step 2 Task Endpoints (Strictly Authenticated) ---
 
 @router.get("/today", response_model=List[FarmTask])
@@ -99,7 +115,7 @@ async def get_today_tasks(
 ):
     """
     Answers: "What should I do today?"
-    Returns prioritized canonical FarmTasks due today strictly for the authenticated farmer.
+    Returns prioritized canonical FarmTasks due today or overdue/in-progress strictly for the authenticated farmer.
     SQL farm_tasks table is the authoritative persistent state.
     """
     from app.repositories.farm_repo import FarmRepository
@@ -119,39 +135,110 @@ async def get_today_tasks(
     state = await FarmStateEngine.get_current_state(farmer_id=farmer.id, db=db)
     state.farm_id = target_farm_id
     ai_tasks = TaskIntelligenceEngine.generate_tasks_for_farm(state)
-    today_date = datetime.now(timezone.utc).date()
+    now_utc = datetime.now(timezone.utc)
+    today_date = now_utc.date()
     today_str = today_date.isoformat()
 
     # Query persistent tasks from SQL database
     repo = TaskRepository(db)
     db_tasks = await repo.get_tasks_by_farmer(farmer.id)
-    db_status_map = {t.id: t.status for t in db_tasks}
-    db_title_map = {t.title.lower(): t.status for t in db_tasks}
+    db_task_map = {t.id: t for t in db_tasks}
+    db_title_map = {t.title.lower(): t for t in db_tasks}
 
     filtered_tasks: List[FarmTask] = []
     seen_task_ids = set()
 
-    # 1. Include AI generated tasks, applying DB completion status if completed
+    # Status mapping helper from SQL string to schema TaskStatus
+    def map_sql_status_to_schema(status_str: Optional[str], is_due: bool) -> TaskStatus:
+        s = (status_str or "").lower()
+        if s == "completed":
+            return TaskStatus.COMPLETED
+        elif s == "overdue":
+            return TaskStatus.OVERDUE
+        elif s == "expired":
+            return TaskStatus.EXPIRED
+        elif s == "postponed":
+            return TaskStatus.POSTPONED
+        elif s == "in_progress":
+            return TaskStatus.IN_PROGRESS
+        elif s == "cancelled":
+            return TaskStatus.CANCELLED
+        elif s in ["scheduled", "pending"]:
+            return TaskStatus.DUE if is_due else TaskStatus.SCHEDULED
+        elif s == "due":
+            return TaskStatus.DUE
+        return TaskStatus.DUE if is_due else TaskStatus.SCHEDULED
+
+    # 1. Include AI generated tasks, applying DB status if recorded
     for t in ai_tasks:
-        if t.due_at[:10] == today_str or t.status in [TaskStatus.DUE, TaskStatus.POSTPONED, TaskStatus.COMPLETED]:
-            if db_status_map.get(t.task_id) == "completed" or db_title_map.get(t.title.lower()) == "completed":
+        db_rec = db_task_map.get(t.task_id) or db_title_map.get(t.title.lower())
+        if db_rec:
+            s = (db_rec.status or "").lower()
+            if s == "completed":
                 t.status = TaskStatus.COMPLETED
                 t.completion_status = "SUCCESS"
+            elif s == "overdue":
+                t.status = TaskStatus.OVERDUE
+            elif s == "expired":
+                t.status = TaskStatus.EXPIRED
+            elif s == "postponed":
+                t.status = TaskStatus.POSTPONED
+            elif s == "due":
+                t.status = TaskStatus.DUE
+            elif s in ["scheduled", "pending"]:
+                t.status = TaskStatus.SCHEDULED
+
+        # Check if task is relevant to "today":
+        # - due_at is today
+        # - or status is DUE, OVERDUE, POSTPONED, or COMPLETED
+        if t.due_at[:10] == today_str or t.status in [TaskStatus.DUE, TaskStatus.OVERDUE, TaskStatus.POSTPONED, TaskStatus.COMPLETED]:
             filtered_tasks.append(t)
             seen_task_ids.add(t.task_id)
             seen_task_ids.add(t.title.lower())
 
-    # 2. Include SQL DB tasks due today or pending/completed today
+    # 2. Include SQL DB tasks
     for dbt in db_tasks:
         if dbt.id in seen_task_ids or dbt.title.lower() in seen_task_ids:
             continue
         dbt_farm_id = dbt.farm_id or target_farm_id
         if dbt_farm_id != target_farm_id:
             continue
-        due_str = str(dbt.due_date) if dbt.due_date else today_str
-        is_today = (due_str == today_str) or (dbt.due_date and dbt.due_date <= today_date and dbt.status in ["pending", "in_progress", "due", "completed"])
-        if is_today:
-            status_enum = TaskStatus.COMPLETED if dbt.status == "completed" else TaskStatus.DUE
+
+        dbt_status = (dbt.status or "").lower()
+        dbt_due_date = dbt.due_date
+        dbt_due_at = dbt.due_at
+
+        if dbt_due_at:
+            if dbt_due_at.tzinfo is None:
+                dbt_due_at = dbt_due_at.replace(tzinfo=timezone.utc)
+            due_str = dbt_due_at.isoformat()
+            due_date_val = dbt_due_at.date()
+            is_past_due = (dbt_due_at <= now_utc)
+        elif dbt_due_date:
+            due_str = str(dbt_due_date)
+            due_date_val = dbt_due_date
+            is_past_due = (dbt_due_date <= today_date)
+        else:
+            due_str = today_str
+            due_date_val = today_date
+            is_past_due = False
+
+        is_due_today = (due_date_val == today_date)
+
+        # Relevance filter for "Today's Tasks":
+        # - Due today
+        # - Status is due, overdue, or in_progress (never hide overdue tasks!)
+        # - Status is completed (if completed or due today)
+        # - Status is expired (if due today)
+        is_relevant = (
+            is_due_today
+            or dbt_status in ["due", "overdue", "in_progress"]
+            or (dbt_status == "completed" and (is_due_today or (dbt.updated_at and dbt.updated_at.date() == today_date)))
+            or (dbt_status == "expired" and is_due_today)
+        )
+
+        if is_relevant:
+            status_enum = map_sql_status_to_schema(dbt_status, is_past_due)
             ft = FarmTask(
                 task_id=dbt.id,
                 farm_id=dbt_farm_id,
@@ -162,14 +249,16 @@ async def get_today_tasks(
                 priority=DecisionPriority.HIGH if (dbt.priority or "").lower() == "high" else DecisionPriority.MEDIUM,
                 status=status_enum,
                 due_at=due_str,
+                expires_at=dbt.expires_at.isoformat() if dbt.expires_at else None,
                 trigger="farm_schedule",
                 reason=dbt.reason or "Scheduled task from farm plan",
-                completion_status="SUCCESS" if dbt.status == "completed" else None
+                completion_status="SUCCESS" if status_enum == TaskStatus.COMPLETED else None
             )
             filtered_tasks.append(ft)
             seen_task_ids.add(dbt.id)
 
     return filtered_tasks
+
 
 
 @router.get("/week", response_model=List[FarmTask])

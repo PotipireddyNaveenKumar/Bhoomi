@@ -34,6 +34,8 @@ class TaskRepository:
             priority=task_in.priority,
             status=TaskStatus.PENDING.value,
             due_date=task_in.due_date,
+            due_at=task_in.due_at,
+            expires_at=task_in.expires_at,
             reason=task_in.reason,
             conditions=task_in.conditions,
             source=source,
@@ -60,6 +62,10 @@ class TaskRepository:
             task.status = update_in.status
         if update_in.due_date is not None:
             task.due_date = update_in.due_date
+        if update_in.due_at is not None:
+            task.due_at = update_in.due_at
+        if update_in.expires_at is not None:
+            task.expires_at = update_in.expires_at
         if update_in.reason is not None:
             task.reason = update_in.reason
         if update_in.conditions is not None:

@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Text, Date, ForeignKey, JSON, Enum
+from sqlalchemy import Column, String, Text, Date, DateTime, ForeignKey, JSON, Enum
 import enum
 from sqlalchemy.orm import relationship
 from app.db.session import Base
@@ -24,9 +24,13 @@ class TaskPriority(str, enum.Enum):
 
 class TaskStatus(str, enum.Enum):
     PENDING = "pending"
+    SCHEDULED = "scheduled"
+    DUE = "due"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     POSTPONED = "postponed"
+    OVERDUE = "overdue"
+    EXPIRED = "expired"
     CANCELLED = "cancelled"
 
 class TaskSource(str, enum.Enum):
@@ -38,15 +42,17 @@ class FarmTask(Base):
     __tablename__ = "farm_tasks"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    farmer_id = Column(String(36), ForeignKey("farmer_profiles.id", ondelete="CASCADE"), nullable=False)
-    farm_id = Column(String(36), ForeignKey("farms.id", ondelete="CASCADE"), nullable=False)
+    farmer_id = Column(String(36), ForeignKey("farmer_profiles.id", ondelete="CASCADE"), nullable=False, index=True)
+    farm_id = Column(String(36), ForeignKey("farms.id", ondelete="CASCADE"), nullable=False, index=True)
     crop_id = Column(String(36), ForeignKey("farm_crops.id", ondelete="SET NULL"), nullable=True)
     title = Column(String(200), nullable=False)
     description = Column(Text, nullable=True)
     task_type = Column(String(50), default=TaskType.GENERAL.value, nullable=False)
     priority = Column(String(20), default=TaskPriority.MEDIUM.value, nullable=False)
-    status = Column(String(20), default=TaskStatus.PENDING.value, nullable=False)
+    status = Column(String(20), default=TaskStatus.PENDING.value, nullable=False, index=True)
     due_date = Column(Date, nullable=False)
+    due_at = Column(DateTime(timezone=True), nullable=True, index=True)
+    expires_at = Column(DateTime(timezone=True), nullable=True, index=True)
     reason = Column(Text, nullable=True)
     conditions = Column(JSON, nullable=True)  # {"check_weather": "rain_probability < 40%", "min_soil_moisture": 20}
     source = Column(String(30), default=TaskSource.AI_AGENT.value, nullable=False)

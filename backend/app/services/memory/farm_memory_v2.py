@@ -73,6 +73,14 @@ class FarmMemoryV2:
         return [m for m in cls._store.get(farmer_id, []) if m.category.upper() == category.upper()]
 
     @classmethod
+    def get_recent_events(cls, farmer_id: str) -> List[Dict[str, Any]]:
+        return [
+            {"key": m.key, "value": m.value, "timestamp": m.timestamp, "category": m.category}
+            for m in cls._store.get(farmer_id, [])
+            if m.category.upper() in ["EVENT", "TASK"]
+        ]
+
+    @classmethod
     def record_harvest_outcome(cls, farmer_id: str, outcome: FarmOutcomeRecord):
         if farmer_id not in cls._outcomes:
             cls._outcomes[farmer_id] = []

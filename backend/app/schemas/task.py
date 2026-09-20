@@ -30,11 +30,14 @@ class TaskPriority(str, Enum):
 
 
 class TaskStatus(str, Enum):
+    PENDING = "PENDING"
+    SCHEDULED = "SCHEDULED"
     PLANNED = "PLANNED"
     DUE = "DUE"
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
     POSTPONED = "POSTPONED"
+    OVERDUE = "OVERDUE"
     SKIPPED = "SKIPPED"
     EXPIRED = "EXPIRED"
     CANCELLED = "CANCELLED"
@@ -114,6 +117,8 @@ class FarmTaskCreate(BaseModel):
     task_type: str = "pest_monitoring"
     priority: str = "medium"
     due_date: date
+    due_at: Optional[datetime] = None
+    expires_at: Optional[datetime] = None
     reason: Optional[str] = None
     conditions: Optional[Dict[str, Any]] = None
 
@@ -124,6 +129,8 @@ class FarmTaskUpdate(BaseModel):
     priority: Optional[str] = None
     status: Optional[str] = None
     due_date: Optional[date] = None
+    due_at: Optional[datetime] = None
+    expires_at: Optional[datetime] = None
     reason: Optional[str] = None
     conditions: Optional[Dict[str, Any]] = None
 
