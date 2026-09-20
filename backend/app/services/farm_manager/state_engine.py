@@ -97,11 +97,19 @@ class FarmStateEngine:
 
         # 1. Digital Twin Context
         dt = digital_twin
-        if dt is None and db is not None:
-            try:
-                dt = await DigitalTwinService.get_farmer_context(db, farmer_id)
-            except Exception:
-                dt = None
+        if dt is None:
+            if db is not None:
+                try:
+                    dt = await DigitalTwinService.get_farmer_context(db, farmer_id)
+                except Exception:
+                    dt = None
+            else:
+                try:
+                    from app.db.session import AsyncSessionLocal
+                    async with AsyncSessionLocal() as session:
+                        dt = await DigitalTwinService.get_farmer_context(session, farmer_id)
+                except Exception:
+                    dt = None
 
         is_demo_or_test = (
             (farmer_id is None and settings.DEMO_MODE)

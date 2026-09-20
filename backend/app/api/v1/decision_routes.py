@@ -58,14 +58,17 @@ def _format_trace_response(trace) -> DecisionTraceResponse:
 
 
 @router.post("/evaluate", response_model=DecisionEvaluationResponse)
-async def evaluate_farm_decisions(request: DecisionEvaluationRequest):
+async def evaluate_farm_decisions(
+    request: DecisionEvaluationRequest,
+    db: AsyncSession = Depends(get_db)
+):
     """
     Canonical Decision Intelligence Evaluation Endpoint.
     Evaluates FarmState, assesses operational risks, resolves conflicts deterministically,
     and returns a fully traceable DecisionPlan.
     """
     try:
-        state = await FarmStateEngine.get_current_state(farmer_id=request.farmer_id)
+        state = await FarmStateEngine.get_current_state(farmer_id=request.farmer_id, db=db)
         plan = FarmDecisionEngine.generate_plan(state)
         risks = FarmRiskAggregator.evaluate_risks(state)
         missing_info = MissingInformationDetector.detect_missing(state=state, intent=request.intent)
