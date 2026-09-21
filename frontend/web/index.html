@@ -441,9 +441,10 @@
       </div>
       <!-- Controls / Filter -->
       <div style="padding: 10px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; background: rgba(30, 41, 59, 0.4);">
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
           <button type="button" id="btnFilterAllNotifs" onclick="filterNotifications('all')" style="padding: 5px 12px; border-radius: 6px; border: 1px solid #3b82f6; background: #3b82f6; color: white; font-weight: 600; cursor: pointer; font-size: 0.78rem;">All</button>
           <button type="button" id="btnFilterUnreadNotifs" onclick="filterNotifications('unread')" style="padding: 5px 12px; border-radius: 6px; border: 1px solid #334155; background: transparent; color: #94a3b8; font-weight: 500; cursor: pointer; font-size: 0.78rem;">Unread Only</button>
+          <button type="button" id="btnFilterTasksNotifs" onclick="filterNotifications('tasks')" style="padding: 5px 12px; border-radius: 6px; border: 1px solid #334155; background: transparent; color: #94a3b8; font-weight: 500; cursor: pointer; font-size: 0.78rem;">Today's Tasks</button>
         </div>
         <button type="button" id="btnRefreshNotifs" onclick="loadNotifications()" style="padding: 5px 12px; border-radius: 6px; border: 1px solid #334155; background: transparent; color: #cbd5e1; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;">🔄 Refresh</button>
       </div>
@@ -752,8 +753,8 @@
               <!-- Rendered dynamically by onLanguageChanged -->
             </div>
 
-            <!-- TODAY'S FARM TASKS SECTION -->
-            <div id="todayTasksSection" class="today-tasks-section" style="margin-top: 28px; text-align: left; background: var(--bg-surface-alt, rgba(255, 255, 255, 0.7)); backdrop-filter: blur(8px); border: 1px solid var(--border-color, #e2e8f0); border-radius: 16px; padding: 18px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);">
+            <!-- TODAY'S FARM TASKS SECTION (Moved to Notification Drawer) -->
+            <div id="todayTasksSection" class="today-tasks-section" style="display: none !important;">
               <div class="today-tasks-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="font-size: 1.3rem;">📋</span>

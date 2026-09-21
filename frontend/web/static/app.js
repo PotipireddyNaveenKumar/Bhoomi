@@ -5938,19 +5938,23 @@ let activeNotifFilter = 'all';
 const NOTIF_I18N = {
   en: {
     btn: "Notifications",
-    modalTitle: "Farm Notifications",
-    modalSub: "Authoritative task lifecycle alerts & reminders",
+    modalTitle: "Farm Tasks & Notifications",
+    modalSub: "Today's tasks, lifecycle alerts & reminders",
     all: "All",
     unreadOnly: "Unread Only",
+    tasksTab: "Today's Tasks",
     refresh: "🔄 Refresh",
-    noNotifs: "🔔 No new notifications.",
-    loading: "Loading notifications...",
+    noNotifs: "🔔 No notifications or pending tasks.",
+    loading: "Loading tasks & notifications...",
     error: "⚠️ Unable to load notifications at this time.",
     markRead: "Mark Read",
     read: "Read",
     acknowledge: "Acknowledge",
     acknowledged: "Acknowledged",
     viewTask: "View Task →",
+    completeBtn: "✓ Complete",
+    completed: "✓ Completed",
+    why: "Why",
     taskDue: "TASK DUE",
     taskOverdue: "TASK OVERDUE",
     taskExpired: "TASK EXPIRED",
@@ -5958,19 +5962,23 @@ const NOTIF_I18N = {
   },
   te: {
     btn: "నోటిఫికేషన్లు",
-    modalTitle: "వ్యవసాయ నోటిఫికేషన్లు",
-    modalSub: "టాస్క్ లైఫ్‌సైకిల్ హెచ్చరికలు మరియు రిమైండర్లు",
+    modalTitle: "వ్యవసాయ పనులు & నోటిఫికేషన్లు",
+    modalSub: "నేటి పనులు, లైఫ్‌సైకిల్ హెచ్చరికలు & రిమైండర్లు",
     all: "అన్నీ",
     unreadOnly: "చదవనివి మాత్రమే",
+    tasksTab: "నేటి పనులు",
     refresh: "🔄 రిఫ్రెష్",
-    noNotifs: "🔔 కొత్త నోటిఫికేషన్లు లేవు.",
-    loading: "నోటిఫికేషన్లు లోడ్ అవుతున్నాయి...",
+    noNotifs: "🔔 కొత్త నోటిఫికేషన్లు లేదా పనులు లేవు.",
+    loading: "పనులు & నోటిఫికేషన్లు లోడ్ అవుతున్నాయి...",
     error: "⚠️ ప్రస్తుతం నోటిఫికేషన్లను లోడ్ చేయలేకపోయాము.",
     markRead: "చదివినట్లు గుర్తించు",
     read: "చదివారు",
     acknowledge: "ధృవీకరించు",
     acknowledged: "ధృవీకరించబడింది",
     viewTask: "టాస్క్ చూడండి →",
+    completeBtn: "✓ పూర్తి చేయండి",
+    completed: "✓ పూర్తయింది",
+    why: "కారణం",
     taskDue: "టాస్క్ గడువు",
     taskOverdue: "టాస్క్ గడువు దాటింది",
     taskExpired: "టాస్క్ ముగిసింది",
@@ -5978,19 +5986,23 @@ const NOTIF_I18N = {
   },
   hi: {
     btn: "सूचनाएं",
-    modalTitle: "कृषि सूचनाएं",
-    modalSub: "कार्य जीवन चक्र अलर्ट और अनुस्मारक",
+    modalTitle: "कृषि कार्य और सूचनाएं",
+    modalSub: "आज के कार्य, जीवन चक्र अलर्ट और अनुस्मारक",
     all: "सभी",
     unreadOnly: "केवल न पढ़ी गई",
+    tasksTab: "आज के कार्य",
     refresh: "🔄 ताज़ा करें",
-    noNotifs: "🔔 कोई नई सूचना नहीं है।",
-    loading: "सूचनाएं लोड हो रही हैं...",
+    noNotifs: "🔔 कोई नई सूचना या कार्य नहीं है।",
+    loading: "कार्य और सूचनाएं लोड हो रही हैं...",
     error: "⚠️ इस समय सूचनाएं लोड करने में असमर्थ।",
     markRead: "पढ़ा हुआ चिह्नित करें",
     read: "पढ़ा गया",
     acknowledge: "स्वीकार करें",
     acknowledged: "स्वीकृत",
     viewTask: "कार्य देखें →",
+    completeBtn: "✓ पूरा करें",
+    completed: "✓ पूर्ण हुआ",
+    why: "कारण",
     taskDue: "कार्य देय",
     taskOverdue: "कार्य अतिदेय",
     taskExpired: "कार्य समाप्त",
@@ -5998,19 +6010,23 @@ const NOTIF_I18N = {
   },
   ta: {
     btn: "அறிவிப்புகள்",
-    modalTitle: "பண்ணை அறிவிப்புகள்",
-    modalSub: "பணி வாழ்க்கை சுழற்சி எச்சரிக்கைகள் மற்றும் நினைவூட்டல்கள்",
+    modalTitle: "பண்ணைப் பணிகள் & அறிவிப்புகள்",
+    modalSub: "இன்றைய பணிகள், எச்சரிக்கைகள் மற்றும் நினைவூட்டல்கள்",
     all: "அனைத்தும்",
     unreadOnly: "படிக்காதவை மட்டும்",
+    tasksTab: "இன்றைய பணிகள்",
     refresh: "🔄 புதுப்பி",
-    noNotifs: "🔔 புதிய அறிவிப்புகள் இல்லை.",
-    loading: "அறிவிப்புகள் ஏற்றப்படுகின்றன...",
+    noNotifs: "🔔 புதிய அறிவிப்புகள் அல்லது பணிகள் இல்லை.",
+    loading: "பணிகள் & அறிவிப்புகள் ஏற்றப்படுகின்றன...",
     error: "⚠️ தற்போது அறிவிப்புகளை ஏற்ற முடியவில்லை.",
     markRead: "படித்ததாகக் குறி",
     read: "படிக்கப்பட்டது",
     acknowledge: "ஒப்புக்கொள்",
     acknowledged: "ஒப்புக்கொள்ளப்பட்டது",
     viewTask: "பணியைக் காண்க →",
+    completeBtn: "✓ முடிக்க",
+    completed: "✓ முடிந்தது",
+    why: "காரணம்",
     taskDue: "பணி நிலுவை",
     taskOverdue: "பணி தாமதமானது",
     taskExpired: "பணி காலாவதியானது",
@@ -6018,19 +6034,23 @@ const NOTIF_I18N = {
   },
   kn: {
     btn: "ಸೂಚನೆಗಳು",
-    modalTitle: "ಕೃಷಿ ಸೂಚನೆಗಳು",
-    modalSub: "ಕಾರ್ಯ ಜೀವನ ಚಕ್ರ ಎಚ್ಚರಿಕೆಗಳು ಮತ್ತು ಜ್ಞಾಪನೆಗಳು",
+    modalTitle: "ಕೃಷಿ ಕಾರ್ಯಗಳು & ಸೂಚನೆಗಳು",
+    modalSub: "ಇಂದಿನ ಕಾರ್ಯಗಳು, ಎಚ್ಚರಿಕೆಗಳು & ಜ್ಞಾಪನೆಗಳು",
     all: "ಎಲ್ಲವೂ",
     unreadOnly: "ಓದದಿರುವವು ಮಾತ್ರ",
+    tasksTab: "ಇಂದಿನ ಕಾರ್ಯಗಳು",
     refresh: "🔄 ರಿಫ್ರೆಶ್",
-    noNotifs: "🔔 ಯಾವುದೇ ಹೊಸ ಸೂಚನೆಗಳಿಲ್ಲ.",
-    loading: "ಸೂಚನೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
+    noNotifs: "🔔 ಯಾವುದೇ ಹೊಸ ಸೂಚನೆಗಳು ಅಥವಾ ಕಾರ್ಯಗಳಿಲ್ಲ.",
+    loading: "ಕಾರ್ಯಗಳು & ಸೂಚನೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
     error: "⚠️ ಪ್ರಸ್ತುತ ಸೂಚನೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ.",
     markRead: "ಓದಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ",
     read: "ಓದಲಾಗಿದೆ",
     acknowledge: "ದೃಢೀಕರಿಸಿ",
     acknowledged: "ದೃಢೀಕರಿಸಲಾಗಿದೆ",
     viewTask: "ಕಾರ್ಯವನ್ನು ನೋಡಿ →",
+    completeBtn: "✓ ಪೂರ್ಣಗೊಳಿಸಿ",
+    completed: "✓ ಪೂರ್ಣಗೊಂಡಿದೆ",
+    why: "ಕಾರಣ",
     taskDue: "ಕಾರ್ಯ ಬಾಕಿ",
     taskOverdue: "ಕಾರ್ಯ ಮೀರಿದೆ",
     taskExpired: "ಕಾರ್ಯ ಮುಕ್ತಾಯಗೊಂಡಿದೆ",
@@ -6038,19 +6058,23 @@ const NOTIF_I18N = {
   },
   ml: {
     btn: "അറിയിപ്പുകൾ",
-    modalTitle: "ഫാം അറിയിപ്പുകൾ",
-    modalSub: "ടാസ്ക് ലൈഫ് സൈക്കിൾ അലേർട്ടുകളും ഓർമ്മപ്പെടുത്തലുകളും",
+    modalTitle: "ഫാം ജോലികളും അറിയിപ്പുകളും",
+    modalSub: "ഇന്നത്തെ ജോലികൾ, അലേർട്ടുകളും ഓർമ്മപ്പെടുത്തലുകളും",
     all: "എല്ലാം",
     unreadOnly: "വായിക്കാത്തവ മാത്രം",
+    tasksTab: "ഇന്നത്തെ ജോലികൾ",
     refresh: "🔄 പുതുക്കുക",
-    noNotifs: "🔔 പുതിയ അറിയിപ്പുകൾ ഒന്നുമില്ല.",
-    loading: "അറിയിപ്പുകൾ ലോഡ് ചെയ്യുന്നു...",
+    noNotifs: "🔔 പുതിയ അറിയിപ്പുകളോ ജോലികളോ ഒന്നുമില്ല.",
+    loading: "ജോലികളും അറിയിപ്പുകളും ലോഡ് ചെയ്യുന്നു...",
     error: "⚠️ അറിയിപ്പുകൾ ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല.",
     markRead: "വായിച്ചതായി അടയാളപ്പെടുത്തുക",
     read: "വായിച്ചു",
     acknowledge: "സ്ഥിരീകരിക്കുക",
     acknowledged: "സ്ഥിരീകരിച്ചു",
     viewTask: "ടാസ്ക് കാണുക →",
+    completeBtn: "✓ പൂർത്തിയാക്കുക",
+    completed: "✓ പൂർത്തിയായി",
+    why: "കാരണം",
     taskDue: "ടാസ്ക് സമയം എത്തി",
     taskOverdue: "കാലാവധി കഴിഞ്ഞു",
     taskExpired: "റദ്ദായി",
@@ -6070,6 +6094,7 @@ function updateNotificationLabels() {
   const txtSub = document.getElementById("txtNotifModalSub");
   const btnAll = document.getElementById("btnFilterAllNotifs");
   const btnUnread = document.getElementById("btnFilterUnreadNotifs");
+  const btnTasks = document.getElementById("btnFilterTasksNotifs");
   const btnRefresh = document.getElementById("btnRefreshNotifs");
 
   if (txtNotifBtn) txtNotifBtn.textContent = dict.btn;
@@ -6077,6 +6102,7 @@ function updateNotificationLabels() {
   if (txtSub) txtSub.textContent = dict.modalSub;
   if (btnAll) btnAll.textContent = dict.all;
   if (btnUnread) btnUnread.textContent = dict.unreadOnly;
+  if (btnTasks) btnTasks.textContent = dict.tasksTab || "Today's Tasks";
   if (btnRefresh) btnRefresh.innerHTML = dict.refresh;
 }
 
@@ -6134,24 +6160,25 @@ function filterNotifications(filterMode) {
   activeNotifFilter = filterMode;
   const btnAll = document.getElementById("btnFilterAllNotifs");
   const btnUnread = document.getElementById("btnFilterUnreadNotifs");
+  const btnTasks = document.getElementById("btnFilterTasksNotifs");
 
-  if (btnAll && btnUnread) {
-    if (filterMode === "unread") {
-      btnAll.style.background = "transparent";
-      btnAll.style.color = "#94a3b8";
-      btnAll.style.borderColor = "#334155";
-      btnUnread.style.background = "#3b82f6";
-      btnUnread.style.color = "#ffffff";
-      btnUnread.style.borderColor = "#3b82f6";
-    } else {
-      btnAll.style.background = "#3b82f6";
-      btnAll.style.color = "#ffffff";
-      btnAll.style.borderColor = "#3b82f6";
-      btnUnread.style.background = "transparent";
-      btnUnread.style.color = "#94a3b8";
-      btnUnread.style.borderColor = "#334155";
+  [btnAll, btnUnread, btnTasks].forEach(btn => {
+    if (btn) {
+      btn.style.background = "transparent";
+      btn.style.color = "#94a3b8";
+      btn.style.borderColor = "#334155";
+      btn.style.fontWeight = "500";
     }
+  });
+
+  const activeBtn = filterMode === "unread" ? btnUnread : (filterMode === "tasks" ? btnTasks : btnAll);
+  if (activeBtn) {
+    activeBtn.style.background = "#3b82f6";
+    activeBtn.style.color = "#ffffff";
+    activeBtn.style.borderColor = "#3b82f6";
+    activeBtn.style.fontWeight = "600";
   }
+
   loadNotifications();
 }
 
@@ -6170,27 +6197,41 @@ async function loadNotifications() {
 
   try {
     const isUnreadOnly = activeNotifFilter === "unread";
-    const res = await fetch(`/api/v1/notifications?unread_only=${isUnreadOnly}&limit=50`, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/json"
-      }
-    });
+    
+    // Fetch notifications and today's tasks in parallel
+    const [notifRes, tasksRes] = await Promise.all([
+      fetch(`/api/v1/notifications?unread_only=${isUnreadOnly}&limit=50`, {
+        headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" }
+      }),
+      fetch(`/api/v1/tasks/today`, {
+        headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" }
+      }).catch(() => null)
+    ]);
 
-    if (!res.ok) {
+    if (!notifRes.ok) {
       container.innerHTML = `<div style="padding: 20px; text-align: center; color: #f87171; font-size: 0.85rem;">${dict.error}</div>`;
       return;
     }
 
-    const data = await res.json();
-    const items = data.items || [];
+    const notifData = await notifRes.json();
+    let notifItems = notifData.items || [];
+    let todayTasks = [];
+    if (tasksRes && tasksRes.ok) {
+      todayTasks = (await tasksRes.json().catch(() => [])) || [];
+    }
+
+    // Build task map by taskId
+    const taskMap = {};
+    todayTasks.forEach(t => {
+      if (t && t.task_id) taskMap[t.task_id] = t;
+    });
 
     // Also update badge with canonical unread_count
-    if (typeof data.unread_count === "number") {
+    if (typeof notifData.unread_count === "number") {
       const badge = document.getElementById("notifBadge");
       if (badge) {
-        if (data.unread_count > 0) {
-          badge.textContent = data.unread_count > 99 ? "99+" : String(data.unread_count);
+        if (notifData.unread_count > 0) {
+          badge.textContent = notifData.unread_count > 99 ? "99+" : String(notifData.unread_count);
           badge.style.display = "inline-block";
         } else {
           badge.style.display = "none";
@@ -6198,15 +6239,101 @@ async function loadNotifications() {
       }
     }
 
-    if (items.length === 0) {
+    // If filterMode === 'tasks', show today's scheduled tasks
+    if (activeNotifFilter === "tasks") {
+      if (todayTasks.length === 0) {
+        container.innerHTML = `<div style="padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 0.9rem; background: rgba(30, 41, 59, 0.3); border-radius: 10px; border: 1px dashed #334155;">${dict.noNotifs}</div>`;
+        return;
+      }
+
+      container.innerHTML = todayTasks.map(t => {
+        const isCompleted = (t.status || "").toUpperCase() === "COMPLETED";
+        const isOverdue = (t.status || "").toUpperCase() === "OVERDUE";
+        const isExpired = (t.status || "").toUpperCase() === "EXPIRED";
+
+        let typeBadgeBg = "#1e3a8a";
+        let typeBadgeColor = "#93c5fd";
+        let typeBadgeBorder = "#3b82f6";
+        let typeLabel = dict.taskDue;
+
+        if (isOverdue) {
+          typeBadgeBg = "#450a0a";
+          typeBadgeColor = "#fca5a5";
+          typeBadgeBorder = "#ef4444";
+          typeLabel = dict.taskOverdue;
+        } else if (isExpired) {
+          typeBadgeBg = "#1e293b";
+          typeBadgeColor = "#cbd5e1";
+          typeBadgeBorder = "#64748b";
+          typeLabel = dict.taskExpired;
+        } else if (isCompleted) {
+          typeBadgeBg = "#064e3b";
+          typeBadgeColor = "#6ee7b7";
+          typeBadgeBorder = "#10b981";
+          typeLabel = dict.completed;
+        }
+
+        const cardBg = isOverdue ? "rgba(69, 10, 10, 0.3)" : "rgba(30, 41, 59, 0.65)";
+        const cardBorder = isOverdue ? "1px solid rgba(239, 68, 68, 0.4)" : "1px solid rgba(51, 65, 85, 0.6)";
+
+        return `
+          <div class="notification-item-card" id="taskCard_${t.task_id}" data-task-id="${t.task_id}" style="padding: 12px 14px; background: ${cardBg}; border: ${cardBorder}; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; background: ${typeBadgeBg}; color: ${typeBadgeColor}; border: 1px solid ${typeBadgeBorder};">${typeLabel}</span>
+                <span style="font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); color: #cbd5e1; font-weight: 600;">🌾 ${t.crop || 'Crop'}</span>
+                <span style="font-size: 0.68rem; color: #94a3b8;">📅 ${t.due_at ? t.due_at.slice(0,10) : 'Today'}</span>
+                <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: ${t.priority === 'HIGH' || t.priority === 'CRITICAL' ? '#450a0a' : '#1e293b'}; color: ${t.priority === 'HIGH' || t.priority === 'CRITICAL' ? '#fca5a5' : '#93c5fd'};">${t.priority || 'MEDIUM'}</span>
+              </div>
+            </div>
+
+            <div style="cursor: pointer;" onclick="handleNotificationCardClick('${t.task_id}')" title="Click to view details">
+              <div style="font-size: 0.92rem; font-weight: 700; color: #f8fafc; line-height: 1.3; ${isCompleted ? 'text-decoration: line-through; opacity: 0.75;' : ''}">${t.title}</div>
+              ${t.reason ? `<div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">💡 <strong>${dict.why}:</strong> ${t.reason}</div>` : ''}
+              ${t.postponement_reason ? `<div style="font-size: 0.78rem; color: #f59e0b; margin-top: 3px;">🌦️ ${t.postponement_reason}</div>` : ''}
+            </div>
+
+            <div class="task-card-details" id="taskDetails_${t.task_id}" style="display: none; font-size: 0.78rem; color: #94a3b8; padding: 8px 10px; background: rgba(15, 23, 42, 0.6); border-radius: 6px; border: 1px dashed rgba(255,255,255,0.1); margin-top: 4px;">
+              <div><strong>Task ID:</strong> ${t.task_id}</div>
+              <div><strong>Status:</strong> ${t.status} | <strong>Trigger:</strong> ${t.trigger || 'farm_schedule'}</div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <button type="button" onclick="handleNotificationCardClick('${t.task_id}')" style="background: transparent; border: none; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 4px;">
+                ${dict.viewTask}
+              </button>
+
+              <div style="display: flex; align-items: center; gap: 6px;">
+                ${isCompleted ? `
+                  <span style="font-size: 0.74rem; color: #34d399; font-weight: 700; background: rgba(16, 185, 129, 0.15); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">${dict.completed}</span>
+                ` : (!isExpired ? `
+                  <button type="button" id="btnComplete_${t.task_id}" onclick="handleCompleteTaskFromNotif('${t.task_id}', null, event)" style="padding: 4px 10px; font-size: 0.74rem; font-weight: 600; background: #16a34a; color: white; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(22,163,74,0.3);">
+                    ${dict.completeBtn}
+                  </button>
+                ` : '')}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+      return;
+    }
+
+    if (notifItems.length === 0) {
       container.innerHTML = `<div style="padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 0.9rem; background: rgba(30, 41, 59, 0.3); border-radius: 10px; border: 1px dashed #334155;">${dict.noNotifs}</div>`;
       return;
     }
 
-    container.innerHTML = items.map(n => {
+    container.innerHTML = notifItems.map(n => {
       const isUnread = !n.read_at;
       const isAcked = !!n.acknowledged_at;
       const type = (n.notification_type || "TASK_DUE").toUpperCase();
+
+      const matchedTask = taskMap[n.task_id];
+      const isTaskCompleted = matchedTask ? (matchedTask.status === "COMPLETED") : (n.meta_payload && n.meta_payload.status === "COMPLETED");
+      const cropVal = (matchedTask && matchedTask.crop) || (n.meta_payload && n.meta_payload.crop) || (currentUser && currentUser.current_crop) || "Crop";
+      const dueVal = (matchedTask && matchedTask.due_at ? matchedTask.due_at.slice(0, 10) : null) || (n.meta_payload && n.meta_payload.due_date) || "Today";
+      const reasonVal = (matchedTask && matchedTask.reason) || (n.meta_payload && n.meta_payload.reason) || "";
 
       let badgeBg = "#1e3a8a";
       let badgeColor = "#93c5fd";
@@ -6243,26 +6370,42 @@ async function loadNotifications() {
       }
 
       return `
-        <div class="notification-item-card" id="notifItem_${n.id}" style="padding: 12px 14px; background: ${cardBg}; border: ${cardBorder}; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;">
+        <div class="notification-item-card" id="taskCard_${n.task_id}" data-task-id="${n.task_id}" data-notif-id="${n.id}" style="padding: 12px 14px; background: ${cardBg}; border: ${cardBorder}; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
             <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
               <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder};">${typeLabel}</span>
+              <span style="font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); color: #cbd5e1; font-weight: 600;">🌾 ${cropVal}</span>
+              <span style="font-size: 0.68rem; color: #94a3b8;">📅 ${dueVal}</span>
               <span style="font-size: 0.68rem; color: #94a3b8;">🕒 ${dateDisplay}</span>
             </div>
             ${isUnread ? '<span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 6px #3b82f6;" title="Unread"></span>' : ''}
           </div>
 
-          <div style="cursor: pointer;" onclick="handleNotificationCardClick('${n.task_id}')" title="Click to view related task">
-            <div style="font-size: 0.92rem; font-weight: 700; color: #f8fafc; line-height: 1.3;">${n.title}</div>
+          <div style="cursor: pointer;" onclick="handleNotificationCardClick('${n.task_id}')" title="Click to view details">
+            <div style="font-size: 0.92rem; font-weight: 700; color: #f8fafc; line-height: 1.3; ${isTaskCompleted ? 'text-decoration: line-through; opacity: 0.75;' : ''}">${n.title}</div>
             <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">${n.message}</div>
+            ${reasonVal ? `<div style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px; line-height: 1.4;">💡 <strong>${dict.why}:</strong> ${reasonVal}</div>` : ''}
           </div>
 
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06);">
+          <div class="task-card-details" id="taskDetails_${n.task_id}" style="display: none; font-size: 0.78rem; color: #94a3b8; padding: 8px 10px; background: rgba(15, 23, 42, 0.6); border-radius: 6px; border: 1px dashed rgba(255,255,255,0.1); margin-top: 4px;">
+            <div><strong>Task ID:</strong> ${n.task_id}</div>
+            <div><strong>Priority:</strong> ${n.priority} | <strong>Notification ID:</strong> ${n.id}</div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap;">
             <button type="button" onclick="handleNotificationCardClick('${n.task_id}')" style="background: transparent; border: none; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 4px;">
               ${dict.viewTask}
             </button>
 
-            <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              ${isTaskCompleted ? `
+                <span style="font-size: 0.72rem; color: #34d399; font-weight: 700; background: rgba(16, 185, 129, 0.15); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">${dict.completed}</span>
+              ` : (type !== "TASK_EXPIRED" ? `
+                <button type="button" id="btnComplete_${n.task_id}" onclick="handleCompleteTaskFromNotif('${n.task_id}', '${n.id}', event)" style="padding: 4px 9px; font-size: 0.74rem; font-weight: 600; background: #16a34a; color: white; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 1px 3px rgba(22,163,74,0.3);">
+                  ${dict.completeBtn}
+                </button>
+              ` : '')}
+
               ${!isAcked ? `
                 <button type="button" id="btnAck_${n.id}" onclick="acknowledgeNotification('${n.id}', event)" style="padding: 4px 9px; font-size: 0.74rem; font-weight: 600; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 6px; cursor: pointer;">
                   ✓ ${dict.acknowledge}
@@ -6342,23 +6485,85 @@ async function acknowledgeNotification(notificationId, evt) {
   }
 }
 
+async function handleCompleteTaskFromNotif(taskId, notifId, evt) {
+  if (evt) evt.stopPropagation();
+  const token = (typeof authToken !== "undefined" && authToken) || localStorage.getItem("bhoomi_auth_token");
+  if (!token) return;
+
+  const btn = document.getElementById(`btnComplete_${taskId}`);
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "⏳...";
+  }
+
+  try {
+    const res = await fetch(`/api/v1/tasks/${encodeURIComponent(taskId)}/complete`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ completion_source: "notification_drawer" })
+    });
+
+    if (res.ok) {
+      if (typeof showToast === "function") {
+        showToast("Task marked as COMPLETED!", "success");
+      }
+      if (notifId) {
+        try {
+          await fetch(`/api/v1/notifications/${encodeURIComponent(notifId)}/acknowledge`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Accept": "application/json"
+            }
+          });
+        } catch (_) {}
+      }
+      if (typeof updateUnreadNotificationBadge === "function") {
+        await updateUnreadNotificationBadge();
+      }
+      await loadNotifications();
+      if (typeof loadTodayTasks === "function") {
+        loadTodayTasks();
+      }
+    } else {
+      const err = await res.json().catch(() => ({}));
+      if (typeof showToast === "function") {
+        showToast(err.detail || "Failed to complete task.", "error");
+      }
+      if (btn) btn.disabled = false;
+    }
+  } catch (err) {
+    if (typeof showToast === "function") {
+      showToast("Network error completing task: " + err.message, "error");
+    }
+    if (btn) btn.disabled = false;
+  }
+}
+
 function handleNotificationCardClick(taskId) {
-  toggleNotificationDrawer();
   if (!taskId) return;
 
-  const card = document.getElementById(`taskCard_${taskId}`);
+  const card = document.getElementById(`taskCard_${taskId}`) || document.querySelector(`[data-task-id="${taskId}"]`);
   if (card) {
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
     const originalBg = card.style.background;
     card.style.transition = "all 0.4s ease";
-    card.style.background = "rgba(59, 130, 246, 0.25)";
+    card.style.background = "rgba(59, 130, 246, 0.35)";
     card.style.borderColor = "#3b82f6";
-    card.style.boxShadow = "0 0 16px rgba(59, 130, 246, 0.5)";
+    card.style.boxShadow = "0 0 16px rgba(59, 130, 246, 0.6)";
+
+    const details = card.querySelector(".task-card-details");
+    if (details) {
+      details.style.display = (details.style.display === "none" || !details.style.display) ? "block" : "none";
+    }
 
     setTimeout(() => {
       card.style.background = originalBg;
       card.style.boxShadow = "";
-    }, 2500);
+    }, 2000);
   } else {
     if (typeof showToast === "function") {
       showToast(`Task ID: ${taskId}`, "info");
@@ -6372,6 +6577,7 @@ window.filterNotifications = filterNotifications;
 window.loadNotifications = loadNotifications;
 window.markNotificationRead = markNotificationRead;
 window.acknowledgeNotification = acknowledgeNotification;
+window.handleCompleteTaskFromNotif = handleCompleteTaskFromNotif;
 window.handleNotificationCardClick = handleNotificationCardClick;
 window.updateUnreadNotificationBadge = updateUnreadNotificationBadge;
 window.updateNotificationLabels = updateNotificationLabels;
