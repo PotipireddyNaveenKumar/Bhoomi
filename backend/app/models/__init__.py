@@ -10,6 +10,7 @@ from app.models.otp_challenge import OTPChallenge
 from app.models.auth_session import AuthSession
 from app.models.recommendation_trace import RecommendationTrace
 from app.models.task_event import FarmTaskEvent, TaskEventType, TaskEventStatus, TaskSchedulerState
+from app.models.notification import FarmerNotification
 
 __all__ = [
     "User",
@@ -23,6 +24,7 @@ __all__ = [
     "TaskEventType",
     "TaskEventStatus",
     "TaskSchedulerState",
+    "FarmerNotification",
     "ChatSession",
     "ChatMessage",
     "FarmerMemory",

@@ -18,6 +18,7 @@ from app.db.session import AsyncSessionLocal, engine
 from app.core.advisory_lock import advisory_lock, BHOOMI_TASK_SCHEDULER_LOCK_ID
 from app.services.tasks.lifecycle_service import TaskLifecycleService
 from app.models.task_event import TaskSchedulerState
+from app.services.notifications.delivery_service import NotificationDeliveryService
 from app.core.datetime_utils import utc_now_naive
 
 # Configure dedicated structured logger
@@ -88,13 +89,21 @@ class TaskSchedulerRunner:
                 try:
                     res = await TaskLifecycleService.run_global_lifecycle(db=session, reference_now=now)
                     stats.update(res)
+
+                    # Deliver pending events to durable farmer notifications inbox
+                    delivery_stats = await NotificationDeliveryService.deliver_pending_events(db=session, reference_now=now)
+                    stats["notifications_delivered"] = delivery_stats.get("delivered", 0)
+                    stats["notifications_failed"] = delivery_stats.get("failed", 0)
+                    stats["notifications_skipped_duplicate"] = delivery_stats.get("skipped_duplicate", 0)
+
                     stats["success"] = True
 
                     lifecycle_msg = (
                         f"TASK_LIFECYCLE_RUN tasks_scanned={stats['tasks_scanned']} "
                         f"tasks_transitioned={stats['tasks_transitioned']} due={stats['due']} "
                         f"overdue={stats['overdue']} expired={stats['expired']} "
-                        f"reminders={stats['reminders_created']} failed={stats['failed']}"
+                        f"reminders={stats['reminders_created']} notifications_delivered={stats['notifications_delivered']} "
+                        f"failed={stats['failed']}"
                     )
                     captured_logs.append(lifecycle_msg)
                 except Exception as e:

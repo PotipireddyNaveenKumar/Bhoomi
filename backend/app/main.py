@@ -44,6 +44,7 @@ from app.api.v1.decision_routes import router as decision_router
 from app.api.v1.pilot import router as pilot_router
 from app.api.v1.demo import router as demo_router
 from app.api.v1.xai_routes import router as xai_router
+from app.api.v1.notifications import router as notifications_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -103,7 +104,26 @@ async def lifespan(app: FastAPI):
                     updated_at TIMESTAMP NOT NULL
                 );
             """))
-            logger.info("Applied migration: Ensured PostgreSQL users, farm_tasks, farm_task_events, and task_scheduler_state tables.")
+            await conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS farmer_notifications (
+                    id VARCHAR(36) PRIMARY KEY,
+                    farmer_id VARCHAR(36) NOT NULL REFERENCES farmer_profiles(id) ON DELETE CASCADE,
+                    farm_id VARCHAR(36) NOT NULL REFERENCES farms(id) ON DELETE CASCADE,
+                    task_id VARCHAR(36) NOT NULL REFERENCES farm_tasks(id) ON DELETE CASCADE,
+                    event_id VARCHAR(36) NOT NULL UNIQUE REFERENCES farm_task_events(id) ON DELETE CASCADE,
+                    event_key VARCHAR(120) NOT NULL,
+                    notification_type VARCHAR(50) NOT NULL,
+                    title TEXT NOT NULL,
+                    message TEXT NOT NULL,
+                    locale VARCHAR(10) NOT NULL DEFAULT 'en',
+                    priority VARCHAR(20) NOT NULL DEFAULT 'MEDIUM',
+                    created_at TIMESTAMP NOT NULL,
+                    read_at TIMESTAMPTZ,
+                    acknowledged_at TIMESTAMPTZ,
+                    meta_payload JSON
+                );
+            """))
+            logger.info("Applied migration: Ensured PostgreSQL users, farm_tasks, farm_task_events, task_scheduler_state, and farmer_notifications tables.")
     logger.info("Database schema initialized.")
     from app.services.reviewer_provisioning import ensure_reviewer_account
     from app.db.session import AsyncSessionLocal
@@ -286,6 +306,7 @@ app.include_router(decision_router, prefix=api_v1)
 app.include_router(pilot_router, prefix=api_v1)
 app.include_router(demo_router, prefix=api_v1)
 app.include_router(xai_router, prefix=api_v1)
+app.include_router(notifications_router, prefix=api_v1)
 
 # Web Frontend Mounting
 WEB_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "web"))

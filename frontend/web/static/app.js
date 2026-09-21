@@ -3024,6 +3024,7 @@ function updateUILanguage(lang) {
 
   updateVoiceModalLabels();
   updateFinanceModalLanguage(lang);
+  if (typeof updateNotificationLabels === 'function') updateNotificationLabels();
 
   // Update Today's Farm Tasks header labels
   const txtTodayTasksTitle = document.getElementById("txtTodayTasksTitle");
@@ -5364,6 +5365,10 @@ async function loadTodayTasks() {
     return;
   }
 
+  if (typeof updateUnreadNotificationBadge === 'function') {
+    updateUnreadNotificationBadge();
+  }
+
   const lang = localStorage.getItem("bhoomi_lang") || "en";
   const dict = TASK_LIFECYCLE_I18N[lang] || TASK_LIFECYCLE_I18N.en;
 
@@ -5923,6 +5928,453 @@ async function loadMarketIntelligence() {
   }
 }
 window.loadMarketIntelligence = loadMarketIntelligence;
+
+// =============================================================================
+// FARMER NOTIFICATION INBOX & REMINDER EXPERIENCE (BATCH 11 - TASK 3)
+// =============================================================================
+
+let activeNotifFilter = 'all';
+
+const NOTIF_I18N = {
+  en: {
+    btn: "Notifications",
+    modalTitle: "Farm Notifications",
+    modalSub: "Authoritative task lifecycle alerts & reminders",
+    all: "All",
+    unreadOnly: "Unread Only",
+    refresh: "🔄 Refresh",
+    noNotifs: "🔔 No new notifications.",
+    loading: "Loading notifications...",
+    error: "⚠️ Unable to load notifications at this time.",
+    markRead: "Mark Read",
+    read: "Read",
+    acknowledge: "Acknowledge",
+    acknowledged: "Acknowledged",
+    viewTask: "View Task →",
+    taskDue: "TASK DUE",
+    taskOverdue: "TASK OVERDUE",
+    taskExpired: "TASK EXPIRED",
+    taskReminder: "TASK REMINDER"
+  },
+  te: {
+    btn: "నోటిఫికేషన్లు",
+    modalTitle: "వ్యవసాయ నోటిఫికేషన్లు",
+    modalSub: "టాస్క్ లైఫ్‌సైకిల్ హెచ్చరికలు మరియు రిమైండర్లు",
+    all: "అన్నీ",
+    unreadOnly: "చదవనివి మాత్రమే",
+    refresh: "🔄 రిఫ్రెష్",
+    noNotifs: "🔔 కొత్త నోటిఫికేషన్లు లేవు.",
+    loading: "నోటిఫికేషన్లు లోడ్ అవుతున్నాయి...",
+    error: "⚠️ ప్రస్తుతం నోటిఫికేషన్లను లోడ్ చేయలేకపోయాము.",
+    markRead: "చదివినట్లు గుర్తించు",
+    read: "చదివారు",
+    acknowledge: "ధృవీకరించు",
+    acknowledged: "ధృవీకరించబడింది",
+    viewTask: "టాస్క్ చూడండి →",
+    taskDue: "టాస్క్ గడువు",
+    taskOverdue: "టాస్క్ గడువు దాటింది",
+    taskExpired: "టాస్క్ ముగిసింది",
+    taskReminder: "టాస్క్ రిమైండర్"
+  },
+  hi: {
+    btn: "सूचनाएं",
+    modalTitle: "कृषि सूचनाएं",
+    modalSub: "कार्य जीवन चक्र अलर्ट और अनुस्मारक",
+    all: "सभी",
+    unreadOnly: "केवल न पढ़ी गई",
+    refresh: "🔄 ताज़ा करें",
+    noNotifs: "🔔 कोई नई सूचना नहीं है।",
+    loading: "सूचनाएं लोड हो रही हैं...",
+    error: "⚠️ इस समय सूचनाएं लोड करने में असमर्थ।",
+    markRead: "पढ़ा हुआ चिह्नित करें",
+    read: "पढ़ा गया",
+    acknowledge: "स्वीकार करें",
+    acknowledged: "स्वीकृत",
+    viewTask: "कार्य देखें →",
+    taskDue: "कार्य देय",
+    taskOverdue: "कार्य अतिदेय",
+    taskExpired: "कार्य समाप्त",
+    taskReminder: "कार्य स्मरणपत्र"
+  },
+  ta: {
+    btn: "அறிவிப்புகள்",
+    modalTitle: "பண்ணை அறிவிப்புகள்",
+    modalSub: "பணி வாழ்க்கை சுழற்சி எச்சரிக்கைகள் மற்றும் நினைவூட்டல்கள்",
+    all: "அனைத்தும்",
+    unreadOnly: "படிக்காதவை மட்டும்",
+    refresh: "🔄 புதுப்பி",
+    noNotifs: "🔔 புதிய அறிவிப்புகள் இல்லை.",
+    loading: "அறிவிப்புகள் ஏற்றப்படுகின்றன...",
+    error: "⚠️ தற்போது அறிவிப்புகளை ஏற்ற முடியவில்லை.",
+    markRead: "படித்ததாகக் குறி",
+    read: "படிக்கப்பட்டது",
+    acknowledge: "ஒப்புக்கொள்",
+    acknowledged: "ஒப்புக்கொள்ளப்பட்டது",
+    viewTask: "பணியைக் காண்க →",
+    taskDue: "பணி நிலுவை",
+    taskOverdue: "பணி தாமதமானது",
+    taskExpired: "பணி காலாவதியானது",
+    taskReminder: "பணி நினைவூட்டல்"
+  },
+  kn: {
+    btn: "ಸೂಚನೆಗಳು",
+    modalTitle: "ಕೃಷಿ ಸೂಚನೆಗಳು",
+    modalSub: "ಕಾರ್ಯ ಜೀವನ ಚಕ್ರ ಎಚ್ಚರಿಕೆಗಳು ಮತ್ತು ಜ್ಞಾಪನೆಗಳು",
+    all: "ಎಲ್ಲವೂ",
+    unreadOnly: "ಓದದಿರುವವು ಮಾತ್ರ",
+    refresh: "🔄 ರಿಫ್ರೆಶ್",
+    noNotifs: "🔔 ಯಾವುದೇ ಹೊಸ ಸೂಚನೆಗಳಿಲ್ಲ.",
+    loading: "ಸೂಚನೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
+    error: "⚠️ ಪ್ರಸ್ತುತ ಸೂಚನೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+    markRead: "ಓದಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ",
+    read: "ಓದಲಾಗಿದೆ",
+    acknowledge: "ದೃಢೀಕರಿಸಿ",
+    acknowledged: "ದೃಢೀಕರಿಸಲಾಗಿದೆ",
+    viewTask: "ಕಾರ್ಯವನ್ನು ನೋಡಿ →",
+    taskDue: "ಕಾರ್ಯ ಬಾಕಿ",
+    taskOverdue: "ಕಾರ್ಯ ಮೀರಿದೆ",
+    taskExpired: "ಕಾರ್ಯ ಮುಕ್ತಾಯಗೊಂಡಿದೆ",
+    taskReminder: "ಕಾರ್ಯ ಜ್ಞಾಪನೆ"
+  },
+  ml: {
+    btn: "അറിയിപ്പുകൾ",
+    modalTitle: "ഫാം അറിയിപ്പുകൾ",
+    modalSub: "ടാസ്ക് ലൈഫ് സൈക്കിൾ അലേർട്ടുകളും ഓർമ്മപ്പെടുത്തലുകളും",
+    all: "എല്ലാം",
+    unreadOnly: "വായിക്കാത്തവ മാത്രം",
+    refresh: "🔄 പുതുക്കുക",
+    noNotifs: "🔔 പുതിയ അറിയിപ്പുകൾ ഒന്നുമില്ല.",
+    loading: "അറിയിപ്പുകൾ ലോഡ് ചെയ്യുന്നു...",
+    error: "⚠️ അറിയിപ്പുകൾ ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല.",
+    markRead: "വായിച്ചതായി അടയാളപ്പെടുത്തുക",
+    read: "വായിച്ചു",
+    acknowledge: "സ്ഥിരീകരിക്കുക",
+    acknowledged: "സ്ഥിരീകരിച്ചു",
+    viewTask: "ടാസ്ക് കാണുക →",
+    taskDue: "ടാസ്ക് സമയം എത്തി",
+    taskOverdue: "കാലാവധി കഴിഞ്ഞു",
+    taskExpired: "റദ്ദായി",
+    taskReminder: "ഓർമ്മപ്പെടുത്തൽ"
+  }
+};
+
+function getNotifDict() {
+  const lang = (localStorage.getItem("bhoomi_lang") || (typeof currentLanguage !== "undefined" ? currentLanguage : "en") || "en").toLowerCase();
+  return NOTIF_I18N[lang] || NOTIF_I18N.en;
+}
+
+function updateNotificationLabels() {
+  const dict = getNotifDict();
+  const txtNotifBtn = document.getElementById("txtNotifBtn");
+  const txtTitle = document.getElementById("txtNotifModalTitle");
+  const txtSub = document.getElementById("txtNotifModalSub");
+  const btnAll = document.getElementById("btnFilterAllNotifs");
+  const btnUnread = document.getElementById("btnFilterUnreadNotifs");
+  const btnRefresh = document.getElementById("btnRefreshNotifs");
+
+  if (txtNotifBtn) txtNotifBtn.textContent = dict.btn;
+  if (txtTitle) txtTitle.textContent = dict.modalTitle;
+  if (txtSub) txtSub.textContent = dict.modalSub;
+  if (btnAll) btnAll.textContent = dict.all;
+  if (btnUnread) btnUnread.textContent = dict.unreadOnly;
+  if (btnRefresh) btnRefresh.innerHTML = dict.refresh;
+}
+
+async function updateUnreadNotificationBadge() {
+  const badge = document.getElementById("notifBadge");
+  if (!badge) return;
+
+  const token = (typeof authToken !== "undefined" && authToken) || localStorage.getItem("bhoomi_auth_token");
+  if (!token) {
+    badge.style.display = "none";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/v1/notifications/unread-count", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const count = data.unread_count || 0;
+      if (count > 0) {
+        badge.textContent = count > 99 ? "99+" : String(count);
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+    } else {
+      badge.style.display = "none";
+    }
+  } catch (err) {
+    console.debug("Notification count check notice:", err);
+    badge.style.display = "none";
+  }
+}
+
+function toggleNotificationDrawer() {
+  const modal = document.getElementById("notificationModal");
+  if (!modal) return;
+
+  const isHidden = modal.style.display === "none" || !modal.style.display;
+  if (isHidden) {
+    modal.style.display = "flex";
+    updateNotificationLabels();
+    loadNotifications();
+  } else {
+    modal.style.display = "none";
+  }
+}
+
+function filterNotifications(filterMode) {
+  activeNotifFilter = filterMode;
+  const btnAll = document.getElementById("btnFilterAllNotifs");
+  const btnUnread = document.getElementById("btnFilterUnreadNotifs");
+
+  if (btnAll && btnUnread) {
+    if (filterMode === "unread") {
+      btnAll.style.background = "transparent";
+      btnAll.style.color = "#94a3b8";
+      btnAll.style.borderColor = "#334155";
+      btnUnread.style.background = "#3b82f6";
+      btnUnread.style.color = "#ffffff";
+      btnUnread.style.borderColor = "#3b82f6";
+    } else {
+      btnAll.style.background = "#3b82f6";
+      btnAll.style.color = "#ffffff";
+      btnAll.style.borderColor = "#3b82f6";
+      btnUnread.style.background = "transparent";
+      btnUnread.style.color = "#94a3b8";
+      btnUnread.style.borderColor = "#334155";
+    }
+  }
+  loadNotifications();
+}
+
+async function loadNotifications() {
+  const container = document.getElementById("notificationListContainer");
+  if (!container) return;
+
+  const dict = getNotifDict();
+  const token = (typeof authToken !== "undefined" && authToken) || localStorage.getItem("bhoomi_auth_token");
+  if (!token) {
+    container.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 0.85rem;">Please login to view notifications.</div>`;
+    return;
+  }
+
+  container.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 0.85rem;">${dict.loading}</div>`;
+
+  try {
+    const isUnreadOnly = activeNotifFilter === "unread";
+    const res = await fetch(`/api/v1/notifications?unread_only=${isUnreadOnly}&limit=50`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      container.innerHTML = `<div style="padding: 20px; text-align: center; color: #f87171; font-size: 0.85rem;">${dict.error}</div>`;
+      return;
+    }
+
+    const data = await res.json();
+    const items = data.items || [];
+
+    // Also update badge with canonical unread_count
+    if (typeof data.unread_count === "number") {
+      const badge = document.getElementById("notifBadge");
+      if (badge) {
+        if (data.unread_count > 0) {
+          badge.textContent = data.unread_count > 99 ? "99+" : String(data.unread_count);
+          badge.style.display = "inline-block";
+        } else {
+          badge.style.display = "none";
+        }
+      }
+    }
+
+    if (items.length === 0) {
+      container.innerHTML = `<div style="padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 0.9rem; background: rgba(30, 41, 59, 0.3); border-radius: 10px; border: 1px dashed #334155;">${dict.noNotifs}</div>`;
+      return;
+    }
+
+    container.innerHTML = items.map(n => {
+      const isUnread = !n.read_at;
+      const isAcked = !!n.acknowledged_at;
+      const type = (n.notification_type || "TASK_DUE").toUpperCase();
+
+      let badgeBg = "#1e3a8a";
+      let badgeColor = "#93c5fd";
+      let badgeBorder = "#3b82f6";
+      let typeLabel = dict.taskDue;
+
+      if (type === "TASK_OVERDUE") {
+        badgeBg = "#450a0a";
+        badgeColor = "#fca5a5";
+        badgeBorder = "#ef4444";
+        typeLabel = dict.taskOverdue;
+      } else if (type === "TASK_EXPIRED") {
+        badgeBg = "#1e293b";
+        badgeColor = "#cbd5e1";
+        badgeBorder = "#64748b";
+        typeLabel = dict.taskExpired;
+      } else if (type === "TASK_REMINDER") {
+        badgeBg = "#362b00";
+        badgeColor = "#fde047";
+        badgeBorder = "#eab308";
+        typeLabel = dict.taskReminder;
+      }
+
+      const cardBg = isUnread ? "rgba(30, 41, 59, 0.75)" : "rgba(15, 23, 42, 0.55)";
+      const cardBorder = isUnread ? "1px solid rgba(59, 130, 246, 0.4)" : "1px solid rgba(51, 65, 85, 0.6)";
+
+      // Format date
+      let dateDisplay = "";
+      try {
+        const d = new Date(n.created_at);
+        dateDisplay = d.toLocaleDateString() + " " + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      } catch (e) {
+        dateDisplay = n.created_at || "";
+      }
+
+      return `
+        <div class="notification-item-card" id="notifItem_${n.id}" style="padding: 12px 14px; background: ${cardBg}; border: ${cardBorder}; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder};">${typeLabel}</span>
+              <span style="font-size: 0.68rem; color: #94a3b8;">🕒 ${dateDisplay}</span>
+            </div>
+            ${isUnread ? '<span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 6px #3b82f6;" title="Unread"></span>' : ''}
+          </div>
+
+          <div style="cursor: pointer;" onclick="handleNotificationCardClick('${n.task_id}')" title="Click to view related task">
+            <div style="font-size: 0.92rem; font-weight: 700; color: #f8fafc; line-height: 1.3;">${n.title}</div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">${n.message}</div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <button type="button" onclick="handleNotificationCardClick('${n.task_id}')" style="background: transparent; border: none; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 4px;">
+              ${dict.viewTask}
+            </button>
+
+            <div style="display: flex; align-items: center; gap: 6px;">
+              ${!isAcked ? `
+                <button type="button" id="btnAck_${n.id}" onclick="acknowledgeNotification('${n.id}', event)" style="padding: 4px 9px; font-size: 0.74rem; font-weight: 600; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 6px; cursor: pointer;">
+                  ✓ ${dict.acknowledge}
+                </button>
+              ` : `
+                <span style="font-size: 0.72rem; color: #34d399; font-weight: 600;">✓ ${dict.acknowledged}</span>
+              `}
+
+              ${isUnread ? `
+                <button type="button" id="btnRead_${n.id}" onclick="markNotificationRead('${n.id}', event)" style="padding: 4px 9px; font-size: 0.74rem; font-weight: 600; background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 6px; cursor: pointer;">
+                  ${dict.markRead}
+                </button>
+              ` : `
+                <span style="font-size: 0.72rem; color: #94a3b8;">${dict.read}</span>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (err) {
+    console.error("Failed to load notifications:", err);
+    container.innerHTML = `<div style="padding: 20px; text-align: center; color: #f87171; font-size: 0.85rem;">${dict.error}</div>`;
+  }
+}
+
+async function markNotificationRead(notificationId, evt) {
+  if (evt) evt.stopPropagation();
+  const token = (typeof authToken !== "undefined" && authToken) || localStorage.getItem("bhoomi_auth_token");
+  if (!token) return;
+
+  const btn = document.getElementById(`btnRead_${notificationId}`);
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch(`/api/v1/notifications/${encodeURIComponent(notificationId)}/read`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (res.ok) {
+      await updateUnreadNotificationBadge();
+      await loadNotifications();
+    }
+  } catch (err) {
+    console.error("Failed to mark notification read:", err);
+  }
+}
+
+async function acknowledgeNotification(notificationId, evt) {
+  if (evt) evt.stopPropagation();
+  const token = (typeof authToken !== "undefined" && authToken) || localStorage.getItem("bhoomi_auth_token");
+  if (!token) return;
+
+  const btn = document.getElementById(`btnAck_${notificationId}`);
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch(`/api/v1/notifications/${encodeURIComponent(notificationId)}/acknowledge`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (res.ok) {
+      await updateUnreadNotificationBadge();
+      await loadNotifications();
+    }
+  } catch (err) {
+    console.error("Failed to acknowledge notification:", err);
+  }
+}
+
+function handleNotificationCardClick(taskId) {
+  toggleNotificationDrawer();
+  if (!taskId) return;
+
+  const card = document.getElementById(`taskCard_${taskId}`);
+  if (card) {
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    const originalBg = card.style.background;
+    card.style.transition = "all 0.4s ease";
+    card.style.background = "rgba(59, 130, 246, 0.25)";
+    card.style.borderColor = "#3b82f6";
+    card.style.boxShadow = "0 0 16px rgba(59, 130, 246, 0.5)";
+
+    setTimeout(() => {
+      card.style.background = originalBg;
+      card.style.boxShadow = "";
+    }, 2500);
+  } else {
+    if (typeof showToast === "function") {
+      showToast(`Task ID: ${taskId}`, "info");
+    }
+  }
+}
+
+// Window bindings
+window.toggleNotificationDrawer = toggleNotificationDrawer;
+window.filterNotifications = filterNotifications;
+window.loadNotifications = loadNotifications;
+window.markNotificationRead = markNotificationRead;
+window.acknowledgeNotification = acknowledgeNotification;
+window.handleNotificationCardClick = handleNotificationCardClick;
+window.updateUnreadNotificationBadge = updateUnreadNotificationBadge;
+window.updateNotificationLabels = updateNotificationLabels;
 
 
 

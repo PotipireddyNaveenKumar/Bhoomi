@@ -11,6 +11,7 @@ from app.models.otp_challenge import OTPChallenge
 from app.models.auth_session import AuthSession
 from app.models.recommendation_trace import RecommendationTrace
 from app.models.task_event import FarmTaskEvent, TaskSchedulerState
+from app.models.notification import FarmerNotification
 
 __all__ = [
     "Base",
@@ -28,4 +29,5 @@ __all__ = [
     "RecommendationTrace",
     "FarmTaskEvent",
     "TaskSchedulerState",
+    "FarmerNotification",
 ]
